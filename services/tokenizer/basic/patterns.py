@@ -102,7 +102,11 @@ SEA_PATTERN = (
 
 # Word patterns for different script types
 
-LATIN_WORD_PATTERN = r"[a-zA-Z]+(?:\.[a-zA-Z]+)+\.?|[a-zA-Z]+(?:[-'\u2019\u0060][a-zA-Z]+)*[-'\u2019\u0060]?"  # Handle abbreviations, contractions, and possessives
+LATIN_WORD_PATTERN = (
+    r"(?:[a-zA-Z]{1,4}\.){2,}[a-zA-Z]*\.?"  # Multi-dot abbreviations: U.S.A., c.e.o.s
+    r"|[a-zA-Z]{1,4}\."  # Single-dot abbreviations: Dr., Mr., Inc., vs., etc.
+    r"|[a-zA-Z]+(?:[-'\u2019\u0060\u2013\u2014\u2011\u2012][a-zA-Z]+)*[-'\u2019\u0060]?"  # Words with contractions/hyphens/dashes
+)
 
 # Korean Hangul (space-separated, NOT character-level like Chinese/Japanese)
 KOREAN_WORD_PATTERN = r"[\uac00-\ud7af]+"

@@ -6,7 +6,7 @@ from analyzer_interface import (
     InputColumn,
     OutputColumn,
 )
-from analyzer_interface.params import IntegerParam
+from analyzer_interface.params import BooleanParam, ChoiceParam, IntegerParam
 
 COL_AUTHOR_ID = "user_id"
 COL_MESSAGE_ID = "message_id"
@@ -24,6 +24,10 @@ OUTPUT_MESSAGE = "message_authors"
 # Parameter definitions
 PARAM_MIN_N = "min_n"
 PARAM_MAX_N = "max_n"
+PARAM_PRESERVE_PUNCTUATION = "preserve_punctuation"
+PARAM_INCLUDE_EMOJI = "include_emoji"
+PARAM_CASE_HANDLING = "case_handling"
+PARAM_NORMALIZE_UNICODE = "normalize_unicode"
 
 interface = AnalyzerInterface(
     id="ngrams",
@@ -148,6 +152,40 @@ the collection of social media posts, and whether certain authors use these sequ
             description="Maximum length of n-grams to extract (e.g., 5 for up to 5-grams)",
             type=IntegerParam(min=1, max=10),
             default=5,
+        ),
+        AnalyzerParam(
+            id=PARAM_PRESERVE_PUNCTUATION,
+            human_readable_name="Preserve Punctuation",
+            description="Include punctuation as separate tokens in n-grams",
+            type=BooleanParam(),
+            default=False,
+            backfill_value=False,
+        ),
+        AnalyzerParam(
+            id=PARAM_INCLUDE_EMOJI,
+            human_readable_name="Include Emoji",
+            description="Include emoji characters as tokens in n-grams",
+            type=BooleanParam(),
+            default=False,
+            backfill_value=False,
+        ),
+        AnalyzerParam(
+            id=PARAM_CASE_HANDLING,
+            human_readable_name="Case Handling",
+            description="How to handle letter case: lowercase normalizes for comparison, preserve keeps original",
+            type=ChoiceParam(
+                choices=[("Lowercase", "lowercase"), ("Preserve", "preserve")]
+            ),
+            default="lowercase",
+            backfill_value="lowercase",
+        ),
+        AnalyzerParam(
+            id=PARAM_NORMALIZE_UNICODE,
+            human_readable_name="Normalize Unicode",
+            description="Apply NFKC Unicode normalization to ensure consistent character representation",
+            type=BooleanParam(),
+            default=True,
+            backfill_value=True,
         ),
     ],
 )

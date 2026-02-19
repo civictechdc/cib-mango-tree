@@ -160,6 +160,11 @@ class SecondaryAnalyzerInterface(DerivedAnalyzerInterface):
   Specifies the output data schema for the analyzer.
   """
 
+    params: list[AnalyzerParam] = []
+    """
+  A list of parameters that the secondary analyzer accepts.
+  """
+
     kind: Literal["secondary"] = "secondary"
 
 

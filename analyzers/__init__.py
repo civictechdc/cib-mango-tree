@@ -5,6 +5,7 @@ from .example.example_report import example_report
 from .example.example_web import example_web
 from .hashtags.hashtags_base import hashtags
 from .hashtags.hashtags_web import hashtags_web
+from .ngrams.copypasta_detection import copypasta_detection
 from .ngrams.ngrams_base import ngrams
 from .ngrams.ngrams_stats import ngrams_stats
 from .ngrams.ngrams_web import ngrams_web
@@ -20,6 +21,7 @@ suite = AnalyzerSuite(
         ngrams,
         ngrams_stats,
         ngrams_web,
+        copypasta_detection,
         time_coordination,
         temporal,
         temporal_web,

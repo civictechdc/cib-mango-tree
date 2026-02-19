@@ -6,6 +6,8 @@ from pydantic import BaseModel
 from analyzer_interface import (
     AnalyzerInterface,
     AnalyzerParam,
+    BooleanParam,
+    ChoiceParam,
     IntegerParam,
     ParamValue,
     TimeBinningValue,
@@ -144,8 +146,12 @@ class ParamState(BaseModel):
 def print_param_value(value: ParamValue | None):
     if isinstance(value, TimeBinningValue):
         return value.to_human_readable_text()
+    if isinstance(value, bool):
+        return "Yes" if value else "No"
     if isinstance(value, int):
         return str(value)
+    if isinstance(value, str):
+        return value
     if value is None:
         return "(not set)"
     raise ValueError("Unsupported parameter type")
@@ -158,6 +164,10 @@ def edit_param(state: ParamState) -> ParamValue | None:
         return edit_int_param(param_type, current_value)
     if param_type.type == "time_binning":
         return edit_time_binning_param(current_value)
+    if param_type.type == "boolean":
+        return edit_boolean_param(current_value)
+    if param_type.type == "choice":
+        return edit_choice_param(param_type, current_value)
     raise ValueError("Unsupported parameter type")
 
 
@@ -202,3 +212,19 @@ def edit_time_binning_param(
         return None
 
     return TimeBinningValue(unit=unit, amount=amount)
+
+
+def edit_boolean_param(current_value: bool | None) -> bool | None:
+    return prompts.list_input(
+        "Choose",
+        choices=[("Yes", True), ("No", False)],
+        default=current_value,
+    )
+
+
+def edit_choice_param(param_type: ChoiceParam, current_value: str | None) -> str | None:
+    return prompts.list_input(
+        "Choose an option",
+        choices=param_type.choices,
+        default=current_value,
+    )

@@ -17,8 +17,12 @@ from .interface import (
     OUTPUT_MESSAGE,
     OUTPUT_MESSAGE_NGRAMS,
     OUTPUT_NGRAM_DEFS,
+    PARAM_CASE_HANDLING,
+    PARAM_INCLUDE_EMOJI,
     PARAM_MAX_N,
     PARAM_MIN_N,
+    PARAM_NORMALIZE_UNICODE,
+    PARAM_PRESERVE_PUNCTUATION,
 )
 
 
@@ -133,10 +137,20 @@ def main(context: PrimaryAnalyzerContext):
     min_n = parameters.get(PARAM_MIN_N, 3)
     max_n = parameters.get(PARAM_MAX_N, 5)
 
-    # Configure tokenizer for social media text processing
+    # Map case_handling parameter string to CaseHandling enum
+    case_handling_str = parameters.get(PARAM_CASE_HANDLING, "lowercase")
+    case_handling_map = {
+        "lowercase": CaseHandling.LOWERCASE,
+        "preserve": CaseHandling.PRESERVE,
+    }
+    case_handling = case_handling_map.get(case_handling_str, CaseHandling.LOWERCASE)
+
+    # Configure tokenizer from user parameters
     tokenizer_config = TokenizerConfig(
-        case_handling=CaseHandling.LOWERCASE,
-        normalize_unicode=True,
+        case_handling=case_handling,
+        normalize_unicode=parameters.get(PARAM_NORMALIZE_UNICODE, True),
+        include_punctuation=parameters.get(PARAM_PRESERVE_PUNCTUATION, False),
+        include_emoji=parameters.get(PARAM_INCLUDE_EMOJI, False),
         extract_hashtags=True,
         extract_mentions=True,
         include_urls=True,

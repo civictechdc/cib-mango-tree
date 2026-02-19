@@ -25,6 +25,28 @@ class IntegerParam(BaseModel):
     max: int
 
 
+class BooleanParam(BaseModel):
+    """
+    Represents a boolean (yes/no) toggle.
+
+    The corresponding value will be of type `bool`.
+    """
+
+    type: Literal["boolean"] = "boolean"
+
+
+class ChoiceParam(BaseModel):
+    """
+    Represents a single-select choice from a list of options.
+
+    The corresponding value will be of type `str` (the selected choice value).
+    """
+
+    type: Literal["choice"] = "choice"
+    choices: list[tuple[str, str]]
+    """List of (display_label, value) pairs."""
+
+
 class TimeBinningParam(BaseModel):
     """
     Represents a time bin.
@@ -87,6 +109,6 @@ class TimeBinningValue(BaseModel):
         raise ValueError("Invalid time binning value")
 
 
-ParamType = Union[TimeBinningParam, IntegerParam]
+ParamType = Union[TimeBinningParam, IntegerParam, BooleanParam, ChoiceParam]
 
-ParamValue = Union[TimeBinningValue, int]
+ParamValue = Union[TimeBinningValue, int, bool, str]

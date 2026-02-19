@@ -18,6 +18,8 @@ from .interface import (
     backfill_param_values,
 )
 from .params import (
+    BooleanParam,
+    ChoiceParam,
     IntegerParam,
     ParamType,
     ParamValue,

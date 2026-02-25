@@ -3,211 +3,204 @@ Tests for copypasta detection secondary analyzer.
 
 Tests cover:
 - Exact duplicate detection across authors
-- Partial overlap detection
-- Same-author filtering
-- Threshold filtering
-- Cluster assignment
+- Text normalization (case, whitespace)
+- Cross-author filtering
+- Graph edge generation
 - Empty inputs
 """
 
 import polars as pl
-import pytest
 
 from .interface import (
-    COL_AUTHOR_ID_A,
-    COL_AUTHOR_ID_B,
     COL_CLUSTER_ID,
-    COL_JACCARD_SIMILARITY,
-    COL_MESSAGE_SURROGATE_ID_A,
-    COL_MESSAGE_SURROGATE_ID_B,
-    COL_SHARED_NGRAM_COUNT,
+    COL_SOURCE_ID,
+    COL_TARGET_ID,
 )
-from .main import _assign_clusters, _compute_jaccard_pairs
+from .main import _build_clusters, _build_edges
 
-# Column names matching the primary ngram analyzer output
 COL_MSG_ID = "message_surrogate_id"
-COL_NGRAM_ID = "ngram_id"
+COL_AUTHOR = "user_id"
+COL_TEXT = "message_text"
 
 
-@pytest.mark.unit
-class TestJaccardComputation:
-    """Test the Jaccard similarity computation."""
+def _make_messages(rows: list[tuple[int, str, str]]) -> pl.DataFrame:
+    """Helper: create a messages DataFrame from (surrogate_id, author_id, text) tuples."""
+    return pl.DataFrame(
+        {
+            COL_MSG_ID: [r[0] for r in rows],
+            COL_AUTHOR: [r[1] for r in rows],
+            COL_TEXT: [r[2] for r in rows],
+        }
+    )
 
+
+class TestExactMatchClustering:
     def test_exact_duplicates(self):
-        """Two messages sharing all n-grams should have similarity = 1.0."""
-        # Messages 1 and 2 share the same 3 n-grams
-        df_msg_ngrams = pl.DataFrame(
-            {
-                COL_MSG_ID: [1, 1, 1, 2, 2, 2],
-                COL_NGRAM_ID: [10, 20, 30, 10, 20, 30],
-            }
+        """Two messages with identical text from different authors form one cluster."""
+        df = _make_messages(
+            [
+                (1, "alice", "hello world"),
+                (2, "bob", "hello world"),
+            ]
         )
-        result = _compute_jaccard_pairs(df_msg_ngrams, threshold=0.5)
+        result = _build_clusters(df, cross_author_only=True)
+        assert result.height == 2
+        assert result[COL_CLUSTER_ID].n_unique() == 1
 
-        assert result.height == 1
-        row = result.row(0, named=True)
-        assert row[COL_JACCARD_SIMILARITY] == pytest.approx(1.0)
-        assert row[COL_SHARED_NGRAM_COUNT] == 3
-
-    def test_partial_overlap(self):
-        """Messages with partial n-gram overlap should have 0 < similarity < 1."""
-        # Message 1 has ngrams {10, 20, 30}, Message 2 has {20, 30, 40}
-        # Intersection = {20, 30} = 2, Union = {10, 20, 30, 40} = 4
-        # Jaccard = 2/4 = 0.5
-        df_msg_ngrams = pl.DataFrame(
-            {
-                COL_MSG_ID: [1, 1, 1, 2, 2, 2],
-                COL_NGRAM_ID: [10, 20, 30, 20, 30, 40],
-            }
+    def test_normalization_case(self):
+        """Case differences are collapsed — 'Hello World' and 'hello world' form the same cluster."""
+        df = _make_messages(
+            [
+                (1, "alice", "Hello World"),
+                (2, "bob", "hello world"),
+            ]
         )
-        result = _compute_jaccard_pairs(df_msg_ngrams, threshold=0.3)
+        result = _build_clusters(df, cross_author_only=True)
+        assert result.height == 2
+        assert result[COL_CLUSTER_ID].n_unique() == 1
 
-        assert result.height == 1
-        row = result.row(0, named=True)
-        assert row[COL_JACCARD_SIMILARITY] == pytest.approx(0.5)
-        assert row[COL_SHARED_NGRAM_COUNT] == 2
-
-    def test_no_overlap(self):
-        """Messages with no shared n-grams should not appear in results."""
-        df_msg_ngrams = pl.DataFrame(
-            {
-                COL_MSG_ID: [1, 1, 2, 2],
-                COL_NGRAM_ID: [10, 20, 30, 40],
-            }
+    def test_normalization_whitespace(self):
+        """Extra whitespace is collapsed — messages differing only in spacing form the same cluster."""
+        df = _make_messages(
+            [
+                (1, "alice", "hello  world"),
+                (2, "bob", "hello world"),
+            ]
         )
-        result = _compute_jaccard_pairs(df_msg_ngrams, threshold=0.1)
+        result = _build_clusters(df, cross_author_only=True)
+        assert result.height == 2
+        assert result[COL_CLUSTER_ID].n_unique() == 1
+
+    def test_no_repetition(self):
+        """All unique messages produce empty output."""
+        df = _make_messages(
+            [
+                (1, "alice", "message one"),
+                (2, "bob", "message two"),
+                (3, "carol", "message three"),
+            ]
+        )
+        result = _build_clusters(df, cross_author_only=True)
         assert result.height == 0
 
-    def test_threshold_filtering(self):
-        """Pairs below the threshold should be excluded."""
-        # Jaccard = 2/4 = 0.5
-        df_msg_ngrams = pl.DataFrame(
-            {
-                COL_MSG_ID: [1, 1, 1, 2, 2, 2],
-                COL_NGRAM_ID: [10, 20, 30, 20, 30, 40],
-            }
+    def test_cross_author_filter_excludes_same_author(self):
+        """With cross_author_only=True, clusters where only one author posted are excluded."""
+        df = _make_messages(
+            [
+                (1, "alice", "repeated message"),
+                (2, "alice", "repeated message"),
+            ]
         )
-        # Threshold 0.6 should exclude this pair (similarity = 0.5)
-        result = _compute_jaccard_pairs(df_msg_ngrams, threshold=0.6)
+        result = _build_clusters(df, cross_author_only=True)
         assert result.height == 0
 
-        # Threshold 0.5 should include it
-        result = _compute_jaccard_pairs(df_msg_ngrams, threshold=0.5)
-        assert result.height == 1
-
-    def test_multiple_pairs(self):
-        """Multiple message pairs with different similarities."""
-        # Msg 1: {10, 20, 30}
-        # Msg 2: {10, 20, 30} -> Jaccard(1,2) = 1.0
-        # Msg 3: {30, 40, 50} -> Jaccard(1,3) = 1/5 = 0.2, Jaccard(2,3) = 0.2
-        df_msg_ngrams = pl.DataFrame(
-            {
-                COL_MSG_ID: [1, 1, 1, 2, 2, 2, 3, 3, 3],
-                COL_NGRAM_ID: [10, 20, 30, 10, 20, 30, 30, 40, 50],
-            }
+    def test_cross_author_filter_off_keeps_same_author(self):
+        """With cross_author_only=False, same-author duplicates are included."""
+        df = _make_messages(
+            [
+                (1, "alice", "repeated message"),
+                (2, "alice", "repeated message"),
+            ]
         )
-        result = _compute_jaccard_pairs(df_msg_ngrams, threshold=0.5)
-        # Only the (1,2) pair should pass at 0.5 threshold
-        assert result.height == 1
-        row = result.row(0, named=True)
-        assert row[COL_JACCARD_SIMILARITY] == pytest.approx(1.0)
+        result = _build_clusters(df, cross_author_only=False)
+        assert result.height == 2
+
+    def test_multiple_clusters(self):
+        """Two distinct repeated messages produce two separate clusters."""
+        df = _make_messages(
+            [
+                (1, "alice", "first repeated"),
+                (2, "bob", "first repeated"),
+                (3, "carol", "second repeated"),
+                (4, "dave", "second repeated"),
+                (5, "eve", "unique message"),
+            ]
+        )
+        result = _build_clusters(df, cross_author_only=True)
+        assert result.height == 4
+        assert result[COL_CLUSTER_ID].n_unique() == 2
 
     def test_empty_input(self):
-        """Empty input should return empty result."""
-        df_msg_ngrams = pl.DataFrame(
-            schema={COL_MSG_ID: pl.Int64, COL_NGRAM_ID: pl.Int64}
-        )
-        result = _compute_jaccard_pairs(df_msg_ngrams, threshold=0.5)
-        assert result.height == 0
-
-    def test_single_message(self):
-        """Single message should produce no pairs."""
-        df_msg_ngrams = pl.DataFrame(
-            {
-                COL_MSG_ID: [1, 1, 1],
-                COL_NGRAM_ID: [10, 20, 30],
-            }
-        )
-        result = _compute_jaccard_pairs(df_msg_ngrams, threshold=0.5)
-        assert result.height == 0
-
-
-@pytest.mark.unit
-class TestClusterAssignment:
-    """Test the union-find cluster assignment."""
-
-    def test_single_pair(self):
-        """Two connected messages form one cluster."""
-        df_pairs = pl.DataFrame(
-            {
-                COL_MESSAGE_SURROGATE_ID_A: [1],
-                COL_MESSAGE_SURROGATE_ID_B: [2],
-            }
-        )
-        result = _assign_clusters(df_pairs)
-        assert result.height == 2
-        # Both messages should be in the same cluster
-        cluster_ids = result[COL_CLUSTER_ID].to_list()
-        assert cluster_ids[0] == cluster_ids[1]
-
-    def test_transitive_chain(self):
-        """Transitive pairs (1-2, 2-3) should form one cluster."""
-        df_pairs = pl.DataFrame(
-            {
-                COL_MESSAGE_SURROGATE_ID_A: [1, 2],
-                COL_MESSAGE_SURROGATE_ID_B: [2, 3],
-            }
-        )
-        result = _assign_clusters(df_pairs)
-        assert result.height == 3
-        cluster_ids = result[COL_CLUSTER_ID].unique().to_list()
-        assert len(cluster_ids) == 1
-
-    def test_separate_clusters(self):
-        """Disconnected pairs should form separate clusters."""
-        df_pairs = pl.DataFrame(
-            {
-                COL_MESSAGE_SURROGATE_ID_A: [1, 3],
-                COL_MESSAGE_SURROGATE_ID_B: [2, 4],
-            }
-        )
-        result = _assign_clusters(df_pairs)
-        assert result.height == 4
-        cluster_ids = result[COL_CLUSTER_ID].unique().to_list()
-        assert len(cluster_ids) == 2
-
-    def test_empty_pairs(self):
-        """Empty input should return empty result."""
-        df_pairs = pl.DataFrame(
+        """Empty input produces empty output."""
+        df = pl.DataFrame(
             schema={
-                COL_MESSAGE_SURROGATE_ID_A: pl.Int64,
-                COL_MESSAGE_SURROGATE_ID_B: pl.Int64,
+                COL_MSG_ID: pl.Int64,
+                COL_AUTHOR: pl.Utf8,
+                COL_TEXT: pl.Utf8,
             }
         )
-        result = _assign_clusters(df_pairs)
+        result = _build_clusters(df, cross_author_only=True)
         assert result.height == 0
 
-    def test_complex_graph(self):
-        """Complex connectivity: (1-2), (2-3), (4-5) -> 2 clusters."""
-        df_pairs = pl.DataFrame(
+
+class TestGraphEdges:
+    def test_two_message_cluster_produces_one_edge(self):
+        """A cluster of 2 messages produces exactly 1 edge."""
+        df_nodes = pl.DataFrame(
             {
-                COL_MESSAGE_SURROGATE_ID_A: [1, 2, 4],
-                COL_MESSAGE_SURROGATE_ID_B: [2, 3, 5],
+                COL_CLUSTER_ID: [0, 0],
+                COL_MSG_ID: [1, 2],
+                COL_AUTHOR: ["alice", "bob"],
+                COL_TEXT: ["hello", "hello"],
             }
         )
-        result = _assign_clusters(df_pairs)
-        assert result.height == 5
-        cluster_ids = result[COL_CLUSTER_ID].unique().to_list()
-        assert len(cluster_ids) == 2
+        edges = _build_edges(df_nodes)
+        assert edges.height == 1
+        assert edges[COL_SOURCE_ID][0] == 1
+        assert edges[COL_TARGET_ID][0] == 2
 
-        # Messages 1, 2, 3 should be in the same cluster
-        cluster_for_1 = result.filter(pl.col(COL_MSG_ID) == 1)[COL_CLUSTER_ID].item()
-        cluster_for_2 = result.filter(pl.col(COL_MSG_ID) == 2)[COL_CLUSTER_ID].item()
-        cluster_for_3 = result.filter(pl.col(COL_MSG_ID) == 3)[COL_CLUSTER_ID].item()
-        assert cluster_for_1 == cluster_for_2 == cluster_for_3
+    def test_three_message_cluster_produces_three_edges(self):
+        """A cluster of 3 messages produces 3 pairwise edges."""
+        df_nodes = pl.DataFrame(
+            {
+                COL_CLUSTER_ID: [0, 0, 0],
+                COL_MSG_ID: [1, 2, 3],
+                COL_AUTHOR: ["alice", "bob", "carol"],
+                COL_TEXT: ["x", "x", "x"],
+            }
+        )
+        edges = _build_edges(df_nodes)
+        assert edges.height == 3
+        assert (edges[COL_CLUSTER_ID] == 0).all()
 
-        # Messages 4, 5 should be in a different cluster
-        cluster_for_4 = result.filter(pl.col(COL_MSG_ID) == 4)[COL_CLUSTER_ID].item()
-        cluster_for_5 = result.filter(pl.col(COL_MSG_ID) == 5)[COL_CLUSTER_ID].item()
-        assert cluster_for_4 == cluster_for_5
-        assert cluster_for_4 != cluster_for_1
+    def test_separate_clusters_do_not_cross(self):
+        """Edges are never generated across different clusters."""
+        df_nodes = pl.DataFrame(
+            {
+                COL_CLUSTER_ID: [0, 0, 1, 1],
+                COL_MSG_ID: [1, 2, 3, 4],
+                COL_AUTHOR: ["alice", "bob", "carol", "dave"],
+                COL_TEXT: ["a", "a", "b", "b"],
+            }
+        )
+        edges = _build_edges(df_nodes)
+        assert edges.height == 2
+        cluster_ids = set(edges[COL_CLUSTER_ID].to_list())
+        assert cluster_ids == {0, 1}
+
+    def test_no_duplicate_edges(self):
+        """Each pair appears exactly once (source_id < target_id)."""
+        df_nodes = pl.DataFrame(
+            {
+                COL_CLUSTER_ID: [0, 0, 0],
+                COL_MSG_ID: [10, 20, 30],
+                COL_AUTHOR: ["a", "b", "c"],
+                COL_TEXT: ["x", "x", "x"],
+            }
+        )
+        edges = _build_edges(df_nodes)
+        assert edges.height == 3
+        assert (edges[COL_SOURCE_ID] < edges[COL_TARGET_ID]).all()
+
+    def test_empty_nodes_produces_empty_edges(self):
+        """Empty nodes table produces empty edges."""
+        df_nodes = pl.DataFrame(
+            schema={
+                COL_CLUSTER_ID: pl.Int64,
+                COL_MSG_ID: pl.Int64,
+                COL_AUTHOR: pl.Utf8,
+                COL_TEXT: pl.Utf8,
+            }
+        )
+        edges = _build_edges(df_nodes)
+        assert edges.height == 0

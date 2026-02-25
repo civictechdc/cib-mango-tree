@@ -4,7 +4,7 @@ from analyzer_interface import (
     OutputColumn,
     SecondaryAnalyzerInterface,
 )
-from analyzer_interface.params import BooleanParam, IntegerParam
+from analyzer_interface.params import BooleanParam
 
 from ..ngrams_base import interface as ngrams_interface
 from ..ngrams_base.interface import (
@@ -14,99 +14,46 @@ from ..ngrams_base.interface import (
 )
 
 # Output IDs
-OUTPUT_COPYPASTA_PAIRS = "copypasta_pairs"
-OUTPUT_COPYPASTA_CLUSTERS = "copypasta_clusters"
+OUTPUT_COPYPASTA_NODES = "copypasta_nodes"
+OUTPUT_COPYPASTA_EDGES = "copypasta_edges"
 OUTPUT_COPYPASTA_SUMMARY = "copypasta_summary"
 
-# Output column names
-COL_MESSAGE_SURROGATE_ID_A = "message_surrogate_id_a"
-COL_MESSAGE_SURROGATE_ID_B = "message_surrogate_id_b"
-COL_AUTHOR_ID_A = "author_a"
-COL_AUTHOR_ID_B = "author_b"
-COL_JACCARD_SIMILARITY = "jaccard_similarity"
-COL_SHARED_NGRAM_COUNT = "shared_ngram_count"
-COL_TEXT_A = "text_a"
-COL_TEXT_B = "text_b"
-
+# Node/edge column names
 COL_CLUSTER_ID = "cluster_id"
+COL_SOURCE_ID = "source_id"
+COL_TARGET_ID = "target_id"
 
-COL_TOTAL_PAIRS = "total_pairs"
-COL_UNIQUE_MESSAGES = "unique_messages_involved"
+# Summary column names
+COL_TOTAL_CLUSTERS = "total_clusters"
+COL_TOTAL_REPEATED_MESSAGES = "total_repeated_messages"
 COL_UNIQUE_AUTHORS = "unique_authors_involved"
-COL_AVG_SIMILARITY = "avg_similarity"
+COL_LARGEST_CLUSTER_SIZE = "largest_cluster_size"
 
 # Parameter IDs
-PARAM_SIMILARITY_THRESHOLD = "similarity_threshold"
 PARAM_CROSS_AUTHOR_ONLY = "cross_author_only"
 
 interface = SecondaryAnalyzerInterface(
     id="copypasta_detection",
-    version="0.1.0",
+    version="0.2.0",
     name="Copypasta Detection",
-    short_description="Detects copied/pasted text across messages using n-gram similarity",
+    short_description="Detects repeated messages across accounts using exact text matching",
     long_description="""
-Identifies pairs of messages that share a high proportion of n-grams, indicating
-copied or pasted text. Uses Jaccard similarity on n-gram sets to measure overlap.
+Identifies groups of messages that contain identical text (after normalization),
+indicating copied or pasted content. Outputs graph-compatible node and edge tables
+so users can browse which posts repeat and which accounts posted them.
 
 This is useful for detecting coordinated inauthentic behavior where multiple
-accounts post identical or near-identical content.
+accounts post the same content verbatim.
 
-The similarity threshold controls how similar two messages must be to be flagged.
-A threshold of 50% means at least half of the combined unique n-grams must be shared.
+Normalization includes: lowercasing, Unicode normalization, and collapsing
+whitespace — so minor formatting differences do not prevent matching.
     """,
     base_analyzer=ngrams_interface,
     outputs=[
         AnalyzerOutput(
-            id=OUTPUT_COPYPASTA_PAIRS,
-            name="Copypasta message pairs",
-            description="Pairs of messages with high n-gram similarity",
-            columns=[
-                OutputColumn(
-                    name=COL_MESSAGE_SURROGATE_ID_A,
-                    data_type="identifier",
-                    human_readable_name="Message A ID",
-                ),
-                OutputColumn(
-                    name=COL_MESSAGE_SURROGATE_ID_B,
-                    data_type="identifier",
-                    human_readable_name="Message B ID",
-                ),
-                OutputColumn(
-                    name=COL_AUTHOR_ID_A,
-                    data_type="identifier",
-                    human_readable_name="Author A",
-                ),
-                OutputColumn(
-                    name=COL_AUTHOR_ID_B,
-                    data_type="identifier",
-                    human_readable_name="Author B",
-                ),
-                OutputColumn(
-                    name=COL_JACCARD_SIMILARITY,
-                    data_type="float",
-                    human_readable_name="Jaccard Similarity",
-                ),
-                OutputColumn(
-                    name=COL_SHARED_NGRAM_COUNT,
-                    data_type="integer",
-                    human_readable_name="Shared N-grams",
-                ),
-                OutputColumn(
-                    name=COL_TEXT_A,
-                    data_type="text",
-                    human_readable_name="Text A",
-                ),
-                OutputColumn(
-                    name=COL_TEXT_B,
-                    data_type="text",
-                    human_readable_name="Text B",
-                ),
-            ],
-        ),
-        AnalyzerOutput(
-            id=OUTPUT_COPYPASTA_CLUSTERS,
-            name="Copypasta clusters",
-            description="Groups of messages clustered by shared content",
+            id=OUTPUT_COPYPASTA_NODES,
+            name="Repeated message nodes",
+            description="Messages involved in repeated content, for use as graph nodes",
             columns=[
                 OutputColumn(
                     name=COL_CLUSTER_ID,
@@ -126,50 +73,65 @@ A threshold of 50% means at least half of the combined unique n-grams must be sh
                 OutputColumn(
                     name=COL_MESSAGE_TEXT,
                     data_type="text",
-                    human_readable_name="Text",
+                    human_readable_name="Message Text",
+                ),
+            ],
+        ),
+        AnalyzerOutput(
+            id=OUTPUT_COPYPASTA_EDGES,
+            name="Repeated message edges",
+            description="Pairwise connections between messages with identical text, for use as graph edges",
+            columns=[
+                OutputColumn(
+                    name=COL_SOURCE_ID,
+                    data_type="identifier",
+                    human_readable_name="Source Message ID",
+                ),
+                OutputColumn(
+                    name=COL_TARGET_ID,
+                    data_type="identifier",
+                    human_readable_name="Target Message ID",
+                ),
+                OutputColumn(
+                    name=COL_CLUSTER_ID,
+                    data_type="identifier",
+                    human_readable_name="Cluster ID",
                 ),
             ],
         ),
         AnalyzerOutput(
             id=OUTPUT_COPYPASTA_SUMMARY,
             name="Copypasta summary statistics",
-            description="Aggregate statistics about detected copypasta",
+            description="Aggregate statistics about detected repeated content",
             columns=[
                 OutputColumn(
-                    name=COL_TOTAL_PAIRS,
+                    name=COL_TOTAL_CLUSTERS,
                     data_type="integer",
-                    human_readable_name="Total Pairs",
+                    human_readable_name="Total Clusters",
                 ),
                 OutputColumn(
-                    name=COL_UNIQUE_MESSAGES,
+                    name=COL_TOTAL_REPEATED_MESSAGES,
                     data_type="integer",
-                    human_readable_name="Unique Messages",
+                    human_readable_name="Total Repeated Messages",
                 ),
                 OutputColumn(
                     name=COL_UNIQUE_AUTHORS,
                     data_type="integer",
-                    human_readable_name="Unique Authors",
+                    human_readable_name="Unique Authors Involved",
                 ),
                 OutputColumn(
-                    name=COL_AVG_SIMILARITY,
-                    data_type="float",
-                    human_readable_name="Average Similarity",
+                    name=COL_LARGEST_CLUSTER_SIZE,
+                    data_type="integer",
+                    human_readable_name="Largest Cluster Size",
                 ),
             ],
         ),
     ],
     params=[
         AnalyzerParam(
-            id=PARAM_SIMILARITY_THRESHOLD,
-            human_readable_name="Similarity Threshold (%)",
-            description="Minimum Jaccard similarity percentage to flag a pair (10-100)",
-            type=IntegerParam(min=10, max=100),
-            default=50,
-        ),
-        AnalyzerParam(
             id=PARAM_CROSS_AUTHOR_ONLY,
             human_readable_name="Cross-Author Only",
-            description="Only flag pairs from different authors",
+            description="Only flag clusters where the repeated message comes from more than one author",
             type=BooleanParam(),
             default=True,
         ),

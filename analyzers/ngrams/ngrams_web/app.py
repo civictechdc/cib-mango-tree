@@ -40,17 +40,18 @@ def plot_scatter(data):
 
     # Create jitter as a small multiplier (5% of the log value)
     jitter_factor = 0.05
+    jitter = pl.Series(1 + rng.uniform(-jitter_factor, jitter_factor, len(data)))
     data = data.with_columns(
-        (
-            pl.col(COL_NGRAM_TOTAL_REPS)
-            * (1 + rng.uniform(-jitter_factor, jitter_factor, len(data)))
-        ).alias("total_reps_jittered")
+        (pl.col(COL_NGRAM_TOTAL_REPS).cast(pl.Float64) * jitter).alias(
+            "total_reps_jittered"
+        )
     )
 
-    n_gram_categories = data.select(pl.col("n").unique().sort()).to_series()
+    n_gram_categories = data.select(pl.col("n").unique().sort()).to_series().to_list()
 
+    # Convert to pandas: required for reliable custom_data column lookup in Plotly Express
     fig = px.scatter(
-        data_frame=data,
+        data_frame=data.to_pandas(),
         x="distinct_posters",
         y="total_reps_jittered",
         log_y=True,
@@ -211,9 +212,6 @@ def server(input, output, sessions):
 
         return data_out
 
-    # Store the figure widget reference
-    current_figure_widget = reactive.value(None)
-
     @reactive.effect
     def handle_reset_button():
         # if reset button is clicked
@@ -222,7 +220,7 @@ def server(input, output, sessions):
             # Reset the click data
             click_data.set(None)
             # Reset the scatter plot by removing any red markers
-            fig_widget = current_figure_widget()
+            fig_widget = scatter_plot.widget
             if fig_widget is not None:
                 try:
                     # Remove red marker traces
@@ -315,11 +313,8 @@ def server(input, output, sessions):
 
         fig = plot_scatter(data=df)
 
-        # Create FigureWidget directly from the figure
-        fig_widget = go.FigureWidget(fig)
-
-        # Store reference to figure widget for reset functionality
-        current_figure_widget.set(fig_widget)
+        # Create FigureWidget from data and layout (matches shinywidgets' as_widget pattern)
+        fig_widget = go.FigureWidget(fig.data, fig.layout)
 
         # Attach click handler to all traces (one for each color group)
         for trace in fig_widget.data:

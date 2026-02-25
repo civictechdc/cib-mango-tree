@@ -31,10 +31,11 @@ def factory(web_context: WebPresenterContext):
     # find the different ngram categories in the data
     ngram_choices = df_stats.select(pl.col("n").unique().sort()).to_series().to_list()
 
-    ngram_choices_dict = {i: f"{i}-grams" for i in ngram_choices}
-
     # make sure this column is categorical (to work for plotly)
     df_stats = df_stats.with_columns(pl.col("n").cast(pl.String))
+
+    # keys must be strings to match what Shiny returns from the selectize input
+    ngram_choices_dict = {str(i): f"{i}-grams" for i in ngram_choices}
 
     # make sure the app has access to these varables
     _set_global_state_vars(df_stats=df_stats, df_full=df_full)
@@ -43,7 +44,7 @@ def factory(web_context: WebPresenterContext):
 
     web_context.dash_app.layout = html.Div(
         [
-            html.H1("Hashtag Analysis Dashboard"),
+            html.H1("N-gram Analysis Dashboard"),
             html.Iframe(
                 src="http://localhost:8050/shiny",  # Shiny app will run on port 8051
                 style={"width": "100%", "height": "800px", "border": "none"},

@@ -43,7 +43,7 @@ class GuiRoutes(BaseModel):
     configure_analysis_parameters: str = "/configure_analysis_parameters"
     preview_dataset: str = "/preview_dataset"
     run_analysis: str = "/run_analysis"
-    analysis_options: str = "/analysis_options"
+    post_analysis: str = "/post_analysis"
 
 
 class GuiColors(BaseModel):

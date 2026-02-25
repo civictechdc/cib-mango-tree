@@ -12,6 +12,7 @@ from gui.pages import (
     ConfigureAnalysisDatasetPage,
     ImportDatasetPage,
     NewProjectPage,
+    PostAnalysisPage,
     PreviewDatasetPage,
     RunAnalysisPage,
     SelectAnalyzerForkPage,
@@ -100,10 +101,15 @@ def gui_main(app: App):
         page = RunAnalysisPage(session=gui_session)
         page.render()
 
+    @ui.page(gui_routes.post_analysis)
+    def post_analysis():
+        """Show options once analysis completes."""
+        page = PostAnalysisPage(session=gui_session)
+        page.render()
+
     # Launch in native mode
     ui.run(
         native=True,
-        fullscreen=True,
         title="CIB Mango Tree",
         favicon="🥭",
         reload=False,

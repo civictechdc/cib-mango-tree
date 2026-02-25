@@ -132,7 +132,7 @@ class RunAnalysisPage(GuiPage):
                         color="primary",
                         on_click=lambda: (
                             dialog.close(),
-                            self.navigate_to(gui_routes.analysis_options),
+                            self.navigate_to(gui_routes.post_analysis),
                         ),
                     )
                     success_btn.set_visibility(False)
@@ -212,7 +212,7 @@ class RunAnalysisPage(GuiPage):
         with (
             ui.column()
             .classes("items-center justify-center")
-            .style("width: 100%; height: 60vh;")
+            .style("width: 100%; height: 50vh;")
         ):
             ui.button(
                 "Run Analysis",

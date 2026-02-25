@@ -125,18 +125,6 @@ class RunAnalysisPage(GuiPage):
                         on_click=request_cancel,
                     ).props("outline")
 
-                    # Return button for errors (initially hidden)
-                    return_btn = ui.button(
-                        "Return to Parameters",
-                        icon="arrow_back",
-                        color="secondary",
-                        on_click=lambda: (
-                            dialog.close(),
-                            self.navigate_to(gui_routes.configure_analysis_parameters),
-                        ),
-                    )
-                    return_btn.set_visibility(False)
-
                     # Success button (initially hidden)
                     success_btn = ui.button(
                         "Continue",
@@ -185,7 +173,6 @@ class RunAnalysisPage(GuiPage):
 
                     # Update buttons
                     success_btn.set_visibility(True)
-                    return_btn.set_visibility(True)
                     cancel_btn.disable()
 
                     self.notify_success("Analysis completed!")
@@ -196,7 +183,6 @@ class RunAnalysisPage(GuiPage):
 
                     # Update buttons
                     cancel_btn.disable()
-                    return_btn.set_visibility(True)
 
                 except Exception as e:
                     # Error occurred
@@ -211,7 +197,6 @@ class RunAnalysisPage(GuiPage):
 
                     # Update buttons
                     cancel_btn.disable()
-                    return_btn.set_visibility(True)
 
                 finally:
                     # Cleanup: delete draft analysis if not completed
@@ -234,4 +219,4 @@ class RunAnalysisPage(GuiPage):
                 icon="play_arrow",
                 color="primary",
                 on_click=start_analysis,
-            ).classes("text-lg")
+            ).classes("text-base")

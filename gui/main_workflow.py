@@ -7,7 +7,7 @@ from nicegui import ui
 from app import App
 from gui.base import GuiSession, gui_routes
 from gui.context import GUIContext
-from gui.dashboards import BaseDashboardPage
+from gui.dashboards import BaseDashboardPage, NgramsDashboardPage
 from gui.pages import (
     ConfigureAnalaysisParams,
     ConfigureAnalysisDatasetPage,
@@ -25,7 +25,9 @@ from gui.pages import (
 
 # Maps primary analyzer IDs to their dashboard page classes.
 # Add an entry here when a new dashboard is implemented.
-_DASHBOARD_REGISTRY: dict[str, type[BaseDashboardPage]] = {}
+_DASHBOARD_REGISTRY: dict[str, type[BaseDashboardPage]] = {
+    "ngrams": NgramsDashboardPage,
+}
 
 
 def _render_dashboard_placeholder(session: GuiSession) -> None:

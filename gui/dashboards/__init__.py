@@ -12,7 +12,9 @@ Modules:
 """
 
 from .base_dashboard import BaseDashboardPage
+from .ngrams import NgramsDashboardPage
 
 __all__ = [
     "BaseDashboardPage",
+    "NgramsDashboardPage",
 ]

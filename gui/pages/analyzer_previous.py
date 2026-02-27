@@ -5,6 +5,7 @@ from nicegui import ui
 from app.analysis_context import AnalysisContext
 from components.select_analysis import analysis_label, present_timestamp
 from gui.base import GuiPage, GuiSession, gui_routes
+from gui.components.manage_analyses import ManageAnalysisDialog
 
 
 class SelectPreviousAnalyzerPage(GuiPage):
@@ -13,6 +14,7 @@ class SelectPreviousAnalyzerPage(GuiPage):
     """
 
     grid: ui.aggrid | None = None
+    analysis_contexts: list[AnalysisContext] = []
 
     def __init__(self, session: GuiSession):
         select_previous_title: str = "Select Previous Analysis"
@@ -37,6 +39,9 @@ class SelectPreviousAnalyzerPage(GuiPage):
             self.navigate_to("/select_project")
             return
 
+        # Store analyses as instance state so the grid can be updated in place
+        self.analysis_contexts = self.session.current_project.list_analyses()
+
         # Main content - centered
         with (
             ui.column()
@@ -45,77 +50,99 @@ class SelectPreviousAnalyzerPage(GuiPage):
         ):
             ui.label("Review a Previous Analysis").classes("text-lg")
 
-            # Populate list of existing analyses
-            now = datetime.now()
-            analysis_list = sorted(
-                [
-                    (
-                        analysis_label(analysis, now),
-                        analysis,
-                    )
-                    for analysis in self.session.current_project.list_analyses()
-                ],
-                key=lambda option: option[0],
-            )
-
-            if analysis_list:
-                self._render_previous_analyses_grid(entries=analysis_list)
+            if self.analysis_contexts:
+                self._render_previous_analyses_grid()
             else:
                 ui.label("No previous tests have been found.").classes("text-grey")
 
             async def _on_proceed():
                 """Handle proceed button click."""
-                # Get selected previous analysis if grid exists
-                selected_name = None
-                if analysis_list:
-                    if self.grid is None:
-                        return
+                if not self.analysis_contexts:
+                    self.notify_warning("No analyses available")
+                    return
 
-                    selected_rows = await self.grid.get_selected_rows()
-                    if selected_rows:
-                        selected_name = selected_rows[0]["name"]
+                if self.grid is None:
+                    return
 
-                # Validation: none selected
-                if not selected_name:
+                selected_rows = await self.grid.get_selected_rows()
+                if not selected_rows:
                     self.notify_warning("Please select a previous analysis")
                     return
 
-                else:
-                    self.notify_warning("Coming soon!")
+                self.notify_warning("Coming soon!")
 
-            ui.button(
-                "Proceed",
-                icon="arrow_forward",
-                color="primary",
-                on_click=_on_proceed,
-            )
+            async def _on_manage_analyses():
+                """Handle manage analyses button click."""
+                dialog = ManageAnalysisDialog(session=self.session)
+                deleted_ids: set = await dialog
 
-    def _render_previous_analyses_grid(
-        self, entries: list[tuple[str, AnalysisContext]]
-    ):
+                if not deleted_ids:
+                    return
+
+                # Remove deleted analyses from instance state
+                self.analysis_contexts = [
+                    ctx for ctx in self.analysis_contexts if ctx.id not in deleted_ids
+                ]
+
+                # Update the page grid in place — no page navigation needed
+                if self.grid is not None:
+                    now = datetime.now()
+                    self.grid.options["rowData"] = [
+                        {
+                            "name": ctx.display_name,
+                            "date": (
+                                present_timestamp(ctx.create_time, now)
+                                if ctx.create_time
+                                else "Unknown"
+                            ),
+                            "analysis_id": ctx.id,
+                        }
+                        for ctx in self.analysis_contexts
+                    ]
+                    self.grid.update()
+
+                count = len(deleted_ids)
+                label = "analysis" if count == 1 else "analyses"
+                self.notify_success(f"Deleted {count} {label}.")
+
+            with ui.row().classes("gap-4"):
+                ui.button(
+                    "Manage Analyses",
+                    icon="settings",
+                    color="secondary",
+                    on_click=_on_manage_analyses,
+                )
+                ui.button(
+                    "Proceed",
+                    icon="arrow_forward",
+                    color="primary",
+                    on_click=_on_proceed,
+                )
+
+    def _render_previous_analyses_grid(self) -> None:
         """Render grid of previous analyses."""
         now = datetime.now()
 
-        data = {
-            "columnDefs": [
-                {"headerName": "Analyzer Name", "field": "name"},
-                {"headerName": "Date Created", "field": "date"},
-            ],
-            "rowData": [
-                {
-                    "name": analysis_context.display_name,
-                    "date": (
-                        present_timestamp(analysis_context.create_time, now)
-                        if analysis_context.create_time
-                        else "Unknown"
-                    ),
-                }
-                for label, analysis_context in entries
-            ],
-            "rowSelection": {"mode": "singleRow"},
-        }
-
         self.grid = ui.aggrid(
-            data,
+            {
+                "columnDefs": [
+                    {"headerName": "Analyzer Name", "field": "name"},
+                    {"headerName": "Date Created", "field": "date"},
+                    {"headerName": "ID", "field": "analysis_id", "hide": True},
+                ],
+                "rowData": [
+                    {
+                        "name": ctx.display_name,
+                        "date": (
+                            present_timestamp(ctx.create_time, now)
+                            if ctx.create_time
+                            else "Unknown"
+                        ),
+                        "analysis_id": ctx.id,
+                    }
+                    for ctx in self.analysis_contexts
+                ],
+                "rowSelection": {"mode": "singleRow"},
+            },
             theme="quartz",
         ).classes("w-full h-64")

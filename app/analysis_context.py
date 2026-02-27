@@ -41,7 +41,7 @@ class AnalysisContext(BaseModel):
 
     @property
     def id(self):
-        return self.model.id
+        return self.model.analysis_id
 
     @property
     def analyzer_id(self):

@@ -319,7 +319,7 @@ class NgramsDashboardPage(BaseDashboardPage):
         """
         Handle n-gram filter input changes (fires on every keystroke).
 
-        Updates autocomplete suggestions and info label to guide user.
+        Updates info label to guide user.
         Does NOT update chart/grid (expensive operations) - those happen on Enter.
 
         Args:
@@ -327,8 +327,6 @@ class NgramsDashboardPage(BaseDashboardPage):
         """
         self._filter_text = e.value if e.value else None
         self._filter_applied = False
-        # Update autocomplete suggestions based on current input
-        self._update_autocomplete_options()
         # Update info label to show hint
         self._update_info_label()
 
@@ -377,30 +375,28 @@ class NgramsDashboardPage(BaseDashboardPage):
             pl.col(COL_NGRAM_WORDS).str.contains(f"(?i){self._filter_text}")
         )
 
-    def _update_autocomplete_options(self) -> None:
+    def _handle_clear(self) -> None:
         """
-        Update autocomplete suggestions based on current filter text.
+        Handle clear button click on search input.
 
-        Filters the full n-gram list to show only options containing
-        the current search text (case-insensitive substring match).
-        Limits results to 100 to avoid overwhelming the dropdown.
+        Resets the chart and grid to show the initial unfiltered state.
         """
-        if self._ngram_select is None or not self._all_ngram_options:
-            return
+        # Clear filter state
+        self._filter_text = None
+        self._filter_applied = False
 
-        if not self._filter_text or len(self._filter_text) < 2:
-            # Show first 100 options if no filter or too short
-            self._ngram_select.set_autocomplete(self._all_ngram_options[:100])
-        else:
-            # Filter options containing the search text (case-insensitive)
-            filtered = [
-                opt
-                for opt in self._all_ngram_options
-                if self._filter_text.lower() in opt.lower()
-            ][
-                :100
-            ]  # Limit to 100 suggestions
-            self._ngram_select.set_autocomplete(filtered)
+        # Clear any selection
+        self._selected_words = None
+        self._selected_series_index = None
+        self._selected_data_index = None
+        self._clear_all_highlights()
+
+        # Re-render chart with full dataset
+        self._update_chart_with_filter()
+
+        # Update grid and info label
+        self._update_grid()
+        self._update_info_label()
 
     def _update_chart_with_filter(self) -> None:
         """
@@ -436,9 +432,10 @@ class NgramsDashboardPage(BaseDashboardPage):
                             label="Search N-gram",
                             on_change=self._handle_filter_change,
                         )
-                        .props("clearable")
+                        .props('clearable autocomplete="off"')
                         .classes("w-1/4")
                         .on("keydown.enter", self._handle_enter_press)
+                        .on("clear", self._handle_clear)
                     )
 
                     # Create chart with empty options and click handler
@@ -527,10 +524,8 @@ class NgramsDashboardPage(BaseDashboardPage):
                             .to_series()
                             .to_list()
                         )
-                        # Set initial autocomplete (limited to avoid overwhelming dropdown)
-                        self._ngram_select.set_autocomplete(
-                            self._all_ngram_options[:100]
-                        )
+                        # Set all n-grams as autocomplete options
+                        self._ngram_select.set_autocomplete(self._all_ngram_options)
 
                     # Build ECharts option and update chart
                     option = plot_scatter_echart(self._df_stats)

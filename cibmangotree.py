@@ -13,6 +13,13 @@ if __name__ == "__main__":
     freeze_support()
     enable_windows_ansi_support()
 
+    # Ensure TERM is set so that inquirer/blessed can use proper cursor control.
+    # Without it, arrow-key navigation reprints the prompt instead of updating in place.
+    import os as _os
+
+    if _os.name != "nt" and not _os.environ.get("TERM"):
+        _os.environ["TERM"] = "xterm-256color"
+
     # Parse command line arguments
     parser = argparse.ArgumentParser(
         description="Mango Tango CLI - Social Media Data Analysis Tool"

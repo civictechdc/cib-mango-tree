@@ -90,94 +90,111 @@ class ConfigureAnalysisDatasetPage(GuiPage):
                             else "Data Preview (all rows)"
                         )
                         ui.label(preview_title).classes("text-sm text-grey-7")
+
+                        # create AGGRRID directly from df
                         grid = ui.aggrid.from_polars(
-                            preview_df, theme="quartz"
+                            preview_df,
+                            theme="quartz",
+                            auto_size_columns=True,
                         ).classes("w-full h-64")
                         grid.on(
                             "firstDataRendered",
-                            lambda: grid.run_grid_method("autoSizeAllColumns"),
+                            lambda: grid.run_grid_method("sizeColumnsToFit"),
                         )
 
-            # Create column mapping UI using cards in a row
-            ui.label("Map Your Data Columns").classes("text-lg font-bold mb-4")
+            # Shared container for cards, grid, and button
+            with (
+                ui.column()
+                .classes("w-full items-center gap-6")
+                .style("max-width: 960px; margin: 0 auto;")
+            ):
+                ui.label("Map Your Data Columns").classes("text-lg font-bold mb-4")
 
-            with ui.row().classes("flex-wrap gap-4 w-full"):
-                for input_col in input_columns:
-                    with ui.card().classes("w-52 p-4"):
-                        with ui.row().classes("items-center gap-1"):
-                            ui.label(
-                                input_col.human_readable_name_or_fallback()
-                            ).classes("text-bold")
-                            if input_col.description:
-                                with ui.icon("info").classes(
-                                    "text-grey-6 cursor-pointer"
-                                ):
-                                    ui.tooltip(input_col.description)
+                with ui.row().classes("flex-wrap gap-6 justify-center w-full"):
+                    for input_col in input_columns:
+                        with ui.card().classes(
+                            "w-52 p-4 no-shadow border border-gray-200"
+                        ):
+                            with ui.row().classes("items-center gap-1"):
+                                ui.label(
+                                    input_col.human_readable_name_or_fallback()
+                                ).classes("text-bold")
+                                if input_col.description:
+                                    with ui.icon("info").classes(
+                                        "text-grey-6 cursor-pointer"
+                                    ):
+                                        ui.tooltip(input_col.description)
 
-                        compatible_columns = [
-                            user_col
-                            for user_col in user_columns
-                            if get_data_type_compatibility_score(
-                                input_col.data_type, user_col.data_type
+                            compatible_columns = [
+                                user_col
+                                for user_col in user_columns
+                                if get_data_type_compatibility_score(
+                                    input_col.data_type, user_col.data_type
+                                )
+                                is not None
+                            ]
+
+                            dropdown_options = {
+                                f"{user_col.name}": user_col.name
+                                for user_col in compatible_columns
+                            }
+
+                            default_value = None
+                            if input_col.name in draft_column_mapping:
+                                mapped_col_name = draft_column_mapping[input_col.name]
+                                default_value = next(
+                                    (
+                                        k
+                                        for k, v in dropdown_options.items()
+                                        if v == mapped_col_name
+                                    ),
+                                    None,
+                                )
+
+                            dropdown = (
+                                ui.select(
+                                    options=list(dropdown_options.keys()),
+                                    value=default_value,
+                                    on_change=lambda: update_preview(),
+                                )
+                                .classes("w-full mt-2")
+                                .props("use-chips")
                             )
-                            is not None
-                        ]
 
-                        dropdown_options = {
-                            f"{user_col.name}": user_col.name
-                            for user_col in compatible_columns
-                        }
-
-                        default_value = None
-                        if input_col.name in draft_column_mapping:
-                            mapped_col_name = draft_column_mapping[input_col.name]
-                            default_value = next(
-                                (
-                                    k
-                                    for k, v in dropdown_options.items()
-                                    if v == mapped_col_name
-                                ),
-                                None,
+                            column_dropdowns[input_col.name] = (
+                                dropdown,
+                                dropdown_options,
                             )
 
-                        dropdown = (
-                            ui.select(
-                                options=list(dropdown_options.keys()),
-                                value=default_value,
-                                on_change=lambda: update_preview(),
-                            )
-                            .classes("w-full mt-2")
-                            .props("use-chips")
-                        )
+                # Preview section (created after cards)
+                preview_container = ui.column().classes("w-full")
 
-                        column_dropdowns[input_col.name] = (dropdown, dropdown_options)
+                # Initial preview render
+                update_preview()
 
-            # Preview section (created after cards)
-            preview_container = ui.column().classes("w-full")
+                # Action button
+                with ui.row().classes("w-full justify-end"):
 
-            # Initial preview render
-            update_preview()
+                    def _on_proceed():
+                        """Build column mapping and proceed."""
+                        final_mapping = {}
+                        for input_col_name, (
+                            dropdown,
+                            options,
+                        ) in column_dropdowns.items():
+                            if dropdown.value:
+                                final_mapping[input_col_name] = options[dropdown.value]
 
-            # Action button
-            with ui.row().classes("w-full justify-end"):
+                        # Store mapping in session
+                        self.session.column_mapping = final_mapping
+                        self.notify_success("Column mapping saved!")
 
-                def _on_proceed():
-                    """Build column mapping and proceed."""
-                    final_mapping = {}
-                    for input_col_name, (dropdown, options) in column_dropdowns.items():
-                        if dropdown.value:
-                            final_mapping[input_col_name] = options[dropdown.value]
+                        # Navigate to parameters configuration page
+                        self.navigate_to(gui_routes.configure_analysis_parameters)
 
-                    # Store mapping in session
-                    self.session.column_mapping = final_mapping
-                    self.notify_success("Column mapping saved!")
-
-                    # Navigate to parameters configuration page
-                    self.navigate_to(gui_routes.configure_analysis_parameters)
-
-                ui.button(
-                    "Configure Parameters",
-                    icon="arrow_forward",
-                    color="primary",
-                    on_click=_on_proceed,
-                )
+                    ui.button(
+                        "Configure Parameters",
+                        icon="arrow_forward",
+                        color="primary",
+                        on_click=_on_proceed,
+                    )

@@ -202,8 +202,10 @@ def plot_scatter_echart(data: pl.DataFrame) -> dict:
             "name": "Nr. unique posters",
             "nameLocation": "middle",
             "nameGap": 30,
+            "nameTextStyle": {"fontSize": 14},
             "axisLabel": {
                 ":formatter": "function(value) { return value >= 1 ? value : ''; }",
+                "fontSize": 12,
             },
         },
         "yAxis": {
@@ -212,8 +214,10 @@ def plot_scatter_echart(data: pl.DataFrame) -> dict:
             "name": "N-gram frequency",
             "nameLocation": "middle",
             "nameGap": 40,
+            "nameTextStyle": {"fontSize": 14},
             "axisLabel": {
                 ":formatter": "function(value) { return value >= 1 ? value : ''; }",
+                "fontSize": 12,
             },
         },
         "series": series,

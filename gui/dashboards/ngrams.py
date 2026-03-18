@@ -49,6 +49,8 @@ class NgramsDashboardPage(BaseDashboardPage):
         self._selected_data_index: int | None = None
         # State for filter
         self._filter_text: str | None = None
+        self._filter_applied: bool = False
+        self._all_ngram_options: list[str] = []
         # DataFrames
         self._df_stats: pl.DataFrame | None = None
         self._df_full: pl.DataFrame | None = None
@@ -56,7 +58,7 @@ class NgramsDashboardPage(BaseDashboardPage):
         self._chart: ui.echart | None = None
         self._grid: ui.aggrid | None = None
         self._info_label: ui.label | None = None
-        self._ngram_select: ui.select | None = None
+        self._ngram_select: ui.input | None = None
 
     def _get_parquet_path(self, output_id: str) -> str | None:
         """
@@ -171,7 +173,7 @@ class NgramsDashboardPage(BaseDashboardPage):
                 f"N-gram: '{self._selected_words}' — {count:,} total repetitions"
             )
         elif self._filter_text:
-            # Show filter results summary
+            # Show filter status
             df_filtered = self._get_filtered_stats()
             count = df_filtered.height
             if count == 0:
@@ -179,7 +181,14 @@ class NgramsDashboardPage(BaseDashboardPage):
                     f"No n-grams found matching '{self._filter_text}'. "
                     "Try a different search term."
                 )
+            elif not self._filter_applied:
+                # User is typing, show hint to press Enter
+                self._info_label.text = (
+                    f"Filter: '{self._filter_text}' — {count:,} matches found. "
+                    "Press Enter to apply filter to chart and grid."
+                )
             else:
+                # Filter has been applied
                 self._info_label.text = (
                     f"Showing {min(count, 100):,} of {count:,} n-grams "
                     f"matching '{self._filter_text}'. "
@@ -189,7 +198,8 @@ class NgramsDashboardPage(BaseDashboardPage):
             # Default summary view
             self._info_label.text = (
                 "Showing top 100 n-grams by frequency. "
-                "Click a point on the scatter plot to view all occurrences."
+                "Type to search, then press Enter to filter. "
+                "Click a point to view all occurrences."
             )
 
     def _update_grid(self) -> None:
@@ -307,24 +317,45 @@ class NgramsDashboardPage(BaseDashboardPage):
 
     def _handle_filter_change(self, e) -> None:
         """
-        Handle n-gram filter selection/input changes.
+        Handle n-gram filter input changes (fires on every keystroke).
 
-        Updates the filter text and refreshes the chart and grid to show
-        only n-grams containing the filter text (substring match).
+        Updates info label to guide user.
+        Does NOT update chart/grid (expensive operations) - those happen on Enter.
 
         Args:
-            e: Change event from ui.select with value attribute
+            e: Change event from ui.input with value attribute
         """
         self._filter_text = e.value if e.value else None
-        # Clear selection when filter changes
+        self._filter_applied = False
+        # Update info label to show hint
+        self._update_info_label()
+
+    def _handle_enter_press(self, e) -> None:
+        """
+        Handle Enter key press in search input.
+
+        Updates the expensive visualizations (chart and grid) with the
+        current filter text. This provides good performance by avoiding
+        continuous redraws on every keystroke.
+
+        Args:
+            e: Keydown event from ui.input
+        """
+        # Clear any previous selection
         self._selected_words = None
         self._selected_series_index = None
         self._selected_data_index = None
         self._clear_all_highlights()
-        # Update chart and grid with filter
+
+        # Mark filter as applied
+        self._filter_applied = True
+
+        # Update expensive visualizations
         self._update_chart_with_filter()
-        self._update_info_label()
         self._update_grid()
+
+        # Update info label to show results
+        self._update_info_label()
 
     def _get_filtered_stats(self) -> pl.DataFrame:
         """
@@ -343,6 +374,29 @@ class NgramsDashboardPage(BaseDashboardPage):
         return self._df_stats.filter(
             pl.col(COL_NGRAM_WORDS).str.contains(f"(?i){self._filter_text}")
         )
+
+    def _handle_clear(self) -> None:
+        """
+        Handle clear button click on search input.
+
+        Resets the chart and grid to show the initial unfiltered state.
+        """
+        # Clear filter state
+        self._filter_text = None
+        self._filter_applied = False
+
+        # Clear any selection
+        self._selected_words = None
+        self._selected_series_index = None
+        self._selected_data_index = None
+        self._clear_all_highlights()
+
+        # Re-render chart with full dataset
+        self._update_chart_with_filter()
+
+        # Update grid and info label
+        self._update_grid()
+        self._update_info_label()
 
     def _update_chart_with_filter(self) -> None:
         """
@@ -372,13 +426,17 @@ class NgramsDashboardPage(BaseDashboardPage):
             with ui.column().classes("w-3/4 q-pa-md gap-4"):
                 # Scatter plot card
                 with ui.card().classes("w-full"):
-                    self._ngram_select = ui.select(
-                        options=[],
-                        with_input=True,
-                        clearable=True,
-                        label="Search N-gram",
-                        on_change=self._handle_filter_change,
-                    ).classes("w-1/4")
+                    self._ngram_select = (
+                        ui.input(
+                            autocomplete=[],
+                            label="Search N-gram",
+                            on_change=self._handle_filter_change,
+                        )
+                        .props('clearable autocomplete="off"')
+                        .classes("w-1/4")
+                        .on("keydown.enter", self._handle_enter_press)
+                        .on("clear", self._handle_clear)
+                    )
 
                     # Create chart with empty options and click handler
                     self._chart = (
@@ -460,14 +518,14 @@ class NgramsDashboardPage(BaseDashboardPage):
 
                     # Populate filter select with unique n-gram values
                     if self._ngram_select is not None:
-                        ngram_options = (
+                        self._all_ngram_options = (
                             self._df_stats.select(pl.col(COL_NGRAM_WORDS).unique())
                             .sort(COL_NGRAM_WORDS)
                             .to_series()
                             .to_list()
                         )
-                        self._ngram_select.options = ngram_options
-                        self._ngram_select.update()
+                        # Set all n-grams as autocomplete options
+                        self._ngram_select.set_autocomplete(self._all_ngram_options)
 
                     # Build ECharts option and update chart
                     option = plot_scatter_echart(self._df_stats)

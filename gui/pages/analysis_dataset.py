@@ -90,74 +90,69 @@ class ConfigureAnalysisDatasetPage(GuiPage):
                             else "Data Preview (all rows)"
                         )
                         ui.label(preview_title).classes("text-sm text-grey-7")
-                        ui.aggrid.from_polars(preview_df, theme="quartz").classes(
-                            "w-full h-64"
+                        grid = ui.aggrid.from_polars(
+                            preview_df, theme="quartz"
+                        ).classes("w-full h-64")
+                        grid.on(
+                            "firstDataRendered",
+                            lambda: grid.run_grid_method("autoSizeAllColumns"),
                         )
 
-            # Create column mapping UI using grid
-            with ui.grid(columns=2).classes("gap-2"):
-                # create labels for grid header
-                ui.label("Required Input Information")  # populates row 1, column 1
-                ui.label("Imported Dataset Columns")  # pupolates row 1, column 2
+            # Create column mapping UI using cards in a row
+            ui.label("Map Your Data Columns").classes("text-lg font-bold mb-4")
 
-                # this then fills the rows with column information
+            with ui.row().classes("flex-wrap gap-4 w-full"):
                 for input_col in input_columns:
-                    # Left column: Input column info card
-                    with ui.row().classes("items-center gap-1"):
-                        ui.label(input_col.human_readable_name_or_fallback()).classes(
-                            "text-bold text-lg"
+                    with ui.card().classes("w-52 p-4"):
+                        with ui.row().classes("items-center gap-1"):
+                            ui.label(
+                                input_col.human_readable_name_or_fallback()
+                            ).classes("text-bold")
+                            if input_col.description:
+                                with ui.icon("info").classes(
+                                    "text-grey-6 cursor-pointer"
+                                ):
+                                    ui.tooltip(input_col.description)
+
+                        compatible_columns = [
+                            user_col
+                            for user_col in user_columns
+                            if get_data_type_compatibility_score(
+                                input_col.data_type, user_col.data_type
+                            )
+                            is not None
+                        ]
+
+                        dropdown_options = {
+                            f"{user_col.name}": user_col.name
+                            for user_col in compatible_columns
+                        }
+
+                        default_value = None
+                        if input_col.name in draft_column_mapping:
+                            mapped_col_name = draft_column_mapping[input_col.name]
+                            default_value = next(
+                                (
+                                    k
+                                    for k, v in dropdown_options.items()
+                                    if v == mapped_col_name
+                                ),
+                                None,
+                            )
+
+                        dropdown = (
+                            ui.select(
+                                options=list(dropdown_options.keys()),
+                                value=default_value,
+                                on_change=lambda: update_preview(),
+                            )
+                            .classes("w-full mt-2")
+                            .props("use-chips")
                         )
-                        if input_col.description:
-                            with ui.icon("info").classes("text-grey-6 cursor-pointer"):
-                                ui.tooltip(input_col.description)
 
-                    # Right column: Dropdown for column selection
-                    # Get compatible user columns
-                    compatible_columns = [
-                        user_col
-                        for user_col in user_columns
-                        if get_data_type_compatibility_score(
-                            input_col.data_type, user_col.data_type
-                        )
-                        is not None
-                    ]
+                        column_dropdowns[input_col.name] = (dropdown, dropdown_options)
 
-                    # Create dropdown options
-                    dropdown_options = {
-                        f"{user_col.name}": user_col.name
-                        for user_col in compatible_columns
-                    }
-
-                    # Pre-select the auto-mapped column
-                    default_value = None
-                    if input_col.name in draft_column_mapping:
-                        mapped_col_name = draft_column_mapping[input_col.name]
-                        default_value = next(
-                            (
-                                k
-                                for k, v in dropdown_options.items()
-                                if v == mapped_col_name
-                            ),
-                            None,
-                        )
-
-                    # Create dropdown with on_change handler
-                    dropdown = (
-                        ui.select(
-                            options=list(dropdown_options.keys()),
-                            label="Select dataset column",
-                            value=default_value,
-                            on_change=lambda: update_preview(),
-                        )
-                        .classes("w-40")
-                        .props("use-chips")
-                    )
-
-                    # Store reference for later
-                    column_dropdowns[input_col.name] = (dropdown, dropdown_options)
-
-            # Preview section (created after grid)
-            ui.separator()
+            # Preview section (created after cards)
             preview_container = ui.column().classes("w-full")
 
             # Initial preview render

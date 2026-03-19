@@ -88,29 +88,31 @@ class ConfigureAnalaysisParams(GuiPage):
             .classes("items-center justify-start gap-6")
             .style("width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem;")
         ):
-            ui.label(f"Configure {analyzer.name} Parameters").classes("text-xl")
+            with (
+                ui.column()
+                .classes("w-full items-center gap-6")
+                .style("max-width: 960px; margin: 0 auto;")
+            ):
+                ui.label(f"Configure {analyzer.name} Parameters").classes(
+                    "text-lg font-bold mb-4"
+                )
 
-            # Create parameter configuration card
-            params_card = AnalysisParamsCard(
-                params=analyzer.params, default_values=param_values
-            )
-
-            # Action button
-            with ui.row().classes("w-full justify-end mt-6"):
+                params_card = AnalysisParamsCard(
+                    params=analyzer.params, default_values=param_values
+                )
 
                 def _on_proceed():
                     """Retrieve parameter values and proceed."""
                     final_params = params_card.get_param_values()
 
-                    # Store parameters in session
                     self.session.analysis_params = final_params
 
-                    # TODO: Navigate to next step (run analysis or review page)
                     self.navigate_to(gui_routes.run_analysis)
 
-                ui.button(
-                    "Proceed to Run Analysis",
-                    icon="arrow_forward",
-                    color="primary",
-                    on_click=_on_proceed,
-                )
+                with ui.row().classes("w-full justify-end mt-6"):
+                    ui.button(
+                        "Proceed to Run Analysis",
+                        icon="arrow_forward",
+                        color="primary",
+                        on_click=_on_proceed,
+                    )

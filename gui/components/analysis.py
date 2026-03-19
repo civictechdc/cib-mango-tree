@@ -7,8 +7,8 @@ class AnalysisParamsCard:
     """
     Card component for configuring analyzer parameters.
 
-    Displays interactive controls for modifying analysis parameters
-    similar to ImportOptionsDialog but as a card component instead of a dialog.
+    Displays each parameter as an individual card, matching the visual style
+    of the column picker cards for consistent UX.
     """
 
     def __init__(
@@ -31,47 +31,45 @@ class AnalysisParamsCard:
         self._build_card()
 
     def _build_card(self):
-        """Build the parameter configuration card."""
-        with ui.card().classes("w-full"):
-            if not self.params:
+        """Build the parameter configuration cards in a flex-wrap row."""
+        if not self.params:
+            with ui.column().classes("w-full items-center"):
                 ui.label("This analyzer has no configurable parameters.").classes(
                     "text-grey-7"
                 )
-                return
+            return
 
-            # Build controls for each parameter
+        with ui.row().classes("flex-wrap gap-6 justify-center w-full"):
             for param in self.params:
-                self._build_param_control(param)
+                self._build_param_card(param)
 
-    def _build_param_control(self, param: AnalyzerParam):
-        """Build UI control for a single parameter."""
-        with ui.column().classes("w-full mb-2"):
-            # Parameter label with description
-            with ui.row().classes("items-center gap-4"):
-                ui.label(param.print_name).classes("text-base font-bold")
+    def _build_param_card(self, param: AnalyzerParam):
+        """Build an individual card for a single parameter."""
+        with ui.card().classes("w-72 p-4 no-shadow border border-gray-200"):
+            with ui.row().classes("items-center gap-1"):
+                ui.label(param.print_name).classes("text-bold")
                 if param.description:
                     with ui.icon("info").classes("text-grey-6 cursor-pointer"):
                         ui.tooltip(param.description)
 
-                # Parameter input control based on type
-                param_type = param.type
-                default_value = self.default_values.get(param.id)
+            param_type = param.type
+            default_value = self.default_values.get(param.id)
 
-                if param_type.type == "integer":
-                    self._build_integer_control(param, param_type, default_value)
-                elif param_type.type == "time_binning":
-                    self._build_time_binning_control(param, default_value)
+            if param_type.type == "integer":
+                self._build_integer_control(param, param_type, default_value)
+            elif param_type.type == "time_binning":
+                self._build_time_binning_control(param, default_value)
 
     def _build_integer_control(
         self,
         param: AnalyzerParam,
         param_type: IntegerParam,
-        default_value: int | None,
+        default_value: ParamValue | None,
     ):
         """Build integer parameter control."""
+        int_default = default_value if isinstance(default_value, int) else None
         number_input = ui.number(
-            label=f"Enter value between {param_type.min} and {param_type.max}",
-            value=default_value if default_value is not None else param_type.min,
+            value=int_default if int_default is not None else param_type.min,
             min=param_type.min,
             max=param_type.max,
             step=1,
@@ -80,16 +78,18 @@ class AnalysisParamsCard:
                 f"Must be at least {param_type.min}": lambda v: v >= param_type.min,
                 f"Must be at most {param_type.max}": lambda v: v <= param_type.max,
             },
-        ).classes("w-40")
+        ).classes("w-full mt-2")
 
         self.param_widgets[param.id] = ("integer", number_input)
 
     def _build_time_binning_control(
-        self, param: AnalyzerParam, default_value: TimeBinningValue | None
+        self, param: AnalyzerParam, default_value: ParamValue | None
     ):
         """Build time binning parameter control."""
-        with ui.row().classes("gap-2"):
-            # Unit selector
+        tb_default = (
+            default_value if isinstance(default_value, TimeBinningValue) else None
+        )
+        with ui.row().classes("gap-2 mt-2 w-full"):
             unit_select = ui.select(
                 {
                     "year": "Year",
@@ -100,14 +100,11 @@ class AnalysisParamsCard:
                     "minute": "Minute",
                     "second": "Second",
                 },
-                label="Pick a time unit",
-                value=default_value.unit if default_value else "day",
+                value=tb_default.unit if tb_default else "day",
             ).classes("w-32")
 
-            # Amount input
             amount_input = ui.number(
-                label="How many?",
-                value=default_value.amount if default_value else 1,
+                value=tb_default.amount if tb_default else 1,
                 min=1,
                 max=1000,
                 step=1,
@@ -116,7 +113,7 @@ class AnalysisParamsCard:
                     "Must be at least 1": lambda v: v >= 1,
                     "Cannot exceed 1000": lambda v: v <= 1000,
                 },
-            ).classes("w-32")
+            ).classes("w-24")
 
         self.param_widgets[param.id] = ("time_binning", unit_select, amount_input)
 

@@ -1,3 +1,4 @@
+from .analysis_config import AnalysisConfigPage
 from .analysis_dataset import ConfigureAnalysisDatasetPage
 from .analysis_params import ConfigureAnalaysisParams
 from .analysis_post import PostAnalysisPage
@@ -19,6 +20,7 @@ __all__ = [
     "SelectAnalyzerForkPage",
     "SelectNewAnalyzerPage",
     "SelectPreviousAnalyzerPage",
+    "AnalysisConfigPage",
     "ConfigureAnalysisDatasetPage",
     "ConfigureAnalaysisParams",
     "RunAnalysisPage",

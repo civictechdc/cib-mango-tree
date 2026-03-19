@@ -10,7 +10,7 @@ class PostAnalysisPage(GuiPage):
             route=gui_routes.post_analysis,
             title=f"{session.current_project.display_name}: Configure Parameters",
             show_back_button=True,
-            back_route=gui_routes.configure_analysis_dataset,
+            back_route=gui_routes.configure_analysis,
             show_footer=True,
         )
 

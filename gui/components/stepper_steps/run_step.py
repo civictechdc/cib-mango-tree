@@ -25,11 +25,20 @@ class RunAnalysisStep:
         self.notify_error = notify_error
         self.navigate_to = navigate_to
 
+    @ui.refreshable_method
     def render(self) -> None:
         """Render the run analysis button and summary."""
         analyzer = self.session.selected_analyzer
         column_mapping = self.session.column_mapping
         params = self.session.analysis_params
+
+        if not analyzer:
+            ui.label("Please select an analyzer first").classes("text-grey")
+            return
+
+        if not column_mapping:
+            ui.label("Please map columns first").classes("text-grey")
+            return
 
         with (
             ui.column()

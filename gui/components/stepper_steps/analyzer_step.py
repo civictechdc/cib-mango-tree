@@ -11,6 +11,7 @@ class AnalyzerSelectionStep:
         self.session = session
         self.button_group: ToggleButtonGroup | None = None
 
+    @ui.refreshable_method
     def render(self) -> None:
         """Render the step content."""
         analyzers = self.session.app.context.suite.primary_anlyzers

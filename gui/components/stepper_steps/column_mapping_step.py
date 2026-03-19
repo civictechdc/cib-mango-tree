@@ -13,13 +13,18 @@ class ColumnMappingStep:
         self.column_dropdowns: dict = {}
         self.preview_container = None
 
+    @ui.refreshable_method
     def render(self) -> None:
         """Render the step content with column cards and preview."""
         analyzer = self.session.selected_analyzer
         project = self.session.current_project
 
-        if not analyzer or not project:
-            ui.label("No analyzer or project selected").classes("text-grey")
+        if not analyzer:
+            ui.label("Please select an analyzer first").classes("text-grey")
+            return
+
+        if not project:
+            ui.label("No project selected").classes("text-grey")
             return
 
         input_columns = analyzer.input.columns

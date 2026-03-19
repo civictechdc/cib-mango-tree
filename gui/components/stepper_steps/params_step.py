@@ -15,6 +15,7 @@ class ParamsConfigStep:
         self.params_card: AnalysisParamsCard | None = None
         self._param_values: dict = {}
 
+    @ui.refreshable_method
     def render(self) -> None:
         """Render parameter configuration or 'no params' message."""
         analyzer = self.session.selected_analyzer
@@ -22,7 +23,7 @@ class ParamsConfigStep:
         column_mapping = self.session.column_mapping
 
         if not analyzer:
-            ui.label("No analyzer selected").classes("text-grey")
+            ui.label("Please select an analyzer first").classes("text-grey")
             return
 
         if not analyzer.params:
@@ -33,7 +34,7 @@ class ParamsConfigStep:
             return
 
         if not project or not column_mapping:
-            ui.label("Column mapping not configured").classes("text-grey")
+            ui.label("Please map columns first").classes("text-grey")
             return
 
         with TemporaryDirectory() as temp_dir:

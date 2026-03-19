@@ -10,6 +10,13 @@ from gui.components.stepper_steps import (
     RunAnalysisStep,
 )
 
+STEP_NAMES = {
+    "Select Analyzer": "analyzer",
+    "Map Columns": "columns",
+    "Configure Parameters": "params",
+    "Run Analysis": "run",
+}
+
 
 class AnalysisConfigPage(GuiPage):
     """Combined analysis configuration using a stepper."""
@@ -44,13 +51,27 @@ class AnalysisConfigPage(GuiPage):
             .classes("items-center justify-start gap-6")
             .style("width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem;")
         ):
-            with ui.stepper().props("vertical animated").classes("w-full") as stepper:
+            with (
+                ui.stepper()
+                .props("horizontal animated")
+                .classes("w-full")
+                .on_value_change(self._on_step_change) as stepper
+            ):
                 self.stepper = stepper
 
                 self._render_analyzer_step()
                 self._render_column_mapping_step()
                 self._render_params_step()
                 self._render_run_step()
+
+    def _on_step_change(self, event) -> None:
+        """Refresh the step content when navigating to it."""
+        step_name = (
+            event.value.name if hasattr(event.value, "name") else str(event.value)
+        )
+        step_key = STEP_NAMES.get(step_name)
+        if step_key and step_key in self.steps:
+            self.steps[step_key].render.refresh()
 
     def _render_analyzer_step(self) -> None:
         """Render Step 1: Analyzer Selection."""

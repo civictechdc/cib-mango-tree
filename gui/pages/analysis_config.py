@@ -76,8 +76,9 @@ class AnalysisConfigPage(GuiPage):
     def _render_analyzer_step(self) -> None:
         """Render Step 1: Analyzer Selection."""
         with ui.step("Select Analyzer", icon="science"):
-            self.steps["analyzer"] = AnalyzerSelectionStep(self.session)
-            self.steps["analyzer"].render()
+            with ui.element().classes("pt-12"):
+                self.steps["analyzer"] = AnalyzerSelectionStep(self.session)
+                self.steps["analyzer"].render()
 
             with ui.stepper_navigation():
                 ui.button(
@@ -89,9 +90,10 @@ class AnalysisConfigPage(GuiPage):
 
     def _render_column_mapping_step(self) -> None:
         """Render Step 2: Column Mapping."""
-        with ui.step("Map Columns", icon="table"):
-            self.steps["columns"] = ColumnMappingStep(self.session)
-            self.steps["columns"].render()
+        with ui.step("Map Columns", icon="pivot_table_chart"):
+            with ui.element().classes("pt-6"):
+                self.steps["columns"] = ColumnMappingStep(self.session)
+                self.steps["columns"].render()
 
             with ui.stepper_navigation():
                 ui.button(
@@ -105,8 +107,9 @@ class AnalysisConfigPage(GuiPage):
     def _render_params_step(self) -> None:
         """Render Step 3: Parameter Configuration."""
         with ui.step("Configure Parameters", icon="tune"):
-            self.steps["params"] = ParamsConfigStep(self.session)
-            self.steps["params"].render()
+            with ui.element().classes("pt-6"):
+                self.steps["params"] = ParamsConfigStep(self.session)
+                self.steps["params"].render()
 
             with ui.stepper_navigation():
                 ui.button(
@@ -120,14 +123,15 @@ class AnalysisConfigPage(GuiPage):
     def _render_run_step(self) -> None:
         """Render Step 4: Run Analysis."""
         with ui.step("Run Analysis", icon="play_arrow"):
-            self.steps["run"] = RunAnalysisStep(
-                session=self.session,
-                notify_success=self.notify_success,
-                notify_warning=self.notify_warning,
-                notify_error=self.notify_error,
-                navigate_to=self.navigate_to,
-            )
-            self.steps["run"].render()
+            with ui.element().classes("pt-6"):
+                self.steps["run"] = RunAnalysisStep(
+                    session=self.session,
+                    notify_success=self.notify_success,
+                    notify_warning=self.notify_warning,
+                    notify_error=self.notify_error,
+                    navigate_to=self.navigate_to,
+                )
+                self.steps["run"].render()
 
             with ui.stepper_navigation():
                 ui.button("Back", on_click=self.stepper.previous).props("flat")

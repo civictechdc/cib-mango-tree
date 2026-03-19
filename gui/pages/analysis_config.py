@@ -76,7 +76,7 @@ class AnalysisConfigPage(GuiPage):
     def _render_analyzer_step(self) -> None:
         """Render Step 1: Analyzer Selection."""
         with ui.step("Select Analyzer", icon="science"):
-            with ui.element().classes("pt-12"):
+            with ui.element().classes("pt-12 w-full items-center"):
                 self.steps["analyzer"] = AnalyzerSelectionStep(self.session)
                 self.steps["analyzer"].render()
 
@@ -91,7 +91,7 @@ class AnalysisConfigPage(GuiPage):
     def _render_column_mapping_step(self) -> None:
         """Render Step 2: Column Mapping."""
         with ui.step("Map Columns", icon="pivot_table_chart"):
-            with ui.element().classes("pt-6"):
+            with ui.element().classes("pt-6 w-full items-center"):
                 self.steps["columns"] = ColumnMappingStep(self.session)
                 self.steps["columns"].render()
 
@@ -107,7 +107,7 @@ class AnalysisConfigPage(GuiPage):
     def _render_params_step(self) -> None:
         """Render Step 3: Parameter Configuration."""
         with ui.step("Configure Parameters", icon="tune"):
-            with ui.element().classes("pt-6"):
+            with ui.element().classes("pt-6 w-full items-center"):
                 self.steps["params"] = ParamsConfigStep(self.session)
                 self.steps["params"].render()
 
@@ -123,7 +123,7 @@ class AnalysisConfigPage(GuiPage):
     def _render_run_step(self) -> None:
         """Render Step 4: Run Analysis."""
         with ui.step("Run Analysis", icon="play_arrow"):
-            with ui.element().classes("pt-6"):
+            with ui.element().classes("pt-6 w-full items-center"):
                 self.steps["run"] = RunAnalysisStep(
                     session=self.session,
                     notify_success=self.notify_success,

@@ -1,3 +1,5 @@
+from typing import Any
+
 from nicegui import ui
 
 from gui.base import GuiPage, GuiSession, gui_routes
@@ -11,6 +13,9 @@ from gui.components.stepper_steps import (
 
 class AnalysisConfigPage(GuiPage):
     """Combined analysis configuration using a stepper."""
+
+    stepper: Any = None
+    steps: dict = {}
 
     def __init__(self, session: GuiSession):
         config_title = "Configure Analysis"
@@ -26,8 +31,6 @@ class AnalysisConfigPage(GuiPage):
             back_route=gui_routes.select_analyzer_fork,
             show_footer=True,
         )
-        self.stepper = None
-        self.steps: dict = {}
 
     def render_content(self) -> None:
         """Render the stepper with all configuration steps."""

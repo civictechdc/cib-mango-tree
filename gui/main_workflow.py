@@ -9,6 +9,7 @@ from gui.base import GuiSession, gui_routes
 from gui.context import GUIContext
 from gui.dashboards import BaseDashboardPage, NgramsDashboardPage
 from gui.pages import (
+    AnalysisConfigPage,
     ConfigureAnalaysisParams,
     ConfigureAnalysisDatasetPage,
     ImportDatasetPage,
@@ -100,6 +101,12 @@ def gui_main(app: App):
     @ui.page(gui_routes.select_analyzer_fork)
     def select_analyzer_fork():
         page = SelectAnalyzerForkPage(session=gui_session)
+        page.render()
+
+    @ui.page(gui_routes.configure_analysis)
+    def configure_analysis():
+        """Combined analysis configuration page with stepper."""
+        page = AnalysisConfigPage(session=gui_session)
         page.render()
 
     @ui.page(gui_routes.select_analyzer)

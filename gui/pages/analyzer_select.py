@@ -24,7 +24,9 @@ class SelectAnalyzerForkPage(GuiPage):
             prompt="What do you want to do next?",
             left_button_label="Start a New Test",
             left_button_icon="computer",
-            left_button_on_click=lambda: self.navigate_to(gui_routes.select_analyzer),
+            left_button_on_click=lambda: self.navigate_to(
+                gui_routes.configure_analysis
+            ),
             right_button_label="Review a Previous Test",
             right_button_on_click=lambda: self.navigate_to(
                 gui_routes.select_previous_analyzer

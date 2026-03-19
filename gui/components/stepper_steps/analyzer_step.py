@@ -30,7 +30,7 @@ class AnalyzerSelectionStep:
             for analyzer_name in analyzer_options.keys():
                 self.button_group.add_button(analyzer_name)
 
-        with ui.card().classes("w-full no-shadow"):
+        with ui.element().classes("pt-12"):
             DEFAULT_TEXT = "No analyzer selected. Click button above to select it."
 
             ui.label().bind_text_from(

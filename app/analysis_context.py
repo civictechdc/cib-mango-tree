@@ -159,6 +159,8 @@ class AnalysisContext(BaseModel):
 
         This method is designed to be called via ui.run.cpu_bound().
 
+        See: https://github.com/zauberzeug/nicegui/discussions/1046#discussioncomment-6225227
+
         Args:
             analysis_model: The analysis model
             analyzer_id: The primary analyzer ID

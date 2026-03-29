@@ -23,21 +23,32 @@ class AnalyzerSelectionStep:
         analyzer_options = {
             analyzer.name: analyzer.short_description for analyzer in analyzers
         }
+        analyzer_long_descriptions = {
+            analyzer.name: analyzer.long_description for analyzer in analyzers
+        }
 
         self.button_group = ToggleButtonGroup()
 
-        with ui.row().classes("items-center justify-center gap-4"):
-            for analyzer_name in analyzer_options.keys():
-                self.button_group.add_button(analyzer_name)
+        with ui.column().classes("items-center w-full"):
+            with ui.element().classes("w-[64rem] max-w-full"):
+                with ui.row().classes("items-center justify-center gap-4 w-full"):
+                    for analyzer_name in analyzer_options.keys():
+                        self.button_group.add_button(analyzer_name)
 
-        with ui.element().classes("pt-12"):
-            DEFAULT_TEXT = "No analyzer selected. Click button above to select it."
+                with ui.element().classes("pt-12 flex justify-center w-full"):
+                    DEFAULT_TEXT = (
+                        "No analyzer selected. Click button above to select it."
+                    )
 
-            ui.label().bind_text_from(
-                target_object=self.button_group,
-                target_name="selected_text",
-                backward=lambda text: analyzer_options.get(text, DEFAULT_TEXT),
-            ).classes("text-center w-full")
+                    with ui.card().classes("w-[40rem] shadow-none"):
+                        with ui.scroll_area().classes("max-h-48"):
+                            ui.label().bind_text_from(
+                                target_object=self.button_group,
+                                target_name="selected_text",
+                                backward=lambda text: analyzer_long_descriptions.get(
+                                    text, DEFAULT_TEXT
+                                ),
+                            ).classes("text-grey")
 
     def is_valid(self) -> bool:
         """Check if an analyzer is selected."""

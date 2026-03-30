@@ -7,8 +7,8 @@ from nicegui import run, ui
 
 from app.analysis_context import AnalysisContext, AnalysisQueueMessage
 from gui.base import GuiSession, gui_routes
+from gui.constants.colors import MANGO_DARK_GREEN, MANGO_ORANGE
 
-UI_RENDER_DELAY = 0.1
 QUEUE_POLL_INTERVAL = 0.05
 
 
@@ -102,7 +102,6 @@ class RunAnalysisStep:
             self.session.app.context.suite.find_toposorted_secondary_analyzers(analyzer)
         )
         secondary_analyzer_ids = [sec.id for sec in secondary_analyzers]
-        total_steps = 1 + len(secondary_analyzers)
 
         manager = Manager()
         queue = manager.Queue()
@@ -122,22 +121,11 @@ class RunAnalysisStep:
             .classes("items-center justify-center gap-6")
             .style("width: 600px; max-width: 90vw; padding: 2rem;"),
         ):
-            ui.label("Running Analysis").classes("text-xl font-bold")
+            analyzer_header = ui.label(analyzer.name).classes("text-xl font-bold")
 
-            progress_bar = ui.linear_progress(value=0).classes("w-full")
+            step_list_container = ui.column().classes("w-full gap-1 mt-4")
 
-            step_checkboxes = []
-            with ui.column().classes("w-full gap-1"):
-                primary_checkbox = ui.checkbox(analyzer.name, value=False).props(
-                    "disable"
-                )
-                step_checkboxes.append(primary_checkbox)
-
-                for secondary in secondary_analyzers:
-                    checkbox = ui.checkbox(secondary.name, value=False).props("disable")
-                    step_checkboxes.append(checkbox)
-
-            log_container = ui.column().classes("w-full gap-1")
+            log_container = ui.column().classes("w-full gap-1 mt-2")
 
             with ui.row().classes("gap-4 mt-4"):
                 cancel_btn = ui.button(
@@ -159,10 +147,10 @@ class RunAnalysisStep:
                 success_btn.set_visibility(False)
 
         analysis_complete = False
-        current_step = 0
+        step_rows: dict[str, tuple[ui.spinner, ui.icon, ui.label]] = {}
 
-        def poll_queue():
-            nonlocal analysis_complete, current_step
+        def _poll_queue():
+            nonlocal analysis_complete, current_step_name
 
             try:
                 msg_dict = queue.get_nowait()
@@ -172,20 +160,40 @@ class RunAnalysisStep:
             msg = AnalysisQueueMessage(**msg_dict)
 
             if msg.type == "analyzer_start":
-                current_step += 1
-                progress_bar.value = current_step / total_steps
-                with log_container:
-                    ui.label(f"Starting {msg.analyzer_name}...").classes(
-                        "text-sm text-grey-7"
-                    )
+                analyzer_header.text = msg.analyzer_name or "Analyzer"
+                step_rows.clear()
+                current_step_name = None
 
             elif msg.type == "analyzer_finish":
-                if 0 < current_step <= len(step_checkboxes):
-                    step_checkboxes[current_step - 1].value = True
-                with log_container:
-                    ui.label(f"Finished {msg.analyzer_name}").classes(
-                        "text-sm text-positive"
-                    )
+                pass
+
+            elif msg.type == "step_start":
+                step_name = msg.step_name or "Processing..."
+                current_step_name = step_name
+
+                with step_list_container:
+                    with ui.row().classes("items-center gap-2"):
+                        spinner = ui.spinner("gears", size="sm", color=MANGO_ORANGE)
+                        checkmark = ui.icon(
+                            "check_circle", color=MANGO_DARK_GREEN, size="sm"
+                        )
+                        checkmark.set_visibility(False)
+                        label = ui.label(step_name)
+                step_rows[step_name] = (spinner, checkmark, label)
+
+            elif msg.type == "step_finish":
+                if current_step_name and current_step_name in step_rows:
+                    spinner, checkmark, label = step_rows[current_step_name]
+                    spinner.set_visibility(False)
+                    checkmark.set_visibility(True)
+                    label.text = current_step_name
+                current_step_name = None
+
+            elif msg.type == "step_progress":
+                if current_step_name and current_step_name in step_rows:
+                    _, _, label = step_rows[current_step_name]
+                    progress_pct = (msg.step_progress or 0) * 100
+                    label.text = f"{current_step_name} ({progress_pct:.0f}%)"
 
             elif msg.type == "log":
                 with log_container:
@@ -238,7 +246,7 @@ class RunAnalysisStep:
                     analysis.delete()
 
         dialog.open()
-        timer = ui.timer(QUEUE_POLL_INTERVAL, poll_queue)
+        timer = ui.timer(QUEUE_POLL_INTERVAL, _poll_queue)
 
         await run_analysis_task()
 

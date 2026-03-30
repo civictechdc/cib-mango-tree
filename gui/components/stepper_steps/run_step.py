@@ -148,6 +148,7 @@ class RunAnalysisStep:
 
         analysis_complete = False
         step_rows: dict[str, tuple[ui.spinner, ui.icon, ui.label]] = {}
+        current_step_name: str = None
 
         def _poll_queue():
             nonlocal analysis_complete, current_step_name

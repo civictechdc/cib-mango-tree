@@ -1,4 +1,4 @@
-name: Build Preview Release
+name: GUI-Prototype Preview Release
 
 on:
   workflow_dispatch:
@@ -71,7 +71,6 @@ jobs:
         id: commit_info
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "commit_msg=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
 
       - name: Create VERSION file
         run: |

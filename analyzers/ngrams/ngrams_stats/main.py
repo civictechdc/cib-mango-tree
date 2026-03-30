@@ -2,8 +2,7 @@ import polars as pl
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from analyzer_interface.context import SecondaryAnalyzerContext
-from terminal_tools import ProgressReporter
+from analyzer_interface.context import NullProgressReporter, SecondaryAnalyzerContext
 
 from ..ngrams_base.interface import (
     COL_AUTHOR_ID,
@@ -137,16 +136,18 @@ def _create_full_report_slice(
 
 
 def main(context: SecondaryAnalyzerContext):
+    progress = context.progress_reporter or (lambda name: NullProgressReporter(name))
+
     df_message_ngrams = pl.read_parquet(
         context.base.table(OUTPUT_MESSAGE_NGRAMS).parquet_path
     )
     df_ngrams = pl.read_parquet(context.base.table(OUTPUT_NGRAM_DEFS).parquet_path)
     df_messages = pl.read_parquet(context.base.table(OUTPUT_MESSAGE).parquet_path)
 
-    with ProgressReporter("Computing ngram statistics"):
+    with progress("Computing ngram statistics"):
         df_ngram_stats = _compute_ngram_statistics(df_message_ngrams, df_messages)
 
-    with ProgressReporter("Creating the summary table"):
+    with progress("Creating the summary table"):
         df_ngram_summary = _create_summary_table(df_ngrams, df_ngram_stats)
         df_ngram_summary.write_parquet(context.output(OUTPUT_NGRAM_STATS).parquet_path)
 
@@ -156,7 +157,7 @@ def main(context: SecondaryAnalyzerContext):
 
     average_cardinality_explosion_factor = df_message_ngrams.height // df_ngrams.height
 
-    with ProgressReporter("Writing full report") as progress:
+    with progress("Writing full report") as reporter:
         with pq.ParquetWriter(
             context.output(OUTPUT_NGRAM_FULL).parquet_path,
             schema=pa.schema(
@@ -193,4 +194,4 @@ def main(context: SecondaryAnalyzerContext):
 
                 writer.write_table(df_output.to_arrow())
                 report_total_processed += df_ngram_summary_slice.height
-                progress.update(report_total_processed / df_ngram_summary.height)
+                reporter.update(report_total_processed / df_ngram_summary.height)

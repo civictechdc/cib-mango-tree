@@ -1,10 +1,11 @@
 import polars as pl
 
-from analyzer_interface.context import PrimaryAnalyzerContext
-from terminal_tools import ProgressReporter
+from analyzer_interface.context import NullProgressReporter, PrimaryAnalyzerContext
 
 
 def main(context: PrimaryAnalyzerContext):
+    progress = context.progress_reporter or (lambda name: NullProgressReporter(name))
+
     # To read the user's input data the way the user intended, you have to do
     # two things:
     # - Read the input file, which is a parquet file. The InputReader interface
@@ -31,9 +32,9 @@ def main(context: PrimaryAnalyzerContext):
 
     # Now you can start your analysis. The following code is just a minimal example.
     #
-    # The use of the ProgressReporter is optional. It helps breaking a
+    # The use of the progress reporter is optional. It helps breaking a
     # longer analysis down into sections.
-    with ProgressReporter("Counting characters") as progress:
+    with progress("Counting characters") as reporter:
         df_count = df_input.select(
             pl.col("message_id"),
             # The input and output columns are as you define in the interface.
@@ -48,10 +49,10 @@ def main(context: PrimaryAnalyzerContext):
         # current batch. Again, this is optional. Here we just use
         # 1.0 to indicate 100% completion.
         #
-        # You can still use the ProgressReporter without updating the progress
+        # You can still use the progress reporter without updating the progress
         # value, in which case the progress bar will just show a spinner and
         # the message.
-        progress.update(1.0)
+        reporter.update(1.0)
 
     # The analyzer is expected to write the output to a parquet file for
     # every output that is defined. Make sure that the output ID and the

@@ -1,4 +1,4 @@
-from .analysis_config import AnalysisConfigPage
+from .analysis_config_and_run import AnalysisConfigAndRunPage
 from .analysis_post import PostAnalysisPage
 from .analyzer_previous import SelectPreviousAnalyzerPage
 from .analyzer_select import SelectAnalyzerForkPage
@@ -15,7 +15,7 @@ __all__ = [
     "ImportDatasetPage",
     "SelectAnalyzerForkPage",
     "SelectPreviousAnalyzerPage",
-    "AnalysisConfigPage",
+    "AnalysisConfigAndRunPage",
     "PostAnalysisPage",
     "PreviewDatasetPage",
 ]

@@ -1,5 +1,6 @@
 import os
 from functools import cached_property
+from typing import Callable
 
 import polars as pl
 from dash import Dash
@@ -16,6 +17,7 @@ from analyzer_interface.context import AssetsReader, InputTableReader
 from analyzer_interface.context import (
     PrimaryAnalyzerContext as BasePrimaryAnalyzerContext,
 )
+from analyzer_interface.context import ProgressReporterProtocol
 from analyzer_interface.context import (
     SecondaryAnalyzerContext as BaseSecondaryAnalyzerContext,
 )
@@ -55,6 +57,7 @@ class PrimaryAnalyzerContext(BasePrimaryAnalyzerContext):
     analyzer: AnalyzerInterface
     store: Storage
     input_columns: dict[str, "InputColumnProvider"]
+    progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
 
     class Config:
         arbitrary_types_allowed = True
@@ -132,6 +135,7 @@ class SecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
     secondary_analyzer: SecondaryAnalyzerInterface
     store: Storage
     temp_dir: str
+    progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
 
     class Config:
         arbitrary_types_allowed = True

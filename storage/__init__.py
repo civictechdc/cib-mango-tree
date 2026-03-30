@@ -60,6 +60,8 @@ SupportedOutputExtension = Literal["parquet", "csv", "xlsx", "json"]
 
 class Storage:
     def __init__(self, *, app_name: str, app_author: str):
+        self.app_name = app_name
+        self.app_author = app_author
         self.user_data_dir = platformdirs.user_data_dir(
             appname=app_name, appauthor=app_author, ensure_exists=True
         )
@@ -71,6 +73,12 @@ class Storage:
             self._bootstrap_analyses_v1()
 
         self.file_selector_state = AppFileSelectorStateManager(self)
+
+    def __getstate__(self):
+        return {"app_name": self.app_name, "app_author": self.app_author}
+
+    def __setstate__(self, state):
+        self.__init__(app_name=state["app_name"], app_author=state["app_author"])
 
     def init_project(self, *, display_name: str, input_temp_file: str):
         with self._lock_database():

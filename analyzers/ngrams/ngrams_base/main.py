@@ -1,9 +1,8 @@
 import polars as pl
 
-from analyzer_interface.context import PrimaryAnalyzerContext
+from analyzer_interface.context import NullProgressReporter, PrimaryAnalyzerContext
 from services.tokenizer.basic import TokenizerConfig, tokenize_text
 from services.tokenizer.core.types import CaseHandling
-from terminal_tools import ProgressReporter
 
 from .interface import (
     COL_AUTHOR_ID,
@@ -128,6 +127,8 @@ def _create_ngram_definitions(ngrams_by_id: dict[str, int]) -> pl.DataFrame:
 
 
 def main(context: PrimaryAnalyzerContext):
+    progress = context.progress_reporter or (lambda name: NullProgressReporter(name))
+
     # Get parameters with defaults
     parameters = context.params
     min_n = parameters.get(PARAM_MIN_N, 3)
@@ -145,26 +146,26 @@ def main(context: PrimaryAnalyzerContext):
 
     input_reader = context.input()
     df_input = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
-    with ProgressReporter("Preprocessing messages"):
+    with progress("Preprocessing messages"):
         df_input = _preprocess_messages(df_input)
 
-    with ProgressReporter("Detecting n-grams") as progress:
+    with progress("Detecting n-grams") as reporter:
         df_ngram_instances, ngrams_by_id = _extract_ngrams_from_messages(
-            df_input, min_n, max_n, tokenizer_config, progress.update
+            df_input, min_n, max_n, tokenizer_config, reporter.update
         )
 
-    with ProgressReporter("Fetching n-gram statistics"):
+    with progress("Fetching n-gram statistics"):
         (
             pl.DataFrame(df_ngram_instances)
             .sort(by=[COL_MESSAGE_SURROGATE_ID, COL_NGRAM_ID])
             .write_parquet(context.output(OUTPUT_MESSAGE_NGRAMS).parquet_path)
         )
 
-    with ProgressReporter("Outputting n-gram definitions"):
+    with progress("Outputting n-gram definitions"):
         df_ngram_defs = _create_ngram_definitions(ngrams_by_id)
         df_ngram_defs.write_parquet(context.output(OUTPUT_NGRAM_DEFS).parquet_path)
 
-    with ProgressReporter("Outputting messages"):
+    with progress("Outputting messages"):
         (
             df_input.select(
                 [

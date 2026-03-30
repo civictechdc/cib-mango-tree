@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Optional, TypeVar, Union
+from typing import Any, Callable, Optional, Protocol, TypeVar, Union
 
 import polars as pl
 from dash import Dash
@@ -10,6 +10,41 @@ from shiny.ui._navs import NavPanel
 
 from .interface import SecondaryAnalyzerInterface
 from .params import ParamValue
+
+
+class ProgressReporterProtocol(Protocol):
+    """Protocol for progress reporting during analysis steps."""
+
+    def update(self, value: float) -> None:
+        """Update progress value (0.0 to 1.0)."""
+        ...
+
+    def finish(self, done_text: str = "Done!") -> None:
+        """Mark the step as complete."""
+        ...
+
+    def __enter__(self) -> "ProgressReporterProtocol": ...
+
+    def __exit__(self, *args) -> None: ...
+
+
+class NullProgressReporter:
+    """No-op progress reporter for when progress reporting is disabled."""
+
+    def __init__(self, title: str):
+        self.title = title
+
+    def update(self, value: float):
+        pass
+
+    def finish(self, done_text: str = "Done!"):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        pass
 
 
 class PrimaryAnalyzerContext(ABC, BaseModel):

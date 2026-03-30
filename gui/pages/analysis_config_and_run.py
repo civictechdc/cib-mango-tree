@@ -18,7 +18,7 @@ STEP_NAMES = {
 }
 
 
-class AnalysisConfigPage(GuiPage):
+class AnalysisConfigAndRunPage(GuiPage):
     """Combined analysis configuration using a stepper."""
 
     stepper: Any = None

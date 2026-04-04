@@ -20,7 +20,11 @@ from analyzers.ngrams.ngrams_stats.interface import (
     OUTPUT_NGRAM_STATS,
 )
 from analyzers.ngrams.ngrams_stats.interface import interface as ngram_stats_interface
-from analyzers.ngrams.ngrams_web.plots import plot_scatter_echart
+from analyzers.ngrams.ngrams_web.plots import (
+    SamplingMetadata,
+    plot_scatter_echart,
+    sample_ngram_data,
+)
 from gui.base import GuiSession
 
 from .base_dashboard import BaseDashboardPage
@@ -54,11 +58,19 @@ class NgramsDashboardPage(BaseDashboardPage):
         # DataFrames
         self._df_stats: pl.DataFrame | None = None
         self._df_full: pl.DataFrame | None = None
+        self._df_stats_sampled: pl.DataFrame | None = None
+        self._sampling_metadata: SamplingMetadata | None = None
         # UI component references (set during render)
         self._chart: ui.echart | None = None
         self._grid: ui.aggrid | None = None
         self._info_label: ui.label | None = None
         self._ngram_select: ui.input | None = None
+        self._chart_loading: ui.column | None = None
+        self._chart_content: ui.column | None = None
+        self._grid_loading: ui.column | None = None
+        self._grid_content: ui.column | None = None
+        self._sampling_label: ui.label | None = None
+        self._show_all_btn: ui.button | None = None
 
     def _get_parquet_path(self, output_id: str) -> str | None:
         """
@@ -421,7 +433,7 @@ class NgramsDashboardPage(BaseDashboardPage):
         self._chart.update()
 
     def render_content(self) -> None:
-        """Render the scatter plot and data grid in full-width cards."""
+        """Render the scatter plot and data grid with loading states."""
         with ui.row().classes("w-full justify-center"):
             with ui.column().classes("w-3/4 q-pa-md gap-4"):
                 # Scatter plot card
@@ -438,103 +450,57 @@ class NgramsDashboardPage(BaseDashboardPage):
                         .on("clear", self._handle_clear)
                     )
 
-                    # Create chart with empty options and click handler
-                    self._chart = (
-                        ui.echart({}, on_point_click=self._handle_point_click)
-                        .classes("w-full")
-                        .style("height: 500px")
+                    # Loading / chart containers
+                    self._chart_loading, self._chart_content = (
+                        self._create_loading_container("500px")
                     )
-
-                    # Create placeholder for error/empty state (hidden by default)
-                    error_container = (
-                        ui.row()
-                        .classes("w-full justify-center items-center")
-                        .style("height: 500px; display: none;")
-                    )
-                    with error_container:
-                        ui.label("No n-gram data available.").classes(
-                            "text-grey-6 text-subtitle1"
+                    with self._chart_content:
+                        self._chart = (
+                            ui.echart({}, on_point_click=self._handle_point_click)
+                            .classes("w-full")
+                            .style("height: 500px")
                         )
+
+                # Sampling info row (hidden until data loads)
+                with ui.row().classes("w-full items-center gap-4"):
+                    self._sampling_label = ui.label("").classes(
+                        "text-body2 text-grey-7"
+                    )
+                    self._show_all_btn = ui.button(
+                        "Show all data",
+                        on_click=self._handle_show_all_click,
+                        color="secondary",
+                    ).props("outline dense")
+                    self._show_all_btn.set_visibility(False)
 
                 # Data viewer card
                 with ui.card().classes("w-full"):
                     with ui.card_section():
                         ui.label("Data viewer").classes("text-h6")
-
-                    # Info label showing current state
                     self._info_label = ui.label("Loading data...").classes(
                         "text-body2 text-grey-7 q-mb-sm"
                     )
-
-                    # Data grid
-                    self._grid = (
-                        ui.aggrid(
-                            {
-                                "columnDefs": [],
-                                "rowData": [],
-                                "defaultColDef": {
-                                    "sortable": True,
-                                    "filter": True,
-                                    "resizable": True,
-                                },
-                            },
-                            theme="quartz",
-                        )
-                        .classes("w-full")
-                        .style("height: 400px")
+                    # Loading / grid containers
+                    self._grid_loading, self._grid_content = (
+                        self._create_loading_container("400px")
                     )
-
-                async def load_and_render() -> None:
-                    """Load data asynchronously and update the chart and grid."""
-                    stats_path = self._get_parquet_path(OUTPUT_NGRAM_STATS)
-                    full_path = self._get_parquet_path(OUTPUT_NGRAM_FULL)
-
-                    if stats_path is None or self._chart is None:
-                        if self._chart is not None:
-                            self._chart.set_visibility(False)
-                        error_container.style("display: flex;")
-                        self.notify_error("No analysis found in the current session.")
-                        return
-
-                    try:
-                        # Load both parquet files in background thread
-                        self._df_stats = await run.io_bound(pl.read_parquet, stats_path)
-                        if full_path:
-                            self._df_full = await run.io_bound(
-                                pl.read_parquet, full_path
+                    with self._grid_content:
+                        self._grid = (
+                            ui.aggrid(
+                                {
+                                    "columnDefs": [],
+                                    "rowData": [],
+                                    "defaultColDef": {
+                                        "sortable": True,
+                                        "filter": True,
+                                        "resizable": True,
+                                    },
+                                },
+                                theme="quartz",
                             )
-                    except Exception as exc:
-                        if self._chart is not None:
-                            self._chart.set_visibility(False)
-                        error_container.style("display: flex;")
-                        self.notify_error(f"Could not load n-gram results: {exc}")
-                        return
-
-                    if self._df_stats.is_empty():
-                        if self._chart is not None:
-                            self._chart.set_visibility(False)
-                        error_container.style("display: flex;")
-                        return
-
-                    # Populate filter select with unique n-gram values
-                    if self._ngram_select is not None:
-                        self._all_ngram_options = (
-                            self._df_stats.select(pl.col(COL_NGRAM_WORDS).unique())
-                            .sort(COL_NGRAM_WORDS)
-                            .to_series()
-                            .to_list()
+                            .classes("w-full")
+                            .style("height: 400px")
                         )
-                        # Set all n-grams as autocomplete options
-                        self._ngram_select.set_autocomplete(self._all_ngram_options)
 
-                    # Build ECharts option and update chart
-                    option = plot_scatter_echart(self._df_stats)
-                    self._chart.options.update(option)
-                    self._chart.update()
-
-                    # Initialize grid with summary view
-                    self._update_info_label()
-                    self._update_grid()
-
-                # Start async loading after page renders (allows spinner to show)
-                ui.timer(0, load_and_render, once=True)
+        # Trigger async load after page renders
+        ui.timer(0, self._load_and_render_async, once=True)

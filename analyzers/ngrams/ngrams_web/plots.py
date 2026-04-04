@@ -9,6 +9,7 @@ Dash, or NiceGUI and can therefore be imported from any GUI layer.
 import numpy as np
 import plotly.express as px
 import polars as pl
+from pydantic import BaseModel
 
 from ..ngrams_base.interface import COL_NGRAM_ID, COL_NGRAM_LENGTH
 from ..ngrams_stats.interface import (
@@ -29,6 +30,65 @@ TAB_10_PALETTE = [
     "#bcbd22",
     "#17becf",
 ]
+
+
+class SamplingMetadata(BaseModel):
+    """Metadata about data sampling applied before visualization."""
+
+    total_count: int
+    sampled_count: int
+    is_sampled: bool
+    strategy: str
+
+    @property
+    def sampling_message(self) -> str:
+        """Human-readable summary shown in the dashboard info label."""
+        if not self.is_sampled:
+            return f"Showing all {self.total_count:,} n-grams."
+        return (
+            f"Showing top {self.sampled_count:,} of {self.total_count:,} n-grams "
+            f"(by frequency). Click 'Show all' to load the complete dataset."
+        )
+
+
+def sample_ngram_data(
+    df: pl.DataFrame,
+    max_points: int = 50000,
+    sort_column: str = COL_NGRAM_TOTAL_REPS,
+) -> tuple[pl.DataFrame, SamplingMetadata]:
+    """
+    Sample n-gram data for visualization.
+
+    For datasets larger than max_points, returns the top N rows sorted by
+    frequency (total_reps). This preserves the most interesting data points
+    while keeping rendering performant.
+
+    Args:
+        df: Input DataFrame with n-gram statistics.
+        max_points: Maximum number of points to return (default 50,000).
+        sort_column: Column to sort by for sampling (default: total_reps).
+
+    Returns:
+        Tuple of (sampled_dataframe, SamplingMetadata).
+    """
+    total_count = len(df)
+
+    if total_count <= max_points:
+        return df, SamplingMetadata(
+            total_count=total_count,
+            sampled_count=total_count,
+            is_sampled=False,
+            strategy="none",
+        )
+
+    sampled = df.sort(sort_column, descending=True).head(max_points)
+
+    return sampled, SamplingMetadata(
+        total_count=total_count,
+        sampled_count=max_points,
+        is_sampled=True,
+        strategy="top_by_frequency",
+    )
 
 
 def plot_scatter(data: pl.DataFrame):
@@ -95,7 +155,10 @@ def plot_scatter(data: pl.DataFrame):
     return fig
 
 
-def plot_scatter_echart(data: pl.DataFrame) -> dict:
+def plot_scatter_echart(
+    data: pl.DataFrame,
+    enable_large_mode: bool = True,
+) -> dict:
     """
     Build a log-log scatter plot of n-gram frequency vs. unique poster count.
 
@@ -107,6 +170,8 @@ def plot_scatter_echart(data: pl.DataFrame) -> dict:
     Args:
         data: The ``ngram_stats`` Polars DataFrame (must contain the standard
               n-gram statistics columns).
+        enable_large_mode: Inject ECharts large-dataset optimizations.
+            Should be True whenever data has more than ~2,000 points.
 
     Returns:
         A plain dict representing the ECharts option object, ready to be
@@ -144,32 +209,42 @@ def plot_scatter_echart(data: pl.DataFrame) -> dict:
             }
             for row in subset.iter_rows(named=True)
         ]
-        series.append(
-            {
-                "name": f"{n}-gram",
-                "type": "scatter",
-                "color": TAB_10_PALETTE[i],
-                "symbolSize": 11,
+        series_config = {
+            "name": f"{n}-gram",
+            "type": "scatter",
+            "color": TAB_10_PALETTE[i],
+            "symbolSize": 11,
+            "itemStyle": {
+                "color": TAB_10_PALETTE[i % len(TAB_10_PALETTE)],
+                "opacity": 0.7,
+                "borderColor": "white",
+                "borderWidth": 0.5,
+            },
+            "emphasis": {
                 "itemStyle": {
-                    "color": TAB_10_PALETTE[i % len(TAB_10_PALETTE)],
-                    "opacity": 0.7,
+                    "color": "#d62728",  # Highlight red color
+                    "opacity": 1.0,
                     "borderColor": "white",
-                    "borderWidth": 0.5,
+                    "borderWidth": 2,
+                    "shadowBlur": 10,
+                    "shadowColor": "rgba(0, 0, 0, 0.3)",
                 },
-                "emphasis": {
-                    "itemStyle": {
-                        "color": "#d62728",  # Highlight red color
-                        "opacity": 1.0,
-                        "borderColor": "white",
-                        "borderWidth": 2,
-                        "shadowBlur": 10,
-                        "shadowColor": "rgba(0, 0, 0, 0.3)",
-                    },
-                    "scale": 1.5,  # Make point 50% larger when emphasized
-                },
-                "data": series_data,
-            }
-        )
+                "scale": 1.5,  # Make point 50% larger when emphasized
+            },
+            "data": series_data,
+        }
+
+        if enable_large_mode:
+            series_config.update(
+                {
+                    "large": True,
+                    "largeThreshold": 2000,
+                    "progressive": 2000,
+                    "progressiveThreshold": 10000,
+                }
+            )
+
+        series.append(series_config)
 
     option = {
         "title": {"text": "Repeated phrases and accounts"},
@@ -222,5 +297,14 @@ def plot_scatter_echart(data: pl.DataFrame) -> dict:
         },
         "series": series,
     }
+
+    if enable_large_mode:
+        option.update(
+            {
+                "animation": False,
+                "animationThreshold": 5000,
+                "hoverLayerThreshold": 10000,
+            }
+        )
 
     return option

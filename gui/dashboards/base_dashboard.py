@@ -12,6 +12,8 @@ and implement render_content().
 
 import abc
 
+from nicegui import ui
+
 from gui.base import GuiPage, GuiSession, gui_routes
 
 
@@ -49,6 +51,49 @@ class BaseDashboardPage(GuiPage, abc.ABC):
             back_route=gui_routes.post_analysis,
             show_footer=True,
         )
+
+    def _create_loading_container(
+        self, height: str = "500px"
+    ) -> tuple[ui.column, ui.column]:
+        """
+        Create a loading spinner container and a (hidden) content container.
+
+        Subclasses call this inside render_content() and later call
+        _show_content() / _show_error() to switch states.
+
+        Returns:
+            (loading_container, content_container)
+        """
+        loading_container = (
+            ui.column()
+            .classes("w-full items-center justify-center")
+            .style(f"height: {height};")
+        )
+        with loading_container:
+            ui.spinner("pie", size="xl")
+            ui.label("Loading dashboard...").classes("text-grey-6 q-mt-md")
+
+        content_container = (
+            ui.column().classes("w-full").style(f"height: {height}; display: none;")
+        )
+
+        return loading_container, content_container
+
+    def _show_content(self, loading_container: ui.column, content_container: ui.column):
+        """Switch from loading state to content display."""
+        loading_container.style("display: none;")
+        content_container.style("display: block;")
+
+    def _show_error(
+        self,
+        loading_container: ui.column,
+        message: str,
+    ) -> None:
+        """Replace loading spinner with an error message in-place."""
+        loading_container.clear()
+        with loading_container:
+            ui.icon("error_outline", size="3rem").classes("text-negative")
+            ui.label(message).classes("text-negative q-mt-md")
 
     @abc.abstractmethod
     def render_content(self) -> None:

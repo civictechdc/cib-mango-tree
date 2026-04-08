@@ -7786,7 +7786,8 @@ for different script families.</p>
 <span class="normal">328</span>
 <span class="normal">329</span>
 <span class="normal">330</span>
-<span class="normal">331</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BasicTokenizer</span><span class="p">(</span><span class="n">AbstractTokenizer</span><span class="p">):</span>
+<span class="normal">331</span>
+<span class="normal">332</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BasicTokenizer</span><span class="p">(</span><span class="n">AbstractTokenizer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unicode-aware basic tokenizer for social media text.</span>
 
@@ -8010,9 +8011,10 @@ for different script families.</p>
             <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">token</span><span class="p">)</span>
             <span class="ow">and</span> <span class="s2">&quot;@&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">token</span>
         <span class="p">):</span>
-            <span class="c1"># Check if this looks like an abbreviation (single letters between periods)</span>
-            <span class="c1"># Pattern: letter(s).letter(s).letter(s) where segments are 1-3 chars</span>
-            <span class="n">abbreviation_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^[a-z]{1,3}(?:\.[a-z]{1,3})+\.?$&quot;</span>
+            <span class="c1"># Check if this looks like an abbreviation</span>
+            <span class="c1"># Multi-dot: letter(s).letter(s).letter(s) where segments are 1-3 chars</span>
+            <span class="c1"># Single-dot: short word followed by period (Dr., Mr., Inc., vs.)</span>
+            <span class="n">abbreviation_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^[a-z]{1,4}\.$|^[a-z]{1,3}(?:\.[a-z]{1,3})+\.?$&quot;</span>
 
             <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">abbreviation_pattern</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># This is an abbreviation, not a URL</span>
@@ -10899,7 +10901,8 @@ for different script families.</p>
 <span class="normal">328</span>
 <span class="normal">329</span>
 <span class="normal">330</span>
-<span class="normal">331</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BasicTokenizer</span><span class="p">(</span><span class="n">AbstractTokenizer</span><span class="p">):</span>
+<span class="normal">331</span>
+<span class="normal">332</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BasicTokenizer</span><span class="p">(</span><span class="n">AbstractTokenizer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unicode-aware basic tokenizer for social media text.</span>
 
@@ -11123,9 +11126,10 @@ for different script families.</p>
             <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">token</span><span class="p">)</span>
             <span class="ow">and</span> <span class="s2">&quot;@&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">token</span>
         <span class="p">):</span>
-            <span class="c1"># Check if this looks like an abbreviation (single letters between periods)</span>
-            <span class="c1"># Pattern: letter(s).letter(s).letter(s) where segments are 1-3 chars</span>
-            <span class="n">abbreviation_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^[a-z]{1,3}(?:\.[a-z]{1,3})+\.?$&quot;</span>
+            <span class="c1"># Check if this looks like an abbreviation</span>
+            <span class="c1"># Multi-dot: letter(s).letter(s).letter(s) where segments are 1-3 chars</span>
+            <span class="c1"># Single-dot: short word followed by period (Dr., Mr., Inc., vs.)</span>
+            <span class="n">abbreviation_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^[a-z]{1,4}\.$|^[a-z]{1,3}(?:\.[a-z]{1,3})+\.?$&quot;</span>
 
             <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">abbreviation_pattern</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># This is an abbreviation, not a URL</span>

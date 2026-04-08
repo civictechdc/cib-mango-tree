@@ -104,7 +104,7 @@ SEA_PATTERN = (
 
 LATIN_WORD_PATTERN = (
     r"(?:[a-zA-Z]{1,4}\.){2,}[a-zA-Z]*\.?"  # Multi-dot abbreviations: U.S.A., c.e.o.s
-    r"|[a-zA-Z]{1,4}\."  # Single-dot abbreviations: Dr., Mr., Inc., vs., etc.
+    r"|[a-zA-Z]{1,4}\.(?!\.)"  # Single-dot abbreviations: Dr., Mr., Inc., vs. (not ellipsis)
     r"|[a-zA-Z]+(?:[-'\u2019\u0060\u2013\u2014\u2011\u2012][a-zA-Z]+)*[-'\u2019\u0060]?"  # Words with contractions/hyphens/dashes
 )
 

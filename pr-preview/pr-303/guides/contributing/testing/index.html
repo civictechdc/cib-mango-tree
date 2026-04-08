@@ -18,7 +18,7 @@
         <link rel="prev" href="../logging/">
       
       
-        <link rel="next" href="../ai_assisted_dev/">
+        <link rel="next" href="../../design-philosophy/architecture/">
       
       
         
@@ -34,9 +34,6 @@
     
     
       <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
-      
-        
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -57,8 +54,6 @@
     
       <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../../stylesheets/extra.css">
-    
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -68,12 +63,7 @@
   </head>
   
   
-    
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="cibmt" data-md-color-primary="indigo" data-md-color-accent="indigo">
+    <body dir="ltr">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -82,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#runing-the-tests" class="md-skip">
+        <a href="#testing" class="md-skip">
           Skip to content
         </a>
       
@@ -124,8 +114,8 @@
       </div>
     </div>
     
-      
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
     
     
@@ -669,96 +659,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../new_contributor_guide/" class="md-nav__link">
+      <a href="../contributing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    New Contributor Guide
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_2" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_2_2_2" id="__nav_2_2_2_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Technical Guides
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2_2_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Technical Guides
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../github_workflow/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Contributing Changes
+    Contributor Workflow
   
 
     
@@ -820,17 +728,17 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_2_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_3" >
         
           
-          <label class="md-nav__link" for="__nav_2_2_2_3" id="__nav_2_2_2_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_2_3" id="__nav_2_2_3_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Implementing Dashboards
+    Dashboards
   
 
     
@@ -841,12 +749,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_2_2_2_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2_2_3">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_3">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Implementing Dashboards
+    Dashboards
   
 
           </label>
@@ -1007,83 +915,19 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#runing-the-tests" class="md-nav__link">
+  <a href="#testing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Runing the Tests
+        Testing
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#implementing-tests" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Implementing tests
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Implementing tests">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#test-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Test Data
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
     </ul>
   
 </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ai_assisted_dev/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    AI-assisted Development
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
       
     </li>
   
@@ -1644,41 +1488,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#runing-the-tests" class="md-nav__link">
+  <a href="#testing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Runing the Tests
+        Testing
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#implementing-tests" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Implementing tests
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Implementing tests">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#test-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Test Data
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1734,28 +1550,10 @@
     
     
       <li class="md-path__item">
-        <a href="../new_contributor_guide/" class="md-path__link">
+        <a href="../contributing/" class="md-path__link">
           
   <span class="md-ellipsis">
     Contributing
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="../github_workflow/" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Technical Guides
   </span>
 
         </a>
@@ -1779,29 +1577,9 @@
 
   <h1>Testing</h1>
 
-<h3 id="runing-the-tests">Runing the Tests</h3>
-<p>You can run all tests invoking the <code>pytest</code> command from project root:
-<div class="highlight"><pre><span></span><code><span class="c1"># Run all test</span>
-pytest
-</code></pre></div></p>
-<p>To run a specific test file. This is useful when you're developing a specific feature and don't want to run the whole test suite:
-<div class="highlight"><pre><span></span><code>pytest analyzers/hashtags/test_hashtags_analyzer.py
-</code></pre></div></p>
-<p>Run specific test function:
-<div class="highlight"><pre><span></span><code>pytest analyzers/hashtags/test_hashtags_analyzer.py::test_gini
-</code></pre></div></p>
-<p>To get more information, run with verbose output:
-<div class="highlight"><pre><span></span><code>pytest -v
-</code></pre></div></p>
-<h3 id="implementing-tests">Implementing tests</h3>
+<h3 id="testing">Testing</h3>
 <p>The <code>testing</code> module provides testers for the primary and
 secondary analyzer modules. See the <a href="https://github.com/civictechdc/mango-tango-cli/blob/develop/analyzers/example/README.md">example</a> for further references.</p>
-<h4 id="test-data">Test Data</h4>
-<ul>
-<li>Test data is co-located with analyzers folders in <code>test_data/</code> directories</li>
-<li>Each analyzer should include its own test files</li>
-<li>Tests use sample data to verify functionality</li>
-</ul>
 
 
 

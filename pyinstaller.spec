@@ -43,6 +43,9 @@ a = Analysis(
         # GUI icons (Simple Icons for footer links)
         ('./gui/icons', 'gui/icons'),
 
+        # Vue GUI components
+        ('./gui/components/dist', './gui/components/dist'),
+
         # NiceGUI static files (required for GUI mode)
         (os.path.join(site_packages_path, 'nicegui'), 'nicegui')
         # Note: pywebview data files are handled by custom hook in ./hooks/

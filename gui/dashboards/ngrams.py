@@ -54,11 +54,14 @@ class NgramsDashboardPage(BaseDashboardPage):
         # DataFrames
         self._df_stats: pl.DataFrame | None = None
         self._df_full: pl.DataFrame | None = None
+        # State for row preview
+        self._selected_row: dict | None = None
         # UI component references (set during render)
         self._chart: ui.echart | None = None
         self._grid: ui.aggrid | None = None
         self._info_label: ui.label | None = None
         self._ngram_select: ui.input | None = None
+        self._preview_container: ui.column | None = None
 
     def _get_parquet_path(self, output_id: str) -> str | None:
         """
@@ -225,6 +228,73 @@ class NgramsDashboardPage(BaseDashboardPage):
                 for col in df_display.columns
             ]
         self._grid.update()
+
+        # Reset any open row preview when the grid's underlying data changes
+        self._selected_row = None
+        self._update_preview()
+
+    def _handle_cell_click(self, e) -> None:
+        """
+        Handle clicks on grid cells to show a full-post preview card.
+
+        Preview is only meaningful in the detail view (when an n-gram is
+        selected and the grid is showing individual posts). In the summary
+        view there is no "Post content" to preview.
+
+        Args:
+            e: AG Grid cellClicked event; row data lives in ``e.args['data']``.
+        """
+        if self._selected_words is None:
+            # Summary view — nothing to preview
+            return
+
+        row_data = e.args.get("data") if getattr(e, "args", None) else None
+        if not row_data:
+            return
+
+        self._selected_row = row_data
+        self._update_preview()
+
+    def _update_preview(self) -> None:
+        """Rebuild the preview container based on ``self._selected_row``."""
+        if self._preview_container is None:
+            return
+
+        self._preview_container.clear()
+
+        if self._selected_row is None:
+            return
+
+        user_id = self._selected_row.get("User ID", "")
+        timestamp = self._selected_row.get("Timestamp", "")
+        ngram = self._selected_row.get("N-gram content", "")
+        post = self._selected_row.get("Post content", "")
+
+        with self._preview_container:
+            with ui.card().classes("w-full").style("max-width: 900px; margin: 0 auto;"):
+                with ui.row().classes("w-full items-center justify-between"):
+                    ui.label("Full post content").classes("text-h6")
+                    ui.button(icon="close", on_click=self._close_preview).props(
+                        "flat round dense"
+                    )
+                ui.separator()
+                with ui.column().classes("w-full gap-1"):
+                    ui.label(f"User ID: {user_id}").classes("text-caption text-grey-7")
+                    ui.label(f"Timestamp: {timestamp}").classes(
+                        "text-caption text-grey-7"
+                    )
+                    ui.label(f"N-gram: {ngram}").classes("text-caption text-grey-7")
+                ui.separator()
+                ui.label(str(post)).classes("text-body1").style(
+                    "white-space: pre-wrap; word-break: break-word;"
+                )
+
+    def _close_preview(self) -> None:
+        """Close the preview card and clear any AG Grid row selection."""
+        self._selected_row = None
+        if self._grid is not None:
+            self._grid.run_grid_method("deselectAll")
+        self._update_preview()
 
     def _highlight_point(self, series_index: int, data_index: int) -> None:
         """
@@ -477,12 +547,17 @@ class NgramsDashboardPage(BaseDashboardPage):
                                     "filter": True,
                                     "resizable": True,
                                 },
+                                "rowSelection": "single",
                             },
                             theme="quartz",
                         )
                         .classes("w-full")
                         .style("height: 400px")
+                        .on("cellClicked", self._handle_cell_click)
                     )
+
+                    # Preview container for full post content (click-to-open)
+                    self._preview_container = ui.column().classes("w-full q-mt-md")
 
                 async def load_and_render() -> None:
                     """Load data asynchronously and update the chart and grid."""

@@ -657,7 +657,7 @@ class NgramsDashboardPage(BaseDashboardPage):
                                         "resizable": True,
                                     },
                                     "tooltipShowDelay": 200,
-                                    "tooltipSwitchShowDelay": 0,
+                                    "tooltipSwitchShowDelay": 70,
                                 },
                                 theme="quartz",
                             )

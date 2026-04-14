@@ -235,10 +235,20 @@ class NgramsDashboardPage(BaseDashboardPage):
         else:
             # Convert to ag-grid format
             self._grid.options["rowData"] = df_display.to_dicts()
-            self._grid.options["columnDefs"] = [
-                {"field": col, "sortable": True, "filter": True, "resizable": True}
-                for col in df_display.columns
-            ]
+            # Build column definitions with special handling for Post content
+            column_defs = []
+            for col in df_display.columns:
+                col_def = {
+                    "field": col,
+                    "sortable": True,
+                    "filter": True,
+                    "resizable": True,
+                }
+                # Add tooltip for Post content column to show full text on hover
+                if col == "Post content":
+                    col_def[":tooltipValueGetter"] = "(params) => params.value"
+                column_defs.append(col_def)
+            self._grid.options["columnDefs"] = column_defs
         self._grid.update()
 
     def _highlight_point(self, series_index: int, data_index: int) -> None:
@@ -646,6 +656,8 @@ class NgramsDashboardPage(BaseDashboardPage):
                                         "filter": True,
                                         "resizable": True,
                                     },
+                                    "tooltipShowDelay": 200,
+                                    "tooltipSwitchShowDelay": 0,
                                 },
                                 theme="quartz",
                             )

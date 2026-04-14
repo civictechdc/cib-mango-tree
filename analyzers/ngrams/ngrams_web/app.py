@@ -23,20 +23,6 @@ data_stats = None  # secondary output
 data_full = None  # primary output
 ngram_choices_dict = {}
 
-# Style for the post-viewing table: wrap long post content across multiple
-# lines so users can inspect the full text (see issue #302).
-POST_CONTENT_STYLES = [
-    {
-        "cols": ["Post content"],
-        "style": {
-            "white-space": "pre-wrap",
-            "word-break": "break-word",
-            "vertical-align": "top",
-            "max-width": "600px",
-        },
-    },
-]
-
 
 def _set_global_state_vars(df_stats: pl.DataFrame, df_full: pl.DataFrame):
     global data_stats, data_full
@@ -447,13 +433,9 @@ def server(input, output, sessions):
             return render.DataGrid(get_top_n_stats(n=100), width="100%")
 
         if has_click:
-            # Show individual posts for clicked n-gram.
-            # Apply wrap styles so the "Post content" column shows the full
-            # post rather than being truncated to a single line.
+            # Show individual posts for clicked n-gram
             data_for_display = get_filtered_full_data()
-            return render.DataGrid(
-                data_for_display, width="100%", styles=POST_CONTENT_STYLES
-            )
+            return render.DataGrid(data_for_display, width="100%")
 
         # No click: show n-gram statistics (top 100)
         if has_search:

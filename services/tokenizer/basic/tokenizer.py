@@ -237,9 +237,10 @@ class BasicTokenizer(AbstractTokenizer):
             and any(c.isalpha() for c in token)
             and "@" not in token
         ):
-            # Check if this looks like an abbreviation (single letters between periods)
-            # Pattern: letter(s).letter(s).letter(s) where segments are 1-3 chars
-            abbreviation_pattern = r"^[a-z]{1,3}(?:\.[a-z]{1,3})+\.?$"
+            # Check if this looks like an abbreviation
+            # Multi-dot: letter(s).letter(s).letter(s) where segments are 1-3 chars
+            # Single-dot: short word followed by period (Dr., Mr., Inc., vs.)
+            abbreviation_pattern = r"^[a-z]{1,4}\.$|^[a-z]{1,3}(?:\.[a-z]{1,3})+\.?$"
 
             if re.match(abbreviation_pattern, token, re.IGNORECASE):
                 return False  # This is an abbreviation, not a URL

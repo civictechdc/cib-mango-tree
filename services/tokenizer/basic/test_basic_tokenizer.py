@@ -917,6 +917,54 @@ class TestAbbreviationsAndPunctuation:
         ]  # Curly apostrophes preserved
         assert result == expected, f"Expected {expected}, got {result}"
 
+    def test_single_dot_abbreviations(self):
+        """Test single-dot abbreviations like Dr., Mr., Inc., vs., etc."""
+        tokenizer = BasicTokenizer()
+        text = "Dr. Smith met Mr. Jones"
+        result = tokenizer.tokenize(text)
+        expected = ["dr.", "smith", "met", "mr.", "jones"]
+        assert result == expected, f"Expected {expected}, got {result}"
+
+    def test_single_dot_abbreviations_mixed(self):
+        """Test mixed single-dot and multi-dot abbreviations."""
+        tokenizer = BasicTokenizer()
+        text = "Inc. vs. Corp. and U.S.A."
+        result = tokenizer.tokenize(text)
+        expected = ["inc.", "vs.", "corp.", "and", "u.s.a."]
+        assert result == expected, f"Expected {expected}, got {result}"
+
+    def test_mrs_abbreviation(self):
+        """Test Mrs. abbreviation."""
+        tokenizer = BasicTokenizer()
+        text = "Mr. Jones and Mrs. Smith"
+        result = tokenizer.tokenize(text)
+        expected = ["mr.", "jones", "and", "mrs.", "smith"]
+        assert result == expected, f"Expected {expected}, got {result}"
+
+    def test_unicode_en_dash_compound(self):
+        """Test en-dash (U+2013) in compound words."""
+        tokenizer = BasicTokenizer()
+        text = "well\u2013known fact"
+        result = tokenizer.tokenize(text)
+        expected = ["well\u2013known", "fact"]
+        assert result == expected, f"Expected {expected}, got {result}"
+
+    def test_unicode_em_dash_compound(self):
+        """Test em-dash (U+2014) in compound words."""
+        tokenizer = BasicTokenizer()
+        text = "mind\u2014blowing update"
+        result = tokenizer.tokenize(text)
+        expected = ["mind\u2014blowing", "update"]
+        assert result == expected, f"Expected {expected}, got {result}"
+
+    def test_unicode_non_breaking_hyphen(self):
+        """Test non-breaking hyphen (U+2011) in compound words."""
+        tokenizer = BasicTokenizer()
+        text = "self\u2011aware robot"
+        result = tokenizer.tokenize(text)
+        expected = ["self\u2011aware", "robot"]
+        assert result == expected, f"Expected {expected}, got {result}"
+
 
 @pytest.mark.unit
 class TestBotDetectionEdgeCases:

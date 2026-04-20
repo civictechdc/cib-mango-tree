@@ -3,8 +3,10 @@ from io import BytesIO
 from fastapi import UploadFile
 from nicegui import ui
 
-from gui.base import GuiPage, GuiSession, gui_routes
+from gui.base import GuiPage
 from gui.components import UploadButton
+from gui.routes import gui_routes
+from gui.session import GuiSession
 
 
 class ImportDatasetPage(GuiPage):

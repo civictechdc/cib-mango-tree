@@ -1,5 +1,7 @@
-from gui.base import GuiPage, GuiSession, gui_routes
+from gui.base import GuiPage
 from gui.choice_fork import two_button_choice_fork_content
+from gui.routes import gui_routes
+from gui.session import GuiSession
 
 
 class SelectAnalyzerForkPage(GuiPage):

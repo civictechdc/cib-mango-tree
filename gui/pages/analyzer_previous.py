@@ -4,8 +4,10 @@ from nicegui import ui
 
 from app.analysis_context import AnalysisContext
 from components.select_analysis import analysis_label, present_timestamp
-from gui.base import GuiPage, GuiSession, gui_routes
+from gui.base import GuiPage
 from gui.components.manage_analyses import ManageAnalysisDialog
+from gui.routes import gui_routes
+from gui.session import GuiSession
 
 
 class SelectPreviousAnalyzerPage(GuiPage):

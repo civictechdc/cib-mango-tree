@@ -5,7 +5,6 @@ Main GUI workflow including all pages.
 from nicegui import ui
 
 from app import App
-from gui.base import GuiSession, gui_routes
 from gui.context import GUIContext
 from gui.dashboards import BaseDashboardPage, NgramsDashboardPage
 from gui.pages import (
@@ -19,6 +18,8 @@ from gui.pages import (
     SelectProjectPage,
     StartPage,
 )
+from gui.routes import gui_routes
+from gui.session import GuiSession
 
 # Maps primary analyzer IDs to their dashboard page classes.
 # Add an entry here when a new dashboard is implemented.

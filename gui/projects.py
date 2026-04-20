@@ -1,6 +1,6 @@
 from nicegui import ui
 
-from gui.base import GuiSession
+from gui.session import GuiSession
 
 
 class ManageProjectsDialog(ui.dialog):

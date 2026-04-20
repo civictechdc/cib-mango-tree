@@ -1,7 +1,7 @@
 from nicegui import ui
 
-from gui.base import GuiSession
 from gui.components.toggle import ToggleButtonGroup
+from gui.session import GuiSession
 
 
 class AnalyzerSelectionStep:

@@ -3,8 +3,8 @@ from tempfile import TemporaryDirectory
 from nicegui import ui
 
 from context import InputColumnProvider, PrimaryAnalyzerDefaultParametersContext
-from gui.base import GuiSession
 from gui.components import AnalysisParamsCard
+from gui.session import GuiSession
 
 
 class ParamsConfigStep:

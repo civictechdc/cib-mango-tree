@@ -2,7 +2,7 @@ import polars as pl
 from nicegui import ui
 
 from analyzer_interface import column_automap, get_data_type_compatibility_score
-from gui.base import GuiSession
+from gui.session import GuiSession
 
 
 class ColumnMappingStep:

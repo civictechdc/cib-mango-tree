@@ -6,8 +6,9 @@ from traceback import format_exc
 from nicegui import run, ui
 
 from app.analysis_context import AnalysisContext, AnalysisQueueMessage
-from gui.base import GuiSession, gui_routes
-from gui.constants.colors import MANGO_DARK_GREEN, MANGO_ORANGE
+from gui.routes import gui_routes
+from gui.session import GuiSession
+from gui.theme import MANGO_DARK_GREEN, MANGO_ORANGE
 
 QUEUE_POLL_INTERVAL = 0.05
 

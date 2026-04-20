@@ -1,6 +1,8 @@
 from nicegui import ui
 
-from gui.base import GuiPage, GuiSession, gui_routes
+from gui.base import GuiPage
+from gui.routes import gui_routes
+from gui.session import GuiSession
 
 
 class SelectProjectPage(GuiPage):

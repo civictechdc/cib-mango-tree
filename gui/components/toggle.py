@@ -1,10 +1,5 @@
 from nicegui import ui
 
-MANGO_DARK_GREEN = "#609949"
-MANGO_ORANGE = "#f3921e"
-MANGO_ORANGE_LIGHT = "#f9bc30"
-ACCENT = "white"
-
 
 class ToggleButton(ui.button):
     def __init__(self, *args, group=None, **kwargs) -> None:

@@ -2,13 +2,15 @@ from typing import Any
 
 from nicegui import ui
 
-from gui.base import GuiPage, GuiSession, gui_routes
+from gui.base import GuiPage
 from gui.components.stepper_steps import (
     AnalyzerSelectionStep,
     ColumnMappingStep,
     ParamsConfigStep,
     RunAnalysisStep,
 )
+from gui.routes import gui_routes
+from gui.session import GuiSession
 
 STEP_NAMES = {
     "Select Analyzer": "analyzer",

@@ -25,7 +25,7 @@ from analyzers.ngrams.ngrams_web.plots import (
     plot_scatter_echart,
     sample_ngram_data,
 )
-from gui.base import GuiSession
+from gui.session import GuiSession
 
 from .base_dashboard import BaseDashboardPage
 

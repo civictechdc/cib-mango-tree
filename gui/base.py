@@ -2,176 +2,20 @@
 Base abstractions for GUI pages using Pydantic and ABC.
 
 This module provides:
-- GuiColors: Brand color constants
-- GuiSession: Type-safe state container replacing module-level globals
 - GuiPage: Abstract base class for all GUI pages
+- format_file_size: Utility for human-readable file sizes
+- present_separator: Utility for displaying separator characters
 """
 
 import abc
-from io import BytesIO
 from pathlib import Path
 from typing import Callable
 
 from nicegui import ui
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
-from analyzer_interface import AnalyzerInterface, ParamValue
-from app.project_context import ProjectContext
-from gui.constants.colors import (
-    ACCENT,
-    MANGO_DARK_GREEN,
-    MANGO_ORANGE,
-    MANGO_ORANGE_LIGHT,
-)
-from gui.context import GUIContext
-from importing.importer import ImporterSession
-from storage import AnalysisModel
-
-
-class GuiRoutes(BaseModel):
-    """Container for"""
-
-    root: str = "/"
-    import_dataset: str = "/import_dataset"
-    new_project: str = "/new_project"
-    select_project: str = "/select_project"
-    select_analyzer_fork: str = "/select_analyzer_fork"
-    select_previous_analyzer: str = "/select_previous_analyzer"
-    configure_analysis: str = "/configure_analysis"
-    preview_dataset: str = "/preview_dataset"
-    post_analysis: str = "/post_analysis"
-    dashboard: str = "/dashboard"
-
-
-class GuiColors(BaseModel):
-    """Mango Tree brand colors"""
-
-    model_config = ConfigDict(frozen=True)
-
-    primary: str = Field(default=MANGO_DARK_GREEN, description="Mango dark green")
-    secondary: str = Field(default=MANGO_ORANGE_LIGHT, description="Mango orange light")
-    accent: str = Field(default=ACCENT, description="Accent color")
-
-    # Additional colors for reference
-    mango_orange: str = Field(default=MANGO_ORANGE, description="Mango orange")
-
-
-# Class for Managing Constants (colors and links)
-class GuiURLS(BaseModel):
-    """UI URL constants."""
-
-    model_config = ConfigDict(frozen=True)
-
-    # External URLs
-    github_url: str = Field(
-        default="https://github.com/civictechdc/cib-mango-tree",
-        description="GitHub repository URL",
-    )
-    instagram_url: str = Field(
-        default="https://www.instagram.com/cibmangotree",
-        description="Instagram profile URL",
-    )
-
-
-class GuiConstants(BaseModel):
-    """Container for both colors and urls"""
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    colors: GuiColors
-    urls: GuiURLS
-
-
-# Singleton instances for easy access in other modules
-gui_colors = GuiColors()
-gui_urls = GuiURLS()
-gui_constants = GuiConstants(colors=gui_colors, urls=gui_urls)
-gui_routes = GuiRoutes()
-
-
-# Class for handling information that
-# must persist throught a session
-class GuiSession(BaseModel):
-    """
-    Application-wide session state container.
-
-    Replaces module-level global variables with a type-safe,
-    validated state container. Provides access to
-    application context and workflow state.
-
-    Attributes:
-        context: Application context wrapping App instance
-        current_project: Currently selected/active project
-        selected_file_path: Path to file selected for import
-        new_project_name: Name for project being created
-        import_session: Active importer session for data preview
-        selected_analyzer: ID of selected primary analyzer
-        current_analysis: Currently selected/active analysis
-
-    Example:
-        ```python
-        context = GUIContext(app=app)
-        session = GuiSession(context=context)
-
-        # Set project
-        session.current_project = project
-
-        # Access app
-        projects = session.app.list_projects()
-        ```
-    """
-
-    # Core context
-    context: GUIContext
-
-    # Workflow state - project creation
-    current_project: ProjectContext | None = None
-    selected_file_path: Path | None = None
-    selected_file_name: str | None = None
-    selected_file: BytesIO | None = None
-    selected_file_content_type: str | None = None
-    new_project_name: str | None = None
-    import_session: ImporterSession | None = None
-
-    # Workflow state - analysis
-    selected_analyzer: AnalyzerInterface | None = None
-    selected_analyzer_name: str | None = None
-    column_mapping: dict[str, str] | None = None
-    current_analysis: AnalysisModel | None = None
-    analysis_params: dict[str, ParamValue] | None = None
-
-    # Allow arbitrary types (for NiceGUI components, ImporterSession, etc.)
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    @property
-    def app(self):
-        """Access underlying App instance."""
-        return self.context.app
-
-    def reset_project_workflow(self) -> None:
-        """Clear project creation workflow state."""
-        self.new_project_name = None
-        self.selected_file_path = None
-        self.import_session = None
-
-    def reset_analysis_workflow(self) -> None:
-        """Clear analysis workflow state."""
-        self.selected_analyzer = None
-        self.selected_analyzer_name = None
-        self.column_mapping = None
-        self.current_analysis = None
-
-    def validate_project_selected(self) -> bool:
-        """Check if a project is currently selected."""
-        return self.current_project is not None
-
-    def validate_file_selected(self) -> bool:
-        """Check if a file is currently selected."""
-        return self.selected_file_path is not None
-
-    def validate_project_name_set(self) -> bool:
-        """Check if new project name is set."""
-        return bool(self.new_project_name and self.new_project_name.strip())
+from gui.session import GuiSession
+from gui.theme import gui_colors, gui_urls
 
 
 class GuiPage(BaseModel, abc.ABC):

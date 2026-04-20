@@ -14,20 +14,6 @@ from importing.csv import CsvImportSession
 from importing.excel import ExcelImportSession
 
 
-def present_separator(value: str) -> str:
-    """Format separator/quote character for display."""
-    mapping = {
-        "\t": "Tab",
-        " ": "Space",
-        ",": ", (Comma)",
-        ";": "; (Semicolon)",
-        "'": "' (Single quote)",
-        '"': '" (Double quote)',
-        "|": "| (Pipe)",
-    }
-    return mapping.get(value, value)
-
-
 class ImportOptionsDialog(ui.dialog):
     """
     Dialog for configuring CSV/Excel import options.

@@ -6,6 +6,7 @@ from traceback import format_exc
 from nicegui import run, ui
 
 from app.analysis_context import AnalysisContext, AnalysisQueueMessage
+from gui.base import GuiPage
 from gui.routes import gui_routes
 from gui.session import GuiSession
 from gui.theme import MANGO_DARK_GREEN, MANGO_ORANGE
@@ -16,19 +17,9 @@ QUEUE_POLL_INTERVAL = 0.05
 class RunAnalysisStep:
     """Step 4: Execute the analysis with progress tracking."""
 
-    def __init__(
-        self,
-        session: GuiSession,
-        notify_success,
-        notify_warning,
-        notify_error,
-        navigate_to,
-    ):
+    def __init__(self, session: GuiSession, page: GuiPage):
         self.session = session
-        self.notify_success = notify_success
-        self.notify_warning = notify_warning
-        self.notify_error = notify_error
-        self.navigate_to = navigate_to
+        self.page = page
 
     @ui.refreshable_method
     def render(self) -> None:
@@ -85,7 +76,7 @@ class RunAnalysisStep:
         project = self.session.current_project
 
         if not analyzer or not project:
-            self.notify_error("Missing analyzer or project")
+            self.page.notify_error("Missing analyzer or project")
             return
 
         try:
@@ -95,7 +86,7 @@ class RunAnalysisStep:
                 self.session.analysis_params,
             )
         except Exception as e:
-            self.notify_error(f"Failed to create analysis: {str(e)}")
+            self.page.notify_error(f"Failed to create analysis: {str(e)}")
             print(f"Analysis creation error:\n{format_exc()}")
             return
 
@@ -147,7 +138,7 @@ class RunAnalysisStep:
                     color="primary",
                     on_click=lambda: (
                         dialog.close(),
-                        self.navigate_to(gui_routes.post_analysis),
+                        self.page.navigate_to(gui_routes.post_analysis),
                     ),
                 )
                 success_btn.set_visibility(False)
@@ -232,9 +223,9 @@ class RunAnalysisStep:
                 if msg.type == "complete":
                     self.session.current_analysis = analysis.model
                     success_btn.set_visibility(True)
-                    self.notify_success("Analysis completed!")
+                    self.page.notify_success("Analysis completed!")
                 else:
-                    self.notify_warning("Analysis was canceled")
+                    self.page.notify_warning("Analysis was canceled")
                 cancel_btn.disable()
 
         async def run_analysis_task():
@@ -252,7 +243,7 @@ class RunAnalysisStep:
                 )
                 analysis.model.is_draft = result.is_draft
             except Exception as e:
-                self.notify_error(f"Analysis error: {str(e)}")
+                self.page.notify_error(f"Analysis error: {str(e)}")
                 print(f"Analysis error:\n{format_exc()}")
                 with log_container:
                     ui.label(f"Error: {str(e)}").classes(

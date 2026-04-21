@@ -81,49 +81,110 @@ Custom Vue.js components are built with Vite and loaded into NiceGUI pages. The 
 
 ## Session Flow
 
+### Page Navigation Overview
+
 ```mermaid
+flowchart LR
+    Start([Start]) --> NewProject["New Project"]
+    NewProject --> ImportDataset["Import Dataset"]
+    ImportDataset --> PreviewDataset["Preview Dataset"]
+    PreviewDataset -->|adjust options| ImportDataset
+    PreviewDataset -->|"Import & Create"| ConfigureAnalysis["Configure Analysis"]
+    ConfigureAnalysis --> PostAnalysis["Post Analysis"]
+    PostAnalysis --> Dashboard["Dashboard"]
+```
 
+### 1. Starting a Project
+
+```mermaid
 sequenceDiagram
-
     autonumber
-
     participant UserStorage@{ "type": "database" }
     actor User
     box CIB Mango Tree App
         participant GUI
         participant GUI Session
-        participant Analyzers
-        participant Dashboard
-        participant AppStorage@{ "type" : "database" }
+        participant App
+        participant AppStorage@{ "type": "database" }
     end
 
     rect rgb(230, 100, 50)
     note over User: Starting A Project
     User->>GUI: CLICKS: "New Project"
-    
     GUI-->>User: Enter project name:
-
     User->>GUI: TYPES: <project name>
-
-    GUI-->>GUI Session: STORES
+    GUI-->>GUI Session: STORES: new_project_name
+    GUI-->>User: NAVIGATE: Import Dataset
     end
+```
 
+### 2. Dataset Importing
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant UserStorage@{ "type": "database" }
+    actor User
+    box CIB Mango Tree App
+        participant GUI
+        participant GUI Session
+        participant App
+        participant AppStorage@{ "type": "database" }
+    end
 
     rect rgb(191, 223, 255)
     note over User: DATASET IMPORTING
     GUI-->>User: Select Dataset:
-
     User->>GUI: CLICKS: "Select dataset"
-
     GUI->>User: SHOWS: Upload window
-
     User-->>UserStorage: SELECTS: <data.csv>
-
     GUI-->>UserStorage: UPLOADS: <data.csv>
+    GUI-->>GUI Session: STORES: selected_file, selected_file_name, selected_file_content_type
+    GUI-->>User: NAVIGATE: Preview Dataset
+    end
+```
 
-    GUI-->>GUI Session: STORES
+### 3. Creating a Project
 
-
+```mermaid
+sequenceDiagram
+    autonumber
+    participant UserStorage@{ "type": "database" }
+    actor User
+    box CIB Mango Tree App
+        participant GUI
+        participant GUI Session
+        participant App
+        participant AppStorage@{ "type": "database" }
     end
 
+    rect rgb(200, 230, 201)
+    note over User: IMPORTING DATASET/CREATING A PROJECT
+    GUI->>GUI: Auto-detect file format (CSV / Excel)
+    GUI->>App: init_session(selected_file)
+    App-->>GUI: ImporterSession
+    GUI->>GUI Session: STORES: import_session
+    GUI->>GUI: load_preview(5 rows)
+    GUI-->>User: SHOWS: Data preview grid
+
+    opt User adjusts import options
+        rect rgb(255, 235, 156)
+            User->>GUI: CLICKS: "Change Import Options"
+            GUI-->>User: SHOWS: Import options dialog
+            User->>GUI: MODIFIES: delimiter, quote char, header, skip rows
+            GUI->>GUI Session: UPDATE: import_session
+            GUI->>GUI: load_preview(5 rows)
+            GUI-->>User: SHOWS: Updated preview
+        end
+    end
+
+    User->>GUI: CLICKS: "Import and Create Project"
+    GUI->>App: create_project(name, importer_session)
+    App->>App: import_as_parquet(temp_file)
+    App->>AppStorage: init_project(display_name, parquet_path)
+    AppStorage-->>App: ProjectModel
+    App-->>GUI: ProjectContext
+    GUI->>GUI Session: STORES: current_project
+    GUI-->>User: SHOWS: Configure Analysis
+    end
 ```

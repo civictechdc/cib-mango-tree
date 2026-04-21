@@ -1,13 +1,16 @@
 from collections.abc import Awaitable, Callable
+from pathlib import Path
 
 from fastapi import File, UploadFile
 from nicegui import app, ui
 
-from gui.component_path import create_vue_dist_path
+
+def _vue_dist_path(file_path: str, js_path: str) -> str:
+    return (Path(file_path).parent / js_path).resolve().as_posix()
 
 
 class UploadButton(
-    ui.element, component=create_vue_dist_path(__file__, "../dist/UploadButton.js")
+    ui.element, component=_vue_dist_path(__file__, "../dist/UploadButton.js")
 ):
     def __init__(
         self,

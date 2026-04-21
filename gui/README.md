@@ -10,11 +10,7 @@ The `/gui` module provides a desktop application interface for CIB Mango Tree, b
 
 ## Running in Development Mode
 
-There are two entry points that launch the GUI:
-
-```
-python cibmangotree.py --gui
-```
+If you've setup the [development environment](https://civictechdc.github.io/cib-mango-tree/guides/get-started/installation/#setting-up-development-environment), navigate to the root folder and launch the gui entry point:
 
 ```
 python cibmangotree_gui.py
@@ -180,10 +176,16 @@ sequenceDiagram
 
     User->>GUI: CLICKS: "Import and Create Project"
     GUI->>App: create_project(name, importer_session)
-    App->>App: import_as_parquet(temp_file)
-    App->>AppStorage: init_project(display_name, parquet_path)
-    AppStorage-->>App: ProjectModel
-    App-->>GUI: ProjectContext
+    activate App
+        App->>App: import_as_parquet(temp_file)
+        App->>AppStorage: init_project(display_name, parquet_path)
+    deactivate App
+        activate AppStorage
+            AppStorage-->>App: ProjectModel
+        deactivate AppStorage
+    activate App 
+        App-->>GUI: ProjectContext
+    deactivate App
     GUI->>GUI Session: STORES: current_project
     GUI-->>User: SHOWS: Configure Analysis
     end

@@ -77,7 +77,7 @@ class SelectProjectPage(GuiPage):
 
                     async def open_manage_projects():
                         """Open the Manage Projects dialog."""
-                        from gui.projects import ManageProjectsDialog
+                        from gui.components.manage_projects import ManageProjectsDialog
 
                         dialog = ManageProjectsDialog(session=self.session)
                         result = await dialog

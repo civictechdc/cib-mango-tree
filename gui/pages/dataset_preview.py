@@ -5,7 +5,7 @@ from typing import cast
 from nicegui import ui
 
 from gui.base import GuiPage
-from gui.import_options import ImportOptionsDialog
+from gui.components.import_options import ImportOptionsDialog
 from gui.routes import gui_routes
 from gui.session import GuiSession
 from importing.csv import CSVImporter

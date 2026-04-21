@@ -36,20 +36,14 @@ class SelectPreviousAnalyzerPage(GuiPage):
     def render_content(self) -> None:
         """Render previous analysis selection interface."""
         # Ensure a project is selected
-        if not self.session.current_project:
-            self.notify_warning("No project selected. Redirecting...")
-            self.navigate_to("/select_project")
+        if not self.require_project():
             return
 
         # Store analyses as instance state so the grid can be updated in place
         self.analysis_contexts = self.session.current_project.list_analyses()
 
         # Main content - centered
-        with (
-            ui.column()
-            .classes("items-center justify-center gap-6")
-            .style("width: 100%; max-width: 800px; margin: 0 auto; height: 80vh;")
-        ):
+        with self.centered_content(max_width="800px"):
             ui.label("Review a Previous Analysis").classes("text-lg")
 
             if self.analysis_contexts:

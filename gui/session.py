@@ -88,7 +88,7 @@ class GuiSession(BaseModel):
 
     def validate_file_selected(self) -> bool:
         """Check if a file is currently selected."""
-        return self.selected_file_path is not None
+        return self.selected_file is not None
 
     def validate_project_name_set(self) -> bool:
         """Check if new project name is set."""

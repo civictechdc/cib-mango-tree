@@ -46,13 +46,7 @@ class SelectProjectPage(GuiPage):
                     project.display_name: project for project in projects
                 }
 
-                with (
-                    ui.column()
-                    .classes("items-center justify-center gap-6")
-                    .style(
-                        "width: 100%; max-width: 600px; margin: 0 auto; height: 80vh;"
-                    )
-                ):
+                with self.centered_content(max_width="600px"):
                     selected_project = (
                         ui.select(
                             label="Select a project",

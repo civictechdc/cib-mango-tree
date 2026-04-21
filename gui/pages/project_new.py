@@ -19,11 +19,7 @@ class NewProjectPage(GuiPage):
 
     def render_content(self) -> None:
         # Main content - centered vertically and horizontally
-        with (
-            ui.column()
-            .classes("items-center justify-center gap-6")
-            .style("width: 100%; max-width: 600px; margin: 0 auto; height: 80vh;")
-        ):
+        with self.centered_content(max_width="600px"):
             # Store the input widget locally (not in session)
             new_project_name_input = ui.input(
                 label="New Project Name",

@@ -43,16 +43,10 @@ class AnalysisConfigAndRunPage(GuiPage):
 
     def render_content(self) -> None:
         """Render the stepper with all configuration steps."""
-        if not self.session.current_project:
-            self.notify_warning("No project selected. Redirecting...")
-            self.navigate_to(gui_routes.select_project)
+        if not self.require_project():
             return
 
-        with (
-            ui.column()
-            .classes("items-center justify-start gap-6")
-            .style("width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem;")
-        ):
+        with self.centered_content(max_width="1200px", justify="start", padding="2rem"):
             with (
                 ui.stepper()
                 .props("horizontal animated")
@@ -128,10 +122,7 @@ class AnalysisConfigAndRunPage(GuiPage):
             with ui.element().classes("pt-6 w-full items-center"):
                 self.steps["run"] = RunAnalysisStep(
                     session=self.session,
-                    notify_success=self.notify_success,
-                    notify_warning=self.notify_warning,
-                    notify_error=self.notify_error,
-                    navigate_to=self.navigate_to,
+                    page=self,
                 )
                 self.steps["run"].render()
 

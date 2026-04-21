@@ -17,12 +17,7 @@ class PostAnalysisPage(GuiPage):
         )
 
     def render_content(self):
-
-        with (
-            ui.column()
-            .classes("items-center justify-center")
-            .style("height: 80vh; width: 100%")
-        ):
+        with self.centered_content():
             # Prompt label
             ui.label("What would you like to do next?").classes("q-mb-lg").style(
                 "font-size: 1.05rem"

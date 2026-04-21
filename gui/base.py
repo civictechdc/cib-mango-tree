@@ -8,12 +8,14 @@ This module provides:
 """
 
 import abc
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Generator
 
 from nicegui import ui
 from pydantic import BaseModel, ConfigDict
 
+from gui.routes import gui_routes
 from gui.session import GuiSession
 from gui.theme import gui_colors, gui_urls
 
@@ -275,6 +277,39 @@ class GuiPage(BaseModel, abc.ABC):
     def notify_error(self, message: str) -> None:
         """Show error notification."""
         ui.notify(message, type="negative")
+
+    @contextmanager
+    def centered_content(
+        self,
+        max_width: str | None = None,
+        height: str = "80vh",
+        padding: str | None = None,
+        justify: str = "center",
+    ) -> Generator[ui.column, None, None]:
+        style = f"height: {height}; width: 100%"
+        if max_width:
+            style += f"; max-width: {max_width}; margin: 0 auto"
+        if padding:
+            style += f"; padding: {padding}"
+        container = (
+            ui.column().classes(f"items-center justify-{justify} gap-6").style(style)
+        )
+        with container:
+            yield container
+
+    def require_project(self) -> bool:
+        if not self.session.current_project:
+            self.notify_warning("No project selected. Redirecting...")
+            self.navigate_to(gui_routes.select_project)
+            return False
+        return True
+
+    def require_file(self) -> bool:
+        if not self.session.selected_file:
+            self.notify_warning("No file selected. Redirecting...")
+            self.navigate_to(gui_routes.import_dataset)
+            return False
+        return True
 
 
 # standalone uitility functions

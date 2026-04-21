@@ -35,11 +35,7 @@ class ImportDatasetPage(GuiPage):
         selected_file_path = None
 
         # Main content - centered vertically and horizontally
-        with (
-            ui.column()
-            .classes("items-center justify-center gap-6")
-            .style("width: 100%; max-width: 800px; margin: 0 auto; height: 80vh;")
-        ):
+        with self.centered_content(max_width="800px"):
             ui.label("Choose a dataset file.").classes("text-lg")
 
             # File info card (initially hidden)

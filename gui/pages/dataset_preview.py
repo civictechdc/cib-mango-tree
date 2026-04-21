@@ -144,12 +144,8 @@ class PreviewDatasetPage(GuiPage):
                     print(f"Project creation error:\n{format_exc()}")
 
             # Main content area - centered
-            with (
-                ui.column()
-                .classes("items-center justify-center gap-6")
-                .style(
-                    "width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem; min-height: 70vh;"
-                )
+            with self.centered_content(
+                max_width="1200px", height="70vh", padding="2rem"
             ):
                 # Data Preview (with container for dynamic updates)
                 data_preview_container = ui.column().classes("w-full")

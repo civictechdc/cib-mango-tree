@@ -25,11 +25,7 @@ class StartPage(GuiPage):
     def render_content(self) -> None:
         """Render main page content with action buttons."""
         # Main content area - centered vertically
-        with (
-            ui.column()
-            .classes("items-center justify-center")
-            .style("height: 80vh; width: 100%")
-        ):
+        with self.centered_content():
             # Prompt label
             ui.label("Let's get started! What do you want to do?").classes(
                 "q-mb-lg"

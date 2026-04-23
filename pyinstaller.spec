@@ -48,7 +48,7 @@ a = Analysis(
 
         # NiceGUI static files (required for GUI mode)
         (os.path.join(site_packages_path, 'nicegui'), 'nicegui')
-        # Note: pywebview data files are handled by custom hook in ./hooks/
+        # Note: pywebview data files are handled by pywebview's built-in pyinstaller hook
     ],
     hiddenimports=[
         'readchar',
@@ -93,7 +93,6 @@ a = Analysis(
         'pywebview',
         'pywebview.platforms',
     ],  # Include any imports that PyInstaller might miss
-    hookspath=['./hooks'],  # Use custom hooks to override broken pywebview hook
     runtime_hooks=[],
     excludes=[],
 )

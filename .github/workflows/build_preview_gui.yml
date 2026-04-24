@@ -103,7 +103,7 @@ jobs:
           FILENAME="CIBMangoTree_${ARTIFACT_NAME}-${VERSION_STRING}.zip"
 
           if [ "${{ matrix.os }}" = "windows-2022" ]; then
-            powershell -Command "Compress-Archive -Path dist\CIBMangoTree\* -DestinationPath dist\${FILENAME}"
+            powershell -Command "Compress-Archive -Path 'dist/CIBMangoTree/*' -DestinationPath 'dist/${FILENAME}'"
           else
             cd dist && zip -r "${FILENAME}" CIBMangoTree.app
           fi

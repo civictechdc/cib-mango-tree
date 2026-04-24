@@ -86,23 +86,36 @@ jobs:
           echo "Looking for: ${{ matrix.executable_name }}"
 
       - name: Package artifact
+        id: package
         shell: bash
         run: |
           VERSION="${{ github.event.inputs.version_name }}"
           SHA="${{ steps.commit_info.outputs.sha_short }}"
           ARTIFACT_NAME="${{ matrix.artifact_name }}"
 
-          if [ "${{ matrix.os }}" = "windows-2022" ]; then
-            powershell -Command "Compress-Archive -Path dist\CIBMangoTree.exe -DestinationPath dist\CIBMangoTree_${ARTIFACT_NAME}-${VERSION}-${SHA}.zip"
+          # Build version string: include SHA only if present
+          if [ -n "$SHA" ]; then
+            VERSION_STRING="${VERSION}-${SHA}"
           else
-            cd dist && zip -r "CIBMangoTree_${ARTIFACT_NAME}-${VERSION}-${SHA}.zip" CIBMangoTree.app
+            VERSION_STRING="${VERSION}"
           fi
+
+          FILENAME="CIBMangoTree_${ARTIFACT_NAME}-${VERSION_STRING}.zip"
+
+          if [ "${{ matrix.os }}" = "windows-2022" ]; then
+            powershell -Command "Compress-Archive -Path dist\CIBMangoTree\* -DestinationPath dist\${FILENAME}"
+          else
+            cd dist && zip -r "${FILENAME}" CIBMangoTree.app
+          fi
+
+          echo "filename=${FILENAME}" >> $GITHUB_OUTPUT
+          echo "artifact_name=CIBMangoTree_${ARTIFACT_NAME}-${VERSION_STRING}" >> $GITHUB_OUTPUT
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CIBMangoTree_${{ matrix.artifact_name }}-${{ github.event.inputs.version_name }}-${{ steps.commit_info.outputs.sha_short }}
-          path: dist/CIBMangoTree_${{ matrix.artifact_name }}-${{ github.event.inputs.version_name }}-${{ steps.commit_info.outputs.sha_short }}.zip
+          name: ${{ steps.package.outputs.artifact_name }}
+          path: dist/${{ steps.package.outputs.filename }}
           retention-days: 30
       
       - name: Create Draft Release
@@ -113,7 +126,7 @@ jobs:
           prerelease: true
           tag_name: gui-preview-${{ github.event.inputs.version_name }}-${{ steps.commit_info.outputs.sha_short }}
           name: "🖥️ GUI Preview: ${{ github.event.inputs.version_name }}"
-          files: dist/CIBMangoTree_${{ matrix.artifact_name }}-${{ github.event.inputs.version_name }}-${{ steps.commit_info.outputs.sha_short }}.zip
+          files: dist/${{ steps.package.outputs.filename }}
           body: |
             # 🧪 GUI Preview Build
 

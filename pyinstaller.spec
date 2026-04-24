@@ -140,16 +140,25 @@ if sys.platform == "darwin":
         },
     )
 else:
+    # Windows/Linux: onedir mode (avoids runtime temp extraction issues with antivirus)
     exe = EXE(
         pyz,
         a.scripts,
-        a.binaries,
-        a.zipfiles,
-        a.datas,
-        name='CIBMangoTree',  # The name of the executable
+        exclude_binaries=True,  # onedir structure
+        name='CIBMangoTree',
         debug=False,
         strip=False,
         upx=True,
         console=False,  # No console window for GUI app
         icon=None,  # Add icon path when available (e.g., 'icon.ico' for Windows)
+    )
+
+    coll = COLLECT(
+        exe,
+        a.binaries,
+        a.zipfiles,
+        a.datas,
+        strip=False,
+        upx=True,
+        name='CIBMangoTree',
     )

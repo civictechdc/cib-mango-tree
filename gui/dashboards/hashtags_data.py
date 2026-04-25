@@ -10,7 +10,13 @@ from datetime import datetime
 
 import polars as pl
 
-from analyzers.hashtags.hashtags_base.interface import COL_AUTHOR_ID, COL_POST, COL_TIME
+from analyzers.hashtags.hashtags_base.interface import (
+    COL_AUTHOR_ID,
+    COL_POST,
+    COL_TIME,
+    OUTPUT_COL_HASHTAGS,
+    SECONDARY_COL_USERS_ALL,
+)
 from analyzers.hashtags.hashtags_web.analysis import secondary_analyzer
 from app.project_context import _get_columns_with_semantic
 from gui.session import GuiSession
@@ -125,3 +131,34 @@ def run_secondary_analysis(
         DataFrame with per-hashtag stats (hashtags, users_all, users_unique, hashtag_perc).
     """
     return secondary_analyzer(df_primary, timewindow)
+
+
+def extract_users_for_hashtag(
+    df_secondary: pl.DataFrame,
+    hashtag: str,
+) -> pl.DataFrame:
+    """
+    Extract users who posted a specific hashtag from secondary analysis output.
+
+    Args:
+        df_secondary: Output of secondary_analyzer() with columns:
+                      hashtags, users_all, users_unique, hashtag_perc
+        hashtag: The hashtag to filter by.
+
+    Returns:
+        DataFrame with columns: User, Posts (sorted by Posts descending).
+        Empty DataFrame if hashtag not found.
+    """
+    hashtag_rows = df_secondary.filter(pl.col(OUTPUT_COL_HASHTAGS) == hashtag)
+
+    if hashtag_rows.is_empty():
+        return pl.DataFrame()
+
+    users_col = hashtag_rows[SECONDARY_COL_USERS_ALL].to_list()[0]
+    return (
+        pl.DataFrame({SECONDARY_COL_USERS_ALL: users_col})
+        .group_by(SECONDARY_COL_USERS_ALL)
+        .agg(pl.count().alias("count"))
+        .sort("count", descending=True)
+        .rename({SECONDARY_COL_USERS_ALL: "User", "count": "Posts"})
+    )

@@ -6,7 +6,7 @@ from nicegui import ui
 
 from app import App
 from gui.context import GUIContext
-from gui.dashboards import BaseDashboardPage, NgramsDashboardPage
+from gui.dashboards import BaseDashboardPage, HashtagsDashboardPage, NgramsDashboardPage
 from gui.pages import (
     AnalysisConfigAndRunPage,
     ImportDatasetPage,
@@ -24,6 +24,7 @@ from gui.session import GuiSession
 # Maps primary analyzer IDs to their dashboard page classes.
 # Add an entry here when a new dashboard is implemented.
 _DASHBOARD_REGISTRY: dict[str, type[BaseDashboardPage]] = {
+    "hashtags": HashtagsDashboardPage,
     "ngrams": NgramsDashboardPage,
 }
 

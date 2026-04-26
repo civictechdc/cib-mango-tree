@@ -11,8 +11,6 @@ from datetime import datetime
 import polars as pl
 
 from analyzers.hashtags.hashtags_base.interface import (
-    COL_AUTHOR_ID,
-    COL_POST,
     COL_TIME,
     OUTPUT_COL_HASHTAGS,
     SECONDARY_COL_USERS_ALL,
@@ -36,7 +34,7 @@ def load_transformed_raw_input(session: GuiSession) -> pl.DataFrame:
         session: GuiSession with current_analysis and app context.
 
     Returns:
-        Transformed DataFrame with schema columns (COL_TIME, COL_AUTHOR_ID, COL_POST).
+        Transformed DataFrame with schema columns (e.g., COL_TIME, COL_AUTHOR_ID, COL_POST).
     """
     analysis = session.current_analysis
     if analysis is None:
@@ -50,26 +48,28 @@ def load_transformed_raw_input(session: GuiSession) -> pl.DataFrame:
     columns_with_semantic = _get_columns_with_semantic(df_raw)
     semantic_dict = {col.name: col for col in columns_with_semantic}
 
-    column_names = [COL_TIME, COL_AUTHOR_ID, COL_POST]
+    column_mapping = analysis.column_mapping
+    if column_mapping is None:
+        raise ValueError("No column mapping found in analysis")
+
     transformed_columns = {}
-    for col_name in column_names:
-        if col_name in semantic_dict:
-            transformed_columns[col_name] = semantic_dict[
-                col_name
+    for schema_col, user_col in column_mapping.items():
+        if user_col in semantic_dict:
+            transformed_columns[schema_col] = semantic_dict[
+                user_col
             ].apply_semantic_transform()
         else:
-            transformed_columns[col_name] = df_raw[col_name]
+            transformed_columns[schema_col] = df_raw[user_col]
 
     df_transformed = df_raw.with_columns(
-        [transformed_columns[col_name].alias(col_name) for col_name in column_names]
+        [
+            transformed_columns[schema_col].alias(schema_col)
+            for schema_col in column_mapping.keys()
+        ]
     )
 
-    column_mapping = analysis.column_mapping
     df_transformed = df_transformed.select(
-        [
-            pl.col(orig_col).alias(schema_col)
-            for schema_col, orig_col in column_mapping.items()
-        ]
+        [pl.col(schema_col) for schema_col in column_mapping.keys()]
     ).sort(pl.col(COL_TIME))
 
     return df_transformed

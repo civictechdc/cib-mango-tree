@@ -480,6 +480,16 @@ class HashtagsDashboardPage(BaseDashboardPage):
 
     def render_content(self) -> None:
         """Render the dashboard with ranked lists layout."""
+        ui.add_css(
+            """
+            .ag-row {
+                cursor: pointer !important;
+            }
+            .ag-row-hover {
+                background-color: #e3f2fd !important;
+            }
+            """
+        )
         with ui.row().classes("w-full justify-center"):
             with ui.column().classes("w-3/4 q-pa-md gap-4"):
                 # -- Gini line plot ----------------------------------
@@ -537,7 +547,7 @@ class HashtagsDashboardPage(BaseDashboardPage):
                                 .style("height: 300px")
                             )
                             self._hashtag_grid.on(
-                                "rowClicked", self._handle_hashtag_click
+                                "cellClicked", self._handle_hashtag_click
                             )
 
                     # User ranked list
@@ -571,7 +581,7 @@ class HashtagsDashboardPage(BaseDashboardPage):
                                 .classes("w-full")
                                 .style("height: 300px")
                             )
-                            self._user_grid.on("rowClicked", self._handle_user_click)
+                            self._user_grid.on("cellClicked", self._handle_user_click)
 
                 # -- Tweet Explorer ----------------------------------
                 with ui.card().classes("w-full"):

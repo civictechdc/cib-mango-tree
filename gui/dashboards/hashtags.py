@@ -143,13 +143,16 @@ class HashtagsDashboardPage(BaseDashboardPage):
 
     def _handle_gini_click(self, e) -> None:
         """Handle click on Gini line plot point."""
-        clicked_value = e.data
-        if clicked_value is None or len(clicked_value) < 1:
+        clicked_data = e.data
+        if clicked_data is None:
             return
 
-        time_str = clicked_value[0]
+        raw_ts = clicked_data.get("raw_ts")
+        if raw_ts is None:
+            return
+
         try:
-            timewindow = datetime.strptime(time_str, "%Y-%m-%d %H:%M")
+            timewindow = datetime.strptime(raw_ts, "%Y-%m-%d %H:%M")
         except ValueError:
             return
 

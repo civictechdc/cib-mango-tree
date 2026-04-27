@@ -17,7 +17,6 @@ from analyzers.hashtags.hashtags_base.interface import (
     COL_AUTHOR_ID,
     COL_POST,
     COL_TIME,
-    OUTPUT_COL_GINI,
     OUTPUT_COL_HASHTAGS,
     OUTPUT_COL_TIMESPAN,
     SECONDARY_COL_HASHTAG_PERC,
@@ -25,6 +24,7 @@ from analyzers.hashtags.hashtags_base.interface import (
 )
 from analyzers.hashtags.hashtags_web.analysis import secondary_analyzer
 from gui.dashboards.hashtags_data import (
+    USER_DATE_FORMAT,
     extract_users_for_hashtag,
     load_primary_output,
     load_transformed_raw_input,
@@ -346,7 +346,7 @@ class HashtagsDashboardPage(BaseDashboardPage):
             self._hashtag_info.text = "Loading hashtag data..."
         else:
             n_hashtags = len(self._df_secondary)
-            date_str = self._selected_timewindow.strftime("%B %d, %Y %H:%M")
+            date_str = self._selected_timewindow.strftime(USER_DATE_FORMAT)
             self._hashtag_info.text = (
                 f"{n_hashtags} hashtags found in window starting {date_str}"
             )
@@ -470,7 +470,7 @@ class HashtagsDashboardPage(BaseDashboardPage):
 
         self._update_tweet_grid(df_tweets)
         self._show_content(self._tweet_loading, self._tweet_content)
-        self._update_tweet_info(len(df_tweets))
+        self._update_tweet_info(count=len(df_tweets))
 
     @staticmethod
     def _filter_tweets(
@@ -519,9 +519,12 @@ class HashtagsDashboardPage(BaseDashboardPage):
 
     def _update_tweet_info(self, count: int) -> None:
         """Update info label for tweet panel."""
+        timewindow_end = self._selected_timewindow + self._get_time_step()
+        date_end = timewindow_end.strftime(USER_DATE_FORMAT)
+        date_start = self._selected_timewindow.strftime(USER_DATE_FORMAT)
         if self._tweet_info is None:
             return
-        self._tweet_info.text = f"{count} posts found"
+        self._tweet_info.text = f"{count} posts found for account {self._selected_user} between {date_start} and {date_end}"
 
     def _clear_tweet_grid(self) -> None:
         """Clear tweet grid and reset state."""

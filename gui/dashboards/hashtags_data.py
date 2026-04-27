@@ -19,6 +19,8 @@ from analyzers.hashtags.hashtags_web.analysis import secondary_analyzer
 from app.project_context import _get_columns_with_semantic
 from gui.session import GuiSession
 
+USER_DATE_FORMAT = "%B %d, %Y %H:%M"
+
 
 def load_transformed_raw_input(session: GuiSession) -> pl.DataFrame:
     """

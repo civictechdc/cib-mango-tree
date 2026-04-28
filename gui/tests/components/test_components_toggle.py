@@ -2,12 +2,13 @@
 
 import pytest
 from nicegui import ui
+from nicegui.testing import User
 
 from gui.components.toggle import ToggleButtonGroup
 
 
 @pytest.mark.asyncio
-async def test_toggle_group_renders_buttons(user) -> None:
+async def test_toggle_group_renders_buttons(user: User) -> None:
     @ui.page("/tg")
     def page() -> None:
         group = ToggleButtonGroup()

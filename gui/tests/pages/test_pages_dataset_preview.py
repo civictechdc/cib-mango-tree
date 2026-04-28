@@ -2,6 +2,7 @@
 
 import pytest
 from nicegui import ui
+from nicegui.testing import User
 
 from gui.pages.dataset_preview import PreviewDatasetPage
 from gui.session import GuiSession
@@ -9,7 +10,7 @@ from gui.session import GuiSession
 
 @pytest.mark.asyncio
 async def test_preview_redirects_when_no_file_selected(
-    user, gui_session: GuiSession
+    user: User, gui_session: GuiSession
 ) -> None:
     @ui.page("/preview_dataset")
     def page() -> None:
@@ -21,7 +22,7 @@ async def test_preview_redirects_when_no_file_selected(
 
 @pytest.mark.asyncio
 async def test_preview_redirects_when_format_not_detected(
-    user, gui_session: GuiSession
+    user: User, gui_session: GuiSession
 ) -> None:
     gui_session.selected_file = __import__("io").BytesIO(b"x")
     gui_session.selected_file_name = "x.bin"

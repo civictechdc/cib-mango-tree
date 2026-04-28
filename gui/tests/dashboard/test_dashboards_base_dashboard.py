@@ -2,6 +2,7 @@
 
 import pytest
 from nicegui import ui
+from nicegui.testing import User
 
 from gui.dashboards.base_dashboard import BaseDashboardPage
 from gui.session import GuiSession
@@ -14,7 +15,7 @@ class _StubDashboard(BaseDashboardPage):
 
 @pytest.mark.asyncio
 async def test_base_dashboard_renders_content(
-    user, gui_session_with_project: GuiSession
+    user: User, gui_session_with_project: GuiSession
 ) -> None:
     gui_session_with_project.selected_analyzer_name = "Demo Analyzer"
 

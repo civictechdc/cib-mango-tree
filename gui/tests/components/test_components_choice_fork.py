@@ -2,12 +2,13 @@
 
 import pytest
 from nicegui import ui
+from nicegui.testing import User
 
 from gui.components.choice_fork import two_button_choice_fork_content
 
 
 @pytest.mark.asyncio
-async def test_two_button_choice_fork_renders_prompt(user) -> None:
+async def test_two_button_choice_fork_renders_prompt(user: User) -> None:
     @ui.page("/fork")
     def page() -> None:
         two_button_choice_fork_content(

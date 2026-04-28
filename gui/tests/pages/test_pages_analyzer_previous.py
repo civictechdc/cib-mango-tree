@@ -2,6 +2,7 @@
 
 import pytest
 from nicegui import ui
+from nicegui.testing import User
 
 from gui.pages.analyzer_previous import SelectPreviousAnalyzerPage
 from gui.session import GuiSession
@@ -9,7 +10,7 @@ from gui.session import GuiSession
 
 @pytest.mark.asyncio
 async def test_previous_analyzer_empty_state(
-    user, gui_session_with_project: GuiSession
+    user: User, gui_session_with_project: GuiSession
 ) -> None:
     @ui.page("/prev")
     def page() -> None:

@@ -1,4 +1,8 @@
-"""NiceGUI pytest fixtures and shared GUI session mocks."""
+"""NiceGUI pytest fixtures and shared GUI session mocks.
+
+See https://nicegui.io/documentation/section_testing — tests use
+``from nicegui.testing import User`` and ``user: User`` on async tests.
+"""
 
 from __future__ import annotations
 
@@ -10,7 +14,6 @@ from app import App
 from gui.context import GUIContext
 from gui.session import GuiSession
 
-# Load user simulation only (full `nicegui.testing.plugin` pulls Selenium screen support).
 pytest_plugins = (
     "nicegui.testing.general_fixtures",
     "nicegui.testing.user_plugin",

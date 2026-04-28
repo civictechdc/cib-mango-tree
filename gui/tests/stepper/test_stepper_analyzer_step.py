@@ -2,6 +2,7 @@
 
 import pytest
 from nicegui import ui
+from nicegui.testing import User
 
 from gui.components.stepper_steps.analyzer_step import AnalyzerSelectionStep
 from gui.session import GuiSession
@@ -9,7 +10,7 @@ from gui.session import GuiSession
 
 @pytest.mark.asyncio
 async def test_analyzer_selection_empty_suite_message(
-    user, gui_session: GuiSession
+    user: User, gui_session: GuiSession
 ) -> None:
     step = AnalyzerSelectionStep(gui_session)
 

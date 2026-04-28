@@ -4,16 +4,16 @@ overview: Create a small, behavior-documenting test set for `gui/` using NiceGUI
 todos:
   - id: inspect-gui-testable-behaviors
     content: Map every non-__init__ module in gui/ to one basic, current-behavior test.
-    status: pending
+    status: completed
   - id: add-session-and-routing-tests
     content: Add basic behavior tests for root gui modules (session, main_workflow, base, routes, context, theme).
-    status: pending
+    status: completed
   - id: add-basic-page-behavior-tests
     content: Add one small current-behavior test for each module in gui/pages, gui/components, gui/components/stepper_steps, and gui/dashboards.
-    status: pending
+    status: completed
   - id: run-targeted-gui-tests
     content: Execute gui/tests and confirm all new behavior-documentation tests pass.
-    status: pending
+    status: completed
 isProject: false
 ---
 
@@ -21,6 +21,68 @@ isProject: false
 
 ## Plan Location
 - This plan is stored in `gui/.cursor/plans/`.
+
+## NiceGUI official docs (testing & User simulation)
+
+Primary guide: [NiceGUI — Testing](https://nicegui.io/documentation/section_testing). The snippets below match the **`test_app.py`** / **`pytest.ini`** examples on that page; upstream source: [`website/documentation/content/section_testing.py`](https://github.com/zauberzeug/nicegui/blob/main/website/documentation/content/section_testing.py).
+
+### Canonical examples (`test_app.py` and `pytest.ini`)
+
+The docs pair a minimal **`test_app.py`** with **`pytest.ini`**. Tests use **`async def`**, annotate **`user: User`**, **`await user.open`**, **`await user.should_see`**, and **`user.find(...).click()`** (click is synchronous).
+
+**`test_app.py`** (from docs):
+
+```python
+from nicegui import ui
+from nicegui.testing import User
+
+async def test_click(user: User) -> None:
+    await user.open("/")
+    await user.should_see("Click me")
+    user.find(ui.button).click()
+    await user.should_see("Hello World!")
+```
+
+**`pytest.ini`** (from docs):
+
+```ini
+[pytest]
+asyncio_mode = auto
+main_file = app.py
+addopts = -p nicegui.testing.user_plugin
+```
+
+Meaning of each **`pytest.ini`** line:
+
+| Setting | Role |
+|---------|------|
+| **`asyncio_mode = auto`** | Lets pytest-asyncio run **`async def`** tests (required for **`user`**). See [User → async execution](https://nicegui.io/documentation/user#async_execution). |
+| **`main_file = app.py`** | Entry script containing **`ui.run(...)`** (and app **`@ui.page`** registrations). The plugin **`runpy`**-loads this file before tests so routes exist. |
+| **`addopts = -p nicegui.testing.user_plugin`** | Loads only the fast **`user`** fixture plugin; use **`-p nicegui.testing.plugin`** if you also need the **`screen`** (browser) fixture. |
+
+**Set main file** (official three options):
+
+1. Name the entry file **`main.py`** (default lookup).
+2. Set **`main_file`** in **`pytest.ini`** (or **`pyproject.toml`** **`[tool.pytest.ini_options]`**).
+3. Use **`@pytest.mark.nicegui_main_file("path/to/app.py")`** per test when multiple apps exist (NiceGUI ≥ 3.1).
+
+You still need **`asyncio_mode`** and the chosen plugin registered (**`pytest.ini`** **`addopts`** or **`conftest.py`** **`pytest_plugins`**).
+
+### How this repo maps (Mango Tree)
+
+| Docs pattern | This project |
+|--------------|----------------|
+| **`pytest.ini` `[pytest]`** | **`[tool.pytest.ini_options]`** in **`pyproject.toml`** (same keys: **`asyncio_mode`**, **`main_file`**, etc.). |
+| **`addopts = -p nicegui.testing.user_plugin`** | **`pytest_plugins`** in **`gui/tests/conftest.py`** loads **`nicegui.testing.general_fixtures`** + **`nicegui.testing.user_plugin`** (**`general_fixtures`** provides **`nicegui_reset_globals`** and ini hooks used by **`user_plugin`**). |
+| **`main_file = app.py`** | **`main_file = ""`** so the **`user`** fixture runs **`prepare_simulation()`** + **`ui.run(...)`** without **`runpy`**-loading a single app file; each test registers **`@ui.page(...)`** before **`await user.open(...)`**. Alternative: point **`main_file`** at a small script that registers Mango Tree routes (e.g. wraps **`gui_main`**). |
+| **`from nicegui.testing import User`** | Prefer on **`user`** parameters for typing (matches doc **`test_app.py`**). |
+
+Further upstream examples: [chat_app](https://github.com/zauberzeug/nicegui/tree/main/examples/chat_app), [todo_list](https://github.com/zauberzeug/nicegui/tree/main/examples/todo_list/), [authentication](https://github.com/zauberzeug/nicegui/tree/main/examples/authentication), [pytest example](https://github.com/zauberzeug/nicegui/tree/main/examples/pytests).
+
+### User fixture (quick reference)
+
+- [NiceGUI: User](https://nicegui.io/documentation/user): **`await user.open(path)`**; **`await user.should_see` / `should_not_see`**; **`user.find`** + **`.click()`** / **`.type(...)`**; **`ui.notify`** captured; **`ui.navigate`** replaced in simulation.
+- **`NICEGUI_USER_SIMULATION`** is set by the **`user`** fixture; do not set it manually in tests.
 
 ## Scope
 - Add a minimal set of tests under [`gui/tests`](gui/tests) to document **current** observable behavior only.
@@ -69,10 +131,10 @@ isProject: false
 - `GuiSession` reset/validation behavior in [`gui/session.py`](gui/session.py):
   - `reset_project_workflow()` clears project/import-related fields.
   - `reset_analysis_workflow()` clears analyzer/analysis-related fields.
-  - `has_project_name()`, `has_selected_file()`, `has_project()` return expected booleans from current state.
+  - Validation helpers (`validate_project_selected()`, `validate_file_selected()`, `validate_project_name_set()`) match current state (names in code may differ from older “has_*” wording).
 - Route/dashboard dispatch behavior in [`gui/main_workflow.py`](gui/main_workflow.py):
-  - `dashboard_view` chooses ngrams dashboard for analyzer id `ngrams`.
-  - Non-ngrams path renders fallback placeholder text.
+  - Dashboard route maps analyzer id `ngrams` to the ngrams dashboard class (`_DASHBOARD_REGISTRY`); logic lives in the dashboard page handler, not necessarily a named `dashboard_view` function.
+  - Unknown analyzer maps to fallback placeholder text (“Dashboard coming soon”, etc.).
 - Start/new-project page intent in [`gui/pages/start.py`](gui/pages/start.py) and [`gui/pages/project_new.py`](gui/pages/project_new.py):
   - Start page renders expected action controls.
   - New project submission with non-empty name stores `session.new_project_name` and proceeds.
@@ -99,4 +161,5 @@ isProject: false
   - `pytest gui/tests/test_session.py gui/tests/test_main_workflow.py gui/tests/test_base.py gui/tests/test_routes.py gui/tests/pages/test_pages_start.py gui/tests/pages/test_pages_project_new.py gui/tests/pages/test_pages_importer.py`
 - If clean, run broader sanity pass:
   - `pytest gui/tests/`
-- If NiceGUI plugin fixture import fails, add the minimal pytest plugin registration in test config as a follow-up (no other scope expansion).
+- Config: [`gui/tests/conftest.py`](../../tests/conftest.py) registers **`nicegui.testing.general_fixtures`** + **`nicegui.testing.user_plugin`**; [`pyproject.toml`](../../../pyproject.toml) sets **`main_file`** (empty), **`asyncio_mode`**, and **`pytest-asyncio`** (see [`requirements-dev.txt`](../../../requirements-dev.txt)).
+- Full **`nicegui.testing.plugin`** requires Selenium for **`screen`** tests; this suite uses user simulation only.

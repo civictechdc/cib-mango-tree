@@ -2,6 +2,7 @@
 
 import pytest
 from nicegui import ui
+from nicegui.testing import User
 
 from gui.pages.analysis_post import PostAnalysisPage
 from gui.session import GuiSession
@@ -9,7 +10,7 @@ from gui.session import GuiSession
 
 @pytest.mark.asyncio
 async def test_post_analysis_shows_next_steps(
-    user, gui_session_with_project: GuiSession
+    user: User, gui_session_with_project: GuiSession
 ) -> None:
     @ui.page("/post_analysis")
     def page() -> None:

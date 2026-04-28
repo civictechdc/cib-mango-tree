@@ -1,9 +1,8 @@
 """Behavior tests for gui.base utilities and GuiPage scaffolding."""
 
-from unittest.mock import MagicMock
-
 import pytest
 from nicegui import ui
+from nicegui.testing import User
 
 from gui.base import GuiPage, format_file_size, present_separator
 from gui.session import GuiSession
@@ -27,7 +26,7 @@ class _StubPage(GuiPage):
 
 @pytest.mark.asyncio
 async def test_gui_page_render_invokes_colors_header_content_footer(
-    user, gui_session: GuiSession
+    user: User, gui_session: GuiSession
 ) -> None:
     @ui.page("/stub-base")
     def page() -> None:

@@ -2,6 +2,7 @@
 
 import pytest
 from nicegui import ui
+from nicegui.testing import User
 
 from gui.pages.analyzer_select import SelectAnalyzerForkPage
 from gui.session import GuiSession
@@ -9,7 +10,7 @@ from gui.session import GuiSession
 
 @pytest.mark.asyncio
 async def test_analyzer_fork_shows_choice_prompt(
-    user, gui_session_with_project: GuiSession
+    user: User, gui_session_with_project: GuiSession
 ) -> None:
     @ui.page("/fork")
     def page() -> None:

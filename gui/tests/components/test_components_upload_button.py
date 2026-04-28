@@ -4,12 +4,13 @@ from unittest.mock import AsyncMock
 
 import pytest
 from nicegui import ui
+from nicegui.testing import User
 
 from gui.components.upload.upload_button import UploadButton
 
 
 @pytest.mark.asyncio
-async def test_upload_button_shows_label(user) -> None:
+async def test_upload_button_shows_label(user: User) -> None:
     @ui.page("/up")
     def page() -> None:
         UploadButton(AsyncMock(), "Browse Files", redirect_url="/preview_dataset")

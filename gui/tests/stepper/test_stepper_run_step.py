@@ -4,13 +4,16 @@ from unittest.mock import MagicMock
 
 import pytest
 from nicegui import ui
+from nicegui.testing import User
 
 from gui.components.stepper_steps.run_step import RunAnalysisStep
 from gui.session import GuiSession
 
 
 @pytest.mark.asyncio
-async def test_run_step_prompts_when_no_analyzer(user, gui_session: GuiSession) -> None:
+async def test_run_step_prompts_when_no_analyzer(
+    user: User, gui_session: GuiSession
+) -> None:
     page = MagicMock()
     step = RunAnalysisStep(gui_session, page)
 

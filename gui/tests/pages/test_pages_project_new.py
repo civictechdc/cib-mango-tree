@@ -2,6 +2,7 @@
 
 import pytest
 from nicegui import ui
+from nicegui.testing import User
 
 from gui.pages.project_new import NewProjectPage
 from gui.session import GuiSession
@@ -9,7 +10,7 @@ from gui.session import GuiSession
 
 @pytest.mark.asyncio
 async def test_new_project_empty_name_shows_warning(
-    user, gui_session: GuiSession
+    user: User, gui_session: GuiSession
 ) -> None:
     @ui.page("/new_project")
     def page() -> None:
@@ -22,7 +23,7 @@ async def test_new_project_empty_name_shows_warning(
 
 @pytest.mark.asyncio
 async def test_new_project_sets_session_and_advances_name(
-    user, gui_session: GuiSession
+    user: User, gui_session: GuiSession
 ) -> None:
     @ui.page("/new_project")
     def page() -> None:

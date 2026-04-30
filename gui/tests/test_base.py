@@ -1,6 +1,5 @@
 """Behavior tests for gui.base utilities and GuiPage scaffolding."""
 
-import pytest
 from nicegui import ui
 from nicegui.testing import User
 
@@ -24,7 +23,6 @@ class _StubPage(GuiPage):
         ui.label("stub-body")
 
 
-@pytest.mark.asyncio
 async def test_gui_page_render_invokes_colors_header_content_footer(
     user: User, gui_session: GuiSession
 ) -> None:

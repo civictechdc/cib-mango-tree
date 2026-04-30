@@ -2,7 +2,6 @@
 
 from io import BytesIO
 
-import pytest
 from nicegui import ui
 from nicegui.testing import User
 
@@ -10,7 +9,6 @@ from gui.components.import_options import ImportOptionsDialog
 from importing.csv import CsvImportSession
 
 
-@pytest.mark.asyncio
 async def test_import_options_dialog_builds_csv_controls(user: User) -> None:
     session = CsvImportSession(
         input_file=BytesIO(b"a,b\n1,2"),

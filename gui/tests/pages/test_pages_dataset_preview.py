@@ -1,6 +1,7 @@
 """Behavior tests for gui.pages.dataset_preview.PreviewDatasetPage."""
 
-import pytest
+from io import BytesIO
+
 from nicegui import ui
 from nicegui.testing import User
 
@@ -8,7 +9,6 @@ from gui.pages.dataset_preview import PreviewDatasetPage
 from gui.session import GuiSession
 
 
-@pytest.mark.asyncio
 async def test_preview_redirects_when_no_file_selected(
     user: User, gui_session: GuiSession
 ) -> None:
@@ -20,11 +20,10 @@ async def test_preview_redirects_when_no_file_selected(
     await user.should_see("No file selected. Redirecting")
 
 
-@pytest.mark.asyncio
 async def test_preview_redirects_when_format_not_detected(
     user: User, gui_session: GuiSession
 ) -> None:
-    gui_session.selected_file = __import__("io").BytesIO(b"x")
+    gui_session.selected_file = BytesIO(b"x")
     gui_session.selected_file_name = "x.bin"
     gui_session.selected_file_content_type = "application/octet-stream"
 

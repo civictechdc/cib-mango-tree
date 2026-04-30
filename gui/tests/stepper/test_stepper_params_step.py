@@ -2,7 +2,6 @@
 
 from unittest.mock import MagicMock
 
-import pytest
 from nicegui import ui
 from nicegui.testing import User
 
@@ -10,7 +9,6 @@ from gui.components.stepper_steps.params_step import ParamsConfigStep
 from gui.session import GuiSession
 
 
-@pytest.mark.asyncio
 async def test_params_step_no_params_message(
     user: User, gui_session: GuiSession
 ) -> None:

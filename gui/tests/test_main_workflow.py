@@ -1,6 +1,5 @@
 """Behavior tests for gui.main_workflow dashboard wiring."""
 
-import pytest
 from nicegui import ui
 from nicegui.testing import User
 
@@ -13,7 +12,6 @@ def test_dashboard_registry_maps_ngrams_to_dashboard_page() -> None:
     assert _DASHBOARD_REGISTRY.get("ngrams") is NgramsDashboardPage
 
 
-@pytest.mark.asyncio
 async def test_placeholder_dashboard_shows_coming_soon(
     user: User, gui_session: GuiSession
 ) -> None:

@@ -1,7 +1,5 @@
-"""NiceGUI pytest fixtures and shared GUI session mocks.
-
-See https://nicegui.io/documentation/section_testing — tests use
-``from nicegui.testing import User`` and ``user: User`` on async tests.
+"""
+NiceGUI pytest fixtures and shared GUI session mocks.
 """
 
 from __future__ import annotations
@@ -14,17 +12,13 @@ from app import App
 from gui.context import GUIContext
 from gui.session import GuiSession
 
-pytest_plugins = (
-    "nicegui.testing.general_fixtures",
-    "nicegui.testing.user_plugin",
-)
-
 
 @pytest.fixture
 def mock_app() -> MagicMock:
     app = MagicMock(spec=App)
     app.list_projects.return_value = []
     suite = MagicMock()
+    # Spelling matches analyzer_interface.suite.AnalyzerSuite.primary_anlyzers (production API).
     suite.primary_anlyzers = []
     suite.get_primary_analyzer.return_value = None
     ctx = MagicMock()

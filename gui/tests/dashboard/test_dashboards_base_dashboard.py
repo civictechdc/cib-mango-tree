@@ -1,6 +1,5 @@
 """Behavior tests for gui.dashboards.base_dashboard.BaseDashboardPage."""
 
-import pytest
 from nicegui import ui
 from nicegui.testing import User
 
@@ -13,7 +12,6 @@ class _StubDashboard(BaseDashboardPage):
         ui.label("stub-dashboard-body")
 
 
-@pytest.mark.asyncio
 async def test_base_dashboard_renders_content(
     user: User, gui_session_with_project: GuiSession
 ) -> None:

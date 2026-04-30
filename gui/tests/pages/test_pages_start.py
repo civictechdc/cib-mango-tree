@@ -1,6 +1,5 @@
 """Behavior tests for gui.pages.start.StartPage."""
 
-import pytest
 from nicegui import ui
 from nicegui.testing import User
 
@@ -8,7 +7,6 @@ from gui.pages.start import StartPage
 from gui.session import GuiSession
 
 
-@pytest.mark.asyncio
 async def test_start_page_shows_primary_actions(
     user: User, gui_session: GuiSession
 ) -> None:

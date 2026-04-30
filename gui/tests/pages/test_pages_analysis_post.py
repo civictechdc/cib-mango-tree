@@ -1,6 +1,5 @@
 """Behavior tests for gui.pages.analysis_post.PostAnalysisPage."""
 
-import pytest
 from nicegui import ui
 from nicegui.testing import User
 
@@ -8,7 +7,6 @@ from gui.pages.analysis_post import PostAnalysisPage
 from gui.session import GuiSession
 
 
-@pytest.mark.asyncio
 async def test_post_analysis_shows_next_steps(
     user: User, gui_session_with_project: GuiSession
 ) -> None:

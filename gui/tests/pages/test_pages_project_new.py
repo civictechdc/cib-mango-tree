@@ -1,6 +1,5 @@
 """Behavior tests for gui.pages.project_new.NewProjectPage."""
 
-import pytest
 from nicegui import ui
 from nicegui.testing import User
 
@@ -8,7 +7,6 @@ from gui.pages.project_new import NewProjectPage
 from gui.session import GuiSession
 
 
-@pytest.mark.asyncio
 async def test_new_project_empty_name_shows_warning(
     user: User, gui_session: GuiSession
 ) -> None:
@@ -21,7 +19,6 @@ async def test_new_project_empty_name_shows_warning(
     await user.should_see("Please enter a project name")
 
 
-@pytest.mark.asyncio
 async def test_new_project_sets_session_and_advances_name(
     user: User, gui_session: GuiSession
 ) -> None:

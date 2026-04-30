@@ -1,13 +1,11 @@
 """Behavior tests for gui.components.analysis.AnalysisParamsCard."""
 
-import pytest
 from nicegui import ui
 from nicegui.testing import User
 
 from gui.components.analysis import AnalysisParamsCard
 
 
-@pytest.mark.asyncio
 async def test_analysis_params_card_empty_shows_message(user: User) -> None:
     @ui.page("/analysis-card")
     def page() -> None:

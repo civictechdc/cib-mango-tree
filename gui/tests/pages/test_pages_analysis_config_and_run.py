@@ -1,6 +1,5 @@
 """Behavior tests for gui.pages.analysis_config_and_run.AnalysisConfigAndRunPage."""
 
-import pytest
 from nicegui import ui
 from nicegui.testing import User
 
@@ -8,7 +7,6 @@ from gui.pages.analysis_config_and_run import AnalysisConfigAndRunPage
 from gui.session import GuiSession
 
 
-@pytest.mark.asyncio
 async def test_analysis_config_requires_project(
     user: User, gui_session: GuiSession
 ) -> None:

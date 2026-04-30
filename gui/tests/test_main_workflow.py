@@ -4,7 +4,7 @@ from nicegui import ui
 from nicegui.testing import User
 
 from gui.dashboards.ngrams import NgramsDashboardPage
-from gui.main_workflow import _DASHBOARD_REGISTRY, _render_dashboard_placeholder
+from gui.dashboards import _DASHBOARD_REGISTRY, _render_dashboard_placeholder
 from gui.session import GuiSession
 
 

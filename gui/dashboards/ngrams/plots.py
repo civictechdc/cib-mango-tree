@@ -1,18 +1,16 @@
 """
-Framework-agnostic figure builders for the n-grams analyzer.
+Framework-agnostic ECharts figure builders for the n-grams analyzer.
 
-These functions accept a Polars DataFrame and return either a Plotly
-``Figure`` or an ECharts option dict.  They have no dependency on Shiny,
-Dash, or NiceGUI and can therefore be imported from any GUI layer.
+These functions accept a Polars DataFrame and return an ECharts option dict.
+They have no dependency on Shiny, Dash, or NiceGUI.
 """
 
 import numpy as np
-import plotly.express as px
 import polars as pl
 from pydantic import BaseModel
 
-from ..ngrams_base.interface import COL_NGRAM_ID, COL_NGRAM_LENGTH
-from ..ngrams_stats.interface import (
+from analyzers.ngrams.ngrams_base.interface import COL_NGRAM_ID, COL_NGRAM_LENGTH
+from analyzers.ngrams.ngrams_stats.interface import (
     COL_NGRAM_DISTINCT_POSTER_COUNT,
     COL_NGRAM_TOTAL_REPS,
     COL_NGRAM_WORDS,
@@ -42,7 +40,6 @@ class SamplingMetadata(BaseModel):
 
     @property
     def sampling_message(self) -> str:
-        """Human-readable summary shown in the dashboard info label."""
         if not self.is_sampled:
             return f"Showing all {self.total_count:,} n-grams."
         return (
@@ -56,21 +53,6 @@ def sample_ngram_data(
     max_points: int = 50000,
     sort_column: str = COL_NGRAM_TOTAL_REPS,
 ) -> tuple[pl.DataFrame, SamplingMetadata]:
-    """
-    Sample n-gram data for visualization.
-
-    For datasets larger than max_points, returns the top N rows sorted by
-    frequency (total_reps). This preserves the most interesting data points
-    while keeping rendering performant.
-
-    Args:
-        df: Input DataFrame with n-gram statistics.
-        max_points: Maximum number of points to return (default 50,000).
-        sort_column: Column to sort by for sampling (default: total_reps).
-
-    Returns:
-        Tuple of (sampled_dataframe, SamplingMetadata).
-    """
     total_count = len(df)
 
     if total_count <= max_points:
@@ -91,93 +73,10 @@ def sample_ngram_data(
     )
 
 
-def plot_scatter(data: pl.DataFrame):
-    """
-    Build a log-log scatter plot of n-gram frequency vs. unique poster count.
-
-    Each point represents one n-gram.  Points are coloured by n-gram length
-    and carry ``customdata`` needed for click-based filtering:
-    ``[words, ngram_id, total_reps]``.
-
-    Args:
-        data: The ``ngram_stats`` Polars DataFrame (must contain the standard
-              n-gram statistics columns).
-
-    Returns:
-        A ``plotly.graph_objects.Figure`` ready to be passed to any Plotly
-        renderer (``ui.plotly``, ``dcc.Graph``, ``fig.show()``, …).
-    """
-    rng = np.random.default_rng(seed=42)
-    jitter_factor = 0.05
-
-    data = data.with_columns(
-        (
-            pl.col(COL_NGRAM_TOTAL_REPS)
-            * (1 + rng.uniform(-jitter_factor, jitter_factor, len(data)))
-        ).alias("total_reps_jittered")
-    )
-
-    n_gram_categories = data.select(
-        pl.col(COL_NGRAM_LENGTH).unique().sort()
-    ).to_series()
-
-    fig = px.scatter(
-        data_frame=data,
-        x=COL_NGRAM_DISTINCT_POSTER_COUNT,
-        y="total_reps_jittered",
-        log_y=True,
-        log_x=True,
-        custom_data=[COL_NGRAM_WORDS, COL_NGRAM_ID, COL_NGRAM_TOTAL_REPS],
-        color=COL_NGRAM_LENGTH,
-        category_orders={COL_NGRAM_LENGTH: n_gram_categories},
-    )
-
-    fig.update_traces(
-        marker=dict(size=11, opacity=0.7, line=dict(width=0.5, color="white")),
-        hovertemplate="<br>".join(
-            [
-                "<b>N-gram:</b> %{customdata[0]}",
-                "<b>Frequency:</b> %{customdata[2]}",
-                "<b>Nr. unique posters:</b> %{x}",
-            ]
-        ),
-    )
-
-    fig.update_layout(
-        title_text="Repeated phrases and accounts",
-        yaxis_title="N-gram frequency",
-        xaxis_title="Nr. unique posters",
-        hovermode="closest",
-        legend=dict(title="N-gram length"),
-        template="plotly_white",
-    )
-
-    return fig
-
-
 def plot_scatter_echart(
     data: pl.DataFrame,
     enable_large_mode: bool = True,
 ) -> dict:
-    """
-    Build a log-log scatter plot of n-gram frequency vs. unique poster count.
-
-    This is the ECharts equivalent of :func:`plot_scatter`.  Each point
-    represents one n-gram.  Points are coloured by n-gram length (one series
-    per unique ``n`` value).  Custom metadata (``ngram_id``, ``words``,
-    ``total_reps``) is attached to each data item for click-based filtering.
-
-    Args:
-        data: The ``ngram_stats`` Polars DataFrame (must contain the standard
-              n-gram statistics columns).
-        enable_large_mode: Inject ECharts large-dataset optimizations.
-            Should be True whenever data has more than ~2,000 points.
-
-    Returns:
-        A plain dict representing the ECharts option object, ready to be
-        passed to ``ui.echart(option)``.
-    """
-    # Apply jitter to y-axis values (same logic as plot_scatter)
     rng = np.random.default_rng(seed=42)
     jitter_factor = 0.05
 
@@ -188,12 +87,10 @@ def plot_scatter_echart(
         ).alias("total_reps_jittered")
     )
 
-    # Get sorted unique n-gram lengths for legend/series ordering
     n_values = (
         data.select(pl.col(COL_NGRAM_LENGTH).unique().sort()).to_series().to_list()
     )
 
-    # Build one series per n-gram length
     series = []
     for i, n in enumerate(n_values):
         subset = data.filter(pl.col(COL_NGRAM_LENGTH) == n)
@@ -222,14 +119,14 @@ def plot_scatter_echart(
             },
             "emphasis": {
                 "itemStyle": {
-                    "color": "#d62728",  # Highlight red color
+                    "color": "#d62728",
                     "opacity": 1.0,
                     "borderColor": "white",
                     "borderWidth": 1,
                     "shadowBlur": 10,
                     "shadowColor": "rgba(0, 0, 0, 0.3)",
                 },
-                "scale": 1.5,  # Make point 50% larger when emphasized
+                "scale": 1.5,
             },
             "data": series_data,
         }

@@ -6,7 +6,7 @@ from nicegui import ui
 
 from app import App
 from gui.context import GUIContext
-from gui.dashboards import BaseDashboardPage, NgramsDashboardPage
+from gui.dashboards import PlaceholderDashboard, get_dashboard
 from gui.pages import (
     AnalysisConfigAndRunPage,
     ImportDatasetPage,
@@ -20,36 +20,6 @@ from gui.pages import (
 )
 from gui.routes import gui_routes
 from gui.session import GuiSession
-
-# Maps primary analyzer IDs to their dashboard page classes.
-# Add an entry here when a new dashboard is implemented.
-_DASHBOARD_REGISTRY: dict[str, type[BaseDashboardPage]] = {
-    "ngrams": NgramsDashboardPage,
-}
-
-
-def _render_dashboard_placeholder(session: GuiSession) -> None:
-    """
-    Fallback page shown when the selected analyzer has no dashboard yet.
-
-    Reuses GuiPage infrastructure by creating a minimal inline page.
-    """
-
-    class _PlaceholderDashboard(BaseDashboardPage):
-        def render_content(self) -> None:
-            with (
-                ui.column()
-                .classes("items-center justify-center")
-                .style("height: 80vh; width: 100%")
-            ):
-                ui.icon("bar_chart", size="4rem").classes("text-grey-5")
-                ui.label("Dashboard coming soon").classes("text-h6 text-grey-6 q-mt-md")
-                ui.label(
-                    "A results dashboard for this analyzer is not yet available."
-                ).classes("text-grey-5")
-
-    page = _PlaceholderDashboard(session=session)
-    page.render()
 
 
 # maing GUI entry point
@@ -131,14 +101,13 @@ def gui_main(app: App):
         analyzer_id = (
             gui_session.selected_analyzer.id if gui_session.selected_analyzer else None
         )
-        dashboard_class = _DASHBOARD_REGISTRY.get(analyzer_id) if analyzer_id else None
+        dashboard_class = get_dashboard(analyzer_id)
 
         if dashboard_class is not None:
             page = dashboard_class(session=gui_session)
             page.render()
         else:
-            # Placeholder shown while a dashboard for this analyzer is not yet built
-            _render_dashboard_placeholder(gui_session)
+            PlaceholderDashboard(session=gui_session).render()
 
     # Launch in native mode
     ui.run(

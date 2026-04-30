@@ -4,7 +4,7 @@ from nicegui import ui
 from nicegui.testing import User
 
 from gui.dashboards.ngrams import NgramsDashboardPage
-from gui.dashboards import _DASHBOARD_REGISTRY, _render_dashboard_placeholder
+from gui.dashboards import _DASHBOARD_REGISTRY, PlaceholderDashboard
 from gui.session import GuiSession
 
 
@@ -17,7 +17,7 @@ async def test_placeholder_dashboard_shows_coming_soon(
 ) -> None:
     @ui.page("/placeholder-dash")
     def page() -> None:
-        _render_dashboard_placeholder(gui_session)
+        PlaceholderDashboard(gui_session).render()
 
     await user.open("/placeholder-dash")
     await user.should_see("Dashboard coming soon")

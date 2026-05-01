@@ -3,8 +3,8 @@
 from nicegui import ui
 from nicegui.testing import User
 
-from gui.dashboards.ngrams import NgramsDashboardPage
 from gui.dashboards import _DASHBOARD_REGISTRY, PlaceholderDashboard
+from gui.dashboards.ngrams import NgramsDashboardPage
 from gui.session import GuiSession
 
 

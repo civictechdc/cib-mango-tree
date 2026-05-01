@@ -12,3 +12,8 @@ VERSION
 .specify/
 node_modules
 ./gui/components/dist
+
+.vscode
+
+# cursor
+./gui/.cursor 

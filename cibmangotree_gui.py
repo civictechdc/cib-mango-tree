@@ -3,6 +3,16 @@ GUI entry point for CIB Mango Tree application.
 This launches the NiceGUI interface in native window mode.
 """
 
+import sys
+from pathlib import Path
+
+# Redirect stdout/stderr to a crash log for debugging frozen Windows builds.
+# Must be set before any imports to catch pywebview/nicegui startup errors.
+if getattr(sys, "frozen", False):
+    _crash_log = Path(sys.executable).parent / "mango_crash.log"
+    sys.stdout = open(_crash_log, "w", encoding="utf-8")
+    sys.stderr = sys.stdout
+
 import logging
 from multiprocessing import freeze_support
 from pathlib import Path

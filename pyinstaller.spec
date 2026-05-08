@@ -110,7 +110,7 @@ if sys.platform == "darwin":
         bootloader_ignore_signals=False,
         strip=True,
         upx=True,
-        console=False,  # No console window for GUI app
+        console=False,  # No console window for macOS GUI app
         entitlements_file="./mango.entitlements",
         codesign_identity=os.getenv('APPLE_APP_CERT_ID'),
     )
@@ -149,7 +149,7 @@ else:
         debug=False,
         strip=False,
         upx=True,
-        console=False,  # No console window for GUI app
+        console=True,  # Show console for debugging Windows silent-fail issue
         icon=None,  # Add icon path when available (e.g., 'icon.ico' for Windows)
     )
 

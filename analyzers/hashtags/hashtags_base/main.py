@@ -15,6 +15,7 @@ from .interface import (
     OUTPUT_COL_USERS,
     OUTPUT_GINI,
     PARAM_TIME_WINDOW,
+    PRIMARY_OUTPUT_DATETIME_FORMAT,
 )
 
 SMOOTH_WINDOW_SIZE = 3
@@ -97,7 +98,7 @@ def hashtag_analysis(data_frame: pl.DataFrame, progress, every="1h") -> pl.DataF
 
     # convert datetime back to string
     df_out = df_out.with_columns(
-        pl.col(OUTPUT_COL_TIMESPAN).dt.to_string("%Y-%m-%d %H:%M:%S")
+        pl.col(OUTPUT_COL_TIMESPAN).dt.to_string(PRIMARY_OUTPUT_DATETIME_FORMAT)
     )
 
     return df_out

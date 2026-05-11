@@ -12,6 +12,7 @@ import polars as pl
 from analyzers.hashtags.hashtags_base.interface import (
     OUTPUT_COL_GINI,
     OUTPUT_COL_TIMESPAN,
+    PRIMARY_OUTPUT_DATETIME_FORMAT,
 )
 
 MANGO_DARK_ORANGE = "#f3921e"
@@ -51,7 +52,7 @@ def plot_gini_echart(
     series_data = [
         {
             "value": [ts, gini],
-            "raw_ts": ts.strftime("%Y-%m-%d %H:%M"),
+            "raw_ts": ts.strftime(PRIMARY_OUTPUT_DATETIME_FORMAT),
             "display_ts": _format_date_for_axis(ts, is_hourly),
         }
         for ts, gini in zip(
@@ -86,7 +87,7 @@ def plot_gini_echart(
         smooth_series_data = [
             {
                 "value": [ts, gini_s],
-                "raw_ts": ts.strftime("%Y-%m-%d %H:%M"),
+                "raw_ts": ts.strftime(PRIMARY_OUTPUT_DATETIME_FORMAT),
                 "display_ts": _format_date_for_axis(ts, is_hourly),
             }
             for ts, gini_s in zip(

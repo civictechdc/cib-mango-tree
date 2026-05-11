@@ -3,7 +3,7 @@ from functools import cached_property
 from tempfile import TemporaryDirectory
 
 import polars as pl
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from analyzer_interface import ParamValue, SecondaryAnalyzerInterface
 from analyzer_interface.context import AssetsReader, InputTableReader
@@ -68,8 +68,7 @@ class TestSecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
     output_parquet_root_path: str
     primary_param_values: dict[str, ParamValue]
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @cached_property
     def base(self) -> AssetsReader:

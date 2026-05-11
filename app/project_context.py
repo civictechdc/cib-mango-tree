@@ -1,7 +1,7 @@
 from functools import cached_property
 
 import polars as pl
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from analyzer_interface import ParamValue
 from analyzer_interface import UserInputColumn as BaseUserInputColumn
@@ -105,5 +105,4 @@ class UserInputColumn(BaseUserInputColumn):
     def apply_semantic_transform(self):
         return self.semantic.try_convert(self.data)
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)

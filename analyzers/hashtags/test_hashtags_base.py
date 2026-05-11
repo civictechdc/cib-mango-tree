@@ -11,10 +11,12 @@ from .hashtags_base.interface import (
     COL_AUTHOR_ID,
     COL_POST,
     COL_TIME,
+    OUTPUT_COL_COUNT,
+    OUTPUT_COL_USERS,
     OUTPUT_GINI,
     interface,
 )
-from .hashtags_base.main import gini, main
+from .hashtags_base.main import gini, hashtag_analysis, main
 from .test_data import test_data_dir
 
 HASHTAGS = [
@@ -81,6 +83,32 @@ def test_gini():
         assert np.allclose(
             [actual], [test_case["expected"]], rtol=1e-2, atol=1e-2
         ), f"Failed test case: {test_case['description']}"
+
+
+def test_hashtag_analysis_handles_nulls():
+    """Test that hashtag_analysis gracefully handles null timestamps and post content."""
+    df = pl.DataFrame(
+        {
+            COL_AUTHOR_ID: ["user1", "user2", "user3", "user4"],
+            COL_TIME: [
+                "2025-01-01 00:00:00",
+                None,
+                "2025-01-01 01:00:00",
+                "2025-01-01 02:00:00",
+            ],
+            COL_POST: ["#hello #world", None, "#hello", ""],
+        }
+    )
+
+    result = hashtag_analysis(df, every="1h")
+
+    all_users = result[OUTPUT_COL_USERS].explode().unique().to_list()
+    assert "user1" in all_users
+    assert "user3" in all_users
+    assert "user2" not in all_users
+    assert "user4" not in all_users
+
+    assert result[OUTPUT_COL_COUNT].sum() == 3
 
 
 def test_hashtag_analyzer():

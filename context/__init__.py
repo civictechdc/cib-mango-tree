@@ -56,8 +56,7 @@ class PrimaryAnalyzerContext(BasePrimaryAnalyzerContext):
     store: Storage
     input_columns: dict[str, "InputColumnProvider"]
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def input(self) -> InputTableReader:
         return PrimaryAnalyzerInputTableReader(
@@ -95,8 +94,7 @@ class PrimaryAnalyzerOutputWriter(TableWriter, BaseModel):
     output_id: str
     store: Storage
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @cached_property
     def parquet_path(self):
@@ -109,8 +107,7 @@ class PrimaryAnalyzerInputTableReader(InputTableReader, BaseModel):
     store: Storage
     input_columns: dict[str, InputColumnProvider]
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @cached_property
     def parquet_path(self):
@@ -133,8 +130,7 @@ class SecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
     store: Storage
     temp_dir: str
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @cached_property
     def base(self) -> AssetsReader:
@@ -179,8 +175,7 @@ class WebPresenterContext(BaseWebPresenterContext):
     store: Storage
     dash_app: Dash
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @cached_property
     def base(self) -> AssetsReader:
@@ -212,8 +207,7 @@ class PrimaryAnalyzerOutputReaderGroupContext(AssetsReader, BaseModel):
     analysis: AnalysisModel
     store: Storage
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def table(self, output_id: str) -> TableReader:
         return PrimaryAnalyzerOutputTableReader(
@@ -226,8 +220,7 @@ class PrimaryAnalyzerOutputTableReader(TableReader, BaseModel):
     output_id: str
     store: Storage
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @cached_property
     def parquet_path(self):
@@ -239,8 +232,7 @@ class SecondaryAnalyzerOutputReaderGroupContext(AssetsReader, BaseModel):
     secondary_analyzer_id: str
     store: Storage
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def table(self, output_id: str) -> TableReader:
         return SecondaryAnalyzerOutputTableReader(
@@ -257,8 +249,7 @@ class SecondaryAnalyzerOutputTableReader(TableReader, BaseModel):
     output_id: str
     store: Storage
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @cached_property
     def parquet_path(self):
@@ -273,8 +264,7 @@ class SecondaryAnalyzerOutputWriter(TableWriter, BaseModel):
     output_id: str
     store: Storage
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @cached_property
     def parquet_path(self):

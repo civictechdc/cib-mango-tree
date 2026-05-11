@@ -1,7 +1,7 @@
 from inspect import signature
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from shiny.session import Inputs, Outputs, Session
 from shiny.ui import (
     _navs,
@@ -65,8 +65,7 @@ class LayoutManager(BaseModel):
     title: Optional[str] = "CIB Mango Tree"
     elements: Optional[List[_navs.NavPanel]] = []
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def add(self, element: _navs.NavPanel):
         self.elements.append(element)

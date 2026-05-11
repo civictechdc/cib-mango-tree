@@ -1,4 +1,4 @@
-Before contributing please refer to our [**Contributor Workflow**](./contributing.md)
+Before contributing please refer to our [**Github Workflow**](../contributing/github_workflow.md)
 
 ## Application Design Overview
 The CIB 🥭 application is a terminal-based tool for performing data analysis and visualization. It is designed to be modular and extensible, allowing developers to contribute new analysis modules and visualization components while providing a consistent user experience around data import, preprocessing, and output generation.
@@ -25,22 +25,22 @@ The application has three "domains":
 
 ```mermaid
 flowchart TD
-    terminal["Terminal (core)"]
-    application["Application (core)"]
-    storage["Storage (core)"]
+  terminal["Terminal (core)"]
+  application["Application (core)"]
+  storage["Storage (core)"]
 
-    importers["Importers (edge)"]
-    semantic["Semantic Preprocessor (edge)"]
+  importers["Importers (edge)"]
+  semantic["Semantic Preprocessor (edge)"]
 
-    content["Analyzers/Web Presenters (content)"]
+  content["Analyzers/Web Presenters (content)"]
 
-    terminal --> application
-    application --> storage
+  terminal --> application
+  application --> storage
 
-    application --> importers
-    application --> semantic
+  application --> importers
+  application --> semantic
 
-    application --> content
+  application --> content
 ```
 
 # Questions, Comments, and Feedback

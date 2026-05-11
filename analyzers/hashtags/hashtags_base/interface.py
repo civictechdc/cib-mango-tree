@@ -8,6 +8,8 @@ from analyzer_interface import (
 )
 from analyzer_interface.params import TimeBinningParam
 
+PRIMARY_OUTPUT_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
 COL_AUTHOR_ID = "Unique UserID"
 COL_TIME = "Timestamp"
 COL_POST = "Post Content"

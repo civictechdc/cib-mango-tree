@@ -13,13 +13,14 @@ import polars as pl
 from analyzers.hashtags.hashtags_base.interface import (
     COL_TIME,
     OUTPUT_COL_HASHTAGS,
+    PRIMARY_OUTPUT_DATETIME_FORMAT,
     SECONDARY_COL_USERS_ALL,
 )
 from analyzers.hashtags.hashtags_web.analysis import secondary_analyzer
 from app.project_context import _get_columns_with_semantic
 from gui.session import GuiSession
 
-USER_DATE_FORMAT = "%B %d, %Y %H:%M"
+DISPLAY_DATE_FORMAT = "%B %d, %Y %H:%M"
 
 
 def load_transformed_raw_input(session: GuiSession) -> pl.DataFrame:
@@ -110,7 +111,7 @@ def load_primary_output(session: GuiSession) -> pl.DataFrame:
 
     if OUTPUT_COL_TIMESPAN in df.columns and df[OUTPUT_COL_TIMESPAN].dtype == pl.String:
         df = df.with_columns(
-            pl.col(OUTPUT_COL_TIMESPAN).str.to_datetime("%Y-%m-%d %H:%M:%S")
+            pl.col(OUTPUT_COL_TIMESPAN).str.to_datetime(PRIMARY_OUTPUT_DATETIME_FORMAT)
         )
 
     return df

@@ -19,6 +19,7 @@ from analyzers.hashtags.hashtags_base.interface import (
     COL_TIME,
     OUTPUT_COL_HASHTAGS,
     OUTPUT_COL_TIMESPAN,
+    PRIMARY_OUTPUT_DATETIME_FORMAT,
     SECONDARY_COL_HASHTAG_PERC,
     SECONDARY_COL_USERS_ALL,
 )
@@ -27,7 +28,7 @@ from gui.session import GuiSession
 
 from ..base_dashboard import BaseDashboardPage
 from .data import (
-    USER_DATE_FORMAT,
+    DISPLAY_DATE_FORMAT,
     extract_users_for_hashtag,
     load_primary_output,
     load_transformed_raw_input,
@@ -137,7 +138,7 @@ class HashtagsDashboardPage(BaseDashboardPage):
             return None
         ts_list = self._df_primary[OUTPUT_COL_TIMESPAN].to_list()
         for i, ts in enumerate(ts_list):
-            if ts.strftime("%Y-%m-%d %H:%M") == raw_ts:
+            if ts.strftime(PRIMARY_OUTPUT_DATETIME_FORMAT) == raw_ts:
                 return i
         return None
 
@@ -185,7 +186,7 @@ class HashtagsDashboardPage(BaseDashboardPage):
             return
 
         try:
-            timewindow = datetime.strptime(raw_ts, "%Y-%m-%d %H:%M")
+            timewindow = datetime.strptime(raw_ts, PRIMARY_OUTPUT_DATETIME_FORMAT)
         except ValueError:
             return
 
@@ -326,7 +327,7 @@ class HashtagsDashboardPage(BaseDashboardPage):
             self._hashtag_info.text = "Loading hashtag data..."
         else:
             n_hashtags = len(self._df_secondary)
-            date_str = self._selected_timewindow.strftime(USER_DATE_FORMAT)
+            date_str = self._selected_timewindow.strftime(DISPLAY_DATE_FORMAT)
             self._hashtag_info.text = (
                 f"{n_hashtags} hashtags found in window starting {date_str}"
             )
@@ -488,8 +489,8 @@ class HashtagsDashboardPage(BaseDashboardPage):
 
     def _update_tweet_info(self, count: int) -> None:
         timewindow_end = self._selected_timewindow + self._get_time_step()
-        date_end = timewindow_end.strftime(USER_DATE_FORMAT)
-        date_start = self._selected_timewindow.strftime(USER_DATE_FORMAT)
+        date_end = timewindow_end.strftime(DISPLAY_DATE_FORMAT)
+        date_start = self._selected_timewindow.strftime(DISPLAY_DATE_FORMAT)
         if self._tweet_info is None:
             return
         self._tweet_info.text = f"{count} posts found for account {self._selected_user} between {date_start} and {date_end}"

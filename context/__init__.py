@@ -117,7 +117,10 @@ class PrimaryAnalyzerInputTableReader(InputTableReader, BaseModel):
         return df.select(
             [
                 pl.col(provider.user_column_name)
-                .map_batches(provider.semantic.try_convert)
+                .map_batches(
+                    provider.semantic.try_convert,
+                    return_dtype=provider.semantic.return_dtype,
+                )
                 .alias(input_column_name)
                 for input_column_name, provider in self.input_columns.items()
             ]

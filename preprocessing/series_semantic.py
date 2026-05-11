@@ -2,18 +2,21 @@ from datetime import datetime
 from typing import Callable, Type, Union
 
 import polars as pl
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from analyzer_interface import DataType
 
 
 class SeriesSemantic(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     semantic_name: str
     column_type: Union[Type[pl.DataType], Callable[[pl.DataType], bool]]
     prevalidate: Callable[[pl.Series], bool] = lambda s: True
     try_convert: Callable[[pl.Series], pl.Series]
     validate_result: Callable[[pl.Series], pl.Series] = lambda s: s.is_not_null()
     data_type: DataType
+    return_dtype: Union[pl.DataType, Type[pl.DataType], None] = None
 
     def check(self, series: pl.Series, threshold: float = 0.8, sample_size: int = 100):
         if not self.check_type(series):
@@ -61,28 +64,39 @@ def parse_datetime_with_tz(s: pl.Series) -> pl.Series:
     # Handle timezone offsets like "-05:00", "+00:00"
     tz_offset_regex = r"[+-]\d{2}:\d{2}$"  # -05:00, +00:00, etc.
 
+    # Handle ISO 8601 "Z" suffix (UTC)
+    z_suffix_regex = r"Z$"
+
     # Check for multiple different timezones
     abbrev_matches = s.str.extract_all(tz_abbrev_regex)
     offset_matches = s.str.extract_all(tz_offset_regex)
+    z_matches = s.str.extract_all(z_suffix_regex)
 
     # Get unique timezone abbreviations
     unique_abbrevs = set()
     if not abbrev_matches.is_empty():
         for match_list in abbrev_matches.to_list():
-            if match_list:  # Not empty
+            if match_list:
                 unique_abbrevs.update(match_list)
 
     # Get unique timezone offsets
     unique_offsets = set()
     if not offset_matches.is_empty():
         for match_list in offset_matches.to_list():
-            if match_list:  # Not empty
+            if match_list:
                 unique_offsets.update(match_list)
 
+    # Get unique Z suffixes
+    unique_z = set()
+    if not z_matches.is_empty():
+        for match_list in z_matches.to_list():
+            if match_list:
+                unique_z.update(match_list)
+
     # Warn if multiple different timezones found
-    total_unique_tz = len(unique_abbrevs) + len(unique_offsets)
+    total_unique_tz = len(unique_abbrevs) + len(unique_offsets) + len(unique_z)
     if total_unique_tz > 1:
-        all_tz = list(unique_abbrevs) + list(unique_offsets)
+        all_tz = list(unique_abbrevs) + list(unique_offsets) + list(unique_z)
         warnings.warn(
             f"Multiple timezones found in datetime column: {all_tz}. "
             f"Assuming all timestamps represent the same timezone for analysis purposes.",
@@ -95,23 +109,28 @@ def parse_datetime_with_tz(s: pl.Series) -> pl.Series:
     # Then remove timezone offsets
     result = result.str.replace(tz_offset_regex, "")
 
+    # Then remove Z suffix
+    result = result.str.replace(z_suffix_regex, "")
+
     return result.str.strptime(pl.Datetime(), strict=False)
 
 
 native_date = SeriesSemantic(
     semantic_name="native_date",
-    column_type=pl.Date,  # Matches native Date columns
-    try_convert=lambda s: s,  # No conversion needed
-    validate_result=lambda s: constant_series(s, True),  # Always valid
+    column_type=pl.Date,
+    try_convert=lambda s: s,
+    validate_result=lambda s: constant_series(s, True),
     data_type="datetime",
+    return_dtype=pl.Date,
 )
 
 native_datetime = SeriesSemantic(
     semantic_name="native_datetime",
-    column_type=pl.Datetime,  # Matches native DateTime columns
-    try_convert=lambda s: s,  # No conversion needed
-    validate_result=lambda s: constant_series(s, True),  # Always valid
+    column_type=pl.Datetime,
+    try_convert=lambda s: s,
+    validate_result=lambda s: constant_series(s, True),
     data_type="datetime",
+    return_dtype=pl.Datetime,
 )
 
 time_military = SeriesSemantic(
@@ -120,6 +139,7 @@ time_military = SeriesSemantic(
     try_convert=parse_time_military,
     validate_result=lambda s: s.is_not_null(),
     data_type="datetime",
+    return_dtype=pl.Time,
 )
 
 datetime_string = SeriesSemantic(
@@ -128,38 +148,43 @@ datetime_string = SeriesSemantic(
     try_convert=parse_datetime_with_tz,
     validate_result=lambda s: s.is_not_null(),
     data_type="datetime",
+    return_dtype=pl.Datetime,
 )
 
 date_string = SeriesSemantic(
     semantic_name="date",
     column_type=pl.String,
-    try_convert=lambda s: s.str.strptime(pl.Date, strict=False),  # Convert to pl.Date
+    try_convert=lambda s: s.str.strptime(pl.Date, strict=False),
     validate_result=lambda s: s.is_not_null(),
-    data_type="datetime",  # Still maps to datetime for analyzer compatibility
+    data_type="datetime",
+    return_dtype=pl.Date,
 )
 
 time_string = SeriesSemantic(
     semantic_name="time",
     column_type=pl.String,
-    try_convert=lambda s: s.str.strptime(pl.Time, strict=False),  # Convert to pl.Time
+    try_convert=lambda s: s.str.strptime(pl.Time, strict=False),
     validate_result=lambda s: s.is_not_null(),
     data_type="time",
+    return_dtype=pl.Time,
 )
 
 timestamp_seconds = SeriesSemantic(
     semantic_name="timestamp_seconds",
     column_type=lambda dt: dt.is_numeric(),
     try_convert=lambda s: (s * 1_000).cast(pl.Datetime(time_unit="ms")),
-    validate_result=lambda s: ((s > datetime(2000, 1, 1)) & (s < datetime(2100, 1, 1))),
+    validate_result=lambda s: (s > datetime(2000, 1, 1)) & (s < datetime(2100, 1, 1)),
     data_type="datetime",
+    return_dtype=pl.Datetime,
 )
 
 timestamp_milliseconds = SeriesSemantic(
     semantic_name="timestamp_milliseconds",
     column_type=lambda dt: dt.is_numeric(),
     try_convert=lambda s: s.cast(pl.Datetime(time_unit="ms")),
-    validate_result=lambda s: ((s > datetime(2000, 1, 1)) & (s < datetime(2100, 1, 1))),
+    validate_result=lambda s: (s > datetime(2000, 1, 1)) & (s < datetime(2100, 1, 1)),
     data_type="datetime",
+    return_dtype=pl.Datetime,
 )
 
 url = SeriesSemantic(
@@ -168,6 +193,7 @@ url = SeriesSemantic(
     try_convert=lambda s: s.str.strip_chars(),
     validate_result=lambda s: s.str.count_matches("^https?://").gt(0),
     data_type="url",
+    return_dtype=pl.String,
 )
 
 identifier = SeriesSemantic(
@@ -176,6 +202,7 @@ identifier = SeriesSemantic(
     try_convert=lambda s: s.str.strip_chars(),
     validate_result=lambda s: s.str.count_matches(r"^@?[A-Za-z0-9_.:-]+$").eq(1),
     data_type="identifier",
+    return_dtype=pl.String,
 )
 
 text_catch_all = SeriesSemantic(
@@ -184,6 +211,7 @@ text_catch_all = SeriesSemantic(
     try_convert=lambda s: s,
     validate_result=lambda s: constant_series(s, True),
     data_type="text",
+    return_dtype=pl.String,
 )
 
 integer_catch_all = SeriesSemantic(
@@ -215,8 +243,8 @@ all_semantics = [
     native_date,
     datetime_string,
     date_string,
-    time_string,
     time_military,
+    time_string,
     timestamp_seconds,
     timestamp_milliseconds,
     url,

@@ -38,7 +38,10 @@ class TestData(ABC, BaseModel):
         return df.with_columns(
             [
                 pl.col(column_name)
-                .map_batches(column_semantic.try_convert)
+                .map_batches(
+                    column_semantic.try_convert,
+                    return_dtype=column_semantic.return_dtype,
+                )
                 .alias(column_name)
                 for column_name in (
                     df.collect_schema().names()

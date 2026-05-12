@@ -7,7 +7,24 @@ on:
   workflow_dispatch:
 
 jobs:
+  validate-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate version matches tag
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          PYPROJECT_VERSION=$(grep -m1 '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          if [ "$TAG_VERSION" != "$PYPROJECT_VERSION" ]; then
+            echo "::error::Version mismatch: tag=v${TAG_VERSION} vs pyproject.toml=${PYPROJECT_VERSION}"
+            exit 1
+          fi
+          echo "✓ Version match: v${TAG_VERSION}"
+
   call-build_exe:
+    needs: validate-version
     uses: ./.github/workflows/build_exe.yml
     secrets: inherit
     with:

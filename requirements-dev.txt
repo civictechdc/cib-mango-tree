@@ -20,7 +20,7 @@ asgiref==3.11.1
     # via shiny
 asttokens==3.0.1
     # via stack-data
-black==24.10.0
+black==26.3.1
     # via cibmangotree (pyproject.toml:dev)
 blessed==1.39.0
     # via inquirer

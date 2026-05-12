@@ -36,7 +36,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pyarrow-stubs>=17.13",
-    "black>=24.10.0",
+    "black>=26.3.1",
     "isort>=5.13.2",
     "pre-commit>=4.0.1",
     "pytest>=9.0.3",

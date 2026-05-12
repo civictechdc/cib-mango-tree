@@ -8,24 +8,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
-          python-version: 3.12
-          cache: 'pip'
-          cache-dependency-path: '**/requirements*.txt'
+          python-version-file: ".python-version"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v8.0.0
+        with:
+          enable-cache: true
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
+        run: uv sync --locked --no-install-project
+
+      - name: Audit dependencies for known vulnerabilities
+        run: uv run pip-audit --skip-editable
 
       - name: Run tests
-        run: pytest
+        run: uv run pytest
+
   test_build:
-      uses: ./.github/workflows/build_exe.yml
-      secrets: inherit
-      with:
-        is_release: false
+    uses: ./.github/workflows/build_exe.yml
+    secrets: inherit
+    with:
+      is_release: false

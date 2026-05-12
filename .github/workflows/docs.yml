@@ -40,7 +40,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --locked --group docs
+        run: uv sync --locked --group docs --no-install-project
 
       - name: Build docs
         run: uv run mkdocs build --config-file mkdocs.yml

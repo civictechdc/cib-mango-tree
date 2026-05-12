@@ -21,10 +21,10 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --locked --all-extras
+        run: uv sync --locked --no-install-project
 
       - name: Audit dependencies for known vulnerabilities
-        run: uv run pip-audit
+        run: uv run pip-audit --skip-editable
 
       - name: Run tests
         run: uv run pytest

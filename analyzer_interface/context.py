@@ -4,7 +4,7 @@ from typing import Any, Callable, Optional, TypeVar, Union
 import polars as pl
 from dash import Dash
 from polars import DataFrame
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from shiny import Inputs, Outputs, Session
 from shiny.ui._navs import NavPanel
 
@@ -100,8 +100,7 @@ class WebPresenterContext(BaseDerivedModuleContext):
         """
         pass
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class SecondaryAnalyzerContext(BaseDerivedModuleContext):
@@ -138,9 +137,9 @@ PolarsDataFrameLike = TypeVar("PolarsDataFrameLike", bound=pl.DataFrame)
 
 class InputTableReader(TableReader):
     @abstractmethod
-    def preprocess[
-        PolarsDataFrameLike
-    ](self, df: PolarsDataFrameLike) -> PolarsDataFrameLike:
+    def preprocess[PolarsDataFrameLike](
+        self, df: PolarsDataFrameLike
+    ) -> PolarsDataFrameLike:
         """
         Given the manually loaded user input dataframe, apply column mapping and
         semantic transformations to give the input dataframe that the analyzer
@@ -180,8 +179,7 @@ class ShinyContext(BaseModel):
     Server handler callback to be called by the shiny application instance
     """
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class FactoryOutputContext(BaseModel):
@@ -205,5 +203,4 @@ class FactoryOutputContext(BaseModel):
     API factory dataframe output for React dashboard REST API
     """
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)

@@ -86,14 +86,12 @@ _ASCII_TREE: str = """
             @@@
 """
 
-_FOOTER: str = Panel.fit(
-    """
+_FOOTER: str = Panel.fit("""
   A Civic Tech DC Project
 [red]
        ╱ * * *  ╱ ╲
        ╲ ===== ╱  ╱[/red]
-"""
-)
+""")
 
 """
 Notes:

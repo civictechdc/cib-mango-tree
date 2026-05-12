@@ -52,7 +52,7 @@ git clone https://github.com/civictechdc/cib-mango-tree.git  # creates cib-mango
 cd cib-mango-tree  # navigate to the folder with cloned repository
 ```
 
-## 3. Create virtual environment & install dependencies
+## 2. Create virtual environment & install dependencies
 
 Choose your preferred method for setting up your development environment:
 
@@ -84,30 +84,38 @@ Choose your preferred method for setting up your development environment:
     # Create virtual environment
     uv venv
 
-    #Activate virtual environment (macOS/Linux)
+    # Activate virtual environment (macOS/Linux)
     source venv/bin/activate
 
     # OR: if using Windows and PowerShell
     # venv\Scripts\activate
-    
-    # Install dependencies
-    uv pip install -r requirements-dev.txt  # also includes requirements.txt
+
+    # Install development dependencies
+    uv sync --group dev
     ```
+
+    ??? tip "Working on documentation?"
+
+        If you're also editing the docs, run `uv sync --all-groups` instead. This installs the MkDocs toolchain (defined in the `docs` dependency group in `pyproject.toml`) needed to build and preview the documentation locally.
 
 === "pip (traditional)"
 
     ```bash
     # Create virtual environment
     python -m venv venv
-    
+
     # Activate virtual environment (macOS/Linux)
     source venv/bin/activate
     # OR: if using Windows and PowerShell
     # venv\Scripts\activate
-    
+
     # Install dependencies
     pip install -r requirements-dev.txt
     ```
+
+    !!! note
+
+        The `requirements*.txt` files are auto-generated convenience artifacts from `pyproject.toml`. For the most reliable setup, use `uv sync` instead.
 
 !!! note "Verify Python version"
     Ensure you're using Python 3.12.x:
@@ -115,7 +123,7 @@ Choose your preferred method for setting up your development environment:
     python --version  # Should show Python 3.12.x
     ```
 
-## 4. Set up pre-commit hooks
+## 3. Set up pre-commit hooks
 
 [Pre-commit](https://pre-commit.com/) hooks (in `pre-commit-config.yaml`) automatically format your code with [Black](https://pypi.org/project/black/) and [isort](https://pycqa.github.io/isort/index.html) before each commit.
 
@@ -125,14 +133,13 @@ In the root of the cloned repository install pre-commit:
 pre-commit install
 ```
 
-!!! tip "Manual formatting"
-    You can also format code manually:
+!!! tip "Verify formatting before pushing"
+    Pre-commit hooks automatically format your code on commit. To verify all files pass CI checks before pushing, run:
     ```bash
-    isort .
-    black .
+    uv run pre-commit run --all-files
     ```
 
-## 5. Verify installation
+## 4. Verify installation
 
 ```bash
 python -m cibmangotree --noop
@@ -202,7 +209,7 @@ One common issue when installing the dependencies for python is the installation
 failing due to compatibility issues with the python package `pyarrow`. The compatibility
 issues are due to a version mismatch between pyarrow and python itself.
 To resolve this issue, you must be on version 3.12 for python.
-Refer to [commands above](#3-create-virtual-environment-install-dependencies) to switch to the correct version.
+Refer to [commands above](#2-create-virtual-environment-install-dependencies) to switch to the correct version.
 
 
 # Next Steps

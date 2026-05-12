@@ -1,7 +1,7 @@
 from inspect import signature
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from shiny.session import Inputs, Outputs, Session
 from shiny.ui import (
     _navs,
@@ -18,8 +18,7 @@ from analyzer_interface.context import ServerCallback
 
 MANGO_ORANGE2 = "#f3921e"
 LOGO_URL = "https://raw.githubusercontent.com/CIB-Mango-Tree/CIB-Mango-Tree-Website/main/assets/images/mango-text.PNG"
-ABOUT_TEXT = markdown(
-    f"""
+ABOUT_TEXT = markdown(f"""
 
 <img src="{LOGO_URL}" alt="logo" style="width:200px;"/>
 
@@ -29,8 +28,7 @@ CIB Mango Tree, a collaborative and open-source project to develop software that
 
 A project of [Civic Tech DC](https://www.civictechdc.org/), our mission is to share methods to uncover how disruptive actors seek to hack our legitimate online discourse regarding health, politics, and society. The CIB Mango Tree presents the most simple tests for CIB first – the low-hanging fruit. These tests are easy to run and interpret. They will reveal signs of unsophisticated CIB. As you move up the Mango Tree, tests become harder and will scavenge for higher-hanging fruit.
 
-"""
-)
+""")
 page_dependencies = tags.head(
     tags.style(".card-header { color:white; background:#f3921e !important; }"),
     tags.link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Roboto"),
@@ -65,8 +63,7 @@ class LayoutManager(BaseModel):
     title: Optional[str] = "CIB Mango Tree"
     elements: Optional[List[_navs.NavPanel]] = []
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def add(self, element: _navs.NavPanel):
         self.elements.append(element)

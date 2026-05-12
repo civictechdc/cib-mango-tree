@@ -47,6 +47,14 @@ def hashtag_analysis(data_frame: pl.DataFrame, every="1h") -> pl.DataFrame:
             pl.col(COL_TIME).str.to_datetime().alias(COL_TIME)
         )
 
+    # Filter rows with null timestamps (required for group_by_dynamic)
+    # and null/empty post content (required for string operations)
+    data_frame = data_frame.filter(
+        pl.col(COL_TIME).is_not_null()
+        & pl.col(COL_POST).is_not_null()
+        & (pl.col(COL_POST) != "")
+    )
+
     # define the expressions
     has_hashtag_symbols = (
         pl.col(COL_POST).str.contains("#").any()

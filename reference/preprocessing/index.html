@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -1978,9 +1978,9 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>preprocessing/series_semantic.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">constant_series</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">constant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">constant_series</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">constant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a series with a constant value for each row of `series`.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">constant</span><span class="p">]</span> <span class="o">*</span> <span class="n">series</span><span class="o">.</span><span class="n">len</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2005,53 +2005,67 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>preprocessing/series_semantic.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span>
-<span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_datetime_with_tz</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_datetime_with_tz</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse datetime strings with timezone info (both abbreviations and offsets)&quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">warnings</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
     <span class="c1"># Handle timezone abbreviations like &quot;UTC&quot;, &quot;EST&quot;</span>
     <span class="n">tz_abbrev_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot; ([A-Z]{3,4})$&quot;</span>  <span class="c1"># UTC, EST, etc.</span>
@@ -2059,28 +2073,39 @@
     <span class="c1"># Handle timezone offsets like &quot;-05:00&quot;, &quot;+00:00&quot;</span>
     <span class="n">tz_offset_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;[+-]\d</span><span class="si">{2}</span><span class="s2">:\d</span><span class="si">{2}</span><span class="s2">$&quot;</span>  <span class="c1"># -05:00, +00:00, etc.</span>
 
+    <span class="c1"># Handle ISO 8601 &quot;Z&quot; suffix (UTC)</span>
+    <span class="n">z_suffix_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;Z$&quot;</span>
+
     <span class="c1"># Check for multiple different timezones</span>
     <span class="n">abbrev_matches</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">extract_all</span><span class="p">(</span><span class="n">tz_abbrev_regex</span><span class="p">)</span>
     <span class="n">offset_matches</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">extract_all</span><span class="p">(</span><span class="n">tz_offset_regex</span><span class="p">)</span>
+    <span class="n">z_matches</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">extract_all</span><span class="p">(</span><span class="n">z_suffix_regex</span><span class="p">)</span>
 
     <span class="c1"># Get unique timezone abbreviations</span>
     <span class="n">unique_abbrevs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">abbrev_matches</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">match_list</span> <span class="ow">in</span> <span class="n">abbrev_matches</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">match_list</span><span class="p">:</span>  <span class="c1"># Not empty</span>
+            <span class="k">if</span> <span class="n">match_list</span><span class="p">:</span>
                 <span class="n">unique_abbrevs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">match_list</span><span class="p">)</span>
 
     <span class="c1"># Get unique timezone offsets</span>
     <span class="n">unique_offsets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">offset_matches</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">match_list</span> <span class="ow">in</span> <span class="n">offset_matches</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">match_list</span><span class="p">:</span>  <span class="c1"># Not empty</span>
+            <span class="k">if</span> <span class="n">match_list</span><span class="p">:</span>
                 <span class="n">unique_offsets</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">match_list</span><span class="p">)</span>
 
+    <span class="c1"># Get unique Z suffixes</span>
+    <span class="n">unique_z</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">z_matches</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">match_list</span> <span class="ow">in</span> <span class="n">z_matches</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">match_list</span><span class="p">:</span>
+                <span class="n">unique_z</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">match_list</span><span class="p">)</span>
+
     <span class="c1"># Warn if multiple different timezones found</span>
-    <span class="n">total_unique_tz</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_abbrevs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_offsets</span><span class="p">)</span>
+    <span class="n">total_unique_tz</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_abbrevs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_offsets</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_z</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">total_unique_tz</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">all_tz</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">unique_abbrevs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">unique_offsets</span><span class="p">)</span>
+        <span class="n">all_tz</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">unique_abbrevs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">unique_offsets</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">unique_z</span><span class="p">)</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Multiple timezones found in datetime column: </span><span class="si">{</span><span class="n">all_tz</span><span class="si">}</span><span class="s2">. &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Assuming all timestamps represent the same timezone for analysis purposes.&quot;</span><span class="p">,</span>
@@ -2092,6 +2117,9 @@
 
     <span class="c1"># Then remove timezone offsets</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tz_offset_regex</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Then remove Z suffix</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">z_suffix_regex</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Datetime</span><span class="p">(),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2116,10 +2144,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>preprocessing/series_semantic.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
@@ -2130,7 +2155,10 @@
 <span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
-<span class="normal">51</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_time_military</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_time_military</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse time strings with multiple format attempts&quot;&quot;&quot;</span>
     <span class="c1"># Try different time formats</span>
     <span class="n">FORMATS_TO_TRY</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">,</span> <span class="s2">&quot;%H:%M&quot;</span><span class="p">,</span> <span class="s2">&quot;%I:%M:%S %p&quot;</span><span class="p">,</span> <span class="s2">&quot;%I:%M %p&quot;</span><span class="p">]</span>

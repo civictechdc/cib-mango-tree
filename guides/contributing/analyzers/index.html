@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -2359,7 +2359,7 @@
 <li>Parameters the analyzer accepts</li>
 <li>Output tables the analyzer produces</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">analyzer_interface</span> <span class="kn">import</span> <span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">analyzer_interface</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AnalyzerInput</span><span class="p">,</span>
     <span class="n">AnalyzerInterface</span><span class="p">,</span> 
     <span class="n">AnalyzerOutput</span><span class="p">,</span>
@@ -2420,11 +2420,11 @@
 </code></pre></div>
 <h4 id="implementation">Implementation</h4>
 <p>The main function receives a context object with access to input data and output paths:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
-<span class="kn">from</span> <span class="nn">analyzer_interface.context</span> <span class="kn">import</span> <span class="n">PrimaryAnalyzerContext</span>
-<span class="kn">from</span> <span class="nn">terminal_tools</span> <span class="kn">import</span> <span class="n">ProgressReporter</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">analyzer_interface.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">PrimaryAnalyzerContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">terminal_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgressReporter</span>
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">PrimaryAnalyzerContext</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">PrimaryAnalyzerContext</span><span class="p">):</span>
     <span class="c1"># Read and preprocess input data</span>
     <span class="n">input_reader</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">input</span><span class="p">()</span>
     <span class="n">df_input</span> <span class="o">=</span> <span class="n">input_reader</span><span class="o">.</span><span class="n">preprocess</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">input_reader</span><span class="o">.</span><span class="n">parquet_path</span><span class="p">))</span>
@@ -2449,9 +2449,9 @@
 </code></pre></div>
 <h4 id="declaration">Declaration</h4>
 <p>Finally, create the analyzer declaration:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">analyzer_interface</span> <span class="kn">import</span> <span class="n">AnalyzerDeclaration</span>
-<span class="kn">from</span> <span class="nn">.interface</span> <span class="kn">import</span> <span class="n">interface</span>
-<span class="kn">from</span> <span class="nn">.main</span> <span class="kn">import</span> <span class="n">main</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">analyzer_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnalyzerDeclaration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">interface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">main</span>
 
 <span class="n">example_analyzer</span> <span class="o">=</span> <span class="n">AnalyzerDeclaration</span><span class="p">(</span>
     <span class="n">interface</span><span class="o">=</span><span class="n">interface</span><span class="p">,</span>
@@ -2463,8 +2463,8 @@
 <p>Secondary analyzers process the output of primary analyzers to create user-friendly exports or perform additional analysis.</p>
 <h4 id="interface-definition_1">Interface Definition</h4>
 <p>Secondary analyzers specify their base primary analyzer and their own outputs:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">analyzer_interface</span> <span class="kn">import</span> <span class="n">AnalyzerOutput</span><span class="p">,</span> <span class="n">OutputColumn</span><span class="p">,</span> <span class="n">SecondaryAnalyzerInterface</span>
-<span class="kn">from</span> <span class="nn">..example_base.interface</span> <span class="kn">import</span> <span class="n">interface</span> <span class="k">as</span> <span class="n">example_base</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">analyzer_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnalyzerOutput</span><span class="p">,</span> <span class="n">OutputColumn</span><span class="p">,</span> <span class="n">SecondaryAnalyzerInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..example_base.interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">interface</span> <span class="k">as</span> <span class="n">example_base</span>
 
 <span class="n">interface</span> <span class="o">=</span> <span class="n">SecondaryAnalyzerInterface</span><span class="p">(</span>
     <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;example_report&quot;</span><span class="p">,</span>
@@ -2487,10 +2487,10 @@
 </code></pre></div>
 <h4 id="implementation_1">Implementation</h4>
 <p>Secondary analyzers read primary outputs and create enhanced results:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
-<span class="kn">from</span> <span class="nn">analyzer_interface.context</span> <span class="kn">import</span> <span class="n">SecondaryAnalyzerContext</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">analyzer_interface.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">SecondaryAnalyzerContext</span>
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">SecondaryAnalyzerContext</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">SecondaryAnalyzerContext</span><span class="p">):</span>
     <span class="c1"># Read primary analyzer output</span>
     <span class="n">df_character_count</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span>
         <span class="n">context</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;character_count&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">parquet_path</span>
@@ -2510,9 +2510,9 @@
 <h3 id="web-presenters">Web Presenters</h3>
 <p>Web presenters create interactive dashboards using either Dash or Shiny frameworks.</p>
 <h4 id="interface-definition_2">Interface Definition</h4>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">analyzer_interface</span> <span class="kn">import</span> <span class="n">WebPresenterInterface</span>
-<span class="kn">from</span> <span class="nn">..example_base</span> <span class="kn">import</span> <span class="n">interface</span> <span class="k">as</span> <span class="n">example_base</span>
-<span class="kn">from</span> <span class="nn">..example_report</span> <span class="kn">import</span> <span class="n">interface</span> <span class="k">as</span> <span class="n">example_report</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">analyzer_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebPresenterInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..example_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">interface</span> <span class="k">as</span> <span class="n">example_base</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..example_report</span><span class="w"> </span><span class="kn">import</span> <span class="n">interface</span> <span class="k">as</span> <span class="n">example_report</span>
 
 <span class="n">interface</span> <span class="o">=</span> <span class="n">WebPresenterInterface</span><span class="p">(</span>
     <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;example_web&quot;</span><span class="p">,</span> 
@@ -2525,11 +2525,11 @@
 </code></pre></div>
 <h4 id="shiny-implementation">Shiny Implementation</h4>
 <p>For more interactive dashboards:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">shiny</span> <span class="kn">import</span> <span class="n">reactive</span><span class="p">,</span> <span class="n">render</span><span class="p">,</span> <span class="n">ui</span>
-<span class="kn">from</span> <span class="nn">shinywidgets</span> <span class="kn">import</span> <span class="n">output_widget</span><span class="p">,</span> <span class="n">render_widget</span>
-<span class="kn">from</span> <span class="nn">analyzer_interface.context</span> <span class="kn">import</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">FactoryOutputContext</span><span class="p">,</span> <span class="n">ShinyContext</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">shiny</span><span class="w"> </span><span class="kn">import</span> <span class="n">reactive</span><span class="p">,</span> <span class="n">render</span><span class="p">,</span> <span class="n">ui</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shinywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">output_widget</span><span class="p">,</span> <span class="n">render_widget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">analyzer_interface.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">FactoryOutputContext</span><span class="p">,</span> <span class="n">ShinyContext</span>
 
-<span class="k">def</span> <span class="nf">factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactoryOutputContext</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactoryOutputContext</span><span class="p">:</span>
     <span class="c1"># Load data</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;character_count&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">parquet_path</span><span class="p">)</span>
 
@@ -2540,16 +2540,16 @@
         <span class="n">output_widget</span><span class="p">(</span><span class="s2">&quot;histogram&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;400px&quot;</span><span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">server</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
         <span class="nd">@render_widget</span>
-        <span class="k">def</span> <span class="nf">histogram</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">histogram</span><span class="p">():</span>
             <span class="c1"># Create interactive plot based on inputs</span>
             <span class="n">show_details</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">show_details</span><span class="p">()</span>
             <span class="c1"># ... create plotly figure ...</span>
             <span class="k">return</span> <span class="n">fig</span>
 
         <span class="nd">@render</span><span class="o">.</span><span class="n">text</span>
-        <span class="k">def</span> <span class="nf">summary</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">():</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Total messages: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">return</span> <span class="n">FactoryOutputContext</span><span class="p">(</span>
@@ -2561,9 +2561,9 @@
 </code></pre></div>
 <h4 id="api-factory-for-react-dashboards">API Factory for React Dashboards</h4>
 <p>Web presenters can also implement an <code>api_factory</code> function to provide structured data for React-based frontends through REST API endpoints:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">..utils.pop</span> <span class="kn">import</span> <span class="n">pop_unnecessary_fields</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">..utils.pop</span><span class="w"> </span><span class="kn">import</span> <span class="n">pop_unnecessary_fields</span>
 
-<span class="k">def</span> <span class="nf">api_factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">api_factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Provides structured data for React dashboards via API endpoints.</span>
 
@@ -2605,7 +2605,7 @@
 </code></pre></div>
 <h5 id="multi-output-api-factory">Multi-Output API Factory</h5>
 <p>For analyzers with multiple outputs, return a dictionary with different data views:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">api_factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">api_factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="n">filter_value</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;matcher&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">options</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
 
     <span class="c1"># Load different data sources</span>
@@ -2695,11 +2695,11 @@ curl<span class="w"> </span><span class="s2">&quot;/api/presenters/ngram_repetit
 </code></pre></div>
 <h3 id="testing-analyzers">Testing Analyzers</h3>
 <h4 id="testing-primary-analyzers">Testing Primary Analyzers</h4>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">testing</span> <span class="kn">import</span> <span class="n">CsvTestData</span><span class="p">,</span> <span class="n">test_primary_analyzer</span>
-<span class="kn">from</span> <span class="nn">.interface</span> <span class="kn">import</span> <span class="n">interface</span>
-<span class="kn">from</span> <span class="nn">.main</span> <span class="kn">import</span> <span class="n">main</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">CsvTestData</span><span class="p">,</span> <span class="n">test_primary_analyzer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">interface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">main</span>
 
-<span class="k">def</span> <span class="nf">test_example_analyzer</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_example_analyzer</span><span class="p">():</span>
     <span class="n">test_primary_analyzer</span><span class="p">(</span>
         <span class="n">interface</span><span class="o">=</span><span class="n">interface</span><span class="p">,</span>
         <span class="n">main</span><span class="o">=</span><span class="n">main</span><span class="p">,</span>
@@ -2714,9 +2714,9 @@ curl<span class="w"> </span><span class="s2">&quot;/api/presenters/ngram_repetit
     <span class="p">)</span>
 </code></pre></div>
 <h4 id="testing-secondary-analyzers">Testing Secondary Analyzers</h4>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">testing</span> <span class="kn">import</span> <span class="n">test_secondary_analyzer</span><span class="p">,</span> <span class="n">ParquetTestData</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">test_secondary_analyzer</span><span class="p">,</span> <span class="n">ParquetTestData</span>
 
-<span class="k">def</span> <span class="nf">test_example_report</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_example_report</span><span class="p">():</span>
     <span class="n">test_secondary_analyzer</span><span class="p">(</span>
         <span class="n">interface</span><span class="o">=</span><span class="n">interface</span><span class="p">,</span>
         <span class="n">main</span><span class="o">=</span><span class="n">main</span><span class="p">,</span>
@@ -2760,10 +2760,10 @@ curl<span class="w"> </span><span class="s2">&quot;/api/presenters/ngram_repetit
 </ul>
 <h3 id="adding-to-the-suite">Adding to the Suite</h3>
 <p>Register all analyzers in <code>analyzers/__init__.py</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">analyzer_interface</span> <span class="kn">import</span> <span class="n">AnalyzerSuite</span>
-<span class="kn">from</span> <span class="nn">.example.example_base</span> <span class="kn">import</span> <span class="n">example_base</span>
-<span class="kn">from</span> <span class="nn">.example.example_report</span> <span class="kn">import</span> <span class="n">example_report</span>  
-<span class="kn">from</span> <span class="nn">.example.example_web</span> <span class="kn">import</span> <span class="n">example_web</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">analyzer_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnalyzerSuite</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.example.example_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">example_base</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.example.example_report</span><span class="w"> </span><span class="kn">import</span> <span class="n">example_report</span>  
+<span class="kn">from</span><span class="w"> </span><span class="nn">.example.example_web</span><span class="w"> </span><span class="kn">import</span> <span class="n">example_web</span>
 
 <span class="n">suite</span> <span class="o">=</span> <span class="n">AnalyzerSuite</span><span class="p">(</span>
     <span class="n">all_analyzers</span><span class="o">=</span><span class="p">[</span>

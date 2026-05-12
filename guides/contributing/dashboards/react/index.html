@@ -11,7 +11,7 @@
 <link href="../shiny/" rel="prev"/>
 <link href="../../logging/" rel="next"/>
 <link href="../../../../assets/images/favicon.png" rel="icon"/>
-<meta content="mkdocs-1.6.1, mkdocs-material-9.7.1" name="generator"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.7.6" name="generator"/>
 <title>React (WIP) - CIB Mango Tree</title>
 <link href="../../../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
 <link href="../../../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
@@ -1576,11 +1576,11 @@
 <h3 id="setting-up-api-factory">Setting Up API Factory</h3>
 <p>The <code>api_factory</code> function transforms analyzer outputs into structured data for React consumption:</p>
 <h4 id="basic-api-factory">Basic API Factory</h4>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">analyzer_interface.context</span> <span class="kn">import</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">FactoryOutputContext</span>
-<span class="kn">from</span> <span class="nn">..utils.pop</span> <span class="kn">import</span> <span class="n">pop_unnecessary_fields</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">analyzer_interface.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">FactoryOutputContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.pop</span><span class="w"> </span><span class="kn">import</span> <span class="n">pop_unnecessary_fields</span>
 
-<span class="k">def</span> <span class="nf">api_factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">api_factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Transform analyzer data for React dashboard consumption.</span>
 
@@ -1632,7 +1632,7 @@
 </code></pre></div>
 <h4 id="multi-output-api-factory">Multi-Output API Factory</h4>
 <p>For analyzers with multiple data views:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">api_factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">api_factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="c1"># Determine which output to return</span>
     <span class="n">output_type</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"output"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">)</span> <span class="k">if</span> <span class="n">options</span> <span class="k">else</span> <span class="s2">"default"</span>
 
@@ -1681,7 +1681,7 @@
     <span class="p">)</span>
 </code></pre></div>
 <h4 id="complex-filtering-and-search">Complex Filtering and Search</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">api_factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">api_factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="c1"># Load base data</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">"ngram_analysis"</span><span class="p">)</span><span class="o">.</span><span class="n">parquet_path</span><span class="p">)</span>
 
@@ -2740,8 +2740,8 @@ npm<span class="w"> </span>run<span class="w"> </span>build
 <h4 id="integration-with-backend">Integration with Backend</h4>
 <p>The Python backend serves the React app:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Backend integration</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
 <span class="c1"># Load build manifest</span>
 <span class="n">manifest_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"web_templates/build/manifest.json"</span><span class="p">)</span>
@@ -2750,7 +2750,7 @@ npm<span class="w"> </span>run<span class="w"> </span>build
 
 <span class="c1"># Serve React app</span>
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">dashboard</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dashboard</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
         <span class="s2">"index.html"</span><span class="p">,</span>
         <span class="n">js_files</span><span class="o">=</span><span class="n">get_js_files</span><span class="p">(</span><span class="n">manifest</span><span class="p">),</span>

@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -1979,7 +1979,7 @@
 </ul>
 <h4 id="using-the-logger-in-your-code">Using the Logger in Your Code</h4>
 <h5 id="basic-usage">Basic Usage</h5>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">app.logger</span> <span class="kn">import</span> <span class="n">get_logger</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">app.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_logger</span>
 
 <span class="c1"># Get a logger for your module</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -2001,9 +2001,9 @@
 </code></pre></div>
 <h4 id="logging-in-analyzers">Logging in Analyzers</h4>
 <p>When developing analyzers, add logging to help with debugging and monitoring:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">app.logger</span> <span class="kn">import</span> <span class="n">get_logger</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">app.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_logger</span>
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
     <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting analysis&quot;</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="p">{</span>
@@ -2082,10 +2082,10 @@ python<span class="w"> </span>-m<span class="w"> </span>cibmangotree<span class=
 </ul>
 <h4 id="testing-with-logs">Testing with Logs</h4>
 <p>When writing tests that involve logging:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">app.logger</span> <span class="kn">import</span> <span class="n">get_logger</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_logger</span>
 
-<span class="k">def</span> <span class="nf">test_my_function_logs_correctly</span><span class="p">(</span><span class="n">caplog</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_my_function_logs_correctly</span><span class="p">(</span><span class="n">caplog</span><span class="p">):</span>
     <span class="k">with</span> <span class="n">caplog</span><span class="o">.</span><span class="n">at_level</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
         <span class="n">my_function</span><span class="p">()</span>
 

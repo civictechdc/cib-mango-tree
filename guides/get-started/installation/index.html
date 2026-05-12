@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -707,10 +707,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-create-virtual-environment-install-dependencies" class="md-nav__link">
+  <a href="#2-create-virtual-environment-install-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Create virtual environment &amp; install dependencies
+        2. Create virtual environment &amp; install dependencies
       
     </span>
   </a>
@@ -718,10 +718,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-set-up-pre-commit-hooks" class="md-nav__link">
+  <a href="#3-set-up-pre-commit-hooks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Set up pre-commit hooks
+        3. Set up pre-commit hooks
       
     </span>
   </a>
@@ -729,10 +729,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#5-verify-installation" class="md-nav__link">
+  <a href="#4-verify-installation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. Verify installation
+        4. Verify installation
       
     </span>
   </a>
@@ -1921,10 +1921,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-create-virtual-environment-install-dependencies" class="md-nav__link">
+  <a href="#2-create-virtual-environment-install-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Create virtual environment &amp; install dependencies
+        2. Create virtual environment &amp; install dependencies
       
     </span>
   </a>
@@ -1932,10 +1932,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-set-up-pre-commit-hooks" class="md-nav__link">
+  <a href="#3-set-up-pre-commit-hooks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Set up pre-commit hooks
+        3. Set up pre-commit hooks
       
     </span>
   </a>
@@ -1943,10 +1943,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#5-verify-installation" class="md-nav__link">
+  <a href="#4-verify-installation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. Verify installation
+        4. Verify installation
       
     </span>
   </a>
@@ -2232,7 +2232,7 @@ following commands can be used to figure what packages you already installed:</p
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/civictechdc/cib-mango-tree.git<span class="w">  </span><span class="c1"># creates cib-mango-tree folder in the current directory</span>
 <span class="nb">cd</span><span class="w"> </span>cib-mango-tree<span class="w">  </span><span class="c1"># navigate to the folder with cloned repository</span>
 </code></pre></div>
-<h3 id="3-create-virtual-environment-install-dependencies">3. Create virtual environment &amp; install dependencies</h3>
+<h3 id="2-create-virtual-environment-install-dependencies">2. Create virtual environment &amp; install dependencies</h3>
 <p>Choose your preferred method for setting up your development environment:</p>
 <details class="info">
 <summary>Installing uv</summary>
@@ -2260,15 +2260,19 @@ following commands can be used to figure what packages you already installed:</p
 <div class="highlight"><pre><span></span><code><span class="c1"># Create virtual environment</span>
 uv<span class="w"> </span>venv
 
-<span class="c1">#Activate virtual environment (macOS/Linux)</span>
+<span class="c1"># Activate virtual environment (macOS/Linux)</span>
 <span class="nb">source</span><span class="w"> </span>venv/bin/activate
 
 <span class="c1"># OR: if using Windows and PowerShell</span>
 <span class="c1"># venv\Scripts\activate</span>
 
-<span class="c1"># Install dependencies</span>
-uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt<span class="w">  </span><span class="c1"># also includes requirements.txt</span>
+<span class="c1"># Install development dependencies</span>
+uv<span class="w"> </span>sync<span class="w"> </span>--group<span class="w"> </span>dev
 </code></pre></div>
+<details class="tip">
+<summary>Working on documentation?</summary>
+<p>If you're also editing the docs, run <code>uv sync --all-groups</code> instead. This installs the MkDocs toolchain (defined in the <code>docs</code> dependency group in <code>pyproject.toml</code>) needed to build and preview the documentation locally.</p>
+</details>
 </div>
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span class="c1"># Create virtual environment</span>
@@ -2282,6 +2286,10 @@ python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </s
 <span class="c1"># Install dependencies</span>
 pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt
 </code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code>requirements*.txt</code> files are auto-generated convenience artifacts from <code>pyproject.toml</code>. For the most reliable setup, use <code>uv sync</code> instead.</p>
+</div>
 </div>
 </div>
 </div>
@@ -2291,20 +2299,19 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>--version<span class="w">  </span><span class="c1"># Should show Python 3.12.x</span>
 </code></pre></div></p>
 </div>
-<h3 id="4-set-up-pre-commit-hooks">4. Set up pre-commit hooks</h3>
+<h3 id="3-set-up-pre-commit-hooks">3. Set up pre-commit hooks</h3>
 <p><a href="https://pre-commit.com/">Pre-commit</a> hooks (in <code>pre-commit-config.yaml</code>) automatically format your code with <a href="https://pypi.org/project/black/">Black</a> and <a href="https://pycqa.github.io/isort/index.html">isort</a> before each commit.</p>
 <p>In the root of the cloned repository install pre-commit:<br />
 <div class="highlight"><pre><span></span><code><span class="c1"># Install pre-commit hooks</span>
 pre-commit<span class="w"> </span>install
 </code></pre></div></p>
 <div class="admonition tip">
-<p class="admonition-title">Manual formatting</p>
-<p>You can also format code manually:
-<div class="highlight"><pre><span></span><code>isort<span class="w"> </span>.
-black<span class="w"> </span>.
+<p class="admonition-title">Verify formatting before pushing</p>
+<p>Pre-commit hooks automatically format your code on commit. To verify all files pass CI checks before pushing, run:
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
 </code></pre></div></p>
 </div>
-<h3 id="5-verify-installation">5. Verify installation</h3>
+<h3 id="4-verify-installation">4. Verify installation</h3>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>cibmangotree<span class="w"> </span>--noop
 </code></pre></div>
 <p>If all went well, you should see: 
@@ -2373,7 +2380,7 @@ pyinstaller<span class="w"> </span>pyinstaller.spec
 failing due to compatibility issues with the python package <code>pyarrow</code>. The compatibility
 issues are due to a version mismatch between pyarrow and python itself.
 To resolve this issue, you must be on version 3.12 for python.
-Refer to <a href="#3-create-virtual-environment-install-dependencies">commands above</a> to switch to the correct version.</p>
+Refer to <a href="#2-create-virtual-environment-install-dependencies">commands above</a> to switch to the correct version.</p>
 <h2 id="next-steps">Next Steps</h2>
 <p>Once you have everything installed and running without any problems,
 the next step is to check out the <a href="../../contributing/github_workflow/">GitHub Contributor Workflow</a> for contributing changes.</p>

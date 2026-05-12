@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -2645,13 +2645,13 @@
 </ul>
 <h3 id="basic-structure">Basic Structure</h3>
 <p>Every Shiny web presenter follows this pattern:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">shiny</span> <span class="kn">import</span> <span class="n">reactive</span><span class="p">,</span> <span class="n">render</span><span class="p">,</span> <span class="n">ui</span>
-<span class="kn">from</span> <span class="nn">shinywidgets</span> <span class="kn">import</span> <span class="n">output_widget</span><span class="p">,</span> <span class="n">render_widget</span>
-<span class="kn">from</span> <span class="nn">analyzer_interface.context</span> <span class="kn">import</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">FactoryOutputContext</span><span class="p">,</span> <span class="n">ShinyContext</span>
-<span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
-<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">shiny</span><span class="w"> </span><span class="kn">import</span> <span class="n">reactive</span><span class="p">,</span> <span class="n">render</span><span class="p">,</span> <span class="n">ui</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shinywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">output_widget</span><span class="p">,</span> <span class="n">render_widget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">analyzer_interface.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebPresenterContext</span><span class="p">,</span> <span class="n">FactoryOutputContext</span><span class="p">,</span> <span class="n">ShinyContext</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
 
-<span class="k">def</span> <span class="nf">factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactoryOutputContext</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactoryOutputContext</span><span class="p">:</span>
     <span class="c1"># Load analyzer data</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;your_output&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">parquet_path</span><span class="p">)</span>
 
@@ -2673,9 +2673,9 @@
         <span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">server</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
         <span class="nd">@reactive</span><span class="o">.</span><span class="n">Calc</span>
-        <span class="k">def</span> <span class="nf">filtered_data</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">filtered_data</span><span class="p">():</span>
             <span class="c1"># Reactive data filtering</span>
             <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">input</span><span class="o">.</span><span class="n">category</span><span class="p">())</span> <span class="o">&amp;</span>
@@ -2683,14 +2683,14 @@
             <span class="p">)</span>
 
         <span class="nd">@render_widget</span>
-        <span class="k">def</span> <span class="nf">main_plot</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">main_plot</span><span class="p">():</span>
             <span class="c1"># Create interactive plot</span>
             <span class="n">plot_df</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">()</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
             <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">plot_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">fig</span>
 
         <span class="nd">@render</span><span class="o">.</span><span class="n">text</span>
-        <span class="k">def</span> <span class="nf">summary_stats</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">summary_stats</span><span class="p">():</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">()</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Showing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> items, avg value: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
 
@@ -2778,25 +2778,25 @@
 <h4 id="reactive-calculations">Reactive Calculations</h4>
 <p>Use <code>@reactive.Calc</code> for expensive computations that multiple outputs depend on:</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@reactive</span><span class="o">.</span><span class="n">Calc</span>
-<span class="k">def</span> <span class="nf">processed_data</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">processed_data</span><span class="p">():</span>
     <span class="c1"># This only runs when dependencies change</span>
     <span class="n">raw_data</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">raw_data</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;active&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">input</span><span class="o">.</span><span class="n">show_active</span><span class="p">())</span>
 
 <span class="nd">@render_widget</span>
-<span class="k">def</span> <span class="nf">plot1</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot1</span><span class="p">():</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">processed_data</span><span class="p">()</span>  <span class="c1"># Uses cached result</span>
     <span class="k">return</span> <span class="n">create_plot</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
 <span class="nd">@render</span><span class="o">.</span><span class="n">text</span>  
-<span class="k">def</span> <span class="nf">summary</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">():</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">processed_data</span><span class="p">()</span>  <span class="c1"># Uses same cached result</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Records: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div>
 <h4 id="reactive-effects">Reactive Effects</h4>
 <p>Use <code>@reactive.Effect</code> for side effects like updating other inputs:</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@reactive</span><span class="o">.</span><span class="n">Effect</span>
-<span class="k">def</span> <span class="nf">update_choices</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_choices</span><span class="p">():</span>
     <span class="c1"># Update selectize choices when category changes</span>
     <span class="n">category</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">category</span><span class="p">()</span>
     <span class="n">new_choices</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">category</span><span class="p">)[</span><span class="s2">&quot;subcategory&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
@@ -2806,19 +2806,19 @@
 <p>Respond to button clicks and other events:</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@reactive</span><span class="o">.</span><span class="n">Effect</span>
 <span class="nd">@reactive</span><span class="o">.</span><span class="n">event</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">reset_button</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">reset_filters</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reset_filters</span><span class="p">():</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">update_slider</span><span class="p">(</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">update_select</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="s2">&quot;All&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="data-visualization">Data Visualization</h3>
 <h4 id="plotly-integration">Plotly Integration</h4>
 <p>Create interactive plots with plotly:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">shinywidgets</span> <span class="kn">import</span> <span class="n">output_widget</span><span class="p">,</span> <span class="n">render_widget</span>
-<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
-<span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">shinywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">output_widget</span><span class="p">,</span> <span class="n">render_widget</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
 
 <span class="nd">@render_widget</span>
-<span class="k">def</span> <span class="nf">scatter_plot</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">scatter_plot</span><span class="p">():</span>
     <span class="n">df_plot</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">()</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
 
     <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
@@ -2841,7 +2841,7 @@
     <span class="k">return</span> <span class="n">fig</span>
 
 <span class="nd">@render_widget</span>  
-<span class="k">def</span> <span class="nf">time_series</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">time_series</span><span class="p">():</span>
     <span class="n">df_ts</span> <span class="o">=</span> <span class="n">time_series_data</span><span class="p">()</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
 
     <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
@@ -2865,12 +2865,12 @@
 </code></pre></div>
 <h4 id="custom-plots">Custom Plots</h4>
 <p>Create custom visualizations with matplotlib or other libraries:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">shiny</span> <span class="kn">import</span> <span class="n">render</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">shiny</span><span class="w"> </span><span class="kn">import</span> <span class="n">render</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 
 <span class="nd">@render</span><span class="o">.</span><span class="n">plot</span>
-<span class="k">def</span> <span class="nf">correlation_heatmap</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">correlation_heatmap</span><span class="p">():</span>
     <span class="n">df_corr</span> <span class="o">=</span> <span class="n">correlation_data</span><span class="p">()</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
@@ -2889,14 +2889,14 @@
 <p>Display and interact with tabular data:</p>
 <h4 id="basic-tables">Basic Tables</h4>
 <div class="highlight"><pre><span></span><code><span class="nd">@render</span><span class="o">.</span><span class="n">table</span>
-<span class="k">def</span> <span class="nf">simple_table</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">simple_table</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">filtered_data</span><span class="p">()</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
 </code></pre></div>
 <h4 id="interactive-data-frames">Interactive Data Frames</h4>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">shiny.render</span> <span class="kn">import</span> <span class="n">DataGrid</span><span class="p">,</span> <span class="n">DataTable</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">shiny.render</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataGrid</span><span class="p">,</span> <span class="n">DataTable</span>
 
 <span class="nd">@render</span><span class="o">.</span><span class="n">data_frame</span>
-<span class="k">def</span> <span class="nf">interactive_grid</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">interactive_grid</span><span class="p">():</span>
     <span class="n">df_display</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">()</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">DataGrid</span><span class="p">(</span>
@@ -2909,7 +2909,7 @@
 
 <span class="c1"># Access selected rows</span>
 <span class="nd">@reactive</span><span class="o">.</span><span class="n">Effect</span>
-<span class="k">def</span> <span class="nf">handle_selection</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_selection</span><span class="p">():</span>
     <span class="n">selected</span> <span class="o">=</span> <span class="n">interactive_grid</span><span class="o">.</span><span class="n">data_view</span><span class="p">(</span><span class="n">selected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># Process selected data</span>
@@ -2917,7 +2917,7 @@
 </code></pre></div>
 <h4 id="custom-table-styling">Custom Table Styling</h4>
 <div class="highlight"><pre><span></span><code><span class="nd">@render</span><span class="o">.</span><span class="n">table</span>
-<span class="k">def</span> <span class="nf">styled_table</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">styled_table</span><span class="p">():</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">summary_stats</span><span class="p">()</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
 
     <span class="c1"># Format numeric columns</span>
@@ -2930,7 +2930,7 @@
 <h4 id="dynamic-ui">Dynamic UI</h4>
 <p>Create UI elements that change based on user input:</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@render</span><span class="o">.</span><span class="n">ui</span>
-<span class="k">def</span> <span class="nf">dynamic_controls</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dynamic_controls</span><span class="p">():</span>
     <span class="n">analysis_type</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">analysis_type</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">analysis_type</span> <span class="o">==</span> <span class="s2">&quot;correlation&quot;</span><span class="p">:</span>
@@ -2949,11 +2949,11 @@
 </code></pre></div>
 <h4 id="progress-indicators">Progress Indicators</h4>
 <p>Show progress for long-running operations:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">shiny</span> <span class="kn">import</span> <span class="n">ui</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">shiny</span><span class="w"> </span><span class="kn">import</span> <span class="n">ui</span>
 
 <span class="nd">@reactive</span><span class="o">.</span><span class="n">Effect</span>
 <span class="nd">@reactive</span><span class="o">.</span><span class="n">event</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">run_analysis</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">run_long_analysis</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_long_analysis</span><span class="p">():</span>
     <span class="k">with</span> <span class="n">ui</span><span class="o">.</span><span class="n">Progress</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="k">as</span> <span class="n">progress</span><span class="p">:</span>
         <span class="n">progress</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;Loading data&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">load_large_dataset</span><span class="p">()</span>
@@ -2970,7 +2970,7 @@
 </code></pre></div>
 <h3 id="integration-with-analyzers">Integration with Analyzers</h3>
 <h4 id="accessing-analyzer-data">Accessing Analyzer Data</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactoryOutputContext</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactoryOutputContext</span><span class="p">:</span>
     <span class="c1"># Access primary analyzer outputs</span>
     <span class="n">main_data</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span>
         <span class="n">context</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;main_analysis&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">parquet_path</span>
@@ -2989,16 +2989,16 @@
 </code></pre></div>
 <h4 id="parameter-integration">Parameter Integration</h4>
 <p>Use analyzer parameters in your dashboard:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">server</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
     <span class="c1"># Get analyzer parameters</span>
     <span class="n">analyzer_threshold</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">base_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 
     <span class="nd">@render</span><span class="o">.</span><span class="n">text</span>
-    <span class="k">def</span> <span class="nf">analysis_info</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">analysis_info</span><span class="p">():</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Analysis run with threshold: </span><span class="si">{</span><span class="n">analyzer_threshold</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="nd">@render_widget</span>
-    <span class="k">def</span> <span class="nf">threshold_comparison</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">threshold_comparison</span><span class="p">():</span>
         <span class="c1"># Compare user input with analyzer parameter</span>
         <span class="n">user_threshold</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">user_threshold</span><span class="p">()</span>
         <span class="n">df_comparison</span> <span class="o">=</span> <span class="n">main_data</span><span class="o">.</span><span class="n">with_columns</span><span class="p">([</span>
@@ -3011,12 +3011,12 @@
 <h3 id="performance-optimization">Performance Optimization</h3>
 <h4 id="efficient-data-processing">Efficient Data Processing</h4>
 <div class="highlight"><pre><span></span><code><span class="nd">@reactive</span><span class="o">.</span><span class="n">Calc</span>
-<span class="k">def</span> <span class="nf">base_data</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">base_data</span><span class="p">():</span>
     <span class="c1"># Load once and cache</span>
     <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
 
 <span class="nd">@reactive</span><span class="o">.</span><span class="n">Calc</span>  
-<span class="k">def</span> <span class="nf">filtered_data</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">filtered_data</span><span class="p">():</span>
     <span class="c1"># Efficient filtering with Polars</span>
     <span class="n">filters</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -3035,7 +3035,7 @@
 </code></pre></div>
 <h4 id="lazy-evaluation">Lazy Evaluation</h4>
 <div class="highlight"><pre><span></span><code><span class="nd">@reactive</span><span class="o">.</span><span class="n">Calc</span>
-<span class="k">def</span> <span class="nf">expensive_calculation</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">expensive_calculation</span><span class="p">():</span>
     <span class="c1"># Only runs when dependencies change</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">()</span>
 
@@ -3055,11 +3055,11 @@
 </code></pre></div>
 <h3 id="testing-shiny-dashboards">Testing Shiny Dashboards</h3>
 <h4 id="unit-testing-components">Unit Testing Components</h4>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytest</span>
-<span class="kn">from</span> <span class="nn">shiny.testing</span> <span class="kn">import</span> <span class="n">ShinyAppProc</span>
-<span class="kn">from</span> <span class="nn">your_presenter</span> <span class="kn">import</span> <span class="n">factory</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shiny.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShinyAppProc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">your_presenter</span><span class="w"> </span><span class="kn">import</span> <span class="n">factory</span>
 
-<span class="k">def</span> <span class="nf">test_dashboard_loads</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_dashboard_loads</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that dashboard loads without errors&quot;&quot;&quot;</span>
     <span class="n">app</span> <span class="o">=</span> <span class="n">factory</span><span class="p">(</span><span class="n">mock_context</span><span class="p">)</span>
 
@@ -3069,7 +3069,7 @@
     <span class="c1"># Test server function exists</span>
     <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">shiny</span><span class="o">.</span><span class="n">server_handler</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">test_data_filtering</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_data_filtering</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test reactive data filtering&quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">ShinyAppProc</span><span class="p">(</span><span class="n">factory</span><span class="p">(</span><span class="n">mock_context</span><span class="p">))</span> <span class="k">as</span> <span class="n">proc</span><span class="p">:</span>
         <span class="c1"># Set input values</span>
@@ -3080,7 +3080,7 @@
         <span class="k">assert</span> <span class="s2">&quot;TypeA&quot;</span> <span class="ow">in</span> <span class="n">output</span>
 </code></pre></div>
 <h4 id="integration-testing">Integration Testing</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">test_with_real_data</span><span class="p">():</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">test_with_real_data</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test dashboard with actual analyzer output&quot;&quot;&quot;</span>
     <span class="c1"># Run analyzer to generate test data</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">create_test_context</span><span class="p">(</span><span class="n">test_data_path</span><span class="p">)</span>
@@ -3101,7 +3101,7 @@
 </ul>
 <h4 id="error-handling">Error Handling</h4>
 <div class="highlight"><pre><span></span><code><span class="nd">@render_widget</span>
-<span class="k">def</span> <span class="nf">safe_plot</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">safe_plot</span><span class="p">():</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -3114,20 +3114,20 @@
         <span class="k">return</span> <span class="n">error_plot</span><span class="p">()</span>
 </code></pre></div>
 <h4 id="session-management">Session Management</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">server</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
     <span class="c1"># Clean up resources when session ends</span>
     <span class="nd">@reactive</span><span class="o">.</span><span class="n">Effect</span>
-    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">():</span>
         <span class="n">session</span><span class="o">.</span><span class="n">on_ended</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">cleanup_user_data</span><span class="p">())</span>
 </code></pre></div>
 <h3 id="example-complete-dashboard">Example: Complete Dashboard</h3>
 <p>Here's a complete example of a Shiny dashboard for analyzing message sentiment:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">shiny</span> <span class="kn">import</span> <span class="n">reactive</span><span class="p">,</span> <span class="n">render</span><span class="p">,</span> <span class="n">ui</span>
-<span class="kn">from</span> <span class="nn">shinywidgets</span> <span class="kn">import</span> <span class="n">output_widget</span><span class="p">,</span> <span class="n">render_widget</span>
-<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
-<span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">shiny</span><span class="w"> </span><span class="kn">import</span> <span class="n">reactive</span><span class="p">,</span> <span class="n">render</span><span class="p">,</span> <span class="n">ui</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shinywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">output_widget</span><span class="p">,</span> <span class="n">render_widget</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
 
-<span class="k">def</span> <span class="nf">factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactoryOutputContext</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">factory</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">WebPresenterContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactoryOutputContext</span><span class="p">:</span>
     <span class="c1"># Load data</span>
     <span class="n">df_sentiment</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span>
         <span class="n">context</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;sentiment_analysis&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">parquet_path</span>
@@ -3197,9 +3197,9 @@
         <span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">server</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
         <span class="nd">@reactive</span><span class="o">.</span><span class="n">Calc</span>
-        <span class="k">def</span> <span class="nf">filtered_data</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">filtered_data</span><span class="p">():</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">df_sentiment</span>
 
             <span class="c1"># Date filtering</span>
@@ -3217,16 +3217,16 @@
             <span class="k">return</span> <span class="n">data</span>
 
         <span class="nd">@render</span><span class="o">.</span><span class="n">text</span>
-        <span class="k">def</span> <span class="nf">total_count</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">total_count</span><span class="p">():</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">())</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="nd">@render</span><span class="o">.</span><span class="n">text</span>
-        <span class="k">def</span> <span class="nf">avg_sentiment</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">avg_sentiment</span><span class="p">():</span>
             <span class="n">avg</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">()[</span><span class="s2">&quot;sentiment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">avg</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="nd">@render_widget</span>
-        <span class="k">def</span> <span class="nf">timeseries_plot</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">timeseries_plot</span><span class="p">():</span>
             <span class="n">df_plot</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">filtered_data</span><span class="p">()</span>
                 <span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
@@ -3245,7 +3245,7 @@
             <span class="k">return</span> <span class="n">fig</span>
 
         <span class="nd">@render_widget</span>
-        <span class="k">def</span> <span class="nf">distribution_plot</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">distribution_plot</span><span class="p">():</span>
             <span class="n">df_plot</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">()</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
 
             <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
@@ -3258,18 +3258,18 @@
             <span class="k">return</span> <span class="n">fig</span>
 
         <span class="nd">@render</span><span class="o">.</span><span class="n">data_frame</span>
-        <span class="k">def</span> <span class="nf">data_table</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">data_table</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">filtered_data</span><span class="p">()</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
 
         <span class="nd">@reactive</span><span class="o">.</span><span class="n">Effect</span>
         <span class="nd">@reactive</span><span class="o">.</span><span class="n">event</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">reset</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">reset_filters</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">reset_filters</span><span class="p">():</span>
             <span class="n">ui</span><span class="o">.</span><span class="n">update_date_range</span><span class="p">(</span><span class="s2">&quot;date_filter&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">date_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end</span><span class="o">=</span><span class="n">date_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">ui</span><span class="o">.</span><span class="n">update_selectize</span><span class="p">(</span><span class="s2">&quot;category_filter&quot;</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="s2">&quot;All&quot;</span><span class="p">)</span>
             <span class="n">ui</span><span class="o">.</span><span class="n">update_slider</span><span class="p">(</span><span class="s2">&quot;sentiment_threshold&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="nd">@render</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;sentiment_data.csv&quot;</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">download</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">filtered_data</span><span class="p">()</span><span class="o">.</span><span class="n">write_csv</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">FactoryOutputContext</span><span class="p">(</span>

@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -2978,7 +2978,7 @@ in a case insensitive manner.</p>
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
-<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_name_hint</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hint</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_name_hint</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hint</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns true if every word in the hint (split by spaces) is present in the name,</span>
 <span class="sd">    in a case insensitive manner.</span>
@@ -3044,7 +3044,7 @@ in a case insensitive manner.</p>
 <span class="normal">46</span>
 <span class="normal">47</span>
 <span class="normal">48</span>
-<span class="normal">49</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">column_automap</span><span class="p">(</span>
+<span class="normal">49</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">column_automap</span><span class="p">(</span>
     <span class="n">user_columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">UserInputColumn</span><span class="p">],</span> <span class="n">input_schema_columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">InputColumn</span><span class="p">]</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -3311,15 +3311,15 @@ in a case insensitive manner.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>analyzer_interface/context.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">116</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
+<span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AssetsReader</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AssetsReader</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TableReader&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TableReader&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the table reader for the specified output.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -3360,13 +3360,13 @@ in a case insensitive manner.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>analyzer_interface/context.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">117</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">116</span>
+<span class="normal">117</span>
 <span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
-<span class="k">def</span> <span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TableReader&quot;</span><span class="p">:</span>
+<span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TableReader&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Gets the table reader for the specified output.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -3459,7 +3459,7 @@ in a case insensitive manner.</p>
 <span class="normal">81</span>
 <span class="normal">82</span>
 <span class="normal">83</span>
-<span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BaseDerivedModuleContext</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BaseDerivedModuleContext</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Common interface for secondary analyzers and web presenters runtime contexts.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -3472,7 +3472,7 @@ in a case insensitive manner.</p>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">base_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParamValue</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParamValue</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the primary analysis parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -3480,7 +3480,7 @@ in a case insensitive manner.</p>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AssetsReader&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AssetsReader&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the base primary analyzer&#39;s context, which lets you inspect and load its</span>
 <span class="sd">        outputs.</span>
@@ -3488,7 +3488,7 @@ in a case insensitive manner.</p>
         <span class="k">pass</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">dependency</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dependency</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">secondary_interface</span><span class="p">:</span> <span class="n">SecondaryAnalyzerInterface</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AssetsReader&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -3611,7 +3611,7 @@ lets you inspect and load its outputs.</p>
 <span class="normal">82</span>
 <span class="normal">83</span>
 <span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
-<span class="k">def</span> <span class="nf">dependency</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dependency</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">secondary_interface</span><span class="p">:</span> <span class="n">SecondaryAnalyzerInterface</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AssetsReader&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -3656,6 +3656,10 @@ lets you inspect and load its outputs.</p>
 presenters.</p>
 
     
+      <p>Config:</p>
+      <ul>
+          <li><code>arbitrary_types_allowed</code>: <code class="highlight language-python"><span class="kc">True</span></code></li>
+      </ul>
 
         <p>Fields:</p>
         <ul>
@@ -3693,7 +3697,9 @@ presenters.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>analyzer_interface/context.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">187</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
 <span class="normal">188</span>
 <span class="normal">189</span>
 <span class="normal">190</span>
@@ -3712,10 +3718,7 @@ presenters.</p>
 <span class="normal">203</span>
 <span class="normal">204</span>
 <span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FactoryOutputContext</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">206</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FactoryOutputContext</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Output interface for both factory and api_facotry functions for web</span>
 <span class="sd">    presenters.</span>
@@ -3736,8 +3739,7 @@ presenters.</p>
 <span class="sd">    API factory dataframe output for React dashboard REST API</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-        <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3883,7 +3885,8 @@ presenters.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>analyzer_interface/context.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">139</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">138</span>
+<span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
 <span class="normal">142</span>
@@ -3892,12 +3895,11 @@ presenters.</p>
 <span class="normal">145</span>
 <span class="normal">146</span>
 <span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">InputTableReader</span><span class="p">(</span><span class="n">TableReader</span><span class="p">):</span>
+<span class="normal">148</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InputTableReader</span><span class="p">(</span><span class="n">TableReader</span><span class="p">):</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">[</span>
-        <span class="n">PolarsDataFrameLike</span>
-    <span class="p">](</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">PolarsDataFrameLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PolarsDataFrameLike</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">preprocess</span><span class="p">[</span><span class="n">PolarsDataFrameLike</span><span class="p">](</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">PolarsDataFrameLike</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PolarsDataFrameLike</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Given the manually loaded user input dataframe, apply column mapping and</span>
 <span class="sd">        semantic transformations to give the input dataframe that the analyzer</span>
@@ -3942,7 +3944,8 @@ expects.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>analyzer_interface/context.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">140</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">139</span>
+<span class="normal">140</span>
 <span class="normal">141</span>
 <span class="normal">142</span>
 <span class="normal">143</span>
@@ -3950,11 +3953,10 @@ expects.</p>
 <span class="normal">145</span>
 <span class="normal">146</span>
 <span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
-<span class="k">def</span> <span class="nf">preprocess</span><span class="p">[</span>
-    <span class="n">PolarsDataFrameLike</span>
-<span class="p">](</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">PolarsDataFrameLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PolarsDataFrameLike</span><span class="p">:</span>
+<span class="normal">148</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocess</span><span class="p">[</span><span class="n">PolarsDataFrameLike</span><span class="p">](</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">PolarsDataFrameLike</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PolarsDataFrameLike</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given the manually loaded user input dataframe, apply column mapping and</span>
 <span class="sd">    semantic transformations to give the input dataframe that the analyzer</span>
@@ -4041,7 +4043,7 @@ expects.</p>
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
-<span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PrimaryAnalyzerContext</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PrimaryAnalyzerContext</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
     <span class="n">temp_dir</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Gets the temporary directory that the module can freely write content to</span>
@@ -4049,7 +4051,7 @@ expects.</p>
 <span class="sd">  &quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;InputTableReader&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;InputTableReader&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the input reader context.</span>
 
@@ -4060,14 +4062,14 @@ expects.</p>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParamValue</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParamValue</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the analysis parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TableWriter&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TableWriter&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the output writer context for the specified output ID.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -4164,7 +4166,7 @@ in anticipation that we may want to support multiple inputs in the future.</p>
 <span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
-<span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;InputTableReader&quot;</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;InputTableReader&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Gets the input reader context.</span>
 
@@ -4204,7 +4206,7 @@ in anticipation that we may want to support multiple inputs in the future.</p>
 <span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
-<span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TableWriter&quot;</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TableWriter&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Gets the output writer context for the specified output ID.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -4264,15 +4266,15 @@ in anticipation that we may want to support multiple inputs in the future.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>analyzer_interface/context.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">107</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
+<span class="normal">107</span>
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SecondaryAnalyzerContext</span><span class="p">(</span><span class="n">BaseDerivedModuleContext</span><span class="p">):</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SecondaryAnalyzerContext</span><span class="p">(</span><span class="n">BaseDerivedModuleContext</span><span class="p">):</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TableWriter&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TableWriter&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the output writer context</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -4312,13 +4314,13 @@ in anticipation that we may want to support multiple inputs in the future.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>analyzer_interface/context.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">107</span>
+<span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
-<span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TableWriter&quot;</span><span class="p">:</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TableWriter&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Gets the output writer context</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -4359,6 +4361,10 @@ in anticipation that we may want to support multiple inputs in the future.</p>
         <p>Output interface for Shiny dashboards</p>
 
     
+      <p>Config:</p>
+      <ul>
+          <li><code>arbitrary_types_allowed</code>: <code class="highlight language-python"><span class="kc">True</span></code></li>
+      </ul>
 
         <p>Fields:</p>
         <ul>
@@ -4383,7 +4389,8 @@ in anticipation that we may want to support multiple inputs in the future.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>analyzer_interface/context.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">167</span>
+<span class="normal">168</span>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
@@ -4397,9 +4404,7 @@ in anticipation that we may want to support multiple inputs in the future.</p>
 <span class="normal">179</span>
 <span class="normal">180</span>
 <span class="normal">181</span>
-<span class="normal">182</span>
-<span class="normal">183</span>
-<span class="normal">184</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ShinyContext</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">182</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ShinyContext</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Output interface for Shiny dashboards</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -4414,8 +4419,7 @@ in anticipation that we may want to support multiple inputs in the future.</p>
 <span class="sd">    Server handler callback to be called by the shiny application instance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-        <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -4544,18 +4548,18 @@ in anticipation that we may want to support multiple inputs in the future.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>analyzer_interface/context.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">125</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">124</span>
+<span class="normal">125</span>
 <span class="normal">126</span>
 <span class="normal">127</span>
 <span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span>
 <span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">TableReader</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="normal">132</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TableReader</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">parquet_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parquet_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the path to the table&#39;s parquet file. The module should expect a parquet</span>
 <span class="sd">        file here.</span>
@@ -4670,18 +4674,18 @@ file here.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>analyzer_interface/context.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">152</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">151</span>
+<span class="normal">152</span>
 <span class="normal">153</span>
 <span class="normal">154</span>
 <span class="normal">155</span>
 <span class="normal">156</span>
 <span class="normal">157</span>
 <span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">TableWriter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="normal">159</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TableWriter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">parquet_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parquet_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the path to the table&#39;s parquet file. The module should write a parquet</span>
 <span class="sd">        file to it.</span>
@@ -4760,6 +4764,10 @@ file to it.</p>
   &lt;/span&gt; (&lt;code&gt;analyzer_interface.context.BaseDerivedModuleContext&lt;/code&gt;)" href="#analyzer_interface.context.BaseDerivedModuleContext">BaseDerivedModuleContext</a></code></p>
 
     
+      <p>Config:</p>
+      <ul>
+          <li><code>arbitrary_types_allowed</code>: <code class="highlight language-python"><span class="kc">True</span></code></li>
+      </ul>
 
         <p>Fields:</p>
         <ul>
@@ -4800,8 +4808,7 @@ file to it.</p>
 <span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WebPresenterContext</span><span class="p">(</span><span class="n">BaseDerivedModuleContext</span><span class="p">):</span>
+<span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">WebPresenterContext</span><span class="p">(</span><span class="n">BaseDerivedModuleContext</span><span class="p">):</span>
     <span class="n">dash_app</span><span class="p">:</span> <span class="n">Dash</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  The Dash app that is being built.</span>
@@ -4809,7 +4816,7 @@ file to it.</p>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">state_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">state_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the directory where the web presenter can store state that persists</span>
 <span class="sd">        between runs. This state space is unique for each</span>
@@ -4817,8 +4824,7 @@ file to it.</p>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
-    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-        <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -5052,7 +5058,7 @@ expected data type. Higher (less negative) scores are better.
 <span class="normal">34</span>
 <span class="normal">35</span>
 <span class="normal">36</span>
-<span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_data_type_compatibility_score</span><span class="p">(</span>
+<span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_data_type_compatibility_score</span><span class="p">(</span>
     <span class="n">expected_data_type</span><span class="p">:</span> <span class="n">DataType</span><span class="p">,</span> <span class="n">actual_data_type</span><span class="p">:</span> <span class="n">DataType</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -5340,12 +5346,12 @@ expected data type. Higher (less negative) scores are better.
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
-<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AnalyzerDeclaration</span><span class="p">(</span><span class="n">AnalyzerInterface</span><span class="p">):</span>
+<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AnalyzerDeclaration</span><span class="p">(</span><span class="n">AnalyzerInterface</span><span class="p">):</span>
     <span class="n">entry_point</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PrimaryAnalyzerContext</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
     <span class="n">default_params</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PrimaryAnalyzerContext</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParamValue</span><span class="p">]]</span>
     <span class="n">is_distributed</span><span class="p">:</span> <span class="nb">bool</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">interface</span><span class="p">:</span> <span class="n">AnalyzerInterface</span><span class="p">,</span>
         <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
@@ -5353,7 +5359,7 @@ expected data type. Higher (less negative) scores are better.
         <span class="n">is_distributed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">default_params</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PrimaryAnalyzerContext</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParamValue</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="p">)</span>
+        <span class="p">),</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a primary analyzer declaration</span>
 
@@ -5374,7 +5380,7 @@ expected data type. Higher (less negative) scores are better.
             <span class="o">**</span><span class="n">interface</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span>
             <span class="n">entry_point</span><span class="o">=</span><span class="n">main</span><span class="p">,</span>
             <span class="n">default_params</span><span class="o">=</span><span class="n">default_params</span><span class="p">,</span>
-            <span class="n">is_distributed</span><span class="o">=</span><span class="n">is_distributed</span>
+            <span class="n">is_distributed</span><span class="o">=</span><span class="n">is_distributed</span><span class="p">,</span>
         <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -5509,7 +5515,7 @@ executable.</p>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
-<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">interface</span><span class="p">:</span> <span class="n">AnalyzerInterface</span><span class="p">,</span>
     <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
@@ -5517,7 +5523,7 @@ executable.</p>
     <span class="n">is_distributed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">default_params</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PrimaryAnalyzerContext</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParamValue</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
         <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()</span>
-    <span class="p">)</span>
+    <span class="p">),</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a primary analyzer declaration</span>
 
@@ -5538,7 +5544,7 @@ executable.</p>
         <span class="o">**</span><span class="n">interface</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span>
         <span class="n">entry_point</span><span class="o">=</span><span class="n">main</span><span class="p">,</span>
         <span class="n">default_params</span><span class="o">=</span><span class="n">default_params</span><span class="p">,</span>
-        <span class="n">is_distributed</span><span class="o">=</span><span class="n">is_distributed</span>
+        <span class="n">is_distributed</span><span class="o">=</span><span class="n">is_distributed</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5693,10 +5699,10 @@ executable.</p>
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span>
-<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SecondaryAnalyzerDeclaration</span><span class="p">(</span><span class="n">SecondaryAnalyzerInterface</span><span class="p">):</span>
+<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SecondaryAnalyzerDeclaration</span><span class="p">(</span><span class="n">SecondaryAnalyzerInterface</span><span class="p">):</span>
     <span class="n">entry_point</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;SecondaryAnalyzerContext&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="p">:</span> <span class="n">SecondaryAnalyzerInterface</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="p">:</span> <span class="n">SecondaryAnalyzerInterface</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a secondary analyzer declaration</span>
 
 <span class="sd">        Args:</span>
@@ -5804,7 +5810,7 @@ that the outputs specified in the interface are generated.</p>
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span>
-<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="p">:</span> <span class="n">SecondaryAnalyzerInterface</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="p">:</span> <span class="n">SecondaryAnalyzerInterface</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a secondary analyzer declaration</span>
 
 <span class="sd">    Args:</span>
@@ -5989,12 +5995,12 @@ that the outputs specified in the interface are generated.</p>
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
-<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WebPresenterDeclaration</span><span class="p">(</span><span class="n">WebPresenterInterface</span><span class="p">):</span>
+<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">WebPresenterDeclaration</span><span class="p">(</span><span class="n">WebPresenterInterface</span><span class="p">):</span>
     <span class="n">factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;WebPresenterContext&quot;</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">FactoryOutputContext</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span>
     <span class="n">shiny</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">server_name</span><span class="p">:</span> <span class="nb">str</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">interface</span><span class="p">:</span> <span class="n">WebPresenterInterface</span><span class="p">,</span>
         <span class="n">factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
@@ -6168,7 +6174,7 @@ https://docs.python.org/3/tutorial/modules.html</p>
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
-<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">interface</span><span class="p">:</span> <span class="n">WebPresenterInterface</span><span class="p">,</span>
     <span class="n">factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
@@ -6554,7 +6560,7 @@ represent how the data is intended to be interpreted.</p>
 <span class="normal">135</span>
 <span class="normal">136</span>
 <span class="normal">137</span>
-<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AnalyzerInterface</span><span class="p">(</span><span class="n">BaseAnalyzerInterface</span><span class="p">):</span>
+<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AnalyzerInterface</span><span class="p">(</span><span class="n">BaseAnalyzerInterface</span><span class="p">):</span>
     <span class="nb">input</span><span class="p">:</span> <span class="n">AnalyzerInput</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Specifies the input data schema for the analyzer.</span>
@@ -6750,7 +6756,7 @@ represent how the data is intended to be interpreted.</p>
 <span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
-<span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AnalyzerOutput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AnalyzerOutput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Uniquely identifies the output data schema for the analyzer. The analyzer</span>
@@ -6766,13 +6772,13 @@ represent how the data is intended to be interpreted.</p>
 
     <span class="n">internal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">get_column_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_column_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">column</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">column</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">transform_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">|</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">|</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
         <span class="n">output_columns</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">lazy</span><span class="p">()</span><span class="o">.</span><span class="n">collect_schema</span><span class="p">()</span><span class="o">.</span><span class="n">names</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">output_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
             <span class="p">[</span>
@@ -6969,7 +6975,7 @@ must include this key in the output dictionary.</p>
 <span class="normal">79</span>
 <span class="normal">80</span>
 <span class="normal">81</span>
-<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AnalyzerParam</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AnalyzerParam</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The name of the parameter. This becomes the key in the parameters dictionary</span>
@@ -7008,7 +7014,7 @@ must include this key in the output dictionary.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">print_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">human_readable_name</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -7266,7 +7272,7 @@ the UX for parameter input.</p>
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
-<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BaseAnalyzerInterface</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BaseAnalyzerInterface</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  The static ID for the analyzer that, with the version, uniquely identifies the</span>
@@ -7540,7 +7546,7 @@ migration between versions of the same analyzer.</p>
 <span class="normal">151</span>
 <span class="normal">152</span>
 <span class="normal">153</span>
-<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">DerivedAnalyzerInterface</span><span class="p">(</span><span class="n">BaseAnalyzerInterface</span><span class="p">):</span>
+<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DerivedAnalyzerInterface</span><span class="p">(</span><span class="n">BaseAnalyzerInterface</span><span class="p">):</span>
     <span class="n">base_analyzer</span><span class="p">:</span> <span class="n">AnalyzerInterface</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  The base analyzer that this secondary analyzer extends. This is always a primary</span>
@@ -7690,7 +7696,7 @@ primary base.</p>
 <span class="normal">204</span>
 <span class="normal">205</span>
 <span class="normal">206</span>
-<span class="normal">207</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">InputColumn</span><span class="p">(</span><span class="n">Column</span><span class="p">):</span>
+<span class="normal">207</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InputColumn</span><span class="p">(</span><span class="n">Column</span><span class="p">):</span>
     <span class="n">name_hints</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Specifies a list of space-separated words that are likely to be found in the</span>
@@ -7871,7 +7877,7 @@ in turn is matched if every word matches some part of the column name.</p>
 <span class="normal">160</span>
 <span class="normal">161</span>
 <span class="normal">162</span>
-<span class="normal">163</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SecondaryAnalyzerInterface</span><span class="p">(</span><span class="n">DerivedAnalyzerInterface</span><span class="p">):</span>
+<span class="normal">163</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SecondaryAnalyzerInterface</span><span class="p">(</span><span class="n">DerivedAnalyzerInterface</span><span class="p">):</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnalyzerOutput</span><span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Specifies the output data schema for the analyzer.</span>
@@ -8072,7 +8078,7 @@ in turn is matched if every word matches some part of the column name.</p>
 <span class="normal">22</span>
 <span class="normal">23</span>
 <span class="normal">24</span>
-<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">IntegerParam</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">IntegerParam</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents an integer value</span>
 
@@ -8147,7 +8153,7 @@ in turn is matched if every word matches some part of the column name.</p>
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
-<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">TimeBinningParam</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TimeBinningParam</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a time bin.</span>
 
@@ -8267,13 +8273,13 @@ in turn is matched if every word matches some part of the column name.</p>
 <span class="normal">84</span>
 <span class="normal">85</span>
 <span class="normal">86</span>
-<span class="normal">87</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">TimeBinningValue</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">87</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TimeBinningValue</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">unit</span><span class="p">:</span> <span class="n">TimeBinningUnit</span>
     <span class="n">amount</span><span class="p">:</span> <span class="nb">int</span>
 
-    <span class="k">def</span> <span class="nf">to_polars_truncate_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars_truncate_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Converts the value to a string that can be used in Polars truncate spec.</span>
 <span class="sd">        See https://docs.pola.rs/api/python/stable/reference/expressions/api/polars.Expr.dt.truncate.html</span>
@@ -8297,7 +8303,7 @@ in turn is matched if every word matches some part of the column name.</p>
 
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid time binning value&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_human_readable_text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_human_readable_text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">amount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amount</span>
         <span class="n">unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span>
 
@@ -8371,7 +8377,7 @@ See https://docs.pola.rs/api/python/stable/reference/expressions/api/polars.Expr
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
-<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">to_polars_truncate_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_polars_truncate_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts the value to a string that can be used in Polars truncate spec.</span>
 <span class="sd">    See https://docs.pola.rs/api/python/stable/reference/expressions/api/polars.Expr.dt.truncate.html</span>

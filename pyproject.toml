@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cibmangotree"
-version = "0.10.0"
+version = "0.10.1"
 description = "Terminal-based social media data analysis tool"
 requires-python = ">=3.12"
 dependencies = [

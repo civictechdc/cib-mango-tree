@@ -137,9 +137,9 @@ PolarsDataFrameLike = TypeVar("PolarsDataFrameLike", bound=pl.DataFrame)
 
 class InputTableReader(TableReader):
     @abstractmethod
-    def preprocess[
-        PolarsDataFrameLike
-    ](self, df: PolarsDataFrameLike) -> PolarsDataFrameLike:
+    def preprocess[PolarsDataFrameLike](
+        self, df: PolarsDataFrameLike
+    ) -> PolarsDataFrameLike:
         """
         Given the manually loaded user input dataframe, apply column mapping and
         semantic transformations to give the input dataframe that the analyzer

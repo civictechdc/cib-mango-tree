@@ -23,16 +23,5 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked --group dev --no-install-project
 
-      - name: Run code formatter
-        run: uv run isort . && uv run black .
-
-      - name: Assert that the codebase has no diff
-        shell: bash
-        run: |
-          if [[ -n "$(git status --short | grep '^ [^\s]\|??')" ]]; then
-            echo "Unstaged/untracked files exist"
-            git status
-            git --no-pager diff
-            echo "Auto formatting hasn't been applied by the codebase."
-            exit 1
-          fi
+      - name: Run pre-commit hooks
+        run: uv run pre-commit run --all-files

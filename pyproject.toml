@@ -30,9 +30,10 @@ dependencies = [
     "python-json-logger>=2.0.7",
     "rich>=14.0.0",
     "regex>=2025.9.1",
+    "urllib3>=2.7.0",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pyarrow-stubs>=17.13",
     "black>=24.10.0",
@@ -58,6 +59,7 @@ where = ["."]
 
 [tool.uv]
 exclude-newer = "7 days"
+exclude-newer-package = { urllib3 = false }
 
 [tool.isort]
 profile = "black"

@@ -1,12 +1,13 @@
 import polars as pl
-from analyzer_interface.context import (
+from dash import html
+from shiny.ui import nav_panel
+
+from cibmangotree.analyzer_interface.context import (
     FactoryOutputContext,
     ShinyContext,
     WebPresenterContext,
 )
-from app.shiny import page_dependencies
-from dash import html
-from shiny.ui import nav_panel
+from cibmangotree.app.shiny import page_dependencies
 
 from ..ngrams_stats.interface import OUTPUT_NGRAM_FULL, OUTPUT_NGRAM_STATS
 from ..ngrams_stats.interface import interface as ngram_stats

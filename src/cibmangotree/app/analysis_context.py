@@ -3,18 +3,19 @@ from functools import cached_property
 from tempfile import TemporaryDirectory
 from typing import Literal
 
-from analyzer_interface import (
+from pydantic import BaseModel
+
+from cibmangotree.analyzer_interface import (
     AnalyzerDeclaration,
     SecondaryAnalyzerDeclaration,
     backfill_param_values,
 )
-from context import (
+from cibmangotree.context import (
     InputColumnProvider,
     PrimaryAnalyzerContext,
     SecondaryAnalyzerContext,
 )
-from pydantic import BaseModel
-from storage import AnalysisModel
+from cibmangotree.storage import AnalysisModel
 
 from .app_context import AppContext
 from .project_context import ProjectContext

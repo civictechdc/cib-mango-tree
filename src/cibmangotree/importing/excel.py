@@ -1,10 +1,11 @@
 from typing import Callable
 
 import polars as pl
-import terminal_tools.prompts as prompts
 from fastexcel import read_excel
 from pydantic import BaseModel
-from terminal_tools.utils import wait_for_key
+
+import cibmangotree.terminal_tools.prompts as prompts
+from cibmangotree.terminal_tools.utils import wait_for_key
 
 from .importer import Importer, ImporterSession
 

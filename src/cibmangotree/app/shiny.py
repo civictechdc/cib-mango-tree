@@ -1,7 +1,6 @@
 from inspect import signature
 from typing import List, Optional
 
-from analyzer_interface.context import ServerCallback
 from pydantic import BaseModel, ConfigDict
 from shiny.session import Inputs, Outputs, Session
 from shiny.ui import (
@@ -14,6 +13,8 @@ from shiny.ui import (
     page_navbar,
     tags,
 )
+
+from cibmangotree.analyzer_interface.context import ServerCallback
 
 MANGO_ORANGE2 = "#f3921e"
 LOGO_URL = "https://raw.githubusercontent.com/CIB-Mango-Tree/CIB-Mango-Tree-Website/main/assets/images/mango-text.PNG"

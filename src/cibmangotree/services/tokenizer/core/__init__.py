@@ -10,7 +10,7 @@ Exports:
 - CaseHandling
 
 Intended usage:
-    from services.tokenizer.core import (
+    from cibmangotree.services.tokenizer.core import (
         AbstractTokenizer,
         TokenizerConfig,
         TokenList,

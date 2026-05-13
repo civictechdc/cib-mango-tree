@@ -1,8 +1,9 @@
 import plotly.express as px
 import polars as pl
-from analyzer_interface.context import WebPresenterContext
 from dash.dcc import Graph
 from dash.html import H2, Div, P
+
+from cibmangotree.analyzer_interface.context import WebPresenterContext
 
 from ..temporal_base.interface import (
     OUTPUT_COL_POST_COUNT,

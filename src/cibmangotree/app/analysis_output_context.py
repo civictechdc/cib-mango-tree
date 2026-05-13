@@ -1,9 +1,10 @@
 from functools import cached_property
 from typing import Literal, Optional
 
-from analyzer_interface import AnalyzerOutput, SecondaryAnalyzerInterface
 from pydantic import BaseModel
-from storage import SupportedOutputExtension
+
+from cibmangotree.analyzer_interface import AnalyzerOutput, SecondaryAnalyzerInterface
+from cibmangotree.storage import SupportedOutputExtension
 
 from .analysis_context import AnalysisContext
 from .app_context import AppContext

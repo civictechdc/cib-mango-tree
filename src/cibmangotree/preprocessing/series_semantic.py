@@ -2,8 +2,9 @@ from datetime import datetime
 from typing import Callable, Type, Union
 
 import polars as pl
-from analyzer_interface import DataType
 from pydantic import BaseModel, ConfigDict
+
+from cibmangotree.analyzer_interface import DataType
 
 
 class SeriesSemantic(BaseModel):

@@ -2,8 +2,9 @@ from abc import ABC, abstractmethod
 from typing import TypeVar
 
 import polars as pl
-from preprocessing.series_semantic import SeriesSemantic
 from pydantic import BaseModel
+
+from cibmangotree.preprocessing.series_semantic import SeriesSemantic
 
 T = TypeVar("T", bound=pl.DataFrame | pl.LazyFrame)
 

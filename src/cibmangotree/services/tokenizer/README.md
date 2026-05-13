@@ -16,7 +16,7 @@ The tokenizer service provides configurable text tokenization that handles:
 ### Simple Usage
 
 ```python
-from services.tokenizer import tokenize_text
+from cibmangotree.services.tokenizer import tokenize_text
 
 text = "Hello @user! Check out #python https://example.com 🚀"
 tokens = tokenize_text(text)
@@ -25,8 +25,8 @@ tokens = tokenize_text(text)
 ### Custom Configuration
 
 ```python
-from services.tokenizer import BasicTokenizer, TokenizerConfig
-from services.tokenizer.core import CaseHandling
+from cibmangotree.services.tokenizer import BasicTokenizer, TokenizerConfig
+from cibmangotree.services.tokenizer.core import CaseHandling
 
 config = TokenizerConfig(
     case_handling=CaseHandling.PRESERVE,
@@ -48,7 +48,7 @@ tokens = tokenizer.tokenize("Social media text #analysis @researcher")
 All tokenizers implement `AbstractTokenizer`:
 
 ```python
-from services.tokenizer.core.base import AbstractTokenizer
+from cibmangotree.services.tokenizer.core.base import AbstractTokenizer
 
 class CustomTokenizer(AbstractTokenizer):
     def tokenize(self, text: str) -> list[str]:
@@ -215,7 +215,7 @@ config = TokenizerConfig(
 ### Basic Integration
 
 ```python
-from services.tokenizer import create_basic_tokenizer, TokenizerConfig
+from cibmangotree.services.tokenizer import create_basic_tokenizer, TokenizerConfig
 
 # Use default configuration
 tokenizer = create_basic_tokenizer()
@@ -230,8 +230,8 @@ tokens = tokenizer.tokenize(text)
 ### Configuration Factory Pattern
 
 ```python
-from services.tokenizer import TokenizerConfig
-from services.tokenizer.core import CaseHandling
+from cibmangotree.services.tokenizer import TokenizerConfig
+from cibmangotree.services.tokenizer.core import CaseHandling
 
 def create_custom_config():
     return TokenizerConfig(
@@ -248,8 +248,8 @@ config = create_custom_config()
 ### Creating Custom Tokenizers
 
 ```python
-from services.tokenizer.core.base import AbstractTokenizer
-from services.tokenizer.core.types import TokenizerConfig
+from cibmangotree.services.tokenizer.core.base import AbstractTokenizer
+from cibmangotree.services.tokenizer.core.types import TokenizerConfig
 
 class CustomTokenizer(AbstractTokenizer):
     """Custom tokenizer implementation."""

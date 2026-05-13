@@ -1,13 +1,14 @@
 import polars as pl
-from analyzer_interface.context import (
+from dash import html
+from shiny.ui import layout_columns, nav_panel
+
+from cibmangotree.analyzer_interface.context import (
     FactoryOutputContext,
     ShinyContext,
     WebPresenterContext,
 )
-from app.project_context import _get_columns_with_semantic
-from app.shiny import page_dependencies
-from dash import html
-from shiny.ui import layout_columns, nav_panel
+from cibmangotree.app.project_context import _get_columns_with_semantic
+from cibmangotree.app.shiny import page_dependencies
 
 from ..hashtags_base.interface import COL_TIME, OUTPUT_GINI
 from .app import (

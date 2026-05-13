@@ -1,8 +1,9 @@
 import polars as pl
-from analyzer_interface.context import PrimaryAnalyzerContext
-from services.tokenizer.basic import TokenizerConfig, tokenize_text
-from services.tokenizer.core.types import CaseHandling
-from terminal_tools import ProgressReporter
+
+from cibmangotree.analyzer_interface.context import PrimaryAnalyzerContext
+from cibmangotree.services.tokenizer.basic import TokenizerConfig, tokenize_text
+from cibmangotree.services.tokenizer.core.types import CaseHandling
+from cibmangotree.terminal_tools import ProgressReporter
 
 from .interface import (
     COL_AUTHOR_ID,

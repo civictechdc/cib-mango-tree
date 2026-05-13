@@ -359,7 +359,7 @@ def print_data_frame_summary(
     data_frame, title: str, apply_color: str = "column_data_type", caption: str = None
 ):
     """Print a summary table for dataframes with many columns"""
-    from preprocessing.series_semantic import infer_series_semantic
+    from cibmangotree.preprocessing.series_semantic import infer_series_semantic
 
     MAX_ROW_CHAR = 25
 

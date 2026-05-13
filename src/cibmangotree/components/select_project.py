@@ -1,7 +1,12 @@
 from typing import Optional
 
-from app import ProjectContext
-from terminal_tools import draw_box, prompts, smart_print_data_frame, wait_for_key
+from cibmangotree.app import ProjectContext
+from cibmangotree.terminal_tools import (
+    draw_box,
+    prompts,
+    smart_print_data_frame,
+    wait_for_key,
+)
 
 from .context import ViewContext
 

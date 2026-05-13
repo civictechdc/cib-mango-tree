@@ -1,7 +1,8 @@
 from typing import Literal
 
 from pydantic import BaseModel
-from storage import SettingsModel
+
+from cibmangotree.storage import SettingsModel
 
 from .app_context import AppContext
 

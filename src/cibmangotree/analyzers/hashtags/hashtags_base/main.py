@@ -1,8 +1,9 @@
 from itertools import accumulate
 
 import polars as pl
-from analyzer_interface.context import PrimaryAnalyzerContext
-from terminal_tools import ProgressReporter
+
+from cibmangotree.analyzer_interface.context import PrimaryAnalyzerContext
+from cibmangotree.terminal_tools import ProgressReporter
 
 from .interface import (
     COL_AUTHOR_ID,

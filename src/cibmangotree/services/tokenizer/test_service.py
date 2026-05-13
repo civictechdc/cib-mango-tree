@@ -210,7 +210,7 @@ class TestNgramParameterValidation:
 
     def test_valid_ngram_ranges(self):
         """Test valid n-gram parameter ranges."""
-        from analyzers.ngrams.ngrams_base.main import ngrams
+        from cibmangotree.analyzers.ngrams.ngrams_base.main import ngrams
 
         tokens = ["word1", "word2", "word3", "word4", "word5"]
 
@@ -231,7 +231,7 @@ class TestNgramParameterValidation:
 
     def test_edge_case_ngram_ranges(self):
         """Test edge cases for n-gram ranges."""
-        from analyzers.ngrams.ngrams_base.main import ngrams
+        from cibmangotree.analyzers.ngrams.ngrams_base.main import ngrams
 
         tokens = ["word1", "word2", "word3"]
 
@@ -258,7 +258,7 @@ class TestNgramParameterValidation:
 
     def test_invalid_ngram_ranges(self):
         """Test behavior with invalid n-gram ranges."""
-        from analyzers.ngrams.ngrams_base.main import ngrams
+        from cibmangotree.analyzers.ngrams.ngrams_base.main import ngrams
 
         tokens = ["word1", "word2", "word3"]
 
@@ -284,7 +284,10 @@ class TestTokenizerIntegration:
 
     def test_tokenizer_ngram_pipeline(self):
         """Test full pipeline from text to n-grams."""
-        from analyzers.ngrams.ngrams_base.main import ngrams, serialize_ngram
+        from cibmangotree.analyzers.ngrams.ngrams_base.main import (
+            ngrams,
+            serialize_ngram,
+        )
 
         text = "This is a test sentence for tokenization."
 
@@ -311,7 +314,7 @@ class TestTokenizerIntegration:
 
     def test_social_media_text_pipeline(self):
         """Test pipeline with social media text."""
-        from analyzers.ngrams.ngrams_base.main import ngrams
+        from cibmangotree.analyzers.ngrams.ngrams_base.main import ngrams
 
         text = "Great work @team! Check out #progress https://example.com 🎉"
 
@@ -336,7 +339,7 @@ class TestTokenizerIntegration:
 
     def test_multilingual_pipeline(self):
         """Test pipeline with multilingual content."""
-        from analyzers.ngrams.ngrams_base.main import ngrams
+        from cibmangotree.analyzers.ngrams.ngrams_base.main import ngrams
 
         text = "Hello 你好 world 世界"
 

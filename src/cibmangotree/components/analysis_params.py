@@ -1,17 +1,21 @@
 from tempfile import TemporaryDirectory
 
 import polars as pl
-from analyzer_interface import (
+from pydantic import BaseModel
+
+from cibmangotree.analyzer_interface import (
     AnalyzerInterface,
     AnalyzerParam,
     IntegerParam,
     ParamValue,
     TimeBinningValue,
 )
-from app import ProjectContext
-from context import InputColumnProvider, PrimaryAnalyzerDefaultParametersContext
-from pydantic import BaseModel
-from terminal_tools import prompts, smart_print_data_frame
+from cibmangotree.app import ProjectContext
+from cibmangotree.context import (
+    InputColumnProvider,
+    PrimaryAnalyzerDefaultParametersContext,
+)
+from cibmangotree.terminal_tools import prompts, smart_print_data_frame
 
 from .context import ViewContext
 

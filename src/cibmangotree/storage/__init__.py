@@ -8,12 +8,13 @@ from typing import Callable, Iterable, Literal, Optional
 import platformdirs
 import polars as pl
 import pyarrow.parquet as pq
-from analyzer_interface.interface import AnalyzerOutput
-from analyzer_interface.params import ParamValue
 from filelock import FileLock
 from pydantic import BaseModel
 from tinydb import Query, TinyDB
 from xlsxwriter import Workbook
+
+from cibmangotree.analyzer_interface.interface import AnalyzerOutput
+from cibmangotree.analyzer_interface.params import ParamValue
 
 from .file_selector import FileSelectorStateManager
 

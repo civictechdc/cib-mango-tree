@@ -5,7 +5,6 @@ from signal import SIGINT, default_int_handler, signal
 from tempfile import TemporaryDirectory
 
 from a2wsgi import WSGIMiddleware
-from context import WebPresenterContext
 from dash import Dash
 from flask import Flask, render_template
 from pydantic import BaseModel
@@ -14,6 +13,8 @@ from starlette.applications import Starlette
 from starlette.responses import RedirectResponse
 from starlette.routing import Mount, Route
 from uvicorn import Config, Server
+
+from cibmangotree.context import WebPresenterContext
 
 from .analysis_context import AnalysisContext
 from .app_context import AppContext

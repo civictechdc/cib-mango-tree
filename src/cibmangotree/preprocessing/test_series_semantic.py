@@ -1,7 +1,8 @@
 from datetime import datetime
 
 import polars as pl
-from preprocessing.series_semantic import (
+
+from cibmangotree.preprocessing.series_semantic import (
     date_string,
     datetime_string,
     infer_series_semantic,

@@ -6,7 +6,8 @@ from pathlib import Path
 
 from rich.console import Console
 from rich.text import Text
-from terminal_tools import enable_windows_ansi_support
+
+from cibmangotree.terminal_tools import enable_windows_ansi_support
 
 
 def main() -> None:
@@ -41,13 +42,13 @@ def main() -> None:
     console.print(loading_msg)
 
     # Import heavy modules after loading message
-    from analyzers import suite
-    from app import App, AppContext
-    from app.logger import setup_logging
-    from components import ViewContext, main_menu, splash
-    from meta import get_version
-    from storage import Storage
-    from terminal_tools.inception import TerminalContext
+    from cibmangotree.analyzers import suite
+    from cibmangotree.app import App, AppContext
+    from cibmangotree.app.logger import setup_logging
+    from cibmangotree.components import ViewContext, main_menu, splash
+    from cibmangotree.meta import get_version
+    from cibmangotree.storage import Storage
+    from cibmangotree.terminal_tools.inception import TerminalContext
 
     # Initialize storage
     storage = Storage(app_name="MangoTango", app_author="Civic Tech DC")

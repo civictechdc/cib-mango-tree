@@ -1,15 +1,16 @@
 from functools import cached_property
 from typing import Union
 
-from analyzer_interface import (
+from pydantic import BaseModel
+
+from cibmangotree.analyzer_interface import (
     AnalyzerDeclaration,
     AnalyzerInterface,
     SecondaryAnalyzerDeclaration,
     SecondaryAnalyzerInterface,
     WebPresenterDeclaration,
 )
-from meta import is_development
-from pydantic import BaseModel
+from cibmangotree.meta import is_development
 
 
 class AnalyzerSuite(BaseModel):

@@ -1,8 +1,9 @@
 import plotly.express as px
 import polars as pl
-from analyzer_interface.context import WebPresenterContext
 from dash.dcc import Graph
 from dash.html import Div
+
+from cibmangotree.analyzer_interface.context import WebPresenterContext
 
 
 def factory(context: WebPresenterContext):

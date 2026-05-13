@@ -2,7 +2,8 @@ from pathlib import Path
 
 import polars as pl
 import pytest
-from testing import ParquetTestData, test_secondary_analyzer
+
+from cibmangotree.testing import ParquetTestData, test_secondary_analyzer
 
 from .ngrams_base.interface import (
     OUTPUT_MESSAGE,

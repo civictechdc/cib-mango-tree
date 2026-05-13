@@ -1,4 +1,4 @@
-from analyzer_interface import WebPresenterInterface
+from cibmangotree.analyzer_interface import WebPresenterInterface
 
 from ..ngrams_base import interface as ngrams_interface
 from ..ngrams_stats import interface as ngram_stats_interface

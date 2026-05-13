@@ -2,32 +2,35 @@ import os
 from functools import cached_property
 
 import polars as pl
-from analyzer_interface import (
+from dash import Dash
+from pydantic import BaseModel, ConfigDict
+
+from cibmangotree.analyzer_interface import (
     AnalyzerInterface,
     ParamValue,
     SecondaryAnalyzerInterface,
     WebPresenterInterface,
     backfill_param_values,
 )
-from analyzer_interface.context import (
+from cibmangotree.analyzer_interface.context import (
     AssetsReader,
     InputTableReader,
 )
-from analyzer_interface.context import (
+from cibmangotree.analyzer_interface.context import (
     PrimaryAnalyzerContext as BasePrimaryAnalyzerContext,
 )
-from analyzer_interface.context import (
+from cibmangotree.analyzer_interface.context import (
     SecondaryAnalyzerContext as BaseSecondaryAnalyzerContext,
 )
-from analyzer_interface.context import (
+from cibmangotree.analyzer_interface.context import (
     TableReader,
     TableWriter,
 )
-from analyzer_interface.context import WebPresenterContext as BaseWebPresenterContext
-from dash import Dash
-from preprocessing.series_semantic import SeriesSemantic
-from pydantic import BaseModel, ConfigDict
-from storage import AnalysisModel, Storage
+from cibmangotree.analyzer_interface.context import (
+    WebPresenterContext as BaseWebPresenterContext,
+)
+from cibmangotree.preprocessing.series_semantic import SeriesSemantic
+from cibmangotree.storage import AnalysisModel, Storage
 
 
 class PrimaryAnalyzerDefaultParametersContext(BasePrimaryAnalyzerContext):

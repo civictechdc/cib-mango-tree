@@ -14,8 +14,9 @@ Use fixtures in tests by adding them as function parameters:
 """
 
 import pytest
-from services.tokenizer.basic import BasicTokenizer
-from services.tokenizer.core.types import CaseHandling, TokenizerConfig
+
+from cibmangotree.services.tokenizer.basic import BasicTokenizer
+from cibmangotree.services.tokenizer.core.types import CaseHandling, TokenizerConfig
 
 # =============================================================================
 # Tokenizer Fixtures

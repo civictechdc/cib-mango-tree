@@ -3,10 +3,15 @@ from pathlib import Path
 
 import polars as pl
 import pytest
-from preprocessing.series_semantic import datetime_string, identifier, text_catch_all
-from services.tokenizer.basic import TokenizerConfig, tokenize_text
-from services.tokenizer.core.types import CaseHandling
-from testing import CsvTestData, ParquetTestData, test_primary_analyzer
+
+from cibmangotree.preprocessing.series_semantic import (
+    datetime_string,
+    identifier,
+    text_catch_all,
+)
+from cibmangotree.services.tokenizer.basic import TokenizerConfig, tokenize_text
+from cibmangotree.services.tokenizer.core.types import CaseHandling
+from cibmangotree.testing import CsvTestData, ParquetTestData, test_primary_analyzer
 
 from .ngrams_base.interface import (
     COL_AUTHOR_ID,

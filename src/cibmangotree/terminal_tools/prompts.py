@@ -6,7 +6,8 @@ from inquirer import confirm as inquirer_confirm
 from inquirer import list_input as inquirer_list_input
 from inquirer import text as inquirer_text
 from inquirer.errors import ValidationError
-from storage.file_selector import FileSelectorStateManager
+
+from cibmangotree.storage.file_selector import FileSelectorStateManager
 
 from .utils import clear_printed_lines
 

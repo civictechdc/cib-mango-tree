@@ -1,11 +1,15 @@
 from functools import cached_property
 
 import polars as pl
-from analyzer_interface import ParamValue
-from analyzer_interface import UserInputColumn as BaseUserInputColumn
-from preprocessing.series_semantic import SeriesSemantic, infer_series_semantic
 from pydantic import BaseModel, ConfigDict
-from storage import AnalysisModel, ProjectModel
+
+from cibmangotree.analyzer_interface import ParamValue
+from cibmangotree.analyzer_interface import UserInputColumn as BaseUserInputColumn
+from cibmangotree.preprocessing.series_semantic import (
+    SeriesSemantic,
+    infer_series_semantic,
+)
+from cibmangotree.storage import AnalysisModel, ProjectModel
 
 from .app_context import AppContext
 

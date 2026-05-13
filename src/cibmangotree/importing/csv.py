@@ -3,9 +3,10 @@ from csv import Sniffer
 from typing import Callable, Optional
 
 import polars as pl
-import terminal_tools.prompts as prompts
 from pydantic import BaseModel
-from terminal_tools.utils import print_message, smart_print_data_frame
+
+import cibmangotree.terminal_tools.prompts as prompts
+from cibmangotree.terminal_tools.utils import print_message, smart_print_data_frame
 
 from .importer import Importer, ImporterSession
 
@@ -24,7 +25,6 @@ class CSVImporter(Importer["CsvImportSession"]):
 
         try:
             with open(input_path, "r", encoding="utf8") as file:
-
                 MAX_LINES = 50  # check the first 50 lines only
                 lines = [line.strip() for i, line in enumerate(file) if i <= MAX_LINES]
                 total_lines = len(lines)

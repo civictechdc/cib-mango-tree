@@ -1,8 +1,9 @@
 from functools import cached_property
 
-from analyzer_interface.suite import AnalyzerSuite
 from pydantic import BaseModel, ConfigDict
-from storage import Storage
+
+from cibmangotree.analyzer_interface.suite import AnalyzerSuite
+from cibmangotree.storage import Storage
 
 
 class AppContext(BaseModel):

@@ -3,14 +3,15 @@ import os
 import tempfile
 from pathlib import Path
 
-from analyzer_interface.suite import AnalyzerSuite
-from context import WebPresenterContext
 from dash import Dash
 from flask import Flask, render_template
-from storage import AnalysisModel, Storage
-from terminal_tools import wait_for_key
-from terminal_tools.inception import TerminalContext
 from waitress import serve
+
+from cibmangotree.analyzer_interface.suite import AnalyzerSuite
+from cibmangotree.context import WebPresenterContext
+from cibmangotree.storage import AnalysisModel, Storage
+from cibmangotree.terminal_tools import wait_for_key
+from cibmangotree.terminal_tools.inception import TerminalContext
 
 
 def analysis_web_server(

@@ -1,6 +1,7 @@
-from app import AnalysisContext
 from colorama import Fore
-from terminal_tools import (
+
+from cibmangotree.app import AnalysisContext
+from cibmangotree.terminal_tools import (
     draw_box,
     open_directory_explorer,
     print_ascii_table,

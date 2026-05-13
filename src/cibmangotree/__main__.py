@@ -8,7 +8,8 @@ from rich.console import Console
 from rich.text import Text
 from terminal_tools import enable_windows_ansi_support
 
-if __name__ == "__main__":
+
+def main() -> None:
     freeze_support()
     enable_windows_ansi_support()
 
@@ -71,3 +72,7 @@ if __name__ == "__main__":
             app=App(context=AppContext(storage=storage, suite=suite)),
         )
     )
+
+
+if __name__ == "__main__":
+    main()

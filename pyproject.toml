@@ -55,7 +55,10 @@ docs = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["src"]
+
+[project.scripts]
+cibmangotree = "cibmangotree.__main__:main"
 
 [tool.uv]
 exclude-newer = "7 days"
@@ -65,7 +68,7 @@ exclude-newer-package = { urllib3 = false }
 profile = "black"
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
+pythonpath = ["src"]
 markers = [
     "unit: Fast unit tests (< 1s each)",
     "integration: Integration tests with realistic scenarios",

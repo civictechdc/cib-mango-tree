@@ -64,6 +64,9 @@ cibmangotree = "cibmangotree.__main__:main"
 exclude-newer = "7 days"
 exclude-newer-package = { urllib3 = false }
 
+[tool.black]
+target-version = ["py312"]
+
 [tool.isort]
 profile = "black"
 

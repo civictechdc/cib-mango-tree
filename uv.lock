@@ -11,7 +11,7 @@ resolution-markers = [
 ]
 
 [options]
-exclude-newer = "2026-05-05T13:02:06.530467Z"
+exclude-newer = "2026-05-05T14:33:40.244622Z"
 exclude-newer-span = "P7D"
 
 [options.exclude-newer-package]
@@ -307,7 +307,7 @@ wheels = [
 
 [[package]]
 name = "cibmangotree"
-version = "0.10.0"
+version = "0.10.1"
 source = { editable = "." }
 dependencies = [
     { name = "a2wsgi" },

@@ -10,8 +10,6 @@ anyio==4.13.0
     #   watchfiles
 anywidget==0.11.0
     # via shinywidgets
-appdirs==1.4.4
-    # via shiny
 asgiref==3.11.1
     # via shiny
 asttokens==3.0.1
@@ -33,37 +31,35 @@ colorama==0.4.6
     # via cibmangotree (pyproject.toml)
 comm==0.2.3
     # via ipywidgets
-dash==2.18.1
+dash==4.1.0
     # via cibmangotree (pyproject.toml)
-dash-core-components==2.0.0
-    # via dash
-dash-html-components==2.0.0
-    # via dash
-dash-table==5.0.0
-    # via dash
 decorator==5.2.1
     # via ipython
 editor==1.7.0
     # via inquirer
 executing==2.2.1
     # via stack-data
-fastexcel==0.13.0
+fastexcel==0.20.2
     # via cibmangotree (pyproject.toml)
-filelock==3.16.1
+filelock==3.29.0
     # via cibmangotree (pyproject.toml)
-flask==3.0.3
+flask==3.1.3
     # via dash
 h11==0.16.0
     # via uvicorn
 htmltools==0.6.1
-    # via shiny
+    # via
+    #   shiny
+    #   shinychat
 idna==3.13
     # via
     #   anyio
     #   requests
-importlib-metadata==9.0.0
-    # via dash
-inquirer==3.4.0
+importlib-metadata==8.7.1
+    # via
+    #   dash
+    #   opentelemetry-api
+inquirer==3.4.1
     # via cibmangotree (pyproject.toml)
 ipython==9.13.0
     # via ipywidgets
@@ -92,6 +88,7 @@ markdown-it-py==4.0.0
     #   shiny
 markupsafe==3.0.3
     # via
+    #   flask
     #   jinja2
     #   werkzeug
 matplotlib-inline==0.2.1
@@ -101,13 +98,15 @@ mdit-py-plugins==0.5.0
 mdurl==0.1.2
     # via markdown-it-py
 narwhals==2.20.0
-    # via shiny
+    # via
+    #   plotly
+    #   shiny
 nest-asyncio==1.6.0
     # via dash
 numpy==2.4.4
-    # via
-    #   pandas
-    #   pyarrow
+    # via pandas
+opentelemetry-api==1.41.1
+    # via shiny
 orjson==3.11.8
     # via shiny
 packaging==26.2
@@ -115,22 +114,25 @@ packaging==26.2
     #   htmltools
     #   plotly
     #   shiny
-pandas==2.2.3
+pandas==3.0.2
     # via cibmangotree (pyproject.toml)
 parso==0.8.7
     # via jedi
 pexpect==4.9.0
     # via ipython
-platformdirs==4.3.6
+platformdirs==4.9.6
     # via
     #   cibmangotree (pyproject.toml)
     #   jupyter-core
-plotly==5.24.1
+    #   shiny
+plotly==6.7.0
     # via
     #   cibmangotree (pyproject.toml)
     #   dash
-polars==1.9.0
+polars==1.40.1
     # via cibmangotree (pyproject.toml)
+polars-runtime-32==1.40.1
+    # via polars
 prompt-toolkit==3.0.52
     # via
     #   ipython
@@ -144,13 +146,11 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.3
     # via stack-data
-pyarrow==17.0.0
-    # via
-    #   cibmangotree (pyproject.toml)
-    #   fastexcel
-pydantic==2.9.1
+pyarrow==24.0.0
     # via cibmangotree (pyproject.toml)
-pydantic-core==2.23.3
+pydantic==2.13.3
+    # via cibmangotree (pyproject.toml)
+pydantic-core==2.46.3
     # via pydantic
 pygments==2.20.0
     # via
@@ -161,23 +161,21 @@ python-dateutil==2.9.0.post0
     # via
     #   pandas
     #   shinywidgets
-python-json-logger==2.0.7
+python-json-logger==4.1.0
     # via cibmangotree (pyproject.toml)
 python-multipart==0.0.27
     # via shiny
-pytz==2026.2
-    # via pandas
 questionary==2.1.1
     # via shiny
 readchar==4.2.2
     # via inquirer
-regex==2025.9.1
+regex==2026.4.4
     # via cibmangotree (pyproject.toml)
 requests==2.33.1
     # via dash
 retrying==1.4.2
     # via dash
-rich==14.0.0
+rich==15.0.0
     # via cibmangotree (pyproject.toml)
 runs==1.3.0
     # via editor
@@ -185,11 +183,14 @@ setuptools==82.0.1
     # via
     #   dash
     #   shiny
-shiny==1.4.0
+shiny==1.6.1
     # via
     #   cibmangotree (pyproject.toml)
+    #   shinychat
     #   shinywidgets
-shinywidgets==0.6.2
+shinychat==0.3.1
+    # via shiny
+shinywidgets==0.8.0
     # via cibmangotree (pyproject.toml)
 six==1.17.0
     # via python-dateutil
@@ -199,11 +200,9 @@ starlette==1.0.0
     # via
     #   cibmangotree (pyproject.toml)
     #   shiny
-tenacity==9.1.4
-    # via plotly
-tinydb==4.8.0
+tinydb==4.8.2
     # via cibmangotree (pyproject.toml)
-traitlets==5.14.3
+traitlets==5.15.0
     # via
     #   ipython
     #   ipywidgets
@@ -215,19 +214,21 @@ typing-extensions==4.15.0
     #   anywidget
     #   dash
     #   htmltools
+    #   opentelemetry-api
     #   pydantic
     #   pydantic-core
     #   shiny
     #   starlette
-tzdata==2026.2
-    # via pandas
+    #   typing-inspection
+typing-inspection==0.4.2
+    # via pydantic
 uc-micro-py==2.0.0
     # via linkify-it-py
 urllib3==2.7.0
     # via
     #   cibmangotree (pyproject.toml)
     #   requests
-uvicorn==0.34.3
+uvicorn==0.46.0
     # via
     #   cibmangotree (pyproject.toml)
     #   shiny
@@ -237,17 +238,17 @@ wcwidth==0.7.0
     # via
     #   blessed
     #   prompt-toolkit
-websockets==15.0.1
+websockets==16.0
     # via
     #   cibmangotree (pyproject.toml)
     #   shiny
-werkzeug==3.0.6
+werkzeug==3.1.8
     # via
     #   dash
     #   flask
 widgetsnbextension==4.0.15
     # via ipywidgets
-xlsxwriter==3.2.0
+xlsxwriter==3.2.9
     # via cibmangotree (pyproject.toml)
 xmod==1.9.0
     # via

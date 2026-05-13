@@ -297,7 +297,7 @@ starlette==1.0.0
     #   shiny
 tinydb==4.8.2
     # via cibmangotree (pyproject.toml)
-traitlets==5.14.3
+traitlets==5.15.0
     # via
     #   ipython
     #   ipywidgets

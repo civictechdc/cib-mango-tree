@@ -14,13 +14,11 @@ anyio==4.13.0
     #   watchfiles
 anywidget==0.11.0
     # via shinywidgets
-appdirs==1.4.4
-    # via shiny
 asgiref==3.11.1
     # via shiny
 asttokens==3.0.1
     # via stack-data
-black==24.10.0
+black==26.3.1
     # via cibmangotree (pyproject.toml:dev)
 blessed==1.39.0
     # via inquirer
@@ -48,14 +46,8 @@ comm==0.2.3
     # via ipywidgets
 cyclonedx-python-lib==11.7.0
     # via pip-audit
-dash==2.18.1
+dash==4.1.0
     # via cibmangotree (pyproject.toml)
-dash-core-components==2.0.0
-    # via dash
-dash-html-components==2.0.0
-    # via dash
-dash-table==5.0.0
-    # via dash
 decorator==5.2.1
     # via ipython
 defusedxml==0.7.1
@@ -66,30 +58,35 @@ editor==1.7.0
     # via inquirer
 executing==2.2.1
     # via stack-data
-fastexcel==0.13.0
+fastexcel==0.20.2
     # via cibmangotree (pyproject.toml)
-filelock==3.16.1
+filelock==3.29.0
     # via
     #   cibmangotree (pyproject.toml)
     #   cachecontrol
+    #   python-discovery
     #   virtualenv
-flask==3.0.3
+flask==3.1.3
     # via dash
 h11==0.16.0
     # via uvicorn
 htmltools==0.6.1
-    # via shiny
+    # via
+    #   shiny
+    #   shinychat
 identify==2.6.19
     # via pre-commit
 idna==3.13
     # via
     #   anyio
     #   requests
-importlib-metadata==9.0.0
-    # via dash
+importlib-metadata==8.7.1
+    # via
+    #   dash
+    #   opentelemetry-api
 iniconfig==2.3.0
     # via pytest
-inquirer==3.4.0
+inquirer==3.4.1
     # via cibmangotree (pyproject.toml)
 ipython==9.13.0
     # via ipywidgets
@@ -99,7 +96,7 @@ ipywidgets==8.1.8
     # via
     #   anywidget
     #   shinywidgets
-isort==5.13.2
+isort==8.0.1
     # via cibmangotree (pyproject.toml:dev)
 itsdangerous==2.2.0
     # via flask
@@ -124,6 +121,7 @@ markdown-it-py==4.0.0
     #   shiny
 markupsafe==3.0.3
     # via
+    #   flask
     #   jinja2
     #   werkzeug
 matplotlib-inline==0.2.1
@@ -137,15 +135,17 @@ msgpack==1.1.2
 mypy-extensions==1.1.0
     # via black
 narwhals==2.20.0
-    # via shiny
+    # via
+    #   plotly
+    #   shiny
 nest-asyncio==1.6.0
     # via dash
 nodeenv==1.10.0
     # via pre-commit
 numpy==2.4.4
-    # via
-    #   pandas
-    #   pyarrow
+    # via pandas
+opentelemetry-api==1.41.1
+    # via shiny
 orjson==3.11.8
     # via shiny
 packageurl-python==0.17.6
@@ -161,7 +161,7 @@ packaging==26.2
     #   pyinstaller-hooks-contrib
     #   pytest
     #   shiny
-pandas==2.2.3
+pandas==3.0.2
     # via cibmangotree (pyproject.toml)
 parso==0.8.7
     # via jedi
@@ -177,22 +177,26 @@ pip-audit==2.10.0
     # via cibmangotree (pyproject.toml:dev)
 pip-requirements-parser==32.0.1
     # via pip-audit
-platformdirs==4.3.6
+platformdirs==4.9.6
     # via
     #   cibmangotree (pyproject.toml)
     #   black
     #   jupyter-core
     #   pip-audit
+    #   python-discovery
+    #   shiny
     #   virtualenv
-plotly==5.24.1
+plotly==6.7.0
     # via
     #   cibmangotree (pyproject.toml)
     #   dash
 pluggy==1.6.0
     # via pytest
-polars==1.9.0
+polars==1.40.1
     # via cibmangotree (pyproject.toml)
-pre-commit==4.0.1
+polars-runtime-32==1.40.1
+    # via polars
+pre-commit==4.6.0
     # via cibmangotree (pyproject.toml:dev)
 prompt-toolkit==3.0.52
     # via
@@ -211,16 +215,15 @@ py-cpuinfo==9.0.0
     # via pytest-benchmark
 py-serializable==2.1.0
     # via cyclonedx-python-lib
-pyarrow==17.0.0
+pyarrow==24.0.0
     # via
     #   cibmangotree (pyproject.toml)
-    #   fastexcel
     #   pyarrow-stubs
-pyarrow-stubs==17.13
+pyarrow-stubs==20.0.0.20251215
     # via cibmangotree (pyproject.toml:dev)
-pydantic==2.9.1
+pydantic==2.13.3
     # via cibmangotree (pyproject.toml)
-pydantic-core==2.23.3
+pydantic-core==2.46.3
     # via pydantic
 pygments==2.20.0
     # via
@@ -228,7 +231,7 @@ pygments==2.20.0
     #   ipython-pygments-lexers
     #   pytest
     #   rich
-pyinstaller==6.14.1
+pyinstaller==6.20.0
     # via cibmangotree (pyproject.toml:dev)
 pyinstaller-hooks-contrib==2026.5
     # via pyinstaller
@@ -238,25 +241,27 @@ pytest==9.0.3
     # via
     #   cibmangotree (pyproject.toml:dev)
     #   pytest-benchmark
-pytest-benchmark==5.1.0
+pytest-benchmark==5.2.3
     # via cibmangotree (pyproject.toml:dev)
 python-dateutil==2.9.0.post0
     # via
     #   pandas
     #   shinywidgets
-python-json-logger==2.0.7
+python-discovery==1.3.0
+    # via virtualenv
+python-json-logger==4.1.0
     # via cibmangotree (pyproject.toml)
 python-multipart==0.0.27
     # via shiny
-pytz==2026.2
-    # via pandas
+pytokens==0.4.1
+    # via black
 pyyaml==6.0.3
     # via pre-commit
 questionary==2.1.1
     # via shiny
 readchar==4.2.2
     # via inquirer
-regex==2025.9.1
+regex==2026.4.4
     # via cibmangotree (pyproject.toml)
 requests==2.33.1
     # via
@@ -265,7 +270,7 @@ requests==2.33.1
     #   pip-audit
 retrying==1.4.2
     # via dash
-rich==14.0.0
+rich==15.0.0
     # via
     #   cibmangotree (pyproject.toml)
     #   pip-audit
@@ -277,11 +282,14 @@ setuptools==82.0.1
     #   pyinstaller
     #   pyinstaller-hooks-contrib
     #   shiny
-shiny==1.4.0
+shiny==1.6.1
     # via
     #   cibmangotree (pyproject.toml)
+    #   shinychat
     #   shinywidgets
-shinywidgets==0.6.2
+shinychat==0.3.1
+    # via shiny
+shinywidgets==0.8.0
     # via cibmangotree (pyproject.toml)
 six==1.17.0
     # via python-dateutil
@@ -293,15 +301,13 @@ starlette==1.0.0
     # via
     #   cibmangotree (pyproject.toml)
     #   shiny
-tenacity==9.1.4
-    # via plotly
-tinydb==4.8.0
+tinydb==4.8.2
     # via cibmangotree (pyproject.toml)
 tomli==2.4.1
     # via pip-audit
 tomli-w==1.2.0
     # via pip-audit
-traitlets==5.14.3
+traitlets==5.15.0
     # via
     #   ipython
     #   ipywidgets
@@ -314,23 +320,25 @@ typing-extensions==4.15.0
     #   cyclonedx-python-lib
     #   dash
     #   htmltools
+    #   opentelemetry-api
     #   pydantic
     #   pydantic-core
     #   shiny
     #   starlette
-tzdata==2026.2
-    # via pandas
+    #   typing-inspection
+typing-inspection==0.4.2
+    # via pydantic
 uc-micro-py==2.0.0
     # via linkify-it-py
 urllib3==2.7.0
     # via
     #   cibmangotree (pyproject.toml)
     #   requests
-uvicorn==0.34.3
+uvicorn==0.46.0
     # via
     #   cibmangotree (pyproject.toml)
     #   shiny
-virtualenv==20.35.4
+virtualenv==21.3.1
     # via pre-commit
 watchfiles==1.1.1
     # via shiny
@@ -338,17 +346,17 @@ wcwidth==0.7.0
     # via
     #   blessed
     #   prompt-toolkit
-websockets==15.0.1
+websockets==16.0
     # via
     #   cibmangotree (pyproject.toml)
     #   shiny
-werkzeug==3.0.6
+werkzeug==3.1.8
     # via
     #   dash
     #   flask
 widgetsnbextension==4.0.15
     # via ipywidgets
-xlsxwriter==3.2.0
+xlsxwriter==3.2.9
     # via cibmangotree (pyproject.toml)
 xmod==1.9.0
     # via

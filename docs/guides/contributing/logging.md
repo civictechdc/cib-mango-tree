@@ -15,7 +15,7 @@ The application uses a structured JSON logging system that provides consistent l
 #### Basic Usage
 
 ```python
-from app.logger import get_logger
+from cibmangotree.app.logger import get_logger
 
 # Get a logger for your module
 logger = get_logger(__name__)
@@ -48,7 +48,7 @@ logger.critical("A very serious error occurred, program may not be able to conti
 When developing analyzers, add logging to help with debugging and monitoring:
 
 ```python
-from app.logger import get_logger
+from cibmangotree.app.logger import get_logger
 
 def main(context):
     logger = get_logger(__name__)

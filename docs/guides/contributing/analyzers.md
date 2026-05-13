@@ -29,7 +29,7 @@ Every primary analyzer must define an interface that specifies:
 - Output tables the analyzer produces
 
 ```python
-from analyzer_interface import (
+from cibmangotree.analyzer_interface import (
     AnalyzerInput,
     AnalyzerInterface, 
     AnalyzerOutput,
@@ -95,8 +95,8 @@ The main function receives a context object with access to input data and output
 
 ```python
 import polars as pl
-from analyzer_interface.context import PrimaryAnalyzerContext
-from terminal_tools import ProgressReporter
+from cibmangotree.analyzer_interface.context import PrimaryAnalyzerContext
+from cibmangotree.terminal_tools import ProgressReporter
 
 def main(context: PrimaryAnalyzerContext):
     # Read and preprocess input data
@@ -127,7 +127,7 @@ def main(context: PrimaryAnalyzerContext):
 Finally, create the analyzer declaration:
 
 ```python
-from analyzer_interface import AnalyzerDeclaration
+from cibmangotree.analyzer_interface import AnalyzerDeclaration
 from .interface import interface
 from .main import main
 
@@ -147,7 +147,7 @@ Secondary analyzers process the output of primary analyzers to create user-frien
 Secondary analyzers specify their base primary analyzer and their own outputs:
 
 ```python
-from analyzer_interface import AnalyzerOutput, OutputColumn, SecondaryAnalyzerInterface
+from cibmangotree.analyzer_interface import AnalyzerOutput, OutputColumn, SecondaryAnalyzerInterface
 from ..example_base.interface import interface as example_base
 
 interface = SecondaryAnalyzerInterface(
@@ -176,7 +176,7 @@ Secondary analyzers read primary outputs and create enhanced results:
 
 ```python
 import polars as pl
-from analyzer_interface.context import SecondaryAnalyzerContext
+from cibmangotree.analyzer_interface.context import SecondaryAnalyzerContext
 
 def main(context: SecondaryAnalyzerContext):
     # Read primary analyzer output
@@ -203,7 +203,7 @@ Web presenters create interactive dashboards using either Dash or Shiny framewor
 ### Interface Definition
 
 ```python
-from analyzer_interface import WebPresenterInterface
+from cibmangotree.analyzer_interface import WebPresenterInterface
 from ..example_base import interface as example_base
 from ..example_report import interface as example_report
 
@@ -224,7 +224,7 @@ For more interactive dashboards:
 ```python
 from shiny import reactive, render, ui
 from shinywidgets import output_widget, render_widget
-from analyzer_interface.context import WebPresenterContext, FactoryOutputContext, ShinyContext
+from cibmangotree.analyzer_interface.context import WebPresenterContext, FactoryOutputContext, ShinyContext
 
 def factory(context: WebPresenterContext) -> FactoryOutputContext:
     # Load data
@@ -408,7 +408,7 @@ curl "/api/presenters/ngram_repetition_by_poster/download/csv"
 ### Testing Primary Analyzers
 
 ```python
-from testing import CsvTestData, test_primary_analyzer
+from cibmangotree.testing import CsvTestData, test_primary_analyzer
 from .interface import interface
 from .main import main
 
@@ -430,7 +430,7 @@ def test_example_analyzer():
 ### Testing Secondary Analyzers
 
 ```python
-from testing import test_secondary_analyzer, ParquetTestData
+from cibmangotree.testing import test_secondary_analyzer, ParquetTestData
 
 def test_example_report():
     test_secondary_analyzer(
@@ -481,7 +481,7 @@ def test_example_report():
 Register all analyzers in `analyzers/__init__.py`:
 
 ```python
-from analyzer_interface import AnalyzerSuite
+from cibmangotree.analyzer_interface import AnalyzerSuite
 from .example.example_base import example_base
 from .example.example_report import example_report  
 from .example.example_web import example_web

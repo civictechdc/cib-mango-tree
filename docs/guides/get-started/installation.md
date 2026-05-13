@@ -154,7 +154,7 @@ No-op flag detected. Exiting successfully.
 
 ## Basic Usage
 
-Once you have activated the environment and installed dependecies, invoke the `cibmangotree.py` script from project root:  
+Once you have activated the environment and installed dependencies, run the application from project root:  
 ```bash
 # Start the application
 python -m cibmangotree
@@ -193,7 +193,7 @@ No manual database setup required.
 pyinstaller pyinstaller.spec
 ```
 
-Output (`cibmangotree.app` or `cimangotree.exe`) will be in `dist` directory.
+Output (`cibmangotree.app` or `cibmangotree.exe`) will be in `dist` directory.
 
 ## Build Requirements
 

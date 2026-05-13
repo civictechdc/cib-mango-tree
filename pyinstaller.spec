@@ -21,8 +21,8 @@ if site_packages_path is None:
   raise RuntimeError("The site-packages directory could not be found. Please setup the python envrionment correctly and try again...")
 
 a = Analysis(
-    ['cibmangotree.py'],  # Entry point
-    pathex=['.'],    # Ensure all paths are correctly included
+    ['src/cibmangotree/__main__.py'],  # Entry point
+    pathex=['.', 'src'],    # Ensure all paths are correctly included
     binaries=[],
     datas=[
         # version file, if defined
@@ -37,8 +37,8 @@ a = Analysis(
         # static assets for web servers
         (os.path.join(site_packages_path, 'shiny/www'), 'shiny/www'),
         (os.path.join(site_packages_path, 'shinywidgets/static'), 'shinywidgets/static'),
-        ('./app/web_static', 'app/web_static'),
-        ('./app/web_templates', 'app/web_templates')
+        ('./src/cibmangotree/app/web_static', 'app/web_static'),
+        ('./src/cibmangotree/app/web_templates', 'app/web_templates')
     ],
     hiddenimports=[
         'readchar',

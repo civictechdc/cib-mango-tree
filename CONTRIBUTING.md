@@ -34,7 +34,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 Before contributing, familiarize yourself with:
 
 - **Project Overview**: Read the [README.md](README.md) for basic information
-- **Architecture**: Review the [Development Guide](docs/dev-guide.md) for architectural understanding
+- **Architecture**: Review the [Development Guide](docs/guides/design-philosophy/architecture.md) for architectural understanding
 - **AI Documentation**: Check `.ai-context/` for comprehensive project context
 
 The Mango Tango CLI is a modular, extensible Python terminal application for social media data analysis with three main domains:
@@ -49,21 +49,23 @@ The Mango Tango CLI is a modular, extensible Python terminal application for soc
 
 ```bash
 # Fork the repository on GitHub, then clone your fork
-git clone https://github.com/YOUR_USERNAME/mango-tango-cli.git
-cd mango-tango-cli
+git clone https://github.com/YOUR_USERNAME/cib-mango-tree.git
+cd cib-mango-tree
 ```
 
 ### 2. Set Up Environment
 
 ```bash
 # Create virtual environment
-python -m venv venv
+uv venv
 
-# Run bootstrap script to install dependencies and set up pre-commit hooks
-# macOS/Linux:
-./bootstrap.sh
+# Activate virtual environment (macOS/Linux)
+source venv/bin/activate
 # Windows (PowerShell):
-./bootstrap.ps1
+# venv\Scripts\activate
+
+# Install development dependencies
+uv sync --group dev
 ```
 
 ### 3. Verify Installation
@@ -211,13 +213,13 @@ black .
 
 ```bash
 # Run all tests
-pytest
+uv run pytest
 
 # Run specific test file
-pytest analyzers/hashtags/test_hashtags_analyzer.py
+uv run pytest src/cibmangotree/analyzers/hashtags/test_hashtags_analyzer.py
 
 # Run with verbose output
-pytest -v
+uv run pytest -v
 ```
 
 ### Test Guidelines

@@ -28,7 +28,7 @@ consistent UX while allowing easy contribution of new analyzers.
 
 ### Entry Points
 
-- `cibmangotree.py` - Main application bootstrap
+- `src/cibmangotree/__main__.py` - Main application bootstrap
 - `python -m cibmangotree` - Standard execution command
 
 ### Core Architecture (MVC-like)

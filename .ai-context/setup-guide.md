@@ -35,25 +35,24 @@ python -m venv venv
 python --version  # Should show Python 3.12.x
 ```
 
-### 3. Bootstrap Development Environment
-
-**macOS/Linux**:
+### 3. Install Dependencies
 
 ```bash
-./bootstrap.sh
+# Create virtual environment (if not already done)
+uv venv
+
+# Activate virtual environment
+source venv/bin/activate  # macOS/Linux
+venv\Scripts\activate     # Windows
+
+# Install development dependencies
+uv sync --group dev
 ```
 
-**Windows (PowerShell)**:
+This will:
 
-```powershell
-./bootstrap.ps1
-```
-
-The bootstrap script will:
-
-- Activate the virtual environment
-- Install all dependencies from `requirements-dev.txt`
-- Set up pre-commit hooks for code formatting
+- Install all dependencies from `pyproject.toml`
+- Set up pre-commit hooks for code formatting (run `pre-commit install` manually if needed)
 
 ### 4. Verify Installation
 
@@ -110,15 +109,17 @@ mango-tango-cli/
 ├── .serena/                 # Serena semantic analysis
 │   └── memories/           # Project knowledge base
 ├── docs/                    # Documentation
-│   ├── ai-context/         # AI assistant context
-│   └── dev-guide.md        # Development guide
-├── app/                     # Application layer
-├── analyzers/              # Analysis modules
-├── components/             # Terminal UI components
-├── storage/                # Data persistence
-├── importing/              # Data import modules
-├── requirements*.txt       # Dependencies
-└── cibmangotree.py         # Main entry point
+├── src/
+│   └── cibmangotree/       # Main package
+│       ├── app/            # Application layer
+│       ├── analyzers/      # Analysis modules
+│       ├── components/     # Terminal UI components
+│       ├── storage/        # Data persistence
+│       ├── importing/      # Data import modules
+│       ├── analyzer_interface/
+│       ├── terminal_tools/
+│       └── __main__.py     # Main entry point
+└── pyproject.toml          # Project configuration
 ```
 
 ## Database and Storage Setup

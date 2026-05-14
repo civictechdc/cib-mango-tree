@@ -7,10 +7,10 @@ copyright: Copyright &copy; 2025 CIB Mango Tree
 nav:
   - "Home":
       - "About": "index.md"
+      - "Overview": "guides/get-started/overview.md"
       - "License": "license.md"
   - "Guides":
       - "Getting Started":
-          - "Overview": "guides/get-started/overview.md"
           - "Installation": "guides/get-started/installation.md"
       - "Contributing":
           - "New Contributor Guide": "guides/contributing/new_contributor_guide.md"

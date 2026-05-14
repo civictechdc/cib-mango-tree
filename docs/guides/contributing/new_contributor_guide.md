@@ -164,7 +164,7 @@ This is possibly the most technically involved part of the entire process as it 
     You can start by following these more specific guides:
 
     1. [Setting up development environment](../get-started/installation.md)
-    1. [Contributing new changes](../contributing/contributing.md) (opening a pull request)
+    1. [Contributing new changes](./github_workflow.md) (opening a pull request)
     1. [Implementing Analyzers](../contributing/analyzers.md)
 
 

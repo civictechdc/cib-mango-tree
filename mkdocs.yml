@@ -19,7 +19,6 @@ nav:
             - "Implementing Analyzers": "guides/contributing/analyzers.md"
             - "Implementing Dashboards":
               - "Shiny": "guides/contributing/dashboards/shiny.md"
-              - "React (WIP)": "guides/contributing/dashboards/react.md"
             - "Logging": "guides/contributing/logging.md"
             - "Testing": "guides/contributing/testing.md"
             - "AI-assisted Development": "guides/contributing/ai_assisted_dev.md"

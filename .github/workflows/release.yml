@@ -29,6 +29,10 @@ jobs:
     secrets: inherit
     with:
       is_release: true
+  call-docs:
+    needs: validate-version
+    uses: ./.github/workflows/docs.yml
+    secrets: inherit
   release:
     needs: call-build_exe
     runs-on: ubuntu-latest

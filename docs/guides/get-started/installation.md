@@ -1,4 +1,4 @@
-# Prerequisites
+# Installation
 
 ## Required software
 
@@ -6,15 +6,13 @@ You will need the following software installed in order to get started with sett
 
 | Software  |  Needed for  |
 | --- | --- |
-| Python 3.12 | Required for all features to work correctly |
+| Python >= 3.12 | Required for all features to work correctly |
 | Git | Required for version control and contributing |
-| command line/terminal | Application runs in terminal |
+| command line/terminal | Application runs in terminal |   
 
-!!! note "Installing Python/Git"  
-    If you haven't installed git and/or python yet refer to the
-    following links for instructions:
-
-    - [Git installation](https://git-scm.com/install/)
+!!! example
+    If you haven't installed git and/or python yet refer to the following links for instructions:  
+    - [Git installation](https://git-scm.com/install/)    
     - [Python installation](https://www.python.org/downloads/)
 
 ## System requirements
@@ -41,9 +39,9 @@ following commands can be used to figure what packages you already installed:
     ```
 
 
-# Setting up development environment
+## Setting up development environment
 
-## 1. Clone repository
+### 1. Clone repository
 
 First clone the remote repository:  
 
@@ -52,28 +50,24 @@ git clone https://github.com/civictechdc/cib-mango-tree.git  # creates cib-mango
 cd cib-mango-tree  # navigate to the folder with cloned repository
 ```
 
-## 2. Create virtual environment & install dependencies
+### 2. Create virtual environment & install dependencies
 
 Choose your preferred method for setting up your development environment:
 
-??? info "Installing uv"  
-    
+??? info "Installing uv"
     `uv` is an extremely fast Python package manager (10-100x faster than pip) that simplifies virtual environment and dependency management.
 
     === "macOS/Linux"
-
         ```bash
         curl -LsSf https://astral.sh/uv/install.sh | sh
         ```
 
     === "Windows (PowerShell)"
-
         ```powershell
         powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
         ```
 
     === "Alternative (via pip)"
-
         ```bash
         pip install uv
         ```
@@ -123,7 +117,7 @@ Choose your preferred method for setting up your development environment:
     python --version  # Should show Python 3.12.x
     ```
 
-## 3. Set up pre-commit hooks
+### 3. Set up pre-commit hooks
 
 [Pre-commit](https://pre-commit.com/) hooks (in `pre-commit-config.yaml`) automatically format your code with [Black](https://pypi.org/project/black/) and [isort](https://pycqa.github.io/isort/index.html) before each commit.
 
@@ -139,7 +133,7 @@ pre-commit install
     uv run pre-commit run --all-files
     ```
 
-## 4. Verify installation
+### 4. Verify installation
 
 ```bash
 python -m cibmangotree --noop
@@ -150,9 +144,9 @@ If all went well, you should see:
 No-op flag detected. Exiting successfully.
 ```
 
-# Starting the Application
+## Starting the Application
 
-## Basic Usage
+### Basic Usage
 
 Once you have activated the environment and installed dependencies, run the application from project root:  
 ```bash
@@ -160,9 +154,9 @@ Once you have activated the environment and installed dependencies, run the appl
 python -m cibmangotree
 ```
 
-# Project storage
+## Project storage
 
-## Application Data Directory
+### Application Data Directory
 
 The application automatically creates data directories:
 
@@ -175,7 +169,7 @@ The application automatically creates data directories:
 === "Linux"
     `~/.local/share/MangoTango/`
 
-## Database Initialization
+### Database Initialization
 
 | Storage component | Function |
 | --- | --- |
@@ -186,7 +180,7 @@ The application automatically creates data directories:
 No manual database setup required.
 
 
-# Executable Building
+## Executable Building
 
 ```bash
 # Build standalone executable
@@ -195,15 +189,15 @@ pyinstaller pyinstaller.spec
 
 Output (`cibmangotree.app` or `cibmangotree.exe`) will be in `dist` directory.
 
-## Build Requirements
+### Build Requirements
 
 - Included in `requirements-dev.txt`
 - Used primarily for release distribution
 - Not required for development
 
-# Troubleshooting
+## Troubleshooting
 
-## Common Dependency Issues
+### Common Dependency Issues
 
 One common issue when installing the dependencies for python is the installation
 failing due to compatibility issues with the python package `pyarrow`. The compatibility
@@ -212,7 +206,7 @@ To resolve this issue, you must be on version 3.12 for python.
 Refer to [commands above](#2-create-virtual-environment-install-dependencies) to switch to the correct version.
 
 
-# Next Steps
+## Next Steps
 
 Once you have everything installed and running without any problems,
 the next step is to check out the [GitHub Contributor Workflow](../contributing/github_workflow.md) for contributing changes.

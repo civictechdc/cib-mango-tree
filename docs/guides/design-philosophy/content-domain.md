@@ -8,7 +8,7 @@ The goal of the Primary Analyzer is to produce a set of output tables that can b
 
 Both Secondary Analyzers and Web Presenters are also defined using interface objects. Secondary Analyzers will depend on the output of Primary Analyzers, and Web Presenters will depend on the output of both Primary and Secondary Analyzers.
 
-# Next Steps
+## Next Steps
 
 Once you finish reading this section it would be a good idea to review the other domain sections. Might also be a good idea to review the section that discusses implementing [Shiny](https://shiny.posit.co/py/) dashboards.
 

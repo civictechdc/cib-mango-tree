@@ -43,11 +43,11 @@ flowchart TD
   application --> content
 ```
 
-# Questions, Comments, and Feedback
+## Questions, Comments, and Feedback
 
 Talk to us on the [Civic Tech DC Slack workspace](https://civictechdc.slack.com)!
 
-# Next Steps
+## Next Steps
 
 It would be recommended to review the sections for each domain, and the section for implementing analyzers. Might also be a good idea to review the section that discusses implementing [Shiny](https://shiny.posit.co/py/) dashboards.
 

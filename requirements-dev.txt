@@ -114,7 +114,7 @@ linkify-it-py==2.1.0
     # via shiny
 macholib==1.16.4
     # via pyinstaller
-markdown-it-py==4.0.0
+markdown-it-py==4.2.0
     # via
     #   mdit-py-plugins
     #   rich
@@ -126,7 +126,7 @@ markupsafe==3.0.3
     #   werkzeug
 matplotlib-inline==0.2.1
     # via ipython
-mdit-py-plugins==0.5.0
+mdit-py-plugins==0.6.0
     # via shiny
 mdurl==0.1.2
     # via markdown-it-py
@@ -146,7 +146,7 @@ numpy==2.4.4
     # via pandas
 opentelemetry-api==1.41.1
     # via shiny
-orjson==3.11.8
+orjson==3.11.9
     # via shiny
 packageurl-python==0.17.6
     # via cyclonedx-python-lib
@@ -221,9 +221,9 @@ pyarrow==24.0.0
     #   pyarrow-stubs
 pyarrow-stubs==20.0.0.20251215
     # via cibmangotree (pyproject.toml:dev)
-pydantic==2.13.3
+pydantic==2.13.4
     # via cibmangotree (pyproject.toml)
-pydantic-core==2.46.3
+pydantic-core==2.46.4
     # via pydantic
 pygments==2.20.0
     # via
@@ -289,7 +289,7 @@ shiny==1.6.1
     #   shinywidgets
 shinychat==0.3.1
     # via shiny
-shinywidgets==0.8.0
+shinywidgets==0.8.1
     # via cibmangotree (pyproject.toml)
 six==1.17.0
     # via python-dateutil

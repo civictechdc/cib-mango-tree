@@ -1,38 +1,26 @@
-name: Publish docs via GitHub Pages
+name: Docs
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - closed
   push:
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      deploy_to:
-        description: "Deployment destination"
-        type: choice
-        options:
-          - prod
-          - preview
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  build:
-    name: Deploy docs
+  check:
+    name: Check docs build
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
-      pull-requests: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/checkout@v6
 
       - name: Install uv
         uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v8.0.0
@@ -43,27 +31,34 @@ jobs:
         run: uv sync --locked --group docs --no-install-project
 
       - name: Build docs
-        run: uv run mkdocs build --config-file mkdocs.yml
+        run: uv run zensical build --clean
 
-      - name: Fix site permissions
-        if: github.event.action != 'closed'
-        run: |
-          sudo chown -R runner:runner site/
-          find site/ -type f -exec chmod 644 {} \;
-          find site/ -type d -exec chmod 755 {} \;
+  deploy:
+    name: Deploy docs
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
 
-      - uses: rossjrw/pr-preview-action@v1
-        if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.deploy_to == 'preview')
+      - uses: actions/configure-pages@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v8.0.0
         with:
-          source-dir: ./site/
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: auto
+          enable-cache: true
 
-      - uses: JamesIves/github-pages-deploy-action@v4
-        if: (github.event_name == 'push' && github.ref_name == 'main') ||  (github.event_name == 'workflow_dispatch' && inputs.deploy_to == 'prod')
+      - name: Install dependencies
+        run: uv sync --locked --group docs --no-install-project
+
+      - name: Build docs
+        run: uv run zensical build --clean
+
+      - uses: actions/upload-pages-artifact@v4
         with:
-          folder: ./site/
-          branch: gh-pages
-          clean-exclude: pr-preview
-          force: false
+          path: site
+
+      - uses: actions/deploy-pages@v5
+        id: deployment

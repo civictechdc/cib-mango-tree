@@ -1,4 +1,4 @@
-# Analyzers Guide
+# Analyzers
 
 Analyzers are the core data processing components of the platform. They follow a three-tier architecture that separates data processing, analysis, and presentation concerns.
 

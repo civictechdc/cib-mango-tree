@@ -1,4 +1,4 @@
-## Logging
+# Logging
 
 The application uses a structured JSON logging system that provides consistent logging across all modules. The logging system automatically separates critical alerts from diagnostic information.
 
@@ -145,6 +145,6 @@ def test_my_function_logs_correctly(caplog):
     assert "Expected log message" in caplog.text
 ```
 
-# Next Steps
+## Next Steps
 
 Once you finish reading this it's recommended to check out the [architecture](../design-philosophy/architecture.md) section.

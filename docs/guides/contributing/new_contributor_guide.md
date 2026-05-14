@@ -1,3 +1,5 @@
+# New Contributor Guide
+
 The mission of CIB Mango Tree community is to bring peer-reviewed research methods on the detection of coordinated inauthentic behavior (CIB) in social media to the fingertips of journalists, fact-checkers, watchdogs, and researchers. We do this by developing an interactive analysis and dashboard app. You can read our project overview on [cibmangotree.org](https://cibmangotree.org).
 
 The purpose of this guide is to provide big-picture instructions on how to contribute a new test to CIB Mango Tree and a more detailed guide for each individual step. You are welcome to take part in any and all of the steps for contributig a new test that are described below. Before reading any of the specific subsections you are recommended to read the Overview section.
@@ -6,16 +8,16 @@ The purpose of this guide is to provide big-picture instructions on how to contr
 !!! info
     This guide is intended for contributing a new test to the library. If this is not your primary area of interest, there are other ways to contribute to the CIB Mango Project, for example in engagement and outreach activities and project management. See our Engagement Guide for more information on contributing in these ways (or ask us on Slack).
 
-# Overview
+## Overview
 
-## A library of tests
+### A library of tests
 
 There is no single test that can provide definitive evidence that a snapshot of activity on social media is coordinated and/or inauthentic or not. Therefore -- at its core -- the goal of CIB Mango Tree is to be a library of different, but complementary tests. Each test highlights specific aspects of social media activity.
 
 !!! example
     **Test A** might focus on finding post content that is copied verbatim a large number of times by different accounts (signaling coordination). On the other hand, **Test B** ignores the post contents and instead analyzes trending hashtags. The two tests are complementary since they analyze different aspects (post content vs. hashtag usage) of the same data.
 
-## Contribution cycle
+### Contribution cycle
 
 Completing the entire test contribution cycle, from ideation to implementation, requires sustained commitment. We recognize that not every contributor will have that level of bandwidth available. Hence the contribution process is broken down into separate stages. Each of these stages has a concrete hand-off, such that you can focus on the concrete deliverable for the specific stage without worrying about the next steps. 
 
@@ -27,7 +29,7 @@ Contributing a new test consists of several steps.
 !!! example
     If you really enjoy diving into a new domain, open-ended problems, and reading papers, you can help us out by doing research and proposing a new test. If instead, you prefer tasks with more clearly defined outputs, you are welcome to review the documentation or implement a currently proposed test.
 
-# I am interested in...
+## I am interested in...
 
 Depending on you interests and availability, you might want to jump to the section relevant to your goals.
 
@@ -89,7 +91,7 @@ Depending on you interests and availability, you might want to jump to the secti
 
 </div>
 
-## Not sure yet, I want to learn more.
+### Not sure yet, I want to learn more.
 
 That is absolutely fine, we've all been there. If you can, the best way to find your way around the project is to join an Civic Tech DC project night in Washington, DC. You can see upcoming events and [register on Luma](https://lu.ma/civic-tech-dc). If in-person attendence is not an option, you can join us virtually too. You'll need to first [join our Slack space](https://www.civictechdc.org/slack) (look for the `#cib-mango-tree-*` channels), where you can learn more.
 
@@ -102,7 +104,7 @@ That is absolutely fine, we've all been there. If you can, the best way to find 
     | [Civic Tech DC Luma](https://lu.ma/civic-tech-dc) | Following upcoming in-person events |
         
 
-## Doing research
+### Doing research
 
 It all starts here. CIB Mango Tree wants to make pre-existing social media analysis methods, descripted in peer-reviewed research broadly available. There are no set-in-stone processes here, the Internet, literature, and the community are your friends! However, if computational social science and social media data analysis are new domains to you, we provide some of the recent review articles that we think are a good starting point and the relevant communities to keep an eye on below.
 
@@ -116,7 +118,7 @@ It all starts here. CIB Mango Tree wants to make pre-existing social media analy
 
 **Getting help**: You can ask around on the `#cib-mango-tree-product` channel. For example, you can share any papers you find interesting to get the conversation going. It is also always great to share short updates in the weekly calls or at the in-person event.
 
-## Designing a test
+### Designing a test
 
 If a test already has a test outline document that has been completed, the best next step is to give a very short presentation of the test and discuss it with the rest of the volunteers in one of the virtual calls (or at in-person events). The goal here is to take the outline and think about how:  
 
@@ -137,7 +139,7 @@ While it is often possible to take an outline and start prototyping immediately 
 **Getting help:** You are welcome to ask around on Slack for more information as you are preparing this and it’s absolutely fine if not everything is clear – the purpose is to discuss the test together as a community.
 
 
-## Prototyping a test
+### Prototyping a test
 
 Once a test has been discussed and we have a good idea of what insights it could provide, we recommend that you start by creating a "quick and dirty" prototype of the test. In practice this means creating a local script (or a notebook etc., whatever works for you) that implements the main analysis and provides some basic outputs. This will allow you to quickly get a feel for what works and what does not without having to deal with the details of application codebase.
 
@@ -154,7 +156,7 @@ There are no specific requirements here, other than that the exploration should 
     - Describe the dependencies used in the analysis (if applicable)
     - Concise description of the analysis, one or two main figures, and any of the outstanding issues
 
-## Implementing a test into the library
+### Implementing a test into the library
 
 This step involves implementing the new test using the prototyped test as a reference. The idea here is to take the code that was used to prototype (see [Prototype a test](#prototyping-a-test) section) and integrate it into our main repository code base. In our parlance, that means implementing _an analyzer_.
 
@@ -171,7 +173,7 @@ This is possibly the most technically involved part of the entire process as it 
 **Hand-off**: The hand-off here is a pull request (PR) to our [main repository](https://github.com/civictechdc/cib-mango-tree) which introduces the code for the new analyzer.
 
 
-## Helping with general software engineering
+### Helping with general software engineering
 
 You might not be interested in any specific parts of new test development, but are instead driven by general software engineering problems. We always welcome help in any of the following areas:
 

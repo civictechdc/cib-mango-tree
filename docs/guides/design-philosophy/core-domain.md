@@ -626,7 +626,7 @@ class AppFileSelectorStateManager(FileSelectorStateManager):
         )
 ```
 
-# Next Steps
+## Next Steps
 
 Once you finish reading this section it would be a good idea to review the other domain sections. Might also be a good idea to review the section that discusses implementing [Shiny](https://shiny.posit.co/py/) dashboards.
 

@@ -1,3 +1,5 @@
+# Testing
+
 ## Runing the Tests
 
 You can run all tests invoking the `pytest` command from project root:

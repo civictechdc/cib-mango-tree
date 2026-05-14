@@ -7,10 +7,10 @@ copyright: Copyright &copy; 2025 CIB Mango Tree
 nav:
   - "Home":
       - "About": "index.md"
+      - "Overview": "guides/get-started/overview.md"
       - "License": "license.md"
   - "Guides":
       - "Getting Started":
-          - "Overview": "guides/get-started/overview.md"
           - "Installation": "guides/get-started/installation.md"
       - "Contributing":
           - "New Contributor Guide": "guides/contributing/new_contributor_guide.md"
@@ -19,7 +19,6 @@ nav:
             - "Implementing Analyzers": "guides/contributing/analyzers.md"
             - "Implementing Dashboards":
               - "Shiny": "guides/contributing/dashboards/shiny.md"
-              - "React (WIP)": "guides/contributing/dashboards/react.md"
             - "Logging": "guides/contributing/logging.md"
             - "Testing": "guides/contributing/testing.md"
             - "AI-assisted Development": "guides/contributing/ai_assisted_dev.md"
@@ -63,7 +62,7 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          # paths: [src] # search packages in the src folder
+          paths: [src] # search packages in the src folder
           options:
             docstring_style: google
             extensions:

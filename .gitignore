@@ -10,3 +10,4 @@ VERSION
 .env*
 .serena/cache
 .specify/
+*.egg-info

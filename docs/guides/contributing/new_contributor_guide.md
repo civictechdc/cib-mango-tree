@@ -156,7 +156,7 @@ There are no specific requirements here, other than that the exploration should 
 
 ## Implementing a test into the library
 
-This step involves implementing the new test using the prototyped test as a reference. The idea here is to take the code that was used to prototype (see [Prototype a test](#prototype-a-test) section) and integrate it into our main repository code base. In our parlance, that means implementing _an analyzer_.
+This step involves implementing the new test using the prototyped test as a reference. The idea here is to take the code that was used to prototype (see [Prototype a test](#prototyping-a-test) section) and integrate it into our main repository code base. In our parlance, that means implementing _an analyzer_.
 
 This is possibly the most technically involved part of the entire process as it requires understanding the data science logic behind the test as well as getting to know the CIB Mango Tree code base and its requirements. We have dedicated technical guides to help you along the way.
 
@@ -164,7 +164,7 @@ This is possibly the most technically involved part of the entire process as it 
     You can start by following these more specific guides:
 
     1. [Setting up development environment](../get-started/installation.md)
-    1. [Contributing new changes](../contributing/contributing.md) (opening a pull request)
+    1. [Contributing new changes](./github_workflow.md) (opening a pull request)
     1. [Implementing Analyzers](../contributing/analyzers.md)
 
 

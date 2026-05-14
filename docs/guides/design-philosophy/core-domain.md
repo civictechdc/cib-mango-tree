@@ -628,9 +628,8 @@ class AppFileSelectorStateManager(FileSelectorStateManager):
 
 # Next Steps
 
-Once you finish reading this section it would be a good idea to review the other domain sections. Might also be a good idea to review the sections that discuss implementing  [Shiny](https://shiny.posit.co/py/), and [React](https://react.dev) dashboards.
+Once you finish reading this section it would be a good idea to review the other domain sections. Might also be a good idea to review the section that discusses implementing [Shiny](https://shiny.posit.co/py/) dashboards.
 
 - [Edge Domain](./edge-domain.md)
 - [Content Domain](./content-domain.md)
-- [Shiny Dashboards](../dashboards/shiny.md)
-- [React Dashboards](../dashboards/react.md)
+- [Shiny Dashboards](../contributing/dashboards/shiny.md)

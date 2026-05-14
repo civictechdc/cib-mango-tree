@@ -45,13 +45,9 @@ dev = [
     "pip-audit>=2.7.0",
 ]
 docs = [
-    "mkdocs",
-    "mkdocstrings[python]",
-    "mkdocs-material",
-    "markdown",
-    "pymdown-extensions>=10.15",
-    "mkdocs-mermaid2-plugin",
-    "griffe_pydantic",
+    "zensical",
+    "mkdocstrings-python",
+    "griffe-pydantic",
 ]
 
 [tool.setuptools.packages.find]

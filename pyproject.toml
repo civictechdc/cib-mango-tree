@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cibmangotree"
-version = "0.10.1"
+version = "0.10.2"
 description = "Terminal-based social media data analysis tool"
 requires-python = ">=3.12"
 dependencies = [
@@ -45,27 +45,29 @@ dev = [
     "pip-audit>=2.7.0",
 ]
 docs = [
-    "mkdocs",
-    "mkdocstrings[python]",
-    "mkdocs-material",
-    "markdown",
-    "pymdown-extensions>=10.15",
-    "mkdocs-mermaid2-plugin",
-    "griffe_pydantic",
+    "zensical",
+    "mkdocstrings-python",
+    "griffe-pydantic",
 ]
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["src"]
+
+[project.scripts]
+cibmangotree = "cibmangotree.__main__:main"
 
 [tool.uv]
 exclude-newer = "7 days"
 exclude-newer-package = { urllib3 = false }
 
+[tool.black]
+target-version = ["py312"]
+
 [tool.isort]
 profile = "black"
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
+pythonpath = ["src"]
 markers = [
     "unit: Fast unit tests (< 1s each)",
     "integration: Integration tests with realistic scenarios",

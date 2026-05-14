@@ -1,7 +1,7 @@
-::: services.tokenizer.core
+::: cibmangotree.services.tokenizer.core
     options:
       group_by_category: false
 
-::: services.tokenizer.basic
+::: cibmangotree.services.tokenizer.basic
     options:
       group_by_category: false

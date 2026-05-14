@@ -2,11 +2,11 @@
 
 ## Entry Point
 
-- `cibmangotree.py` - Main entry point, bootstraps the application with Storage, App, and terminal components
+- `src/cibmangotree/__main__.py` - Main entry point, bootstraps the application with Storage, App, and terminal components
 
 ## Core Modules
 
-### App (`app/`)
+### App (`src/cibmangotree/app/`)
 
 - `app.py` - Main App class with workspace capabilities
 - `app_context.py` - AppContext class for dependency injection
@@ -16,7 +16,7 @@
 - `analysis_webserver_context.py` - Context for web server operations
 - `settings_context.py` - SettingsContext for configuration management
 
-### Components (`components/`)
+### Components (`src/cibmangotree/components/`)
 
 Terminal UI components using inquirer for interactive flows:
 
@@ -33,12 +33,12 @@ Terminal UI components using inquirer for interactive flows:
 - `export_outputs.py` - Output export functionality
 - `context.py` - ViewContext class for UI state
 
-### Storage (`storage/`)
+### Storage (`src/cibmangotree/storage/`)
 
 - `__init__.py` - Storage class, models (ProjectModel, AnalysisModel, etc.)
 - `file_selector.py` - File selection state management
 
-### Analyzers (`analyzers/`)
+### Analyzers (`src/cibmangotree/analyzers/`)
 
 Modular analysis system:
 
@@ -53,7 +53,7 @@ Modular analysis system:
 - `temporal_barplot/` - Temporal visualization (web presenter)
 - `time_coordination/` - Time coordination analysis
 
-### Importing (`importing/`)
+### Importing (`src/cibmangotree/importing/`)
 
 - `importer.py` - Base Importer and ImporterSession classes
 - `csv.py` - CSV import implementation

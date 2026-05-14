@@ -1,5 +1,7 @@
+#
+
 <p align="center">
-<img src="img/mango-text.png" alt="Mango Tree project logo with text" width="300px"/>
+<img src="img/cibmt_logo.svg" alt="Mango Tree project logo with text" width="250px"/>
 </p>
 
 Welcome to the technical documentation website of [CIB Mango Tree](https://cibmangotree.org), a collaborative and open-source project to develop software that tests for coordinated inauthentic behavior (CIB) in datasets of social media activity.

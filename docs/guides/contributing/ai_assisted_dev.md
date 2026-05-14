@@ -1,3 +1,9 @@
+# AI-Assisted Development
+
+!!! danger
+    We added these rules some time ago in 2025 and have not thoroughly reviewed them since. Proceed with caution. We are in the process of reviewing and crafting our AI use policy.  
+
+
 
 This repository includes hybrid AI documentation enhanced with semantic code analysis which contains:  
 
@@ -11,7 +17,7 @@ This repository includes hybrid AI documentation enhanced with semantic code ana
 - For Claude Code users**: See `CLAUDE.md` + Serena MCP integration
 
 !!! warning
-        Always start sessions with "Read the initial instructions".
+    Always start sessions with "Read the initial instructions".
 
 - For Cursor users: See `.cursorrules` + `.ai-context/`
 - For other AI tools: See `.ai-context/README.md`

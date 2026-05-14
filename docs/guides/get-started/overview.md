@@ -1,3 +1,4 @@
+# Overview
 
 CIB Mango Tree is a Python-based, open source toolkit for detecting coordinated inauthentic behavior (CIB) in social media datasets. It is designed for researchers, data journalists, fact-checkers, and watchdogs working to identify manipulation and inauthentic activity online.
 
@@ -7,6 +8,18 @@ Through an interactive terminal interface, users can import datasets, check data
 /// caption
 The welcome screen of the application
 ///
+
+## Roadmap
+
+### Graphical user interface transition
+
+We are developing a graphical user interface (GUI) built with [NiceGUI](https://nicegui.io/), which will replace both the current terminal (CLI) interface and Shiny-based dashboards. This transition aims to provide a more intuitive experience for data exploration and visualization. We anticipate to make the GUI available as part of the next minor release (v0.11.0).
+
+!!! tip
+    
+    GUI development is currently underway on the `gui-prototype` branch.
+
+After the GUI release, the CLI and Shiny dashboards will be deprecated and eventually removed in a future major version.
 
 ## Tech Stack
 

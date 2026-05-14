@@ -1,5 +1,5 @@
 # Terminal tools
 
-:::terminal_tools
+:::cibmangotree.terminal_tools
     options:
         show_submodules: true

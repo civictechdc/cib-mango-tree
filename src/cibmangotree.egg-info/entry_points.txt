@@ -1,2 +1,0 @@
-[console_scripts]
-cibmangotree = cibmangotree.__main__:main

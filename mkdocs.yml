@@ -62,7 +62,7 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          # paths: [src] # search packages in the src folder
+          paths: [src] # search packages in the src folder
           options:
             docstring_style: google
             extensions:

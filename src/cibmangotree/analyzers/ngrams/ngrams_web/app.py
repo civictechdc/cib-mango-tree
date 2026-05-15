@@ -75,7 +75,7 @@ def plot_scatter(data):
     fig.update_layout(
         title_text="Repeated phrases and accounts",
         yaxis_title="Overall Post Frequency of N-gram",
-        xaxis_title="No. of Unique UserIDs posting the N-gram",
+        xaxis_title="No. of Unique UserIDs Posting the N-gram",
         hovermode="closest",
         legend=dict(title="N-gram length"),
         template="plotly_white",
@@ -112,7 +112,7 @@ def _get_app_layout(ngram_choices_dict: dict):
 
     app_layout = [
         ui.card(
-            ui.card_header("Copypasta statistics"),
+            ui.card_header("Copypasta Statistics"),
             ui.layout_sidebar(
                 ui.sidebar(
                     ui.input_text(
@@ -144,8 +144,8 @@ def _get_app_layout(ngram_choices_dict: dict):
             ),
         ),
         ui.card(
-            ui.card_header("Data viewer"),
-            ui.output_text(id="data_info"),
+            ui.card_header("N-gram Details Viewer"),
+            ui.output_ui(id="data_info"),
             ui.output_data_frame("data_viewer"),
         ),
     ]
@@ -163,7 +163,7 @@ def server(input, output, sessions):
             COL_MESSAGE_TEXT,
             COL_MESSAGE_TIMESTAMP,
         ]
-        COL_RENAME = ["Unique user ID", "N-gram content", "Post content", "Timestamp"]
+        COL_RENAME = ["Unique UserID", "N-gram Content", "Post Content", "Timestamp"]
         old2new = {k: v for k, v in zip(SEL_COLUMNS, COL_RENAME)}
 
         if df.is_empty():
@@ -388,27 +388,32 @@ def server(input, output, sessions):
             # Show specific ngram info
             if not filtered_data.is_empty():
                 total_reps = len(filtered_data)
-                ngram_string = filtered_data["N-gram content"][0]
-                return f"N-gram: '{ngram_string}' — {total_reps:,} total repetitions"
+                ngram_string = filtered_data["N-gram Content"][0]
+                unique_user_ids = filtered_data["Unique UserID"].n_unique()
+                return ui.div(
+                    ui.p(f"N-gram: '{ngram_string}'", style="margin: 0;"),
+                    ui.p(f"No. total repetitions: {total_reps}", style="margin: 0;"),
+                    ui.p(f"No. unique UserIDs: {unique_user_ids}", style="margin: 0;"),
+                )
             else:
-                return "Selected n-gram not found in current filters. Try adjusting your search or n-gram length selection."
+                return ui.p("Selected n-gram not found in current filters. Try adjusting your search or n-gram length selection.")
 
         if has_search:
             # Show search results summary
             search_stats = get_search_filtered_stats()
 
             if search_stats.is_empty():
-                return f"No results found for '{content_search}'. Try adjusting your search or n-gram length selection."
+                return ui.p(f"No results found for '{content_search}'. Try adjusting your search or n-gram length selection.")
 
             total_ngrams = len(search_stats)
             if not filtered_data.is_empty():
                 total_records = len(filtered_data)
-                return f"Search results for '{content_search}': {total_ngrams:,} unique n-grams (showing top 100) with {total_records:,} total occurrences"
+                return ui.p(f"Search results for '{content_search}': {total_ngrams:,} unique n-grams (showing top 100) with {total_records:,} total occurrences")
             else:
-                return f"Search results for '{content_search}': {total_ngrams:,} unique n-grams"
+                return ui.p(f"Search results for '{content_search}': {total_ngrams:,} unique n-grams")
 
         # Default: show summary message
-        return "Showing summary (top 100 n-grams by frequency). Click a data point on the scatter plot to view all occurrences."
+        return ui.p("Showing summary (top 100 n-grams by frequency). Click a data point on the scatter plot to view all occurrences.")
 
     reset_click_count = reactive.value(0)
 

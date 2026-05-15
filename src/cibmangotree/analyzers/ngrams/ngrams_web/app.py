@@ -74,8 +74,8 @@ def plot_scatter(data):
     # Customize the plot
     fig.update_layout(
         title_text="Repeated phrases and accounts",
-        yaxis_title="N-gram frequency",
-        xaxis_title="Nr. unique posters",
+        yaxis_title="Overall Post Frequency of N-gram",
+        xaxis_title="No. of Unique UserIDs posting the N-gram",
         hovermode="closest",
         legend=dict(title="N-gram length"),
         template="plotly_white",
@@ -112,7 +112,7 @@ def _get_app_layout(ngram_choices_dict: dict):
 
     app_layout = [
         ui.card(
-            ui.card_header("N-gram statistics"),
+            ui.card_header("Copypasta statistics"),
             ui.layout_sidebar(
                 ui.sidebar(
                     ui.input_text(
@@ -137,6 +137,10 @@ def _get_app_layout(ngram_choices_dict: dict):
                     ),
                 ),
                 output_widget("scatter_plot", height="400px"),
+                ui.div(
+                    "In this graph, repeated phrases (n-grams) are represented as individual dots. Dots are plotted on the x-axis by the number of unique userIDs that posted the phrase, and on the y-axis by the overall number of times the phrase was posted by all accounts.",
+                    style="text-align: center; margin-top: -60px; font-size: 12px;"
+                    )
             ),
         ),
         ui.card(

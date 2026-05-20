@@ -57,8 +57,9 @@ where = ["src"]
 
 [project.scripts]
 cibmangotree = "cibmangotree.__main__:main"
+cibmt-cli = "cibmangotree.__main__:main"
 cibmangotree-gui = "cibmangotree.gui.__main__:main"
-cibmt-gui = "cibmangotree.gui.__main__:main"
+cibmt = "cibmangotree.gui.__main__:main"
 
 [tool.uv]
 exclude-newer = "7 days"

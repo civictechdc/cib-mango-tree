@@ -21,9 +21,7 @@ if site_packages_path is None:
   raise RuntimeError("The site-packages directory could not be found. Please setup the python envrionment correctly and try again...")
 
 a = Analysis(
-    ['cibmangotree_gui.py'],  # GUI entry point
-    pathex=['.'],    # Ensure all paths are correctly included
-    ['src/cibmangotree/__main__.py'],  # Entry point
+    ['src/cibmangotree/gui/__main__.py'],  # GUI entry point
     pathex=['.', 'src'],    # Ensure all paths are correctly included
     binaries=[],
     datas=[
@@ -39,17 +37,15 @@ a = Analysis(
         # static assets for web servers
         (os.path.join(site_packages_path, 'shiny/www'), 'shiny/www'),
         (os.path.join(site_packages_path, 'shinywidgets/static'), 'shinywidgets/static'),
-        ('./app/web_static', 'app/web_static'),
-        ('./app/web_templates', 'app/web_templates'),
 
         # GUI icons (Simple Icons for footer links)
-        ('./gui/icons', 'gui/icons'),
+        ('src/cibmangotree/gui/icons', 'cibmangotree/gui/icons'),
 
         # Vue GUI components
-        ('./gui/components/dist', './gui/components/dist'),
+        ('src/cibmangotree/gui/components/dist', 'cibmangotree/gui/components/dist'),
 
         # NiceGUI static files (required for GUI mode)
-        (os.path.join(site_packages_path, 'nicegui'), 'nicegui')
+        (os.path.join(site_packages_path, 'nicegui'), 'nicegui'),
         # Note: pywebview data files are handled by pywebview's built-in pyinstaller hook
         ('./src/cibmangotree/app/web_static', 'app/web_static'),
         ('./src/cibmangotree/app/web_templates', 'app/web_templates')

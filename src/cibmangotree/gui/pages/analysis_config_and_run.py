@@ -3,7 +3,7 @@ from typing import Any
 from nicegui import ui
 
 from cibmangotree.gui.base import GuiPage
-from cibmangotree.gui.components.stepper_steps import (
+from cibmangotree.gui.pages.analysis_workflow import (
     AnalyzerSelectionStep,
     ColumnMappingStep,
     ParamsConfigStep,

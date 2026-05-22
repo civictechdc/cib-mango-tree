@@ -1,11 +1,11 @@
-"""Behavior tests for gui.components.stepper_steps.params_step.ParamsConfigStep."""
+"""Behavior tests for gui.pages.analysis_workflow.params_step.ParamsConfigStep."""
 
 from unittest.mock import MagicMock
 
 from nicegui import ui
 from nicegui.testing import User
 
-from cibmangotree.gui.components.stepper_steps.params_step import ParamsConfigStep
+from cibmangotree.gui.pages.analysis_workflow.params_step import ParamsConfigStep
 from cibmangotree.gui.session import GuiSession
 
 

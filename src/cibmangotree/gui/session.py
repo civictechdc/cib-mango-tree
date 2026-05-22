@@ -71,8 +71,12 @@ class GuiSession(BaseModel):
 
     def reset_project_workflow(self) -> None:
         """Clear project creation workflow state."""
-        self.new_project_name = None
+        self.current_project = None
         self.selected_file_path = None
+        self.selected_file_name = None
+        self.selected_file = None
+        self.selected_file_content_type = None
+        self.new_project_name = None
         self.import_session = None
 
     def reset_analysis_workflow(self) -> None:
@@ -81,6 +85,7 @@ class GuiSession(BaseModel):
         self.selected_analyzer_name = None
         self.column_mapping = None
         self.current_analysis = None
+        self.analysis_params = None
 
     def validate_project_selected(self) -> bool:
         """Check if a project is currently selected."""

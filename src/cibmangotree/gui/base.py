@@ -10,11 +10,12 @@ This module provides:
 import abc
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Callable, Generator
+from typing import Generator
 
 from nicegui import ui
 from pydantic import BaseModel, ConfigDict
 
+from cibmangotree.gui.components.exit_confirmation import ExitConfirmationDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import gui_colors, gui_urls
@@ -28,6 +29,11 @@ class GuiPage(BaseModel, abc.ABC):
     pattern. Subclasses implement `render_content()` for page-specific UI
     while inheriting consistent header/footer rendering.
 
+    Exit lifecycle:
+    - `on_exit()`: Override to perform cleanup when leaving the page
+    - `requires_exit_confirmation()`: Override to trigger confirmation dialog
+    - `get_exit_confirmation_message()`: Override to customize confirmation text
+
     Attributes:
         session: Session state container with app context
         route: URL route for this page (e.g., "/", "/projects")
@@ -36,7 +42,6 @@ class GuiPage(BaseModel, abc.ABC):
         back_route: Route to navigate when back button clicked
         back_icon: Icon for back button (default: "arrow_back")
         back_text: Optional text label for back button
-        on_page_exit: Optional callback invoked before navigation (back/home buttons)
         show_footer: Whether to render footer
 
     Usage:
@@ -54,6 +59,12 @@ class GuiPage(BaseModel, abc.ABC):
             def render_content(self) -> None:
                 with ui.column().classes("items-center"):
                     ui.label("My page content")
+
+            def requires_exit_confirmation(self) -> bool:
+                return self.session.current_analysis is not None
+
+            def on_exit(self) -> None:
+                self.session.reset_analysis_workflow()
 
         # Register with NiceGUI
         @ui.page("/my_page")
@@ -75,7 +86,6 @@ class GuiPage(BaseModel, abc.ABC):
     back_route: str | None = None
     back_icon: str = "arrow_back"
     back_text: str | None = None
-    on_page_exit: Callable[[], None] | None = None
 
     # Footer configuration
     show_footer: bool = True
@@ -165,19 +175,55 @@ class GuiPage(BaseModel, abc.ABC):
                             on_click=self._handle_home_click,
                         ).props("flat")
 
-    def _handle_back_click(self) -> None:
-        """Handle back button click with optional page exit callback."""
-        if self.on_page_exit:
-            self.on_page_exit()
+    async def _handle_back_click(self) -> None:
+        """Handle back button click with optional exit confirmation."""
+        if self.requires_exit_confirmation():
+            dialog = ExitConfirmationDialog(
+                message=self.get_exit_confirmation_message(),
+            )
+            confirmed = await dialog
+            if not confirmed:
+                return
+
+        self.on_exit()
 
         if self.back_route:
             self.navigate_to(self.back_route)
 
-    def _handle_home_click(self) -> None:
-        """Handle home button click with optional page exit callback."""
-        if self.on_page_exit:
-            self.on_page_exit()
+    async def _handle_home_click(self) -> None:
+        """Handle home button click with optional exit confirmation."""
+        if self.requires_exit_confirmation():
+            dialog = ExitConfirmationDialog(
+                message=self.get_exit_confirmation_message(),
+            )
+            confirmed = await dialog
+            if not confirmed:
+                return
+
+        self.on_exit()
         self.navigate_to("/")
+
+    def on_exit(self) -> None:
+        """Override to perform cleanup when leaving the page.
+
+        Called after exit confirmation (if any) is accepted,
+        before navigation occurs.
+        """
+        pass
+
+    def requires_exit_confirmation(self) -> bool:
+        """Override to trigger confirmation dialog before leaving.
+
+        Returns True to show confirmation, False to navigate directly.
+        """
+        return False
+
+    def get_exit_confirmation_message(self) -> str:
+        """Override to customize the exit confirmation message.
+
+        Only used when requires_exit_confirmation() returns True.
+        """
+        return "Are you sure you want to leave this page?"
 
     def _render_footer(self) -> None:
         """

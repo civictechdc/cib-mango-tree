@@ -33,6 +33,15 @@ class SelectPreviousAnalyzerPage(GuiPage):
             show_footer=True,
         )
 
+    def requires_exit_confirmation(self) -> bool:
+        return self.session.current_analysis is not None
+
+    def get_exit_confirmation_message(self) -> str:
+        return "Your analysis selection will be lost. Leave anyway?"
+
+    def on_exit(self) -> None:
+        self.session.reset_analysis_workflow()
+
     def render_content(self) -> None:
         """Render previous analysis selection interface."""
         # Ensure a project is selected
@@ -93,6 +102,7 @@ class SelectPreviousAnalyzerPage(GuiPage):
                 )
                 self.session.column_mapping = selected_context.column_mapping
                 self.session.analysis_params = selected_context.backfilled_param_values
+                self.session.analysis_loaded_from_storage = True
 
                 self.navigate_to(gui_routes.post_analysis)
 

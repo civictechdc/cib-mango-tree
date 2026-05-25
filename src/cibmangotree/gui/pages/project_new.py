@@ -14,8 +14,10 @@ class NewProjectPage(GuiPage):
             show_back_button=True,
             back_route="/",
             show_footer=True,
-            on_page_exit=lambda: session.reset_project_workflow(),
         )
+
+    def on_exit(self) -> None:
+        self.session.reset_project_workflow()
 
     def render_content(self) -> None:
         # Main content - centered vertically and horizontally

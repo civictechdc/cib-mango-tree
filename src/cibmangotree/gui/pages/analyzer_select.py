@@ -21,6 +21,9 @@ class SelectAnalyzerForkPage(GuiPage):
             show_footer=True,
         )
 
+    def on_exit(self) -> None:
+        self.session.reset_analysis_workflow()
+
     def render_content(self):
         # Main content area - centered vertically
         with self.centered_content():

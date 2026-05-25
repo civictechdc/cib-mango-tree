@@ -29,6 +29,20 @@ class ImportDatasetPage(GuiPage):
             show_footer=True,
         )
 
+    def requires_exit_confirmation(self) -> bool:
+        if self.session.project_loaded_from_storage:
+            return False
+        return (
+            self.session.current_project is not None
+            or self.session.selected_file is not None
+        )
+
+    def get_exit_confirmation_message(self) -> str:
+        return "No project has been created yet. Leave anyway?"
+
+    def on_exit(self) -> None:
+        self.session.reset_project_workflow()
+
     def render_content(self) -> None:
         """Render file selection interface."""
         # Page state - store selected file path locally

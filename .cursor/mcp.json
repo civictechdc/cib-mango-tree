@@ -1,7 +1,6 @@
 {
   "mcpServers": {
     "serena": {
-      "type": "stdio",
       "command": "uvx",
       "args": [
         "--from",

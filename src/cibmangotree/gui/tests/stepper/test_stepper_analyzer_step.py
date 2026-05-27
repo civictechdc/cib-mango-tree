@@ -1,9 +1,9 @@
-"""Behavior tests for gui.components.stepper_steps.analyzer_step.AnalyzerSelectionStep."""
+"""Behavior tests for gui.pages.analysis_workflow.analyzer_step.AnalyzerSelectionStep."""
 
 from nicegui import ui
 from nicegui.testing import User
 
-from cibmangotree.gui.components.stepper_steps.analyzer_step import (
+from cibmangotree.gui.pages.analysis_workflow.analyzer_step import (
     AnalyzerSelectionStep,
 )
 from cibmangotree.gui.session import GuiSession

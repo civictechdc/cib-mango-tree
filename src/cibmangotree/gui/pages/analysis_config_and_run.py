@@ -3,7 +3,7 @@ from typing import Any
 from nicegui import ui
 
 from cibmangotree.gui.base import GuiPage
-from cibmangotree.gui.components.stepper_steps import (
+from cibmangotree.gui.pages.analysis_workflow import (
     AnalyzerSelectionStep,
     ColumnMappingStep,
     ParamsConfigStep,
@@ -40,6 +40,17 @@ class AnalysisConfigAndRunPage(GuiPage):
             back_route=gui_routes.select_analyzer_fork,
             show_footer=True,
         )
+
+    def requires_exit_confirmation(self) -> bool:
+        if self.session.analysis_loaded_from_storage:
+            return False
+        return self.session.selected_analyzer is not None
+
+    def get_exit_confirmation_message(self) -> str:
+        return "Your analysis has not been saved yet. Leave anyway?"
+
+    def on_exit(self) -> None:
+        self.session.reset_analysis_workflow()
 
     def render_content(self) -> None:
         """Render the stepper with all configuration steps."""

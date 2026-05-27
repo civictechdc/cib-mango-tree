@@ -28,6 +28,8 @@ class GuiSession(BaseModel):
         import_session: Active importer session for data preview
         selected_analyzer: ID of selected primary analyzer
         current_analysis: Currently selected/active analysis
+        project_loaded_from_storage: True if project was loaded from disk
+        analysis_loaded_from_storage: True if analysis was loaded from disk
 
     Example:
         ```python
@@ -61,6 +63,10 @@ class GuiSession(BaseModel):
     current_analysis: AnalysisModel | None = None
     analysis_params: dict[str, ParamValue] | None = None
 
+    # Source tracking flags
+    project_loaded_from_storage: bool = False
+    analysis_loaded_from_storage: bool = False
+
     # Allow arbitrary types (for NiceGUI components, ImporterSession, etc.)
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -71,9 +77,14 @@ class GuiSession(BaseModel):
 
     def reset_project_workflow(self) -> None:
         """Clear project creation workflow state."""
-        self.new_project_name = None
+        self.current_project = None
         self.selected_file_path = None
+        self.selected_file_name = None
+        self.selected_file = None
+        self.selected_file_content_type = None
+        self.new_project_name = None
         self.import_session = None
+        self.project_loaded_from_storage = False
 
     def reset_analysis_workflow(self) -> None:
         """Clear analysis workflow state."""
@@ -81,6 +92,8 @@ class GuiSession(BaseModel):
         self.selected_analyzer_name = None
         self.column_mapping = None
         self.current_analysis = None
+        self.analysis_params = None
+        self.analysis_loaded_from_storage = False
 
     def validate_project_selected(self) -> bool:
         """Check if a project is currently selected."""

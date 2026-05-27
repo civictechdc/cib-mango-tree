@@ -15,12 +15,14 @@ def test_reset_project_workflow_clears_project_import_fields(
     session.new_project_name = "p"
     session.selected_file_path = Path("/tmp/x.csv")
     session.import_session = MagicMock()
+    session.project_loaded_from_storage = True
 
     session.reset_project_workflow()
 
     assert session.new_project_name is None
     assert session.selected_file_path is None
     assert session.import_session is None
+    assert session.project_loaded_from_storage is False
 
 
 def test_reset_analysis_workflow_clears_analysis_fields(mock_app: MagicMock) -> None:
@@ -29,6 +31,7 @@ def test_reset_analysis_workflow_clears_analysis_fields(mock_app: MagicMock) -> 
     session.selected_analyzer_name = "ngrams"
     session.column_mapping = {"a": "b"}
     session.current_analysis = MagicMock()
+    session.analysis_loaded_from_storage = True
 
     session.reset_analysis_workflow()
 
@@ -36,6 +39,7 @@ def test_reset_analysis_workflow_clears_analysis_fields(mock_app: MagicMock) -> 
     assert session.selected_analyzer_name is None
     assert session.column_mapping is None
     assert session.current_analysis is None
+    assert session.analysis_loaded_from_storage is False
 
 
 def test_validate_project_selected_and_file_and_name(mock_app: MagicMock) -> None:

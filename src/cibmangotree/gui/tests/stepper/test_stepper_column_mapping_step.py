@@ -1,9 +1,9 @@
-"""Behavior tests for gui.components.stepper_steps.column_mapping_step.ColumnMappingStep."""
+"""Behavior tests for gui.pages.analysis_workflow.column_mapping_step.ColumnMappingStep."""
 
 from nicegui import ui
 from nicegui.testing import User
 
-from cibmangotree.gui.components.stepper_steps.column_mapping_step import (
+from cibmangotree.gui.pages.analysis_workflow.column_mapping_step import (
     ColumnMappingStep,
 )
 from cibmangotree.gui.session import GuiSession

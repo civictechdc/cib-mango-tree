@@ -22,6 +22,9 @@ class SelectProjectPage(GuiPage):
             show_footer=True,
         )
 
+    def on_exit(self) -> None:
+        self.session.reset_analysis_workflow()
+
     def render_content(self) -> None:
         """Render projects list with selection interface."""
         # Projects list - centered
@@ -64,6 +67,7 @@ class SelectProjectPage(GuiPage):
                             self.session.current_project = project_options[
                                 selected_project.value
                             ]
+                            self.session.project_loaded_from_storage = True
                             self.notify_success(
                                 f"Selected project: {self.session.current_project.display_name}"
                             )

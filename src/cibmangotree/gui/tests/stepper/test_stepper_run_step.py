@@ -1,11 +1,11 @@
-"""Behavior tests for gui.components.stepper_steps.run_step.RunAnalysisStep."""
+"""Behavior tests for gui.pages.analysis_workflow.run_step.RunAnalysisStep."""
 
 from unittest.mock import MagicMock
 
 from nicegui import ui
 from nicegui.testing import User
 
-from cibmangotree.gui.components.stepper_steps.run_step import RunAnalysisStep
+from cibmangotree.gui.pages.analysis_workflow.run_step import RunAnalysisStep
 from cibmangotree.gui.session import GuiSession
 
 

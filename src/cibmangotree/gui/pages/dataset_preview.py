@@ -34,6 +34,15 @@ class PreviewDatasetPage(GuiPage):
             show_footer=True,
         )
 
+    def requires_exit_confirmation(self) -> bool:
+        return self.session.selected_file is not None
+
+    def get_exit_confirmation_message(self) -> str:
+        return "No project has been created yet. Leave anyway?"
+
+    def on_exit(self) -> None:
+        self.session.reset_project_workflow()
+
     def _selected_file_does_not_exists(self) -> bool:
         return (
             not self.session.selected_file_content_type

@@ -1,7 +1,6 @@
 {
   "mcpServers": {
     "serena": {
-      "type": "stdio",
       "command": "uvx",
       "args": [
         "--from",
@@ -15,6 +14,16 @@
         "false"
       ],
       "env": {}
+    },
+    "nicegui-docs": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "mcpdoc",
+        "mcpdoc",
+        "--urls",
+        "NiceGUI:https://nicegui.io/llms.txt"
+      ]
     }
   }
 }

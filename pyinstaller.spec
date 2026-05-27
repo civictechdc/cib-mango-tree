@@ -1,7 +1,6 @@
 # code: language=python
 # main.spec
 # This file tells PyInstaller how to bundle your application
-from PyInstaller.utils.hooks import copy_metadata, collect_data_files
 from PyInstaller.building.api import EXE, PYZ
 from PyInstaller.building.build_main import Analysis, COLLECT, BUNDLE
 import sys
@@ -31,13 +30,6 @@ a = Analysis(
             if os.path.exists('VERSION') else []
         ),
 
-        # inquirer depends on readchar as a hidden dependency that requires package metadata
-        *copy_metadata('readchar'),
-
-        # static assets for web servers
-        (os.path.join(site_packages_path, 'shiny/www'), 'shiny/www'),
-        (os.path.join(site_packages_path, 'shinywidgets/static'), 'shinywidgets/static'),
-
         # GUI icons (Simple Icons for footer links)
         ('src/cibmangotree/gui/icons', 'cibmangotree/gui/icons'),
 
@@ -46,36 +38,12 @@ a = Analysis(
 
         # NiceGUI static files (required for GUI mode)
         (os.path.join(site_packages_path, 'nicegui'), 'nicegui'),
-        # Note: pywebview data files are handled by pywebview's built-in pyinstaller hook
-        ('./src/cibmangotree/app/web_static', 'app/web_static'),
-        ('./src/cibmangotree/app/web_templates', 'app/web_templates')
     ],
     hiddenimports=[
-        'readchar',
         'numpy',
         'numpy.core.multiarray',
-        'shiny',
-        'shiny.ui',
-        'shiny.server',
-        'htmltools',
-        'starlette',
-        'uvicorn',
-        'uvicorn.logging',
-        'uvicorn.loops',
-        'uvicorn.loops.auto',
-        'uvicorn.protocols',
-        'uvicorn.protocols.http',
-        'uvicorn.protocols.http.auto',
-        'uvicorn.protocols.websockets',
-        'uvicorn.protocols.websockets.auto',
-        'uvicorn.lifespan',
-        'uvicorn.lifespan.on',
         'asyncio',
-        'websockets',
-        'websockets.legacy',
-        'websockets.legacy.server',
         'polars',
-        'plotly',
         'linkify_it',
         'markdown_it',
         'mdit_py_plugins',
@@ -83,15 +51,13 @@ a = Analysis(
         'uc_micro',
         'pythonjsonlogger',
         'pythonjsonlogger.json',
-        # NiceGUI and pywebview (required for GUI mode)
+        # NiceGUI (required for GUI mode)
         'nicegui',
         'nicegui.elements',
         'nicegui.events',
         'nicegui.ui',
         'fastapi',
         'sse_starlette',
-        'pywebview',
-        'pywebview.platforms',
     ],  # Include any imports that PyInstaller might miss
     runtime_hooks=[],
     excludes=[],

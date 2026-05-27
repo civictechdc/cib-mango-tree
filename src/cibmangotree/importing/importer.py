@@ -8,16 +8,8 @@ import polars as pl
 class ImporterSession(ABC):
     """
     The ImporterSession interface handles the ongoing configuration of an import.
-    It keeps the configuration state, knows how to print the configuration to the
-    console, and can load a preview of the data from the input file.
+    It keeps the configuration state and can load a preview of the data from the input file.
     """
-
-    @abstractmethod
-    def print_config(self) -> None:
-        """
-        Print the configuration of the import session to the console.
-        """
-        pass
 
     @abstractmethod
     def load_preview(self, n_records: int) -> pl.DataFrame | None:

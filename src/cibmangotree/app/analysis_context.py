@@ -6,11 +6,8 @@ from typing import Callable, Literal
 
 from pydantic import BaseModel, ConfigDict
 
-from cibmangotree.analyzer_interface import (
-    AnalyzerDeclaration,
-    SecondaryAnalyzerDeclaration,
-    backfill_param_values,
-)
+from cibmangotree.analyzer_interface import backfill_param_values
+from cibmangotree.analyzer_interface.context import ProgressReporterProtocol
 from cibmangotree.context import (
     InputColumnProvider,
     PrimaryAnalyzerContext,
@@ -40,11 +37,6 @@ class AnalysisQueueMessage(BaseModel):
     step_progress: float | None = None
     message: str | None = None
     progress: float | None = None
-
-
-class AnalysisRunProgressEvent(BaseModel):
-    analyzer: AnalyzerDeclaration | SecondaryAnalyzerDeclaration
-    event: Literal["start", "finish"]
 
 
 class AnalysisContext(BaseModel):

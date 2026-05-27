@@ -6,7 +6,6 @@ from cibmangotree.analyzer_interface.context import (
     NullProgressReporter,
     SecondaryAnalyzerContext,
 )
-from cibmangotree.terminal_tools import ProgressReporter
 
 from ..ngrams_base.interface import (
     COL_AUTHOR_ID,

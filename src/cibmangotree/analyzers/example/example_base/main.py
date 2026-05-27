@@ -4,7 +4,6 @@ from cibmangotree.analyzer_interface.context import (
     NullProgressReporter,
     PrimaryAnalyzerContext,
 )
-from cibmangotree.terminal_tools import ProgressReporter
 
 
 def main(context: PrimaryAnalyzerContext):

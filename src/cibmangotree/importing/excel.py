@@ -44,66 +44,6 @@ class ExcelImporter(Importer["ExcelImportSession"]):
         )
 
 
-class ExcelImporterTerminal(ExcelImporter):
-    """
-    Terminal-specific Excel importer with interactive UI methods.
-    Extends ExcelImporter with sheet selection and modification capabilities.
-    """
-
-    def init_session(self, input_path: str | BytesIO):
-        """
-        Initialize Excel import session with terminal prompts for multi-sheet files.
-        """
-        import terminal_tools.prompts as prompts
-
-        reader = read_excel(
-            cast(str, input_path)
-            if type(input_path) is not BytesIO
-            else input_path.getvalue()
-        )
-        sheet_names = reader.sheet_names
-
-        if not sheet_names:
-            return None
-        if len(sheet_names) == 1:
-            return ExcelImportSession(
-                input_file=input_path,
-                selected_sheet=sheet_names[0],
-                sheet_names=sheet_names,
-            )
-
-        # Multi-sheet file: prompt user for selection
-        sheet_name = prompts.list_input(
-            "Which sheet would you like to import?", choices=sheet_names
-        )
-        if sheet_name is None:
-            return None
-
-        return ExcelImportSession(
-            input_file=input_path,
-            selected_sheet=sheet_name,
-            sheet_names=sheet_names,
-        )
-
-    def manual_init_session(self, input_path: str):
-        return self.init_session(input_path)
-
-    def modify_session(
-        self, input_path: str, import_session: "ExcelImportSession", reset_screen
-    ):
-        import terminal_tools.prompts as prompts
-        from terminal_tools.utils import wait_for_key
-
-        reset_screen(import_session)
-        if len(import_session.sheet_names) == 1:
-            print("This Excel file only has one sheet.\nThere's nothing to modify.\n\n")
-            wait_for_key(prompt=True)
-            return import_session
-
-        new_session = self.init_session(input_path)
-        return new_session or import_session
-
-
 class ExcelImportSession(ImporterSession, BaseModel):
     input_file: str | BytesIO
     selected_sheet: str

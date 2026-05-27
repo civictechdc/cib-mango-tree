@@ -78,7 +78,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --locked
+        run: uv sync --locked --no-dev
 
       - name: Create macOS keychain
         id: keychain
@@ -129,6 +129,16 @@ jobs:
           ls -lah dist/
           echo "Looking for: CIBMangoTree"
 
+      - name: Clean up redundant onedir folder
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          # Remove the intermediate CIBMangoTree/ folder (BUNDLE already created .app)
+          if [ -d "dist/CIBMangoTree" ] && [ ! -L "dist/CIBMangoTree" ]; then
+            rm -rf dist/CIBMangoTree
+            echo "Removed redundant dist/CIBMangoTree/ folder"
+          fi
+
       - name: Create and sign macOS package
         if: runner.os == 'macOS' && inputs.is_release
         env:
@@ -163,6 +173,7 @@ jobs:
         if: runner.os == 'macOS' && inputs.is_release
         run: |
           rm -rf /tmp/cibmangotree
+          rm -rf dist/CIBMangoTree
           rm -rf dist/CIBMangoTree.app
           rm -rf dist/CIBMangoTree_${{matrix.artifact_name}}.zip
 

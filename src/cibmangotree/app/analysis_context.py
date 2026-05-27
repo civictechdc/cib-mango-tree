@@ -89,17 +89,6 @@ class AnalysisContext(BaseModel):
     def is_draft(self):
         return self.model.is_draft
 
-    @cached_property
-    def web_presenters(self):
-        return self.app_context.suite.find_web_presenters(self.analyzer_spec)
-
-    def web_server(self):
-        from .analysis_webserver_context import AnalysisWebServerContext
-
-        return AnalysisWebServerContext(
-            app_context=self.app_context, analysis_context=self
-        )
-
     def rename(self, new_name: str):
         self.model.display_name = new_name
         self.app_context.storage.save_analysis(self.model)

@@ -8,17 +8,12 @@ from cibmangotree.analyzer_interface import (
     AnalyzerInterface,
     SecondaryAnalyzerDeclaration,
     SecondaryAnalyzerInterface,
-    WebPresenterDeclaration,
 )
 from cibmangotree.meta import is_development
 
 
 class AnalyzerSuite(BaseModel):
-    all_analyzers: list[
-        Union[
-            AnalyzerDeclaration, SecondaryAnalyzerDeclaration, WebPresenterDeclaration
-        ]
-    ]
+    all_analyzers: list[Union[AnalyzerDeclaration, SecondaryAnalyzerDeclaration]]
 
     @cached_property
     def primary_anlyzers(self):
@@ -79,26 +74,3 @@ class AnalyzerSuite(BaseModel):
 
     def get_secondary_analyzer_by_id(self, analyzer_id, secondary_id):
         return self._secondary_analyzers_by_base.get(analyzer_id, {}).get(secondary_id)
-
-    @cached_property
-    def web_presenters_by_primary(self):
-        return {
-            analyzer.id: {
-                presenter.id: presenter
-                for presenter in self.all_analyzers
-                if isinstance(presenter, WebPresenterDeclaration)
-                if presenter.base_analyzer.id == analyzer.id
-            }
-            for analyzer in self.primary_anlyzers
-        }
-
-    def find_web_presenters(self, primary_analyzer: AnalyzerInterface):
-        return [
-            presenter
-            for presenter in self.all_analyzers
-            if isinstance(presenter, WebPresenterDeclaration)
-            if presenter.base_analyzer.id == primary_analyzer.id
-        ]
-
-    def get_web_presenter(self, analyzer_id, presenter_id):
-        return self.web_presenters_by_primary.get(analyzer_id, {}).get(presenter_id)

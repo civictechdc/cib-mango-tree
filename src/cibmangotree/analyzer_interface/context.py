@@ -1,12 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Optional, Protocol, TypeVar, Union
+from typing import Any, Callable, Optional, Protocol, TypeVar
 
 import polars as pl
-from dash import Dash
 from polars import DataFrame
 from pydantic import BaseModel, ConfigDict
-from shiny import Inputs, Outputs, Session
-from shiny.ui._navs import NavPanel
 
 from .interface import SecondaryAnalyzerInterface
 from .params import ParamValue
@@ -82,7 +79,7 @@ class PrimaryAnalyzerContext(ABC, BaseModel):
 
 class BaseDerivedModuleContext(ABC, BaseModel):
     """
-    Common interface for secondary analyzers and web presenters runtime contexts.
+    Common interface for secondary analyzers runtime contexts.
     """
 
     temp_dir: str
@@ -117,25 +114,6 @@ class BaseDerivedModuleContext(ABC, BaseModel):
         lets you inspect and load its outputs.
         """
         pass
-
-
-class WebPresenterContext(BaseDerivedModuleContext):
-    dash_app: Dash
-    """
-  The Dash app that is being built.
-  """
-
-    @property
-    @abstractmethod
-    def state_dir(self) -> str:
-        """
-        Gets the directory where the web presenter can store state that persists
-        between runs. This state space is unique for each
-        project/primary analyzer/web presenter combination.
-        """
-        pass
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class SecondaryAnalyzerContext(BaseDerivedModuleContext):
@@ -192,50 +170,3 @@ class TableWriter(ABC):
         file to it.
         """
         pass
-
-
-ServerCallback = Union[
-    Callable[[Inputs], None], Callable[[Inputs, Outputs, Session], None]
-]
-
-
-class ShinyContext(BaseModel):
-    """
-    Output interface for Shiny dashboards
-    """
-
-    panel: NavPanel = None
-    """
-    UI navigation panel to be added to shiny dashboard
-    """
-
-    server_handler: Optional[ServerCallback] = None
-    """
-    Server handler callback to be called by the shiny application instance
-    """
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-
-class FactoryOutputContext(BaseModel):
-    """
-    Output interface for both factory and api_facotry functions for web
-    presenters.
-    """
-
-    shiny: Optional[ShinyContext] = None
-    """
-    Factory oputput for shiny dashboards
-    """
-
-    api: Optional[dict[str, Any]] = None
-    """
-    API factory output for React dashboard REST API
-    """
-
-    data_frames: Optional[dict[str, DataFrame]] = None
-    """
-    API factory dataframe output for React dashboard REST API
-    """
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)

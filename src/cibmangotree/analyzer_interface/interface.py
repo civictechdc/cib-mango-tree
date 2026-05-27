@@ -163,10 +163,6 @@ class SecondaryAnalyzerInterface(DerivedAnalyzerInterface):
     kind: Literal["secondary"] = "secondary"
 
 
-class WebPresenterInterface(DerivedAnalyzerInterface):
-    kind: Literal["web"] = "web"
-
-
 DataType = Literal[
     "text", "integer", "float", "boolean", "datetime", "identifier", "url", "time"
 ]

@@ -10,13 +10,13 @@ from datetime import datetime
 
 import polars as pl
 
+from cibmangotree.analyzers.hashtags.hashtags_base.analysis import secondary_analyzer
 from cibmangotree.analyzers.hashtags.hashtags_base.interface import (
     COL_TIME,
     OUTPUT_COL_HASHTAGS,
     PRIMARY_OUTPUT_DATETIME_FORMAT,
     SECONDARY_COL_USERS_ALL,
 )
-from cibmangotree.analyzers.hashtags.hashtags_web.analysis import secondary_analyzer
 from cibmangotree.app.project_context import _get_columns_with_semantic
 from cibmangotree.gui.session import GuiSession
 

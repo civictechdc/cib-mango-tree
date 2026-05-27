@@ -31,3 +31,9 @@ jobs:
     secrets: inherit
     with:
       is_release: false
+
+  test_build_gui:
+    uses: ./.github/workflows/build_gui.yml
+    secrets: inherit
+    with:
+      is_release: false

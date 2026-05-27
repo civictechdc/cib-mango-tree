@@ -5,7 +5,8 @@ These functions accept a Polars DataFrame and return an ECharts option dict.
 They have no dependency on Shiny, Dash, or NiceGUI.
 """
 
-import numpy as np
+import random
+
 import polars as pl
 from pydantic import BaseModel
 
@@ -80,14 +81,15 @@ def plot_scatter_echart(
     data: pl.DataFrame,
     enable_large_mode: bool = True,
 ) -> dict:
-    rng = np.random.default_rng(seed=42)
+    rng = random.Random(42)
     jitter_factor = 0.05
 
+    jitter = pl.Series(
+        [1 + rng.uniform(-jitter_factor, jitter_factor) for _ in range(len(data))]
+    )
+
     data = data.with_columns(
-        (
-            pl.col(COL_NGRAM_TOTAL_REPS)
-            * (1 + rng.uniform(-jitter_factor, jitter_factor, len(data)))
-        ).alias("total_reps_jittered")
+        (pl.col(COL_NGRAM_TOTAL_REPS) * jitter).alias("total_reps_jittered")
     )
 
     n_values = (

@@ -41,14 +41,11 @@ a = Analysis(
     ],
     hiddenimports=[
         'numpy',
-        'numpy.core.multiarray',
         'asyncio',
         'polars',
         'linkify_it',
         'markdown_it',
-        'mdit_py_plugins',
         'mdurl',
-        'uc_micro',
         'pythonjsonlogger',
         'pythonjsonlogger.json',
         # NiceGUI (required for GUI mode)
@@ -57,10 +54,15 @@ a = Analysis(
         'nicegui.events',
         'nicegui.ui',
         'fastapi',
-        'sse_starlette',
     ],  # Include any imports that PyInstaller might miss
+    excludes=[
+        'pytest',
+        'py',
+        'setuptools',
+        'pip',
+        'wheel',
+    ],
     runtime_hooks=[],
-    excludes=[],
 )
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)

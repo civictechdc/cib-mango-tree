@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cibmangotree"
-version = "0.10.2"
-description = "Terminal-based social media data analysis tool"
+version = "0.11.0"
+description = "Interactive social media data analysis tool"
 requires-python = ">=3.12"
 dependencies = [
     "polars>=1.9.0",
@@ -44,7 +44,7 @@ docs = [
 where = ["src"]
 
 [project.scripts]
-cibmangotree-gui = "cibmangotree.gui.__main__:main"
+cibmangotree = "cibmangotree.gui.__main__:main"
 cibmt = "cibmangotree.gui.__main__:main"
 
 [tool.uv]

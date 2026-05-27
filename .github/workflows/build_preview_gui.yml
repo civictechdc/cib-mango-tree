@@ -1,4 +1,4 @@
-name: GUI-Prototype Preview Release
+name: GUI Preview Release
 
 on:
   workflow_dispatch:
@@ -25,127 +25,66 @@ on:
         type: string
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        include:
-          - platform_name: Windows
-            artifact_name: windows
-            os: windows-2022
-            executable_name: CIBMangoTree.exe
-          - platform_name: MacOS (x86)
-            artifact_name: macos-x86
-            os: macos-15-intel
-            executable_name: CIBMangoTree.app
-          - platform_name: MacOS (arm64)
-            artifact_name: macos-arm64
-            os: macos-15
-            executable_name: CIBMangoTree.app
-
-    name: Build ${{ matrix.platform_name }}
-    runs-on: ${{ matrix.os }}
-
+  get-commit-info:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.branch }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-          cache: 'pip'
-          cache-dependency-path: '**/requirements*.txt'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Install PyInstaller
-        run: |
-          pip install pyinstaller
-
       - name: Get commit info
         id: commit_info
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-      - name: Create VERSION file
-        run: |
-          python -c "with open('VERSION', 'w', encoding='utf-8') as f: f.write('${{ github.event.inputs.branch }}-${{ steps.commit_info.outputs.sha_short }}')"
+    outputs:
+      sha_short: ${{ steps.commit_info.outputs.sha_short }}
 
-      - name: Build with PyInstaller
-        run: pyinstaller pyinstaller.spec
+  build-preview:
+    needs: get-commit-info
+    uses: ./.github/workflows/build_gui.yml
+    secrets: inherit
+    with:
+      is_release: false
 
-      - name: Verify build output
-        shell: bash
-        run: |
-          ls -lah dist/
-          echo "Looking for: ${{ matrix.executable_name }}"
-
-      - name: Package artifact
-        id: package
-        shell: bash
-        run: |
-          VERSION="${{ github.event.inputs.version_name }}"
-          SHA="${{ steps.commit_info.outputs.sha_short }}"
-          ARTIFACT_NAME="${{ matrix.artifact_name }}"
-
-          # Build version string: include SHA only if present
-          if [ -n "$SHA" ]; then
-            VERSION_STRING="${VERSION}-${SHA}"
-          else
-            VERSION_STRING="${VERSION}"
-          fi
-
-          FILENAME="CIBMangoTree_${ARTIFACT_NAME}-${VERSION_STRING}.zip"
-
-          if [ "${{ matrix.os }}" = "windows-2022" ]; then
-            powershell -Command "Compress-Archive -Path 'dist/CIBMangoTree/*' -DestinationPath 'dist/${FILENAME}'"
-          else
-            cd dist && zip -r "${FILENAME}" CIBMangoTree.app
-          fi
-
-          echo "filename=${FILENAME}" >> $GITHUB_OUTPUT
-          echo "artifact_name=CIBMangoTree_${ARTIFACT_NAME}-${VERSION_STRING}" >> $GITHUB_OUTPUT
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v6
+  create-draft-release:
+    needs: [get-commit-info, build-preview]
+    if: ${{ github.event.inputs.create_release == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v5
         with:
-          name: ${{ steps.package.outputs.artifact_name }}
-          path: dist/${{ steps.package.outputs.filename }}
-          retention-days: 30
-      
+          path: artifacts
+
       - name: Create Draft Release
-        if: ${{ github.event.inputs.create_release == 'true' }}
         uses: softprops/action-gh-release@v1
         with:
           draft: true
           prerelease: true
-          tag_name: gui-preview-${{ github.event.inputs.version_name }}-${{ steps.commit_info.outputs.sha_short }}
-          name: "🖥️ GUI Preview: ${{ github.event.inputs.version_name }}"
-          files: dist/${{ steps.package.outputs.filename }}
+          tag_name: gui-preview-${{ github.event.inputs.version_name }}-${{ needs.get-commit-info.outputs.sha_short }}
+          name: "GUI Preview: ${{ github.event.inputs.version_name }}"
+          files: |
+            artifacts/**/*
           body: |
-            # 🧪 GUI Preview Build
+            # GUI Preview Build
 
             **Version:** `${{ github.event.inputs.version_name }}`
-            **Platform:** ${{ matrix.platform_name }}
             **Branch:** `${{ github.event.inputs.branch }}`
-            **Commit:** [`${{ steps.commit_info.outputs.sha_short }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+            **Commit:** [`${{ needs.get-commit-info.outputs.sha_short }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
             **Workflow Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
-            ## 📝 Build Notes
+            ## Build Notes
 
             ${{ github.event.inputs.notes }}
 
             ---
 
-            ## 💾 Installation Instructions
+            ## Installation Instructions
 
             ### Windows
-            1. Download `CIBMangoTree_windows-*.zip`
+            1. Download `CIBMangoTree_windows.zip`
             2. Extract the zip file
             3. Run `CIBMangoTree.exe`
             4. If Windows Defender warns about unsigned app, click "More info" → "Run anyway"
@@ -159,5 +98,5 @@ jobs:
 
             ---
 
-            ⚠️ **This is an unsigned preview build for internal testing only.**
+            This is an unsigned preview build for internal testing only.
             Not for production use or distribution outside the team.

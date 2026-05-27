@@ -51,9 +51,6 @@ class ExcelImportSession(ImporterSession, BaseModel):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    def print_config(self):
-        print(f"- Sheet name: {self.selected_sheet}")
-
     def load_preview(self, n_records: int) -> pl.DataFrame:
         return pl.read_excel(self.input_file, sheet_name=self.selected_sheet).head(
             n_records

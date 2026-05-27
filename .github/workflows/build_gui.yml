@@ -61,7 +61,7 @@ jobs:
               pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/CIBMangoTree_macos-arm64_signed.pkg" --sign "$APPLE_INST_CERT_ID"
             list_command: ls -ll dist
 
-    name: Build GUI ${{ matrix.platform_name }}
+    name: ${{ matrix.platform_name }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code

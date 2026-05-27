@@ -14,7 +14,6 @@ dependencies = [
     "tinydb>=4.8.0",
     "XlsxWriter>=3.2.0",
     "filelock>=3.16.1",
-    "pandas>=2.2.3",
     "pyarrow>=17.0.0",
     "fastexcel>=0.13.0",
     "python-json-logger>=2.0.7",

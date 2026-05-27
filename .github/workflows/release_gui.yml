@@ -1,0 +1,88 @@
+name: GUI Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+jobs:
+  validate-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Validate version matches tag
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          PYPROJECT_VERSION=$(grep -m1 '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          if [ "$TAG_VERSION" != "$PYPROJECT_VERSION" ]; then
+            echo "::error::Version mismatch: tag=v${TAG_VERSION} vs pyproject.toml=${PYPROJECT_VERSION}"
+            exit 1
+          fi
+          echo "✓ Version match: v${TAG_VERSION}"
+
+  audit:
+    needs: validate-version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: ".python-version"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v8.0.0
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --locked --no-install-project
+
+      - name: Audit dependencies
+        run: uv run pip-audit --skip-editable
+
+  call-build_gui:
+    needs: [validate-version, audit]
+    uses: ./.github/workflows/build_gui.yml
+    secrets: inherit
+    with:
+      is_release: true
+
+  release:
+    needs: [call-build_gui]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v5
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v3
+        if: github.ref_type == 'tag'
+        with:
+          draft: false
+          prerelease: false
+          name: "GUI Release ${{ github.ref_name }}"
+          files: |
+            artifacts/**/*
+          body: |
+            # CIB Mango Tree GUI ${{ github.ref_name }}
+
+            ## Installation
+
+            ### Windows
+            1. Download `CIBMangoTree_windows.zip`
+            2. Extract and run `CIBMangoTree.exe`
+
+            ### macOS
+            1. Download the `.pkg` installer for your architecture (x86 or arm64)
+            2. Run the installer to install to `/Applications/`
+            3. For first launch, right-click → "Open" to bypass Gatekeeper if needed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

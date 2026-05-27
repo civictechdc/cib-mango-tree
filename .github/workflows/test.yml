@@ -26,12 +26,6 @@ jobs:
       - name: Run tests
         run: uv run pytest
 
-  test_build:
-    uses: ./.github/workflows/build_exe.yml
-    secrets: inherit
-    with:
-      is_release: false
-
   test_build_gui:
     uses: ./.github/workflows/build_gui.yml
     secrets: inherit

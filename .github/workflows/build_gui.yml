@@ -162,9 +162,11 @@ jobs:
             powershell -Command "Compress-Archive -Path 'dist/CIBMangoTree' -DestinationPath 'dist/${{matrix.artifact_name}}.zip'"
             echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
           elif [ "${{ runner.os }}" = "macOS" ]; then
-            echo "artifact_path=dist/CIBMangoTree.app" >> $GITHUB_ENV
+            (cd dist && zip -r -y "${{matrix.artifact_name}}.zip" CIBMangoTree.app)
+            echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
           else
-            echo "artifact_path=dist/CIBMangoTree" >> $GITHUB_ENV
+            powershell -Command "Compress-Archive -Path 'dist/CIBMangoTree' -DestinationPath 'dist/${{matrix.artifact_name}}.zip'"
+            echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
           fi
 
       - name: Clean up macOS artifacts

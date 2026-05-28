@@ -58,6 +58,20 @@ jobs:
         with:
           path: artifacts
 
+      - name: Zip directory artifacts for release upload
+        shell: bash
+        run: |
+          for artifact_dir in artifacts/*/; do
+            if [ -d "$artifact_dir" ]; then
+              dir_name=$(basename "$artifact_dir")
+              if [ -d "$artifact_dir/CIBMangoTree.app" ]; then
+                (cd "$artifact_dir" && zip -r -y "${dir_name}.zip" CIBMangoTree.app)
+              elif [ -d "$artifact_dir/CIBMangoTree" ]; then
+                (cd "$artifact_dir" && zip -r "${dir_name}.zip" CIBMangoTree)
+              fi
+            fi
+          done
+
       - name: Create Draft Release
         uses: softprops/action-gh-release@v1
         with:

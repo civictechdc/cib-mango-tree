@@ -120,8 +120,8 @@ class AnalysisContext(BaseModel):
         Returns:
             The updated analysis model (is_draft=False on success)
         """
-        from analyzers import suite
-        from preprocessing.series_semantic import all_semantics
+        from cibmangotree.analyzers import suite
+        from cibmangotree.preprocessing.series_semantic import all_semantics
 
         from .gui_progress_reporter import GUIProgressReporter
 

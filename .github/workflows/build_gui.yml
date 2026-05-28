@@ -40,7 +40,7 @@ jobs:
               security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
               security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_KEYCHAIN_PASS" build.keychain
               security find-identity -v -p codesigning build.keychain
-              pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/${{matrix.artifact_name}}_signed.pkg" --sign "$APPLE_INST_CERT_ID"
+              pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/CIBMangoTree_macos-x86_signed.pkg" --sign "$APPLE_INST_CERT_ID"
             list_command: ls -ll dist
           - platform_name: MacOS (arm64)
             artifact_name: CIBMangoTree_macos-arm64
@@ -52,7 +52,7 @@ jobs:
               security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
               security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_KEYCHAIN_PASS" build.keychain
               security find-identity -v -p codesigning build.keychain
-              pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/${{matrix.artifact_name}}_signed.pkg" --sign "$APPLE_INST_CERT_ID"
+              pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/CIBMangoTree_macos-arm64_signed.pkg" --sign "$APPLE_INST_CERT_ID"
             list_command: ls -ll dist
 
     name: ${{ matrix.platform_name }}

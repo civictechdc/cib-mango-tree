@@ -30,6 +30,7 @@ jobs:
             artifact_name: CIBMangoTree_windows
             os: windows-2022
             list_command: dir dist
+            check_command: dist/CIBMangoTree/CIBMangoTree.exe --noop
           - platform_name: MacOS (x86)
             artifact_name: CIBMangoTree_macos-x86
             os: macos-15-intel
@@ -42,6 +43,7 @@ jobs:
               security find-identity -v -p codesigning build.keychain
               pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/CIBMangoTree_macos-x86_signed.pkg" --sign "$APPLE_INST_CERT_ID"
             list_command: ls -ll dist
+            check_command: dist/CIBMangoTree.app/Contents/MacOS/CIBMangoTree --noop
           - platform_name: MacOS (arm64)
             artifact_name: CIBMangoTree_macos-arm64
             os: macos-15
@@ -54,6 +56,7 @@ jobs:
               security find-identity -v -p codesigning build.keychain
               pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/CIBMangoTree_macos-arm64_signed.pkg" --sign "$APPLE_INST_CERT_ID"
             list_command: ls -ll dist
+            check_command: dist/CIBMangoTree.app/Contents/MacOS/CIBMangoTree --noop
 
     name: ${{ matrix.platform_name }}
     runs-on: ${{ matrix.os }}
@@ -122,6 +125,9 @@ jobs:
         run: |
           ls -lah dist/
           echo "Looking for: CIBMangoTree"
+
+      - name: Test executable with --noop
+        run: ${{ matrix.check_command }}
 
       - name: Clean up redundant onedir folder
         if: runner.os == 'macOS'

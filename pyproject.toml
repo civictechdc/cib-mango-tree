@@ -49,7 +49,6 @@ cibmt = "cibmangotree.__main__:main"
 
 [tool.uv]
 exclude-newer = "7 days"
-exclude-newer-package = { urllib3 = false }
 
 [tool.black]
 target-version = ["py312"]

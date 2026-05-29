@@ -1,6 +1,6 @@
 """
-GUI entry point for CIB Mango Tree application.
-This launches the NiceGUI interface in native window mode.
+Main entry point for CIB Mango Tree application.
+Bootstraps core services and launches the GUI.
 """
 
 import argparse
@@ -13,7 +13,7 @@ from pathlib import Path
 def main() -> None:
     freeze_support()
 
-    parser = argparse.ArgumentParser(description="CIB Mango Tree GUI")
+    parser = argparse.ArgumentParser(description="CIB Mango Tree")
     parser.add_argument(
         "--noop", action="store_true", help="No-operation mode for testing"
     )
@@ -42,7 +42,7 @@ def main() -> None:
 
     # Get logger for main module
     logger = logging.getLogger(__name__)
-    logger.info("Starting CIB Mango Tree GUI application")
+    logger.info("Starting CIB Mango Tree application")
 
     # Create App instance
     app = App(context=AppContext(storage=storage, suite=suite))

@@ -3,7 +3,9 @@ GUI entry point for CIB Mango Tree application.
 This launches the NiceGUI interface in native window mode.
 """
 
+import argparse
 import logging
+import sys
 from multiprocessing import freeze_support
 from pathlib import Path
 
@@ -11,13 +13,23 @@ from pathlib import Path
 def main() -> None:
     freeze_support()
 
-    # Import heavy modules after loading message
+    parser = argparse.ArgumentParser(description="CIB Mango Tree GUI")
+    parser.add_argument(
+        "--noop", action="store_true", help="No-operation mode for testing"
+    )
+    args = parser.parse_args()
+
+    # Import heavy modules
     from cibmangotree.analyzers import suite
     from cibmangotree.app import App, AppContext
     from cibmangotree.app.logger import setup_logging
     from cibmangotree.gui import gui_main
     from cibmangotree.meta import get_version
     from cibmangotree.storage import Storage
+
+    if args.noop:
+        print("No-op flag detected. All runtime imports loaded successfully.")
+        sys.exit(0)
 
     # Initialize storage
     storage = Storage(app_name="MangoTango", app_author="Civic Tech DC")

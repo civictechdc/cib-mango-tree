@@ -27,16 +27,13 @@ jobs:
       matrix:
         include:
           - platform_name: Windows
-            artifact_name: windows
+            artifact_name: CIBMangoTree_windows
             os: windows-2022
-            zip_command: powershell -Command "Compress-Archive -Path 'dist/CIBMangoTree/*' -DestinationPath 'dist/CIBMangoTree_windows.zip'"
-            artifact_path: dist/CIBMangoTree_windows.zip
             list_command: dir dist
+            check_command: dist/CIBMangoTree/CIBMangoTree.exe --noop
           - platform_name: MacOS (x86)
-            artifact_name: macos-x86
+            artifact_name: CIBMangoTree_macos-x86
             os: macos-15-intel
-            zip_command: cd dist && zip -r CIBMangoTree_macos-x86.zip CIBMangoTree.app
-            artifact_path: dist/CIBMangoTree_macos-x86.zip
             pkg_command: |
               mkdir -p /tmp/cibmangotree/
               ditto dist/CIBMangoTree.app /tmp/cibmangotree/CIBMangoTree.app
@@ -46,11 +43,10 @@ jobs:
               security find-identity -v -p codesigning build.keychain
               pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/CIBMangoTree_macos-x86_signed.pkg" --sign "$APPLE_INST_CERT_ID"
             list_command: ls -ll dist
+            check_command: dist/CIBMangoTree.app/Contents/MacOS/CIBMangoTree --noop
           - platform_name: MacOS (arm64)
-            artifact_name: macos-arm64
+            artifact_name: CIBMangoTree_macos-arm64
             os: macos-15
-            zip_command: cd dist && zip -r CIBMangoTree_macos-arm64.zip CIBMangoTree.app
-            artifact_path: dist/CIBMangoTree_macos-arm64.zip
             pkg_command: |
               mkdir -p /tmp/cibmangotree/
               ditto dist/CIBMangoTree.app /tmp/cibmangotree/CIBMangoTree.app
@@ -60,6 +56,7 @@ jobs:
               security find-identity -v -p codesigning build.keychain
               pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/CIBMangoTree_macos-arm64_signed.pkg" --sign "$APPLE_INST_CERT_ID"
             list_command: ls -ll dist
+            check_command: dist/CIBMangoTree.app/Contents/MacOS/CIBMangoTree --noop
 
     name: ${{ matrix.platform_name }}
     runs-on: ${{ matrix.os }}
@@ -129,6 +126,9 @@ jobs:
           ls -lah dist/
           echo "Looking for: CIBMangoTree"
 
+      - name: Test executable with --noop
+        run: ${{ matrix.check_command }}
+
       - name: Clean up redundant onedir folder
         if: runner.os == 'macOS'
         shell: bash
@@ -152,21 +152,27 @@ jobs:
           APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
           APPLE_TEAM_ID: ${{secrets.TEAM_ID}}
           APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
-        run: xcrun notarytool submit dist/CIBMangoTree_${{matrix.artifact_name}}_signed.pkg --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS --wait
+        run: xcrun notarytool submit dist/${{matrix.artifact_name}}_signed.pkg --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS --wait
 
       - name: Staple notarization ticket
         if: runner.os == 'macOS' && inputs.is_release
-        run: xcrun stapler staple dist/CIBMangoTree_${{matrix.artifact_name}}_signed.pkg
+        run: xcrun stapler staple dist/${{matrix.artifact_name}}_signed.pkg
 
       - name: Package artifact
         shell: bash
         run: |
           if [ "${{ runner.os }}" = "macOS" ] && [ "${{ inputs.is_release }}" = "true" ]; then
-            mv dist/CIBMangoTree_${{matrix.artifact_name}}_signed.pkg dist/CIBMangoTree_${{matrix.artifact_name}}.pkg
-            echo "artifact_path=dist/CIBMangoTree_${{matrix.artifact_name}}.pkg" >> $GITHUB_ENV
+            mv dist/${{matrix.artifact_name}}_signed.pkg dist/${{matrix.artifact_name}}.pkg
+            echo "artifact_path=dist/${{matrix.artifact_name}}.pkg" >> $GITHUB_ENV
+          elif [ "${{ runner.os }}" = "Windows" ] && [ "${{ inputs.is_release }}" = "true" ]; then
+            powershell -Command "Compress-Archive -Path 'dist/CIBMangoTree' -DestinationPath 'dist/${{matrix.artifact_name}}.zip'"
+            echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
+          elif [ "${{ runner.os }}" = "macOS" ]; then
+            (cd dist && zip -r -y "${{matrix.artifact_name}}.zip" CIBMangoTree.app)
+            echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
           else
-            ${{ matrix.zip_command }}
-            echo "artifact_path=${{ matrix.artifact_path }}" >> $GITHUB_ENV
+            powershell -Command "Compress-Archive -Path 'dist/CIBMangoTree' -DestinationPath 'dist/${{matrix.artifact_name}}.zip'"
+            echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
           fi
 
       - name: Clean up macOS artifacts
@@ -175,7 +181,6 @@ jobs:
           rm -rf /tmp/cibmangotree
           rm -rf dist/CIBMangoTree
           rm -rf dist/CIBMangoTree.app
-          rm -rf dist/CIBMangoTree_${{matrix.artifact_name}}.zip
 
       - name: Inspect dist/ directory
         run: ${{ matrix.list_command }}
@@ -183,5 +188,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: gui-${{ matrix.artifact_name }}
+          name: ${{ matrix.artifact_name }}
           path: ${{ env.artifact_path }}

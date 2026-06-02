@@ -4,12 +4,17 @@ This launches the NiceGUI interface in native window mode.
 """
 
 import logging
+import sys
 from multiprocessing import freeze_support
 from pathlib import Path
 
 
 def main() -> None:
     freeze_support()
+
+    if sys.platform == 'win32':
+        from cibmangotree.gui.remove_motw import remove_motw
+        remove_motw()
 
     # Import heavy modules after loading message
     from cibmangotree.analyzers import suite

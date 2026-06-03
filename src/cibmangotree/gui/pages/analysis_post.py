@@ -2,7 +2,7 @@ from nicegui import ui
 
 from cibmangotree.app.analysis_context import AnalysisContext
 from cibmangotree.gui.base import GuiPage
-from cibmangotree.gui.components.export_outputs import ExportDialog
+from cibmangotree.gui.components import ExportDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
 

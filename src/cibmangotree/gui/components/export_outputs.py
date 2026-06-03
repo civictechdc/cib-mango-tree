@@ -122,8 +122,9 @@ class ExportDialog(ui.dialog):
 
         self.output_status_rows: dict[str, tuple] = {}
 
-        with self, ui.card().classes("w-full").style(
-            "min-width: 500px; max-width: 700px"
+        with (
+            self,
+            ui.card().classes("w-full").style("min-width: 500px; max-width: 700px"),
         ):
             self._build_step_1()
             self._build_step_2()
@@ -159,9 +160,7 @@ class ExportDialog(ui.dialog):
         with self.step_1:
             ui.label("Select outputs to export").classes("text-h6 q-mb-md")
 
-            self.output_checkboxes: list[tuple[AnalysisOutputContext, ui.checkbox]] = (
-                []
-            )
+            self.output_checkboxes: list[tuple[AnalysisOutputContext, ui.checkbox]] = []
             self.checkbox_container = ui.column().classes("w-full gap-1 mb-4")
 
             with self.checkbox_container:
@@ -205,8 +204,7 @@ class ExportDialog(ui.dialog):
         ]
 
         self.chunking_visible = any(
-            output.num_rows > LARGE_OUTPUT_THRESHOLD
-            for output in self.selected_outputs
+            output.num_rows > LARGE_OUTPUT_THRESHOLD for output in self.selected_outputs
         )
         self.chunking_section.set_visibility(self.chunking_visible)
         self._show_step(2)
@@ -308,29 +306,29 @@ class ExportDialog(ui.dialog):
                 "text-base q-mb-md"
             )
 
-            self.export_progress_bar = ui.linear_progress(
-                value=0, show_value=False
-            ).classes("w-full q-mb-md").props("instant-feedback")
+            self.export_progress_bar = (
+                ui.linear_progress(value=0, show_value=False)
+                .classes("w-full q-mb-md")
+                .props("instant-feedback")
+            )
 
             self.output_status_container = ui.column().classes("w-full gap-1 mb-4")
 
     def _build_step_4(self):
         self.step_4 = ui.column().classes("w-full")
         with self.step_4:
-            self.complete_status_label = ui.label("").classes("text-h6 q-mb-md")
+            with ui.row().classes("items-center gap-2 q-mb-md"):
+                self.complete_success_icon = ui.icon(
+                    "check_circle", color=MANGO_DARK_GREEN, size="lg"
+                )
+                self.complete_error_icon = ui.icon(
+                    "cancel", color="negative", size="lg"
+                )
+                self.complete_status_label = ui.label("").classes("text-h6")
+                self.complete_success_icon.set_visibility(False)
+                self.complete_error_icon.set_visibility(False)
 
-            self.complete_success_icon = (
-                ui.icon("check_circle", color=MANGO_DARK_GREEN, size="lg")
-                .classes("q-mb-md")
-            )
-            self.complete_error_icon = (
-                ui.icon("cancel", color="negative", size="lg")
-                .classes("q-mb-md")
-            )
-            self.complete_success_icon.set_visibility(False)
-            self.complete_error_icon.set_visibility(False)
-
-            self.complete_message = ui.label("").classes("q-mb-md")
+            self.complete_message_container = ui.column().classes("w-full gap-1 mb-4")
 
             with ui.row().classes("w-full justify-end gap-2"):
                 self.step_4_open_folder = ui.button(
@@ -435,24 +433,19 @@ class ExportDialog(ui.dialog):
             self.complete_success_icon.set_visibility(True)
             self.complete_error_icon.set_visibility(False)
 
-        if self.exported_paths:
-            lines = []
+        self.complete_message_container.clear()
+        with self.complete_message_container:
             for path, chunk_count in self.exported_paths:
                 if chunk_count > 1:
                     display_path = path.replace("_[*]", "")
-                    lines.append(
-                        f"{os.path.basename(display_path)} in {chunk_count} chunks"
-                    )
+                    ui.label(
+                        f"Exported as {os.path.basename(display_path)} "
+                        f"in {chunk_count} chunks"
+                    ).classes("text-sm")
                 else:
-                    lines.append(os.path.basename(path))
-            self.complete_message.text = "Exported:\n" + "\n".join(lines)
-        else:
-            self.complete_message.text = ""
-
-        if self.export_errors:
-            self.complete_message.text += (
-                "\n\nErrors:\n" + "\n".join(self.export_errors)
-            )
+                    ui.label(f"Exported as {os.path.basename(path)}").classes("text-sm")
+            for error in self.export_errors:
+                ui.label(error).classes("text-sm text-negative")
 
         self.step_4_open_folder.set_visibility(bool(self.exported_paths))
         self._show_step(4)

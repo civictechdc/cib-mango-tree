@@ -435,17 +435,21 @@ class ExportDialog(ui.dialog):
 
         self.complete_message_container.clear()
         with self.complete_message_container:
-            for path, chunk_count in self.exported_paths:
-                if chunk_count > 1:
-                    display_path = path.replace("_[*]", "")
-                    ui.label(
-                        f"Exported as {os.path.basename(display_path)} "
-                        f"in {chunk_count} chunks"
-                    ).classes("text-sm")
-                else:
-                    ui.label(f"Exported as {os.path.basename(path)}").classes("text-sm")
-            for error in self.export_errors:
-                ui.label(error).classes("text-sm text-negative")
+            if self.exported_paths:
+                for path, chunk_count in self.exported_paths:
+                    if chunk_count > 1:
+                        display_path = path.replace("_[*]", "")
+                        ui.label(
+                            f"Exported {os.path.basename(display_path)} in {chunk_count} chunks"
+                        ).classes("text-sm")
+                    else:
+                        ui.label(f"Exported {os.path.basename(path)}").classes(
+                            "text-sm"
+                        )
+
+            if self.export_errors:
+                for error in self.export_errors:
+                    ui.label(error).classes("text-sm")
 
         self.step_4_open_folder.set_visibility(bool(self.exported_paths))
         self._show_step(4)

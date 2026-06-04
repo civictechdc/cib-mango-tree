@@ -13,7 +13,7 @@ from cibmangotree.gui.utils import open_directory_explorer
 from cibmangotree.storage import SupportedOutputExtension
 
 QUEUE_POLL_INTERVAL = 0.5
-LARGE_OUTPUT_THRESHOLD = 50_000
+LARGE_OUTPUT_THRESHOLD = 100_000
 
 
 class ExportProgressMessage(BaseModel):
@@ -131,22 +131,22 @@ class ExportDialog(ui.dialog):
             self,
             ui.card().classes("w-full").style("min-width: 500px; max-width: 700px"),
         ):
-            self._build_step_1()
-            self._build_step_2()
-            self._build_step_3()
-            self._build_step_4()
+            self._build_select_outputs()
+            self._build_configure_export()
+            self._build_export_progress()
+            self._build_export_complete()
 
-        self._show_step(1)
+        self._show_step("select_outputs")
 
-    def _show_step(self, step: int):
-        cards = [
-            self.step_1,
-            self.step_2,
-            self.step_3,
-            self.step_4,
-        ]
-        for i, card in enumerate(cards):
-            card.set_visibility(i + 1 == step)
+    def _show_step(self, step: str):
+        steps = {
+            "select_outputs": self.select_outputs,
+            "configure_export": self.configure_export,
+            "export_progress": self.export_progress,
+            "export_complete": self.export_complete,
+        }
+        for name, card in steps.items():
+            card.set_visibility(name == step)
 
     def _add_checkbox_group(
         self, label_text: str, outputs: list[AnalysisOutputContext]
@@ -160,9 +160,9 @@ class ExportDialog(ui.dialog):
             )
             self.output_checkboxes.append((output, cb))
 
-    def _build_step_1(self):
-        self.step_1 = ui.column().classes("w-full")
-        with self.step_1:
+    def _build_select_outputs(self):
+        self.select_outputs = ui.column().classes("w-full")
+        with self.select_outputs:
             ui.label("Select outputs to export").classes("text-h6 q-mb-md")
 
             self.output_checkboxes: list[tuple[AnalysisOutputContext, ui.checkbox]] = []
@@ -191,19 +191,19 @@ class ExportDialog(ui.dialog):
 
             with ui.row().classes("w-full justify-end gap-2"):
                 ui.button("Cancel", on_click=self.close, color="secondary")
-                self.step_1_next = ui.button(
+                self.select_outputs_next = ui.button(
                     "Next",
-                    on_click=self._go_step_2,
+                    on_click=self._go_to_configure_export,
                     color="primary",
                     icon="arrow_forward",
                 )
-                self.step_1_next.set_enabled(False)
+                self.select_outputs_next.set_enabled(False)
 
     def _on_selection_changed(self):
         has_selection = any(cb.value for _, cb in self.output_checkboxes)
-        self.step_1_next.set_enabled(has_selection)
+        self.select_outputs_next.set_enabled(has_selection)
 
-    def _go_step_2(self):
+    def _go_to_configure_export(self):
         self.selected_outputs = [
             output for output, cb in self.output_checkboxes if cb.value
         ]
@@ -212,11 +212,11 @@ class ExportDialog(ui.dialog):
             output.num_rows > LARGE_OUTPUT_THRESHOLD for output in self.selected_outputs
         )
         self.chunking_section.set_visibility(self.chunking_visible)
-        self._show_step(2)
+        self._show_step("configure_export")
 
-    def _build_step_2(self):
-        self.step_2 = ui.column().classes("w-full")
-        with self.step_2:
+    def _build_configure_export(self):
+        self.configure_export = ui.column().classes("w-full")
+        with self.configure_export:
             ui.label("Configure export").classes("text-h6 q-mb-md")
 
             is_hashtags = self.analysis_context.analyzer_id == "hashtags"
@@ -279,7 +279,7 @@ class ExportDialog(ui.dialog):
             with ui.row().classes("w-full justify-end gap-2"):
                 ui.button(
                     "Back",
-                    on_click=lambda: self._show_step(1),
+                    on_click=lambda: self._show_step("select_outputs"),
                     color="secondary",
                     icon="arrow_back",
                 )
@@ -302,9 +302,9 @@ class ExportDialog(ui.dialog):
 
         self._start_export()
 
-    def _build_step_3(self):
-        self.step_3 = ui.column().classes("w-full")
-        with self.step_3:
+    def _build_export_progress(self):
+        self.export_progress = ui.column().classes("w-full")
+        with self.export_progress:
             ui.label("Exporting...").classes("text-h6 q-mb-md")
 
             self.export_status_label = ui.label("Preparing...").classes(
@@ -319,9 +319,9 @@ class ExportDialog(ui.dialog):
 
             self.output_status_container = ui.column().classes("w-full gap-1 mb-4")
 
-    def _build_step_4(self):
-        self.step_4 = ui.column().classes("w-full")
-        with self.step_4:
+    def _build_export_complete(self):
+        self.export_complete = ui.column().classes("w-full")
+        with self.export_complete:
             with ui.row().classes("items-center gap-2 q-mb-md"):
                 self.complete_success_icon = ui.icon(
                     "check_circle", color=MANGO_DARK_GREEN, size="lg"
@@ -336,7 +336,7 @@ class ExportDialog(ui.dialog):
             self.complete_message_container = ui.column().classes("w-full gap-1 mb-4")
 
             with ui.row().classes("w-full justify-end gap-2"):
-                self.step_4_open_folder = ui.button(
+                self.export_complete_open_folder = ui.button(
                     "Open exports folder",
                     on_click=self._open_folder,
                     color="primary",
@@ -347,10 +347,10 @@ class ExportDialog(ui.dialog):
     def _start_export(self):
         if self.format is None:
             ui.notify("Please select an export format", type="warning")
-            self._show_step(2)
+            self._show_step("configure_export")
             return
 
-        self._show_step(3)
+        self._show_step("export_progress")
 
         self.progress_queue = queue.Queue()
         self.exported_paths = []
@@ -456,8 +456,8 @@ class ExportDialog(ui.dialog):
                 for error in self.export_errors:
                     ui.label(error).classes("text-sm")
 
-        self.step_4_open_folder.set_visibility(bool(self.exported_paths))
-        self._show_step(4)
+        self.export_complete_open_folder.set_visibility(bool(self.exported_paths))
+        self._show_step("export_complete")
 
     async def _open_folder(self):
         await run.io_bound(

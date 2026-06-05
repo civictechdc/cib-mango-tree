@@ -52,6 +52,8 @@ jobs:
     needs: [get-commit-info, build-preview]
     if: ${{ github.event.inputs.create_release == 'true' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v5
@@ -74,6 +76,7 @@ jobs:
               fi
             fi
           done
+          rm -rf artifacts/*/
 
       - name: Create Draft Release
         uses: softprops/action-gh-release@v1
@@ -83,7 +86,7 @@ jobs:
           tag_name: gui-preview-${{ github.event.inputs.version_name }}-${{ needs.get-commit-info.outputs.sha_short }}
           name: "GUI Preview: ${{ github.event.inputs.version_name }}"
           files: |
-            artifacts/**/*
+            artifacts/*.zip
           body: |
             # GUI Preview Build
 

@@ -5,6 +5,7 @@ Bootstraps core services and launches the GUI.
 
 import argparse
 import logging
+import multiprocessing
 import sys
 from multiprocessing import freeze_support
 from pathlib import Path
@@ -12,6 +13,7 @@ from pathlib import Path
 
 def main() -> None:
     freeze_support()
+    multiprocessing.set_start_method("spawn", force=True)
 
     parser = argparse.ArgumentParser(description="CIB Mango Tree")
     parser.add_argument(

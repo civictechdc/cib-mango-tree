@@ -37,12 +37,10 @@ nav = [
             "guides/design-philosophy/content-domain.md",
         ]},
     ]},
-    {"Reference (CLI)" = [
+    {"Reference" = [
         "reference/analyzer_interface.md",
-        "reference/components.md",
         "reference/app.md",
         "reference/preprocessing.md",
-        "reference/terminal_tools.md",
         "reference/importing.md",
         "reference/meta.md",
         "reference/storage.md",

@@ -88,6 +88,8 @@ paths = ["src"]
 [project.markdown_extensions.pymdownx.tabbed]
 alternate_style = true
 
+[project.markdown_extensions.pymdownx.snippets]
+
 [project.markdown_extensions.toc]
 permalink = true
 

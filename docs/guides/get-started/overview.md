@@ -21,7 +21,6 @@ CIB Mango Tree relies on the following packages and data science tooling from th
 
 | Domain | Technologies |
 |----------|--------------|
-| Core | Python 3.12, NiceGUI (GUI), TinyDB (metadata), Starlette & Uvicorn (web-server) |
-| Data | Polars/Pandas, PyArrow, Parquet files |
-| Web | Dash, Shiny for Python, Plotly |
+| Core | Python 3.12, Polars, NiceGUI (GUI), ECharts|
+| Data | PyArrow, Parquet files, TinyDB |
 | Dev Tools | Black, isort, pytest, PyInstaller |

@@ -76,13 +76,14 @@ Choose your preferred method for setting up your development environment:
 
     ```bash
     # Create virtual environment
+    # this creates a hidden `.venv` folder
     uv venv
 
     # Activate virtual environment (macOS/Linux)
-    source venv/bin/activate
+    source .venv/bin/activate
 
     # OR: if using Windows and PowerShell
-    # venv\Scripts\activate
+    # .venv\Scripts\activate
 
     # Install development dependencies
     uv sync --group dev
@@ -148,13 +149,13 @@ No-op flag detected. All runtime imports loaded successfully.
 
 ### Basic Usage
 
-Once you have activated the environment and installed dependencies, run the application from project root:
+Once you have activated the environment and installed dependencies, run the application using `cibmt` command:
 ```bash
 # Start the application
 cibmt
 ```
 
-Alternatively, use the full command:
+Alternatively, use the long-version command:
 ```bash
 cibmangotree
 ```

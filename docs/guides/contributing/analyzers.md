@@ -95,8 +95,7 @@ The main function receives a context object with access to input data and output
 
 ```python
 import polars as pl
-from cibmangotree.analyzer_interface.context import PrimaryAnalyzerContext
-from cibmangotree.terminal_tools import ProgressReporter
+from cibmangotree.analyzer_interface.context import PrimaryAnalyzerContext, NullProgressReporter
 
 def main(context: PrimaryAnalyzerContext):
     # Read and preprocess input data
@@ -107,8 +106,11 @@ def main(context: PrimaryAnalyzerContext):
     fudge_factor = context.params.get("fudge_factor")
     assert isinstance(fudge_factor, int), "Fudge factor must be an integer"
     
+    # Get progress reporter (provided by context, or fall back to no-op)
+    progress = context.progress_reporter or (lambda name: NullProgressReporter(name))
+    
     # Perform analysis with progress reporting
-    with ProgressReporter("Counting characters") as progress:
+    with progress("Counting characters") as reporter:
         df_count = df_input.select(
             pl.col("message_id"),
             pl.col("message_text")
@@ -116,7 +118,7 @@ def main(context: PrimaryAnalyzerContext):
             .add(fudge_factor)
             .alias("character_count")
         )
-        progress.update(1.0)
+        reporter.update(1.0)
     
     # Write output to specified path
     df_count.write_parquet(context.output("character_count").parquet_path)

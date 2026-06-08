@@ -13,7 +13,7 @@ from cibmangotree.context import (
     PrimaryAnalyzerContext,
     SecondaryAnalyzerContext,
 )
-from cibmangotree.storage import AnalysisModel
+from cibmangotree.storage import AnalysisModel, Storage
 
 from .app_context import AppContext
 from .project_context import ProjectContext
@@ -96,7 +96,7 @@ class AnalysisContext(BaseModel):
         column_mapping: dict[str, str],
         input_columns_data: dict[str, tuple[str, str]],
         secondary_analyzer_ids: list[str],
-        storage,
+        storage: Storage,
         queue: Queue,
         cancel_event: Event,
     ) -> AnalysisModel:

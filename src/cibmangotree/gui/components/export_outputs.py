@@ -5,7 +5,7 @@ import threading
 from typing import Literal
 
 from nicegui import run, ui
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from cibmangotree.app import AnalysisContext, AnalysisOutputContext
 from cibmangotree.gui.theme import MANGO_DARK_GREEN
@@ -23,7 +23,7 @@ class ExportProgressMessage(BaseModel):
         "output_finish",
         "output_error",
         "all_complete",
-    ]
+    ] = Field(...)
     name: str | None = None
     index: int | None = None
     total: int | None = None

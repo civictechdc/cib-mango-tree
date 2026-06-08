@@ -33,7 +33,7 @@ class ImportOptionsDialog(ui.dialog):
 
         Args:
             import_session: Current import session with detected settings
-            selected_file_path: Path to the file being imported
+            selected_file: BytesIO buffer of the file being imported
             on_retry: Callback function called when user clicks "Retry Import"
                      with the updated import session as parameter
         """

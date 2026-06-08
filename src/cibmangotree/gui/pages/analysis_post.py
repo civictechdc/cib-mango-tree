@@ -1,10 +1,13 @@
-from nicegui import ui
+import os
+
+from nicegui import run, ui
 
 from cibmangotree.app.analysis_context import AnalysisContext
 from cibmangotree.gui.base import GuiPage
 from cibmangotree.gui.components import ExportDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.utils import open_directory_explorer
 
 
 class PostAnalysisPage(GuiPage):
@@ -38,6 +41,20 @@ class PostAnalysisPage(GuiPage):
             dialog = ExportDialog(analysis_context=ctx)
             await dialog
 
+        async def _open_results_folder():
+            if self.session.current_analysis is None:
+                self.notify_warning("No analysis to open. Run an analysis first.")
+                return
+            results_path = os.path.dirname(
+                self.session.app.context.storage._get_project_primary_output_root_path(
+                    self.session.current_analysis
+                )
+            )
+            try:
+                await run.io_bound(open_directory_explorer, results_path)
+            except OSError as e:
+                self.notify_error(f"Could not open results folder: {e}")
+
         with self.centered_content():
             ui.label("What would you like to do next?").classes("q-mb-lg").style(
                 "font-size: 1.05rem"
@@ -58,6 +75,6 @@ class PostAnalysisPage(GuiPage):
 
                 ui.button(
                     "Open results folder",
-                    on_click=lambda: self.notify_warning("Coming soon!"),
+                    on_click=_open_results_folder,
                     color="primary",
-                ).set_enabled(False)
+                )

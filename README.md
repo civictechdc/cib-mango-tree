@@ -1,6 +1,6 @@
 <h1 align="center">CIB Mango Tree</h1>
 
-<h3 align="center">A Standalone Desktop App for Detecting Coordinated Inauthentic Behavior Datasets of Online Activity</h3>
+<h3 align="center">An Open Source Toolkit for Detecting Coordinated Inauthentic Behavior in Datasets of Online Activity</h3>
 
 
 <p align="center">

@@ -16,6 +16,10 @@
 <a href="https://black.readthedocs.io/en/stable/"><img alt="license: MIT" src="https://img.shields.io/badge/license-MIT-green"></a>
 </p>
 
+> [!NOTE]
+> **v0.11.0-alpha** is now available with a new GUI interface! [Download the pre-release](https://github.com/CIB-Mango-Tree/cib-mango-tree/releases/tag/v0.11.0-alpha)
+> 
+> The latest stable release (v0.10.2) still uses the terminal interface.
 
 ## About
 
@@ -32,6 +36,9 @@ CIB Mango Tree is a project of [Civic Tech DC](https://www.civictechdc.org/), a 
 The latest release is available under Assets in the Releases tab: 
   
 [CIB Mango Tree latest](https://github.com/civictechdc/cib-mango-tree/releases/latest)
+
+> [!NOTE]
+> **v0.11.0-alpha** is available with a new GUI interface! [Download the pre-release](https://github.com/CIB-Mango-Tree/cib-mango-tree/releases/tag/v0.11.0-alpha)
 
 ## Contributing
 

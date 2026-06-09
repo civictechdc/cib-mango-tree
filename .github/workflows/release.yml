@@ -1,4 +1,4 @@
-name: GUI Release
+name: New Release
 
 on:
   push:

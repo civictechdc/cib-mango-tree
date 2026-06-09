@@ -37,7 +37,7 @@ jobs:
             pkg_command: |
               mkdir -p /tmp/cibmangotree/
               ditto dist/CIBMangoTree.app /tmp/cibmangotree/CIBMangoTree.app
-              chmod +x /tmp/cibmangotree/CIBMangoTree.app/CIBMangoTree
+              chmod +x /tmp/cibmangotree/CIBMangoTree.app/Contents/MacOS/CIBMangoTree
               security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
               security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_KEYCHAIN_PASS" build.keychain
               security find-identity -v -p codesigning build.keychain
@@ -50,7 +50,7 @@ jobs:
             pkg_command: |
               mkdir -p /tmp/cibmangotree/
               ditto dist/CIBMangoTree.app /tmp/cibmangotree/CIBMangoTree.app
-              chmod +x /tmp/cibmangotree/CIBMangoTree.app/CIBMangoTree
+              chmod +x /tmp/cibmangotree/CIBMangoTree.app/Contents/MacOS/CIBMangoTree
               security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
               security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_KEYCHAIN_PASS" build.keychain
               security find-identity -v -p codesigning build.keychain

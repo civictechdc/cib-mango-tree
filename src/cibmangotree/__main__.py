@@ -13,8 +13,16 @@ from pathlib import Path
 
 def main() -> None:
     freeze_support()
+
     multiprocessing.set_start_method("spawn", force=True)
 
+    # clear Mark of the Web for Win .exe
+    if sys.platform == "win32":
+        from src.cibmangotree.gui.utils import _remove_motw
+
+        _remove_motw()
+
+    # Import heavy modules after loading message
     parser = argparse.ArgumentParser(description="CIB Mango Tree")
     parser.add_argument(
         "--noop", action="store_true", help="No-operation mode for testing"

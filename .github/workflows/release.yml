@@ -53,7 +53,7 @@ jobs:
     with:
       is_release: true
   call-docs:
-    needs: [validate-version, audit]
+    needs: validate-version
     uses: ./.github/workflows/docs.yml
     secrets: inherit
   release:

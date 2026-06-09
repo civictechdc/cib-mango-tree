@@ -20,7 +20,7 @@ if site_packages_path is None:
   raise RuntimeError("The site-packages directory could not be found. Please setup the python envrionment correctly and try again...")
 
 a = Analysis(
-    ['src/cibmangotree/gui/__main__.py'],  # GUI entry point
+    ['src/cibmangotree/__main__.py'],  # Main entry point
     pathex=['.', 'src'],    # Ensure all paths are correctly included
     binaries=[],
     datas=[

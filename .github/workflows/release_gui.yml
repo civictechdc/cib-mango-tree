@@ -80,8 +80,8 @@ jobs:
             1. Download `CIBMangoTree_windows.zip`
             2. Extract and run `CIBMangoTree.exe`
 
-            ### macOS
-            1. Download the `.pkg` installer for your architecture (x86 or arm64)
+            ### MacOS
+            1. Download the `.pkg` installer for your architecture (`CIBMangoTree_macos-x86.pkg` or `CIBMangoTree_macos-arm64.pkg`)
             2. Run the installer to install to `/Applications/`
             3. For first launch, right-click → "Open" to bypass Gatekeeper if needed
         env:

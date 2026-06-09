@@ -44,12 +44,11 @@ docs = [
 where = ["src"]
 
 [project.scripts]
-cibmangotree = "cibmangotree.gui.__main__:main"
-cibmt = "cibmangotree.gui.__main__:main"
+cibmangotree = "cibmangotree.__main__:main"
+cibmt = "cibmangotree.__main__:main"
 
 [tool.uv]
 exclude-newer = "7 days"
-exclude-newer-package = { urllib3 = false }
 
 [tool.black]
 target-version = ["py312"]

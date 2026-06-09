@@ -117,7 +117,7 @@ else:
         debug=True,
         strip=False,
         upx=True,
-        console=True,  # No console window for GUI app
+        console=False,  # No console window for GUI app
         icon=None,  # Add icon path when available (e.g., 'icon.ico' for Windows)
     )
 

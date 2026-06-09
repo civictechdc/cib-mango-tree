@@ -26,10 +26,10 @@ class StartPage(GuiPage):
         """Render main page content with action buttons."""
         # Main content area - centered vertically
         with self.centered_content():
-            # Prompt label
-            ui.label("Let's get started! What do you want to do?").classes(
-                "q-mb-lg"
-            ).style("font-size: 1.05rem")
+            # Hero logo
+            ui.html(self._load_svg_icon("cibmt_logo"), sanitize=False).classes(
+                "size-36 q-mb-xl"
+            )
 
             # Action buttons row
             with ui.row().classes("gap-4"):

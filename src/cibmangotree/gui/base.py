@@ -245,7 +245,16 @@ class GuiPage(BaseModel, abc.ABC):
                     ui.label("MIT License").classes("text-sm text-bold")
 
                 # Center: Project attribution
-                ui.label("A Civic Tech DC Project").classes("text-sm text-bold")
+                with ui.element("div").classes("flex items-center gap-2"):
+                    with ui.link(target=gui_urls.website_url, new_tab=True).classes(
+                        "inline-flex items-center no-underline"
+                    ):
+                        with ui.element("div").classes("bg-white rounded-full p-1.5"):
+                            ui.html(
+                                self._load_svg_icon("cibmt_logo"), sanitize=False
+                            ).classes("size-5")
+                        ui.tooltip("Visit cibmangotree.org")
+                    ui.label("A Civic Tech DC Project").classes("text-sm text-bold")
 
                 # Right: External links
                 self._render_footer_links()
@@ -338,7 +347,7 @@ class GuiPage(BaseModel, abc.ABC):
         if padding:
             style += f"; padding: {padding}"
         container = (
-            ui.column().classes(f"items-center justify-{justify} gap-6").style(style)
+            ui.column().classes(f"items-center justify-{justify} gap-8").style(style)
         )
         with container:
             yield container

@@ -34,6 +34,10 @@ class GuiURLS(BaseModel):
         default="https://www.instagram.com/cibmangotree",
         description="Instagram profile URL",
     )
+    website_url: str = Field(
+        default="https://cibmangotree.org",
+        description="Official website URL",
+    )
 
 
 class GuiConstants(BaseModel):

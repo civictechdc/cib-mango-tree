@@ -14,6 +14,15 @@ import pytest
 from cibmangotree.app.logger import get_logger, setup_logging
 
 
+def _close_logging_handlers():
+    """Close and remove all root logger handlers to release file locks on Windows."""
+    root_logger = logging.getLogger()
+    for handler in root_logger.handlers[:]:
+        handler.close()
+        root_logger.removeHandler(handler)
+    root_logger.setLevel(logging.WARNING)
+
+
 class TestSetupLogging:
     """Test cases for the setup_logging function."""
 
@@ -30,6 +39,8 @@ class TestSetupLogging:
             # Directory should be created
             assert log_file_path.parent.exists()
 
+            _close_logging_handlers()
+
     def test_setup_logging_configures_root_logger(self):
         """Test that setup_logging configures the root logger with correct level."""
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -39,6 +50,8 @@ class TestSetupLogging:
 
             root_logger = logging.getLogger()
             assert root_logger.level == logging.DEBUG
+
+            _close_logging_handlers()
 
     def test_setup_logging_configures_handlers(self):
         """Test that setup_logging configures both console and file handlers."""
@@ -72,6 +85,8 @@ class TestSetupLogging:
             # File handler should exist and be set to INFO level
             assert file_handler is not None
             assert file_handler.level == logging.INFO
+
+            _close_logging_handlers()
 
     def test_console_handler_only_shows_errors(self):
         """Test that console handler only shows ERROR and CRITICAL messages."""
@@ -116,6 +131,8 @@ class TestSetupLogging:
                 # Restore original stderr
                 sys.stderr = original_stderr
 
+            _close_logging_handlers()
+
     def test_file_handler_logs_info_and_above(self):
         """Test that file handler logs INFO and above messages when set to INFO level."""
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -147,6 +164,8 @@ class TestSetupLogging:
                 assert "Error message" in log_content
                 assert "Critical message" in log_content
                 assert "Debug message" not in log_content
+
+            _close_logging_handlers()
 
     def test_log_format_is_json(self):
         """Test that log messages are formatted as JSON."""
@@ -180,6 +199,8 @@ class TestSetupLogging:
                                 assert "app_version" in log_entry
                             except json.JSONDecodeError:
                                 pytest.fail(f"Log line is not valid JSON: {line}")
+
+            _close_logging_handlers()
 
 
 class TestGetLogger:
@@ -247,6 +268,8 @@ class TestIntegration:
                     ]  # renamed field
                     assert log_entry["app_version"] == "integration_test_version"
 
+            _close_logging_handlers()
+
 
 class TestContextEnrichment:
     """Test cases for context enrichment features."""
@@ -275,6 +298,8 @@ class TestContextEnrichment:
                     assert isinstance(log_entry["process_id"], int)
                     assert isinstance(log_entry["thread_id"], int)
 
+            _close_logging_handlers()
+
     def test_third_party_logger_levels(self):
         """Test that third-party loggers are set to WARNING level."""
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -295,6 +320,8 @@ class TestContextEnrichment:
             # Application loggers should inherit root level (DEBUG)
             app_logger = logging.getLogger("app")
             assert app_logger.level == logging.DEBUG
+
+            _close_logging_handlers()
 
     def test_cli_level_controls_file_handler(self):
         """Test that CLI log level properly controls file handler level."""
@@ -317,6 +344,8 @@ class TestContextEnrichment:
             # File handler level should match the CLI level
             assert file_handler.level == logging.DEBUG
 
+            _close_logging_handlers()
+
     def test_global_exception_handler_setup(self):
         """Test that global exception handler is installed."""
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -334,3 +363,5 @@ class TestContextEnrichment:
             finally:
                 # Restore original handler
                 sys.excepthook = original_excepthook
+
+            _close_logging_handlers()

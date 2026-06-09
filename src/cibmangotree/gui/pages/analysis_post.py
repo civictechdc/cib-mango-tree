@@ -15,7 +15,7 @@ class PostAnalysisPage(GuiPage):
         super().__init__(
             session=session,
             route=gui_routes.post_analysis,
-            title=f"{session.current_project.display_name}: Configure Parameters",
+            title=f"{session.current_project.display_name}: Analysis Results",
             show_back_button=True,
             back_route=gui_routes.configure_analysis,
             show_footer=True,

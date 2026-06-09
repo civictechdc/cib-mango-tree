@@ -111,10 +111,8 @@ def gui_main(app: App):
         else:
             PlaceholderDashboard(session=gui_session).render()
 
-    # Launch in native mode on macOS, browser mode on Windows
-    is_macos = sys.platform == "darwin"
     ui.run(
-        native=is_macos,
+        native=True,
         title="CIB Mango Tree",
         favicon="🥭",
         reload=False,

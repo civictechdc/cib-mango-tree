@@ -16,10 +16,11 @@ def main() -> None:
 
     multiprocessing.set_start_method("spawn", force=True)
 
+    # clear Mark of the Web for Win .exe
     if sys.platform == "win32":
-        from src.cibmangotree.gui.remove_motw import remove_motw
+        from src.cibmangotree.gui.utils import _remove_motw
 
-        remove_motw()
+        _remove_motw()
 
     # Import heavy modules after loading message
     parser = argparse.ArgumentParser(description="CIB Mango Tree")

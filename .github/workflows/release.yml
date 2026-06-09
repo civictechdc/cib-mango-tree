@@ -1,4 +1,4 @@
-name: New Release
+name: GUI Release
 
 on:
   push:
@@ -46,18 +46,15 @@ jobs:
       - name: Audit dependencies
         run: uv run pip-audit --skip-editable
 
-  call-build_exe:
+  call-build_gui:
     needs: [validate-version, audit]
-    uses: ./.github/workflows/build_exe.yml
+    uses: ./.github/workflows/build_gui.yml
     secrets: inherit
     with:
       is_release: true
-  call-docs:
-    needs: validate-version
-    uses: ./.github/workflows/docs.yml
-    secrets: inherit
+
   release:
-    needs: [call-build_exe, call-docs]
+    needs: [call-build_gui]
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
@@ -69,8 +66,23 @@ jobs:
         uses: softprops/action-gh-release@v3
         if: github.ref_type == 'tag'
         with:
-          prerelease: ${{ contains(github.ref_name, '-alpha') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-rc') }}
+          draft: false
+          prerelease: false
+          name: "GUI Release ${{ github.ref_name }}"
           files: |
             artifacts/**/*
+          body: |
+            # CIB Mango Tree GUI ${{ github.ref_name }}
+
+            ## Installation
+
+            ### Windows
+            1. Download `CIBMangoTree_windows.zip`
+            2. Extract and run `CIBMangoTree.exe`
+
+            ### MacOS
+            1. Download the `.pkg` installer for your architecture (`CIBMangoTree_macos-x86.pkg` or `CIBMangoTree_macos-arm64.pkg`)
+            2. Run the installer to install to `/Applications/`
+            3. For first launch, right-click → "Open" to bypass Gatekeeper if needed
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

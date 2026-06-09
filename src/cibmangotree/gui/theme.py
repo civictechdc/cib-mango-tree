@@ -41,8 +41,8 @@ class GuiConstants(BaseModel):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    colors: GuiColors
-    urls: GuiURLS
+    colors: GuiColors = Field(...)
+    urls: GuiURLS = Field(...)
 
 
 # Singleton instances for easy access in other modules

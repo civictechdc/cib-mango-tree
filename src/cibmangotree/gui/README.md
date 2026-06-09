@@ -10,10 +10,10 @@ The `/gui` module provides a desktop application interface for CIB Mango Tree, b
 
 ## Running in Development Mode
 
-If you've setup the [development environment](https://civictechdc.github.io/cib-mango-tree/guides/get-started/installation/#setting-up-development-environment), navigate to the root folder and launch the gui entry point:
+If you've setup the [development environment](https://civictechdc.github.io/cib-mango-tree/guides/get-started/installation/#setting-up-development-environment), launch the gui entry point with the `cibmt` (or `cibmangotree`) command:
 
 ```
-python cibmangotree_gui.py
+cibmt
 ```
 
 Both initialize the `App` instance and call `gui_main(app=app)`. NiceGUI starts a local uvicorn server and opens a native desktop window. Set `reload=True` in `ui.run()` inside `main_workflow.py` to enable hot-reloading during development.
@@ -68,6 +68,7 @@ Each analyzer gets its own dashboard page inheriting `BaseDashboardPage` (which 
 Currently implemented:
 
 - `ngrams.py` — `NgramsDashboardPage` for the n-grams analyzer
+- `hashtags.py` — `NgramsDashboardPage` for the n-grams analyzer
 
 Planned but not yet implemented: hashtags, temporal.
 

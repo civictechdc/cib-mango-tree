@@ -4,8 +4,17 @@ on: pull_request
 
 jobs:
   test:
-    name: PyTest Suite
-    runs-on: ubuntu-latest
+    name: PyTest Suite (${{ matrix.platform_name }})
+    strategy:
+      matrix:
+        include:
+          - platform_name: Ubuntu
+            os: ubuntu-latest
+          - platform_name: MacOS Arm64
+            os: macos-15
+          - platform_name: Windows
+            os: windows-2022
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -27,6 +36,7 @@ jobs:
         run: uv run pytest
 
   test_build_gui:
+    name: Executable Build
     uses: ./.github/workflows/build_gui.yml
     secrets: inherit
     with:

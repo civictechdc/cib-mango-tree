@@ -4,7 +4,7 @@ The Edge domain governs data import and export.
 
 ### Importers
 
-The Importers live inside the `importing` directory inside the project root. Each importer offers a new way to import data into the workspace. The importers should be agnostic about the available analyzers. However, the Importers currently provide a terminal user flow so that their options can be customized by the user—a necessity since each importer may expose different sets of options and may have different UX approaches for their configuration.
+The Importers live inside the `importing` directory inside the project root. Each importer offers a new way to import data into the workspace. The importers should be agnostic about the available analyzers. The Importers provide a GUI user flow so that their options can be customized by the user—a necessity since each importer may expose different sets of options and may have different UX approaches for their configuration.
 
 The importers eventually write data to a parquet file, whose path is provisioned by the application.
 

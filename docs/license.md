@@ -4,6 +4,5 @@ hide:
 - feedback
 ---
 
-```
+
 --8<-- "LICENSE"
-```

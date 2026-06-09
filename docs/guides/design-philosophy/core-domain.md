@@ -4,7 +4,7 @@
 
 The Application lives inside the `app` directory in the project root. This is responsible for defining and executing all capabilities of the application's workspace. Any extension or modification of the application's workspace capabilities should be done here.
 
-The application code should be free of specific storage implementation and be agnostic about the specifics of the terminal interface and the available analyzers.
+The application code should be free of specific storage implementation and be agnostic about the specifics of the GUI interface and the available analyzers.
 
 Here's what the entrypoint for the application module looks like
 
@@ -20,32 +20,29 @@ from .project_context import ProjectContext
 from .settings_context import SettingsContext
 ```
 
-### Terminal Components
+### GUI Components
 
-The Terminal Components live inside the `terminal_tools` inside the project root. Their main responsibility is user flow, rendering the terminal interface, and handling user input.
+The GUI Components live inside the `gui` directory inside the project root. Their main responsibility is user flow, rendering the graphical interface using NiceGUI, and handling user input.
 
 The user flow understandably depends on the set of capabilities offered by the [Application](#application), so an adjustment there may require an adjustment here.
 
-Here's what the entrypoint for the termnal module looks like
+Here's what the entrypoint for the gui module looks like
 
-**./terminal_tools/__init__.py**
+**./gui/__init__.py**
 
 ```python
-from .progress import ProgressReporter
-from .utils import (
-    clear_printed_lines,
-    clear_terminal,
-    draw_box,
-    enable_windows_ansi_support,
-    open_directory_explorer,
-    print_ascii_table,
-    wait_for_key,
-)
+"""
+GUI components using NiceGUI for desktop application interface.
+"""
+
+from .main_workflow import gui_main
+
+__all__ = ["gui_main"]
 ```
 
 ### Storage IO
 
-The Storage IO lives Inside the `storage` directory inside the project root. It is responsible for interacting directly with the file system where the workspace data and data files are stored. It makes decisions on paths, intermediate file formats, and database schema and implementation. It should know as little as possible about how the data is used and should be agnostic about the specifics of the terminal interface and the available analyzers.
+The Storage IO lives Inside the `storage` directory inside the project root. It is responsible for interacting directly with the file system where the workspace data and data files are stored. It makes decisions on paths, intermediate file formats, and database schema and implementation. It should know as little as possible about how the data is used and should be agnostic about the specifics of the GUI interface and the available analyzers.
 
 Here's what the entrypoint for the storage module looks like
 

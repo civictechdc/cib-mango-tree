@@ -8,7 +8,7 @@ They have no dependency on Shiny, Dash, or NiceGUI.
 import random
 
 import polars as pl
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from cibmangotree.analyzers.ngrams.ngrams_base.interface import (
     COL_NGRAM_ID,
@@ -37,10 +37,10 @@ TAB_10_PALETTE = [
 class SamplingMetadata(BaseModel):
     """Metadata about data sampling applied before visualization."""
 
-    total_count: int
-    sampled_count: int
-    is_sampled: bool
-    strategy: str
+    total_count: int = Field(...)
+    sampled_count: int = Field(...)
+    is_sampled: bool = Field(...)
+    strategy: str = Field(...)
 
     @property
     def sampling_message(self) -> str:

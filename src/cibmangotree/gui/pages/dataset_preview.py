@@ -140,6 +140,7 @@ class PreviewDatasetPage(GuiPage):
                             else ""
                         ),
                         importer_session=self.session.import_session,
+                        dataset_name=self.session.selected_file_name,
                     )
 
                     # Store project in session

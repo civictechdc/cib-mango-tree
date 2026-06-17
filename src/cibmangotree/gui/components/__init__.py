@@ -6,6 +6,7 @@ from .export_outputs import ExportDialog
 from .import_options import ImportOptionsDialog
 from .manage_analyses import ManageAnalysisDialog
 from .manage_projects import ManageProjectsDialog
+from .new_project_dialog import NewProjectDialog
 from .toggle import ToggleButton, ToggleButtonGroup
 from .upload.upload_button import UploadButton
 
@@ -17,6 +18,7 @@ __all__ = [
     "UploadButton",
     "ManageAnalysisDialog",
     "ManageProjectsDialog",
+    "NewProjectDialog",
     "ImportOptionsDialog",
     "ExitConfirmationDialog",
     "analysis_label",

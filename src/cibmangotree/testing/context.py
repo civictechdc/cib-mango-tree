@@ -1,6 +1,7 @@
 import os
 from functools import cached_property
 from tempfile import TemporaryDirectory
+from typing import Callable
 
 import polars as pl
 from pydantic import BaseModel, ConfigDict
@@ -12,6 +13,9 @@ from cibmangotree.analyzer_interface.context import (
 )
 from cibmangotree.analyzer_interface.context import (
     PrimaryAnalyzerContext as BasePrimaryAnalyzerContext,
+)
+from cibmangotree.analyzer_interface.context import (
+    ProgressReporterProtocol,
 )
 from cibmangotree.analyzer_interface.context import (
     SecondaryAnalyzerContext as BaseSecondaryAnalyzerContext,
@@ -26,6 +30,7 @@ class TestPrimaryAnalyzerContext(BasePrimaryAnalyzerContext):
     input_parquet_path: str
     output_parquet_root_path: str
     param_values: dict[str, ParamValue]
+    progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
 
     def input(self) -> InputTableReader:
         return TestTableReader(parquet_path=self.input_parquet_path)
@@ -73,6 +78,7 @@ class TestSecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
     dependency_output_parquet_paths: dict[str, dict[str, str]] = dict()
     output_parquet_root_path: str
     primary_param_values: dict[str, ParamValue]
+    progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 

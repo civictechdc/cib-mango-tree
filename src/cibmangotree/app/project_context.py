@@ -15,6 +15,9 @@ from .app_context import AppContext
 
 
 class ProjectContext(BaseModel):
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     model: ProjectModel
     app_context: AppContext
     is_deleted: bool = False

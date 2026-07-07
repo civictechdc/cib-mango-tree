@@ -1,11 +1,9 @@
-from typing import Callable
+from io import BytesIO
+from typing import cast
 
 import polars as pl
 from fastexcel import read_excel
-from pydantic import BaseModel
-
-import cibmangotree.terminal_tools.prompts as prompts
-from cibmangotree.terminal_tools.utils import wait_for_key
+from pydantic import BaseModel, ConfigDict
 
 from .importer import Importer, ImporterSession
 
@@ -16,59 +14,42 @@ class ExcelImporter(Importer["ExcelImportSession"]):
         return "Excel"
 
     def suggest(self, input_path: str) -> bool:
-        return input_path.endswith(".xlsx")
+        return (
+            input_path.endswith(".xlsx")
+            or input_path
+            == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
 
-    def init_session(self, input_path: str):
-        reader = read_excel(input_path)
+    def init_session(self, input_path: str | BytesIO):
+        """
+        Initialize Excel import session.
+
+        For single-sheet files, automatically selects the sheet.
+        For multi-sheet files, returns None (caller must provide sheet selection).
+        """
+        reader = read_excel(
+            cast(str, input_path)
+            if type(input_path) is not BytesIO
+            else input_path.getvalue()
+        )
         sheet_names = reader.sheet_names
 
-        if not sheet_names:
-            return None
-        if len(sheet_names) == 1:
-            return ExcelImportSession(
-                input_file=input_path,
-                selected_sheet=sheet_names[0],
-                sheet_names=sheet_names,
-            )
-
-        sheet_name = prompts.list_input(
-            "Which sheet would you like to import?", choices=sheet_names
-        )
-        if sheet_name is None:
+        if not sheet_names or (len(sheet_names) == 0 or len(sheet_names) > 1):
             return None
 
         return ExcelImportSession(
             input_file=input_path,
-            selected_sheet=sheet_name,
+            selected_sheet=sheet_names[0],
             sheet_names=sheet_names,
         )
 
-    def manual_init_session(self, input_path: str):
-        return self.init_session(input_path)
-
-    def modify_session(
-        self,
-        input_path: str,
-        import_session: "ExcelImportSession",
-        reset_screen: Callable[[], None],
-    ):
-        reset_screen(import_session)
-        if len(import_session.sheet_names) == 1:
-            print("This Excel file only has one sheet.\nThere's nothing to modify.\n\n")
-            wait_for_key(prompt=True)
-            return import_session
-
-        new_session = self.init_session(input_path)
-        return new_session or import_session
-
 
 class ExcelImportSession(ImporterSession, BaseModel):
-    input_file: str
+    input_file: str | BytesIO
     selected_sheet: str
     sheet_names: list[str]
 
-    def print_config(self):
-        print(f"- Sheet name: {self.selected_sheet}")
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def load_preview(self, n_records: int) -> pl.DataFrame:
         return pl.read_excel(self.input_file, sheet_name=self.selected_sheet).head(

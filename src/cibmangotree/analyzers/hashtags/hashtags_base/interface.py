@@ -8,6 +8,8 @@ from cibmangotree.analyzer_interface import (
 )
 from cibmangotree.analyzer_interface.params import TimeBinningParam
 
+PRIMARY_OUTPUT_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
 COL_AUTHOR_ID = "Unique UserID"
 COL_TIME = "Timestamp"
 COL_POST = "Post Content"
@@ -20,6 +22,11 @@ OUTPUT_COL_TIMESPAN = "timewindow_start"
 OUTPUT_COL_GINI = "gini"
 OUTPUT_COL_COUNT = "count"
 OUTPUT_COL_HASHTAGS = "hashtags"
+
+# Secondary analyzer output columns
+SECONDARY_COL_USERS_ALL = "users_all"
+SECONDARY_COL_USERS_UNIQUE = "users_unique"
+SECONDARY_COL_HASHTAG_PERC = "hashtag_perc"
 
 interface = AnalyzerInterface(
     id="hashtags",

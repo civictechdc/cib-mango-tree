@@ -8,7 +8,7 @@ You will need the following software installed in order to get started with sett
 | --- | --- |
 | Python >= 3.12 | Required for all features to work correctly |
 | Git | Required for version control and contributing |
-| command line/terminal | Application runs in terminal |   
+| command line/terminal | Used to launch the application (opens in browser) |   
 
 !!! example
     If you haven't installed git and/or python yet refer to the following links for instructions:  
@@ -76,13 +76,14 @@ Choose your preferred method for setting up your development environment:
 
     ```bash
     # Create virtual environment
+    # this creates a hidden `.venv` folder
     uv venv
 
     # Activate virtual environment (macOS/Linux)
-    source venv/bin/activate
+    source .venv/bin/activate
 
     # OR: if using Windows and PowerShell
-    # venv\Scripts\activate
+    # .venv\Scripts\activate
 
     # Install development dependencies
     uv sync --group dev
@@ -136,23 +137,30 @@ pre-commit install
 ### 4. Verify installation
 
 ```bash
-python -m cibmangotree --noop
+cibmt --noop
 ```
 
-If all went well, you should see: 
+If all went well, you should see:
 ```bash
-No-op flag detected. Exiting successfully.
+No-op flag detected. All runtime imports loaded successfully.
 ```
 
 ## Starting the Application
 
 ### Basic Usage
 
-Once you have activated the environment and installed dependencies, run the application from project root:  
+Once you have activated the environment and installed dependencies, run the application using `cibmt` command:
 ```bash
 # Start the application
-python -m cibmangotree
+cibmt
 ```
+
+Alternatively, use the long-version command:
+```bash
+cibmangotree
+```
+
+The application opens in a standalone window on macOS, or in your default browser on Windows.
 
 ## Project storage
 

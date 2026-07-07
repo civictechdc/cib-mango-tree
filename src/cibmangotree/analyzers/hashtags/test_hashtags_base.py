@@ -1,6 +1,6 @@
+import math
 import os
 
-import numpy as np
 import polars as pl
 
 from cibmangotree.analyzer_interface.params import TimeBinningValue
@@ -84,8 +84,8 @@ def test_gini():
         # Calculate actual Gini coefficient
         actual = gini(data_series)
 
-        assert np.allclose(
-            [actual], [test_case["expected"]], rtol=1e-2, atol=1e-2
+        assert math.isclose(
+            actual, test_case["expected"], rel_tol=1e-2, abs_tol=1e-2
         ), f"Failed test case: {test_case['description']}"
 
 

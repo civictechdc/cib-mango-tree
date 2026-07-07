@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, TypeVar
+from io import BytesIO
+from typing import TypeVar
 
 import polars as pl
 
@@ -7,19 +8,11 @@ import polars as pl
 class ImporterSession(ABC):
     """
     The ImporterSession interface handles the ongoing configuration of an import.
-    It keeps the configuration state, knows how to print the configuration to the
-    console, and can load a preview of the data from the input file.
+    It keeps the configuration state and can load a preview of the data from the input file.
     """
 
     @abstractmethod
-    def print_config(self) -> None:
-        """
-        Print the configuration of the import session to the console.
-        """
-        pass
-
-    @abstractmethod
-    def load_preview(self, n_records: int) -> Optional[pl.DataFrame]:
+    def load_preview(self, n_records: int) -> pl.DataFrame | None:
         """
         Attempt to load a preview of the data from the input file.
 
@@ -59,7 +52,7 @@ class Importer[SessionType](ABC):
         pass
 
     @abstractmethod
-    def init_session(self, input_path: str) -> Optional[SessionType]:
+    def init_session(self, input_path: str | BytesIO) -> SessionType | None:
         """
         Produces an initial import session object that contains all the configuration
         needed for the import. The user can either accept this configuration or
@@ -69,24 +62,5 @@ class Importer[SessionType](ABC):
         import parameters. This doesn't necessarily mean that the file cannot be
         loaded; the UI will force the user to customize the import session if the
         user wants to proceed with this importer.
-        """
-        pass
-
-    @abstractmethod
-    def manual_init_session(self, input_path: str) -> Optional[SessionType]:
-        pass
-
-    @abstractmethod
-    def modify_session(
-        self,
-        input_path: str,
-        import_session: SessionType,
-        reset_screen: Callable[[SessionType], None],
-    ) -> Optional[SessionType]:
-        """
-        Performs the interactive UI sequence that customizes the import session
-        from the initial one.
-
-        Return None here if the user interrupts the customization process.
         """
         pass

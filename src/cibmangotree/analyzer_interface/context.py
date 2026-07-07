@@ -1,15 +1,47 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Optional, TypeVar, Union
+from typing import Any, Callable, Optional, Protocol, TypeVar
 
 import polars as pl
-from dash import Dash
 from polars import DataFrame
 from pydantic import BaseModel, ConfigDict
-from shiny import Inputs, Outputs, Session
-from shiny.ui._navs import NavPanel
 
 from .interface import SecondaryAnalyzerInterface
 from .params import ParamValue
+
+
+class ProgressReporterProtocol(Protocol):
+    """Protocol for progress reporting during analysis steps."""
+
+    def update(self, value: float) -> None:
+        """Update progress value (0.0 to 1.0)."""
+        ...
+
+    def finish(self, done_text: str = "Done!") -> None:
+        """Mark the step as complete."""
+        ...
+
+    def __enter__(self) -> "ProgressReporterProtocol": ...
+
+    def __exit__(self, *args) -> None: ...
+
+
+class NullProgressReporter:
+    """No-op progress reporter for when progress reporting is disabled."""
+
+    def __init__(self, title: str):
+        self.title = title
+
+    def update(self, value: float):
+        pass
+
+    def finish(self, done_text: str = "Done!"):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        pass
 
 
 class PrimaryAnalyzerContext(ABC, BaseModel):
@@ -47,7 +79,7 @@ class PrimaryAnalyzerContext(ABC, BaseModel):
 
 class BaseDerivedModuleContext(ABC, BaseModel):
     """
-    Common interface for secondary analyzers and web presenters runtime contexts.
+    Common interface for secondary analyzers runtime contexts.
     """
 
     temp_dir: str
@@ -82,25 +114,6 @@ class BaseDerivedModuleContext(ABC, BaseModel):
         lets you inspect and load its outputs.
         """
         pass
-
-
-class WebPresenterContext(BaseDerivedModuleContext):
-    dash_app: Dash
-    """
-  The Dash app that is being built.
-  """
-
-    @property
-    @abstractmethod
-    def state_dir(self) -> str:
-        """
-        Gets the directory where the web presenter can store state that persists
-        between runs. This state space is unique for each
-        project/primary analyzer/web presenter combination.
-        """
-        pass
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class SecondaryAnalyzerContext(BaseDerivedModuleContext):
@@ -157,50 +170,3 @@ class TableWriter(ABC):
         file to it.
         """
         pass
-
-
-ServerCallback = Union[
-    Callable[[Inputs], None], Callable[[Inputs, Outputs, Session], None]
-]
-
-
-class ShinyContext(BaseModel):
-    """
-    Output interface for Shiny dashboards
-    """
-
-    panel: NavPanel = None
-    """
-    UI navigation panel to be added to shiny dashboard
-    """
-
-    server_handler: Optional[ServerCallback] = None
-    """
-    Server handler callback to be called by the shiny application instance
-    """
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-
-class FactoryOutputContext(BaseModel):
-    """
-    Output interface for both factory and api_facotry functions for web
-    presenters.
-    """
-
-    shiny: Optional[ShinyContext] = None
-    """
-    Factory oputput for shiny dashboards
-    """
-
-    api: Optional[dict[str, Any]] = None
-    """
-    API factory output for React dashboard REST API
-    """
-
-    data_frames: Optional[dict[str, DataFrame]] = None
-    """
-    API factory dataframe output for React dashboard REST API
-    """
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)

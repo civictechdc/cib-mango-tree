@@ -1,6 +1,6 @@
 <h1 align="center">CIB Mango Tree</h1>
 
-<h3 align="center">An Interactive Command Line and Dashboard Tool for Detecting Coordinated Inauthentic Behavior Datasets of Online Activity</h3>
+<h3 align="center">An Open Source Toolkit for Detecting Coordinated Inauthentic Behavior in Datasets of Online Activity</h3>
 
 
 <p align="center">
@@ -11,20 +11,23 @@
 <p align="center">
 <a href="https://www.python.org/"><img alt="code" src="https://img.shields.io/badge/Python-3.12-blue?logo=Python"></a>
 <a href="https://docs.astral.sh/ruff/"><img alt="style: black" src="https://img.shields.io/badge/Polars-1.41.1-skyblue?logo=Polars"></a>
-<a href="https://plotly.com/python/"><img alt="style: black" src="https://img.shields.io/badge/Plotly-5.24.1-purple?logo=Plotly"></a>
-<a href="https://github.com/Textualize/rich"><img alt="style: black" src="https://img.shields.io/badge/Rich-14.0.0-gold?logo=Rich"></a>
 <a href="https://civictechdc.github.io/cib-mango-tree/"><img alt="style: black" src="https://img.shields.io/badge/docs-website-blue"></a>
 <a href="https://black.readthedocs.io/en/stable/"><img alt="style: black" src="https://img.shields.io/badge/style-Black-black?logo=Black"></a>
 <a href="https://black.readthedocs.io/en/stable/"><img alt="license: MIT" src="https://img.shields.io/badge/license-MIT-green"></a>
 </p>
 
+> [!NOTE]
+> **v0.11.0-alpha** is now available with a new GUI interface! [Download the pre-release](https://github.com/CIB-Mango-Tree/cib-mango-tree/releases/tag/v0.11.0-alpha)
+> 
+> The latest stable release (v0.10.2) still uses the terminal interface.
 
 ## About
 
 CIB Mango Tree is a Python-based, iteractive open source toolkit for detecting coordinated inauthentic behavior (CIB) in social media datasets. It is designed for researchers, data journalists, fact-checkers, and watchdogs working to identify inauthentic activity online. For more about the project, visit the project main home page: [cibmangotree.org](https://cibmangotree.org)
 
-
-![CIB Mango Tree orange logo in the terminal welcome display](./docs/img/cibmt_splash_logo.png)
+<p align="center">
+<img src="./docs/img/cibmt_welcome_screen.png" alt="CIBMT Welcome Screen" style="width:650px"/>
+</p>
 
 CIB Mango Tree is a project of [Civic Tech DC](https://www.civictechdc.org/), a nonprofit community of volunteers using open-source technology to support civic engagement, strengthen democracy, and empower public-interest initiatives.
 
@@ -33,6 +36,9 @@ CIB Mango Tree is a project of [Civic Tech DC](https://www.civictechdc.org/), a 
 The latest release is available under Assets in the Releases tab: 
   
 [CIB Mango Tree latest](https://github.com/civictechdc/cib-mango-tree/releases/latest)
+
+> [!NOTE]
+> **v0.11.0-alpha** is available with a new GUI interface! [Download the pre-release](https://github.com/CIB-Mango-Tree/cib-mango-tree/releases/tag/v0.11.0-alpha)
 
 ## Contributing
 

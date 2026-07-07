@@ -1,9 +1,8 @@
 # code: language=python
 # main.spec
 # This file tells PyInstaller how to bundle your application
-from PyInstaller.utils.hooks import copy_metadata
 from PyInstaller.building.api import EXE, PYZ
-from PyInstaller.building.build_main import Analysis
+from PyInstaller.building.build_main import Analysis, COLLECT, BUNDLE
 import sys
 import os
 import site
@@ -21,7 +20,7 @@ if site_packages_path is None:
   raise RuntimeError("The site-packages directory could not be found. Please setup the python envrionment correctly and try again...")
 
 a = Analysis(
-    ['src/cibmangotree/__main__.py'],  # Entry point
+    ['src/cibmangotree/__main__.py'],  # Main entry point
     pathex=['.', 'src'],    # Ensure all paths are correctly included
     binaries=[],
     datas=[
@@ -31,81 +30,103 @@ a = Analysis(
             if os.path.exists('VERSION') else []
         ),
 
-        # inquirer depends on readchar as a hidden dependency that requires package metadata
-        *copy_metadata('readchar'),
+        # GUI icons (Simple Icons for footer links)
+        ('src/cibmangotree/gui/icons', 'cibmangotree/gui/icons'),
 
-        # static assets for web servers
-        (os.path.join(site_packages_path, 'shiny/www'), 'shiny/www'),
-        (os.path.join(site_packages_path, 'shinywidgets/static'), 'shinywidgets/static'),
-        ('./src/cibmangotree/app/web_static', 'app/web_static'),
-        ('./src/cibmangotree/app/web_templates', 'app/web_templates')
+        # Vue GUI components
+        ('src/cibmangotree/gui/components/dist', 'cibmangotree/gui/components/dist'),
+
+        # NiceGUI static files (required for GUI mode)
+        (os.path.join(site_packages_path, 'nicegui'), 'nicegui'),
     ],
     hiddenimports=[
-        'readchar',
         'numpy',
-        'numpy.core.multiarray',
-        'shiny',
-        'shiny.ui',
-        'shiny.server',
-        'htmltools',
-        'starlette',
-        'uvicorn',
-        'uvicorn.logging',
-        'uvicorn.loops',
-        'uvicorn.loops.auto',
-        'uvicorn.protocols',
-        'uvicorn.protocols.http',
-        'uvicorn.protocols.http.auto',
-        'uvicorn.protocols.websockets',
-        'uvicorn.protocols.websockets.auto',
-        'uvicorn.lifespan',
-        'uvicorn.lifespan.on',
         'asyncio',
-        'websockets',
-        'websockets.legacy',
-        'websockets.legacy.server',
         'polars',
-        'plotly',
         'linkify_it',
         'markdown_it',
-        'mdit_py_plugins',
         'mdurl',
-        'uc_micro',
         'pythonjsonlogger',
-        'pythonjsonlogger.jsonlogger',
+        'pythonjsonlogger.json',
+        # NiceGUI (required for GUI mode)
+        'nicegui',
+        'nicegui.elements',
+        'nicegui.events',
+        'nicegui.ui',
+        'fastapi',
     ],  # Include any imports that PyInstaller might miss
-    hookspath=[],
+    excludes=[
+        'pytest',
+        'py',
+        'setuptools',
+        'pip',
+        'wheel',
+    ],
     runtime_hooks=[],
-    excludes=[],
 )
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
 if sys.platform == "darwin":
+    # For onedir build: EXE only contains scripts
     exe = EXE(
         pyz,
         a.scripts,
-        a.binaries,
-        a.zipfiles,
-        a.datas,
-        name='cibmangotree',  # The name of the executable
+        exclude_binaries=True,  # This makes it onedir, not onefile
+        name='CIBMangoTree',
         debug=False,
+        bootloader_ignore_signals=False,
         strip=True,
-        upx=True,  # You can set this to False if you don't want UPX compression
-        console=True,  # Set to False if you don't want a console window
+        upx=True,
+        console=False,  # No console window for GUI app
         entitlements_file="./mango.entitlements",
         codesign_identity=os.getenv('APPLE_APP_CERT_ID'),
     )
-else:
-    exe = EXE(
-        pyz,
-        a.scripts,
+
+    # Collect all files for the bundle (onedir structure)
+    coll = COLLECT(
+        exe,
         a.binaries,
         a.zipfiles,
         a.datas,
-        name='cibmangotree',  # The name of the executable
-        debug=False,
+        strip=True,
+        upx=True,
+        name='CIBMangoTree'
+    )
+
+    # Create macOS app bundle from the collected files
+    app = BUNDLE(
+        coll,
+        name='CIBMangoTree.app',
+        icon=None,  # Add icon path when available (e.g., 'icon.icns')
+        bundle_identifier='org.civictechdc.cibmangotree',
+        info_plist={
+            'NSPrincipalClass': 'NSApplication',
+            'NSHighResolutionCapable': 'True',
+            'CFBundleShortVersionString': '0.9.0',
+            'CFBundleName': 'CIB Mango Tree',  # Display name (can have spaces)
+        },
+    )
+else:
+    # Windows/Linux: onedir mode (avoids runtime temp extraction issues with antivirus)
+    exe = EXE(
+        pyz,
+        a.scripts,
+        exclude_binaries=True,  # onedir structure
+        name='CIBMangoTree',
+        debug=True,
         strip=False,
-        upx=True,  # You can set this to False if you don't want UPX compression
-        console=True,  # Set to False if you don't want a console window
+        upx=True,
+        console=False,  # No console window for GUI app
+        icon=None,  # Add icon path when available (e.g., 'icon.ico' for Windows)
+    )
+
+    coll = COLLECT(
+        exe,
+        a.binaries,
+        a.zipfiles,
+        a.datas,
+        strip=False,
+        upx=True,
+        name='CIBMangoTree',
     )

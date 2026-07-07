@@ -37,17 +37,16 @@ nav = [
             "guides/design-philosophy/content-domain.md",
         ]},
     ]},
-    {"Reference (CLI)" = [
+    {"Reference" = [
         "reference/analyzer_interface.md",
-        "reference/components.md",
         "reference/app.md",
         "reference/preprocessing.md",
-        "reference/terminal_tools.md",
         "reference/importing.md",
         "reference/meta.md",
         "reference/storage.md",
         "reference/testing.md",
         "reference/tokenizer.md",
+        "reference/gui.md",
     ]},
 ]
 
@@ -89,9 +88,13 @@ paths = ["src"]
 [project.markdown_extensions.pymdownx.tabbed]
 alternate_style = true
 
+[project.markdown_extensions.pymdownx.snippets]
+
+[project.markdown_extensions.toc]
+permalink = true
+
 [project.plugins.mkdocstrings.handlers.python.options]
 docstring_style = "google"
-extensions = ["griffe_pydantic"]
 filters = ["!^_[^_]", "!^test_"]
 heading_level = 2
 parameter_headings = true

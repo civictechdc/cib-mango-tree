@@ -1,15 +1,14 @@
 import os
 from functools import cached_property
+from typing import Callable
 
 import polars as pl
-from dash import Dash
 from pydantic import BaseModel, ConfigDict
 
 from cibmangotree.analyzer_interface import (
     AnalyzerInterface,
     ParamValue,
     SecondaryAnalyzerInterface,
-    WebPresenterInterface,
     backfill_param_values,
 )
 from cibmangotree.analyzer_interface.context import (
@@ -20,14 +19,14 @@ from cibmangotree.analyzer_interface.context import (
     PrimaryAnalyzerContext as BasePrimaryAnalyzerContext,
 )
 from cibmangotree.analyzer_interface.context import (
+    ProgressReporterProtocol,
+)
+from cibmangotree.analyzer_interface.context import (
     SecondaryAnalyzerContext as BaseSecondaryAnalyzerContext,
 )
 from cibmangotree.analyzer_interface.context import (
     TableReader,
     TableWriter,
-)
-from cibmangotree.analyzer_interface.context import (
-    WebPresenterContext as BaseWebPresenterContext,
 )
 from cibmangotree.preprocessing.series_semantic import SeriesSemantic
 from cibmangotree.storage import AnalysisModel, Storage
@@ -63,6 +62,7 @@ class PrimaryAnalyzerContext(BasePrimaryAnalyzerContext):
     analyzer: AnalyzerInterface
     store: Storage
     input_columns: dict[str, "InputColumnProvider"]
+    progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -140,6 +140,7 @@ class SecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
     secondary_analyzer: SecondaryAnalyzerInterface
     store: Storage
     temp_dir: str
+    progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -177,40 +178,6 @@ class SecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
                 self.analysis, self.secondary_analyzer.id
             ),
             exist_ok=True,
-        )
-
-
-class WebPresenterContext(BaseWebPresenterContext):
-    analysis: AnalysisModel
-    web_presenter: WebPresenterInterface
-    store: Storage
-    dash_app: Dash
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    @cached_property
-    def base(self) -> AssetsReader:
-        return PrimaryAnalyzerOutputReaderGroupContext(
-            analysis=self.analysis, store=self.store
-        )
-
-    @cached_property
-    def base_params(self) -> dict[str, ParamValue]:
-        return backfill_param_values(
-            self.analysis.param_values, self.web_presenter.base_analyzer
-        )
-
-    def dependency(self, interface: SecondaryAnalyzerInterface) -> AssetsReader:
-        return SecondaryAnalyzerOutputReaderGroupContext(
-            analysis=self.analysis,
-            secondary_analyzer_id=interface.id,
-            store=self.store,
-        )
-
-    @cached_property
-    def state_dir(self) -> str:
-        return self.store._get_web_presenter_state_path(
-            self.analysis.project_id, self.web_presenter.id
         )
 
 

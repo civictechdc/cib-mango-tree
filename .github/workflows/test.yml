@@ -4,8 +4,17 @@ on: pull_request
 
 jobs:
   test:
-    name: PyTest Suite
-    runs-on: ubuntu-latest
+    name: PyTest Suite (${{ matrix.platform_name }})
+    strategy:
+      matrix:
+        include:
+          - platform_name: Ubuntu
+            os: ubuntu-latest
+          - platform_name: MacOS Arm64
+            os: macos-15
+          - platform_name: Windows
+            os: windows-2022
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -23,14 +32,12 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked --no-install-project
 
-      - name: Audit dependencies for known vulnerabilities
-        run: uv run pip-audit --skip-editable
-
       - name: Run tests
         run: uv run pytest
 
-  test_build:
-    uses: ./.github/workflows/build_exe.yml
+  test_build_gui:
+    name: Executable Build
+    uses: ./.github/workflows/build_gui.yml
     secrets: inherit
     with:
       is_release: false

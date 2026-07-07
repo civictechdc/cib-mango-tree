@@ -1,12 +1,9 @@
 import csv
 from csv import Sniffer
-from typing import Callable, Optional
+from io import BytesIO
 
 import polars as pl
-from pydantic import BaseModel
-
-import cibmangotree.terminal_tools.prompts as prompts
-from cibmangotree.terminal_tools.utils import print_message, smart_print_data_frame
+from pydantic import BaseModel, ConfigDict
 
 from .importer import Importer, ImporterSession
 
@@ -17,9 +14,11 @@ class CSVImporter(Importer["CsvImportSession"]):
         return "CSV"
 
     def suggest(self, input_path: str) -> bool:
-        return input_path.endswith(".csv")
+        return input_path.endswith(".csv") or input_path == "text/csv"
 
-    def _detect_skip_rows_and_dialect(self, input_path: str) -> tuple[int, csv.Dialect]:
+    def _detect_skip_rows_and_dialect(
+        self, input_path: str | BytesIO
+    ) -> tuple[int, csv.Dialect]:
         """Detect the number of rows to skip before CSV data begins and the CSV dialect."""
         skip_rows = 0
 
@@ -141,7 +140,7 @@ class CSVImporter(Importer["CsvImportSession"]):
         # Consider it a CSV header if at least 50% of non-empty fields look like column names
         return header_indicators >= len(non_empty_fields) * 0.5
 
-    def init_session(self, input_path: str):
+    def init_session(self, input_path: str | BytesIO):
         skip_rows, dialect = self._detect_skip_rows_and_dialect(input_path)
 
         return CsvImportSession(
@@ -152,222 +151,15 @@ class CSVImporter(Importer["CsvImportSession"]):
             skip_rows=skip_rows,
         )
 
-    def manual_init_session(self, input_path: str):
-        separator = self._separator_option(None)
-        if separator is None:
-            return None
-
-        quote_char = self._quote_char_option(None)
-        if quote_char is None:
-            return None
-
-        has_header = self._header_option(None)
-        if has_header is None:
-            return None
-
-        skip_rows = self._skip_rows_option(None)
-        if skip_rows is None:
-            return None
-
-        return CsvImportSession(
-            input_file=input_path,
-            separator=separator,
-            quote_char=quote_char,
-            has_header=has_header,
-            skip_rows=skip_rows,
-        )
-
-    def modify_session(
-        self,
-        input_path: str,
-        import_session: "CsvImportSession",
-        reset_screen: Callable[[], None],
-    ):
-        is_first_time = True
-        while True:
-            reset_screen(import_session)
-            action = prompts.list_input(
-                "What would you like to change?",
-                choices=[
-                    ("Column separator", "separator"),
-                    ("Quote character", "quote_char"),
-                    ("Header", "header"),
-                    ("Skip rows", "skip_rows"),
-                    ("Done. Use these options.", "done"),
-                ],
-                default=None if is_first_time else "done",
-            )
-            is_first_time = False
-            if action is None:
-                return None
-
-            if action == "done":
-                return import_session
-
-            if action == "separator":
-                separator = self._separator_option(import_session.separator)
-                if separator is None:
-                    continue
-                import_session.separator = separator
-
-            if action == "quote_char":
-                quote_char = self._quote_char_option(import_session.quote_char)
-                if quote_char is None:
-                    continue
-                import_session.quote_char = quote_char
-
-            if action == "header":
-                has_header = self._header_option(import_session.has_header)
-                if has_header is None:
-                    continue
-                import_session.has_header = has_header
-
-            if action == "skip_rows":
-                skip_rows = self._skip_rows_option(import_session.skip_rows)
-                if skip_rows is None:
-                    continue
-                import_session.skip_rows = skip_rows
-
-    @staticmethod
-    def _separator_option(previous_value: Optional[str]) -> Optional[str]:
-        input: Optional[str] = prompts.list_input(
-            "Select the column separator",
-            choices=[
-                ("comma (,)", ","),
-                ("semicolon (;)", ";"),
-                ("Pipe (|)", "|"),
-                ("Tab", "\t"),
-                ("Other", "other"),
-            ],
-            default=(
-                previous_value
-                if previous_value in [",", ";", "\t"]
-                else "other" if previous_value is not None else None
-            ),
-        )
-        if input is None:
-            return None
-        if input != "other":
-            return input
-
-        input = prompts.text("Enter the separator")
-        if input is None:
-            return None
-        input = input.strip()
-        if len(input) == 0:
-            return None
-
-    @staticmethod
-    def _quote_char_option(previous_value: Optional[str]) -> Optional[str]:
-        input: Optional[str] = prompts.list_input(
-            "Select the quote character",
-            choices=[
-                ('Double quote (")', '"'),
-                ("Single quote (')", "'"),
-                ("Other", "other"),
-            ],
-            default=(
-                previous_value
-                if previous_value in ['"', "'"]
-                else "other" if previous_value is not None else None
-            ),
-        )
-        if input is None:
-            return None
-        if input != "other":
-            return input
-
-        input = prompts.text("Enter the quote character")
-        if input is None:
-            return None
-        input = input.strip()
-        if len(input) == 0:
-            return None
-
-    def _header_option(self, previous_value: Optional[bool]) -> Optional[bool]:
-        return prompts.list_input(
-            "Does the file have a header?",
-            choices=[
-                ("Yes", True),
-                ("No", False),
-            ],
-            default=previous_value,
-        )
-
-    @staticmethod
-    def _skip_rows_option(previous_value: Optional[int]) -> Optional[int]:
-        while True:
-            input_str = prompts.text(
-                f"Number of rows to skip at the beginning of file (current: {previous_value or 0}).",
-                default=str(previous_value) if previous_value is not None else "0",
-            )
-            if input_str is None:  # User cancelled
-                return None
-
-            try:
-                skip_rows = int(input_str.strip())
-                if skip_rows < 0:
-                    print_message(
-                        "Skip rows cannot be negative. Please try again.", "error"
-                    )
-                    continue
-                if skip_rows > 10:
-                    confirm = prompts.confirm(
-                        f"Skip {skip_rows} rows? This seems high. Continue?",
-                        default=True,
-                    )
-                    if not confirm:
-                        continue  # Ask for input again instead of returning None
-                return skip_rows
-            except ValueError:
-                print_message("Please enter a valid number.", "error")
-                continue
-
 
 class CsvImportSession(ImporterSession, BaseModel):
-    input_file: str
+    input_file: str | BytesIO
     separator: str
     quote_char: str
     has_header: bool = True
     skip_rows: int = 0
 
-    def print_config(self):
-        def present_separator(value: str) -> str:
-            if value == "\t":
-                return "(Tab)"
-            if value == " ":
-                return "(Space)"
-            if value == ",":
-                return "(Comma ,)"
-            if value == ";":
-                return "(Semicolon ;)"
-            if value == "'":
-                return "(Single quote ')"
-            if value == '"':
-                return '(Double quote ")'
-            if value == "|":
-                return "(Pipe |)"
-            return value
-
-        # Create configuration DataFrame
-        config_data = pl.DataFrame(
-            {
-                "Option": [
-                    "Column separator",
-                    "Quote character",
-                    "Has header",
-                    "Skip rows",
-                ],
-                "Value": [
-                    present_separator(self.separator),
-                    present_separator(self.quote_char),
-                    "Yes" if self.has_header else "No",
-                    str(self.skip_rows),
-                ],
-            }
-        )
-
-        smart_print_data_frame(config_data, title=None, apply_color=None)
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def load_preview(self, n_records: int) -> pl.DataFrame:
         return pl.read_csv(
@@ -382,6 +174,18 @@ class CsvImportSession(ImporterSession, BaseModel):
         )
 
     def import_as_parquet(self, output_path: str) -> None:
+        if isinstance(self.input_file, BytesIO):
+            pl.read_csv(
+                self.input_file,
+                separator=self.separator,
+                quote_char=self.quote_char,
+                has_header=self.has_header,
+                skip_rows=self.skip_rows,
+                truncate_ragged_lines=True,
+                ignore_errors=True,
+            ).write_parquet(output_path)
+            return
+
         lazyframe = pl.scan_csv(
             self.input_file,
             separator=self.separator,

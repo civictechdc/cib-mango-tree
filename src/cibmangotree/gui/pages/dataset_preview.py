@@ -154,28 +154,31 @@ class PreviewDatasetPage(GuiPage):
 
             # Main content area - centered
             with self.centered_content(
-                max_width="1200px", height="70vh", padding="2rem"
+                max_width="1200px",
+                padding="1rem",
+                justify="start",
+                height="auto",
             ):
                 # Data Preview (with container for dynamic updates)
-                data_preview_container = ui.column().classes("w-full")
+                data_preview_container = ui.column().classes("w-full gap-2")
                 with data_preview_container:
                     self._make_preview_grid(import_preview)
 
                 # Bottom Actions
-                with ui.row().classes("w-full justify-center gap-2 mt-4"):
+                with ui.row().classes("w-full justify-center gap-2"):
                     ui.button(
-                        "Change Import Options",
-                        icon="settings",
-                        color="secondary",
+                        "There's something wrong",
+                        icon="close",
+                        color="negative",
                         on_click=open_import_options,
-                    ).props("outline")
+                    ).props("no-caps")
 
                     ui.button(
-                        "Import and Create Project",
+                        "Looks good, let's proceed",
                         icon="upload",
                         color="primary",
                         on_click=import_data_create_project,
-                    )
+                    ).props("no-caps")
 
         except Exception as e:
             self.notify_error(f"Error loading preview: {str(e)}")
@@ -190,15 +193,18 @@ class PreviewDatasetPage(GuiPage):
         Args:
             data_frame: Polars DataFrame containing preview data
         """
+        ui.label(
+            "The table below shows the first five rows of your imported dataset. "
+            "To enable proper analysis, please check the table below to ensure "
+            "that it matches your original dataset. Your column headers should "
+            "appear in the first row."
+        ).classes("w-full break-words")
+
         ui.label("Data Preview (first 5 rows)").classes("text-lg")
 
-        # Count empty columns
-        n_empty = sum((c[0] == 0 for c in data_frame.count().iter_columns()))
-        ui.label(
-            f"Nr. detected columns: {len(data_frame.columns)} ({n_empty} empty)"
-        ).classes("text-sm")
+        ui.label(f"No. detected columns: {len(data_frame.columns)}").classes("text-sm")
 
         # Display data grid
         ui.aggrid.from_polars(
             data_frame, theme="quartz", auto_size_columns=False
-        ).classes("w-full h-64")
+        ).classes("w-full h-48")

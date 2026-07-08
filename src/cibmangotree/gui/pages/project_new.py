@@ -40,11 +40,7 @@ class NewProjectPage(GuiPage):
                 on_click=_on_next,
                 color="primary",
             )
-            next_button.set_enabled(False)
-
-            def _on_input_change():
-                next_button.set_enabled(
-                    bool(new_project_name_input.value and new_project_name_input.value.strip())
-                )
-
-            new_project_name_input.on("update:model-value", _on_input_change)
+            next_button.bind_enabled_from(
+                new_project_name_input, "value",
+                backward=lambda v: bool(v and v.strip() if v else False),
+            )

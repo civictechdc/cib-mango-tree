@@ -31,16 +31,21 @@ class NewProjectPage(GuiPage):
             )
 
             def _on_next():
-                self.session.new_project_name = new_project_name_input.value
+                project_name = new_project_name_input.value
+                if not project_name or not project_name.strip():
+                    self.notify_warning("Please enter a project name")
+                    return
+                self.session.new_project_name = project_name
                 self.navigate_to(gui_routes.import_dataset)
 
             next_button = ui.button(
-                text="NEXT: SELECT DATASET",
+                text="Next: Select Dataset",
                 icon="arrow_forward",
                 on_click=_on_next,
                 color="primary",
             )
             next_button.bind_enabled_from(
-                new_project_name_input, "value",
+                new_project_name_input,
+                "value",
                 backward=lambda v: bool(v and v.strip() if v else False),
             )

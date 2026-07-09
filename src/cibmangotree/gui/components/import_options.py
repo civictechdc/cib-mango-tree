@@ -46,9 +46,14 @@ class ImportOptionsDialog(ui.dialog):
         # Build dialog UI
         with (
             self,
-            ui.card().classes("w-full").style("min-width: 600px; max-width: 800px"),
+            ui.card().classes("w-full p-3").style("min-width: 600px; max-width: 800px"),
         ):
-            ui.label("Fix Import Settings").classes("text-h5 mb-4")
+            ui.label("Fix Import Settings").classes("text-h6 mb-2")
+
+            ui.label(
+                "Sometimes the default settings don't suit your dataset. "
+                "Adjust the settings below to import your data correctly."
+            ).classes("w-full break-words text-lg mb-2")
 
             if isinstance(import_session, CsvImportSession):
                 self._build_csv_controls()
@@ -56,7 +61,7 @@ class ImportOptionsDialog(ui.dialog):
                 self._build_excel_controls()
 
             # Action buttons
-            with ui.row().classes("w-full justify-end gap-2 mt-6"):
+            with ui.row().classes("w-full justify-end gap-2 mt-3"):
                 ui.button("Cancel", on_click=self.close).props("outline")
                 ui.button(
                     "Retry Import",
@@ -69,7 +74,7 @@ class ImportOptionsDialog(ui.dialog):
         """Build CSV-specific configuration controls."""
         session = self.import_session
 
-        ROW_LAYOUT = "w-full items-center gap-4 mb-4"
+        ROW_LAYOUT = "w-full items-center gap-2 mb-2"
 
         # Row 1: Column Separator
         with ui.row().classes(ROW_LAYOUT):

@@ -17,11 +17,16 @@ class App(BaseModel):
             for project in self.context.storage.list_projects()
         ]
 
-    def create_project(self, name: str, importer_session: ImporterSession):
+    def create_project(
+        self,
+        name: str,
+        importer_session: ImporterSession,
+        dataset_name: str | None = None,
+    ):
         with NamedTemporaryFile(delete=False) as temp_file:
             importer_session.import_as_parquet(temp_file.name)
         project_model = self.context.storage.init_project(
-            display_name=name, input_temp_file=temp_file.name
+            display_name=name, input_temp_file=temp_file.name, dataset_name=dataset_name
         )
         return ProjectContext(model=project_model, app_context=self.context)
 

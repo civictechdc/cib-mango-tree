@@ -25,7 +25,7 @@ class ImportDatasetPage(GuiPage):
             route=gui_routes.import_dataset,
             title="Import Dataset",
             show_back_button=True,
-            back_route=gui_routes.new_project,
+            back_route="/",
             show_footer=True,
         )
 

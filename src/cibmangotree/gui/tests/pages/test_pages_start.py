@@ -15,5 +15,6 @@ async def test_start_page_shows_primary_actions(
         StartPage(session=gui_session).render()
 
     await user.open("/")
-    await user.should_see("New Project")
-    await user.should_see("Show Existing Projects")
+    await user.should_see("Create New")
+    await user.should_see("Delete")
+    await user.should_see("Open Project")

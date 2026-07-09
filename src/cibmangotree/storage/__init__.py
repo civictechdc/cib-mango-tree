@@ -23,6 +23,9 @@ class ProjectModel(BaseModel):
     class_: Literal["project"] = "project"
     id: str
     display_name: str
+    create_timestamp: Optional[float] = None
+    modified_timestamp: Optional[float] = None
+    dataset_name: Optional[str] = None
 
 
 class SettingsModel(BaseModel):
@@ -80,10 +83,23 @@ class Storage:
     def __setstate__(self, state):
         self.__init__(app_name=state["app_name"], app_author=state["app_author"])
 
-    def init_project(self, *, display_name: str, input_temp_file: str):
+    def init_project(
+        self,
+        *,
+        display_name: str,
+        input_temp_file: str,
+        dataset_name: str | None = None,
+    ):
         with self._lock_database():
             project_id = self._find_unique_project_id(display_name)
-            project = ProjectModel(id=project_id, display_name=display_name)
+            now = datetime.now().timestamp()
+            project = ProjectModel(
+                id=project_id,
+                display_name=display_name,
+                create_timestamp=now,
+                modified_timestamp=now,
+                dataset_name=dataset_name,
+            )
             self.db.insert(project.model_dump())
 
         project_dir = self._get_project_path(project_id)
@@ -95,10 +111,17 @@ class Storage:
     def list_projects(self):
         q = Query()
         projects = self.db.search(q["class_"] == "project")
-        return sorted(
-            (ProjectModel(**project) for project in projects),
-            key=lambda project: project.display_name,
-        )
+        result = []
+        for project in projects:
+            model = ProjectModel(**project)
+            if model.create_timestamp is None:
+                project_path = self._get_project_path(model.id)
+                try:
+                    model.create_timestamp = os.path.getmtime(project_path)
+                except OSError:
+                    pass
+            result.append(model)
+        return sorted(result, key=lambda project: project.display_name)
 
     def get_project(self, project_id: str):
         q = Query()
@@ -118,7 +141,10 @@ class Storage:
         with self._lock_database():
             q = Query()
             self.db.update(
-                {"display_name": name},
+                {
+                    "display_name": name,
+                    "modified_timestamp": datetime.now().timestamp(),
+                },
                 (q["id"] == project_id) & (q["class_"] == "project"),
             )
 

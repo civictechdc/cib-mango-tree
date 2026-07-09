@@ -50,7 +50,7 @@ On macOS this produces `CIBMangoTree.app` (onedir + BUNDLE). On other platforms 
 Each page subclasses `GuiPage` and implements `render_content()`:
 
 - `start.py` — home/landing page
-- `project_select.py` / `project_new.py` — select or create a project
+- `project_select.py` — select or create a project
 - `importer.py` / `dataset_preview.py` — import and preview a dataset
 - `analyzer_select.py` — choose a primary or previous analyzer
 - `analyzer_previous.py` — view/re-use past analyzer runs

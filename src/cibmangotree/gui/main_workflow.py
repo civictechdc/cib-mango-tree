@@ -2,8 +2,6 @@
 Main GUI workflow including all pages.
 """
 
-import sys
-
 from nicegui import ui
 
 from cibmangotree.app import App
@@ -12,7 +10,6 @@ from cibmangotree.gui.dashboards import PlaceholderDashboard, get_dashboard
 from cibmangotree.gui.pages import (
     AnalysisConfigAndRunPage,
     ImportDatasetPage,
-    NewProjectPage,
     PostAnalysisPage,
     PreviewDatasetPage,
     SelectAnalyzerForkPage,
@@ -47,12 +44,6 @@ def gui_main(app: App):
     def select_project_page():
         """Sub-page showing list of existing projects using GuiPage abstraction."""
         page = SelectProjectPage(session=gui_session)
-        page.render()
-
-    @ui.page(gui_routes.new_project)
-    def new_project():
-        """Sub-page for creating a new project name before importing dataset"""
-        page = NewProjectPage(session=gui_session)
         page.render()
 
     @ui.page(gui_routes.import_dataset)

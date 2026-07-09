@@ -131,6 +131,7 @@ class RunAnalysisStep:
                     color="secondary",
                     on_click=lambda: cancel_event.set(),
                 ).props("outline")
+                cancel_btn.set_visibility(False)
 
                 success_btn = ui.button(
                     "Continue",

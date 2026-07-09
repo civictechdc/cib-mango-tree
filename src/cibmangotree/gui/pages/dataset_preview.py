@@ -207,4 +207,4 @@ class PreviewDatasetPage(GuiPage):
         # Display data grid
         ui.aggrid.from_polars(
             data_frame, theme="quartz", auto_size_columns=False
-        ).classes("w-full h-48")
+        ).classes("w-full h-64")

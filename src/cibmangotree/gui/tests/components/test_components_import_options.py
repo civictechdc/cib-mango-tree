@@ -25,5 +25,5 @@ async def test_import_options_dialog_builds_csv_controls(user: User) -> None:
         )
 
     await user.open("/iod")
-    await user.should_see("Import Configuration")
+    await user.should_see("Fix Import Settings")
     await user.should_see("Column separator:")

@@ -46,9 +46,14 @@ class ImportOptionsDialog(ui.dialog):
         # Build dialog UI
         with (
             self,
-            ui.card().classes("w-full").style("min-width: 600px; max-width: 800px"),
+            ui.card().classes("w-full p-3").style("min-width: 600px; max-width: 800px"),
         ):
-            ui.label("Import Configuration").classes("text-h5 mb-4")
+            ui.label("Fix Import Settings").classes("text-h6 mb-2")
+
+            ui.label(
+                "Sometimes the default settings don't suit your dataset. "
+                "Adjust the settings below to import your data correctly."
+            ).classes("w-full break-words text-lg mb-2")
 
             if isinstance(import_session, CsvImportSession):
                 self._build_csv_controls()
@@ -56,7 +61,7 @@ class ImportOptionsDialog(ui.dialog):
                 self._build_excel_controls()
 
             # Action buttons
-            with ui.row().classes("w-full justify-end gap-2 mt-6"):
+            with ui.row().classes("w-full justify-end gap-2 mt-3"):
                 ui.button("Cancel", on_click=self.close).props("outline")
                 ui.button(
                     "Retry Import",
@@ -69,13 +74,25 @@ class ImportOptionsDialog(ui.dialog):
         """Build CSV-specific configuration controls."""
         session = self.import_session
 
-        ROW_LAYOUT = "w-full items-center gap-4 mb-4"
+        ROW_LAYOUT = "w-full items-center gap-2 mb-2"
 
         # Row 1: Column Separator
         with ui.row().classes(ROW_LAYOUT):
-            ui.label("Column separator:").classes("text-base font-bold").style(
-                "min-width: 160px"
-            )
+            with ui.row().classes("items-center gap-1").style("min-width: 160px"):
+                ui.label("Column separator:").classes("text-base font-bold")
+                with ui.icon("info").classes("text-grey-6 cursor-pointer"):
+                    with (
+                        ui.tooltip()
+                        .classes("w-64")
+                        .props(
+                            'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
+                        )
+                    ):
+                        ui.label(
+                            "Data files separate columns by commas, semicolons, pipes, or "
+                            "tabs (empty space). Open your data file in a text editor to "
+                            "visually determine what symbols are separating your columns."
+                        ).classes("text-base leading-relaxed whitespace-normal")
             self.separator_toggle = ui.toggle(
                 {
                     ",": "Comma (,)",
@@ -88,9 +105,23 @@ class ImportOptionsDialog(ui.dialog):
 
         # Row 2: Quote Character
         with ui.row().classes(ROW_LAYOUT):
-            ui.label("Quote character:").classes("text-base font-bold").style(
-                "min-width: 160px"
-            )
+            with ui.row().classes("items-center gap-1").style("min-width: 160px"):
+                ui.label("Quote character:").classes("text-base font-bold")
+                with ui.icon("info").classes("text-grey-6 cursor-pointer"):
+                    with (
+                        ui.tooltip()
+                        .classes("w-64")
+                        .props(
+                            'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
+                        )
+                    ):
+                        ui.label(
+                            "A quote character is used to enclose text so that our software "
+                            "can recognize it as a continuous block of text, even if it "
+                            "contains a comma or a line break. The default quote character "
+                            'is a double quote ("), but your dataset might use a single '
+                            "quote (')."
+                        ).classes("text-base leading-relaxed whitespace-normal")
             self.quote_toggle = ui.toggle(
                 {
                     '"': 'Double quote (")',
@@ -101,12 +132,21 @@ class ImportOptionsDialog(ui.dialog):
 
         # Row 3: Has Header
         with ui.row().classes(ROW_LAYOUT):
-            with (
-                ui.label("Has header:")
-                .classes("text-base font-bold")
-                .style("min-width: 160px")
-            ):
-                ui.tooltip("Whether the file has a header row with column names")
+            with ui.row().classes("items-center gap-1").style("min-width: 160px"):
+                ui.label("Has header:").classes("text-base font-bold")
+                with ui.icon("info").classes("text-grey-6 cursor-pointer"):
+                    with (
+                        ui.tooltip()
+                        .classes("w-64")
+                        .props(
+                            'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
+                        )
+                    ):
+                        ui.label(
+                            "Some datasets feature a header row with the title of the "
+                            "dataset, which does not contain data in individual columns. "
+                            'If your dataset has this, click "yes" here, and vice versa.'
+                        ).classes("text-base leading-relaxed whitespace-normal")
             self.header_toggle = ui.toggle(
                 {True: "Yes", False: "No"},
                 value=session.has_header,
@@ -114,9 +154,21 @@ class ImportOptionsDialog(ui.dialog):
 
         # Row 4: Skip Rows
         with ui.row().classes(ROW_LAYOUT):
-            ui.label("Skip rows:").classes("text-base font-bold").style(
-                "min-width: 160px"
-            )
+            with ui.row().classes("items-center gap-1").style("min-width: 160px"):
+                ui.label("Skip rows:").classes("text-base font-bold")
+                with ui.icon("info").classes("text-grey-6 cursor-pointer"):
+                    with (
+                        ui.tooltip()
+                        .classes("w-64")
+                        .props(
+                            'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
+                        )
+                    ):
+                        ui.label(
+                            "Some datasets begin with multiple rows that contain titles, "
+                            "blurbs, or other irrelevant information. Count the number of "
+                            "these rows and enter the corresponding number to skip them"
+                        ).classes("text-base leading-relaxed whitespace-normal")
             self.skip_rows_input = ui.number(
                 label="Number of rows to skip at start",
                 value=session.skip_rows,

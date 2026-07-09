@@ -6,7 +6,6 @@ class GuiRoutes(BaseModel):
 
     root: str = "/"
     import_dataset: str = "/import_dataset"
-    new_project: str = "/new_project"
     select_project: str = "/select_project"
     select_analyzer_fork: str = "/select_analyzer_fork"
     select_previous_analyzer: str = "/select_previous_analyzer"

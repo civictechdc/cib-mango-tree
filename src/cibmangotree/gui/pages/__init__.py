@@ -4,7 +4,6 @@ from .analyzer_previous import SelectPreviousAnalyzerPage
 from .analyzer_select import SelectAnalyzerForkPage
 from .dataset_preview import PreviewDatasetPage
 from .importer import ImportDatasetPage
-from .project_new import NewProjectPage
 from .project_select import SelectProjectPage
 from .start import StartPage
 

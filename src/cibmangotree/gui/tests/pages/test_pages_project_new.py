@@ -7,7 +7,7 @@ from cibmangotree.gui.pages.project_new import NewProjectPage
 from cibmangotree.gui.session import GuiSession
 
 
-async def test_new_project_empty_name_shows_warning(
+async def test_new_project_empty_name_disables_next_button(
     user: User, gui_session: GuiSession
 ) -> None:
     @ui.page("/new_project")
@@ -15,8 +15,10 @@ async def test_new_project_empty_name_shows_warning(
         NewProjectPage(session=gui_session).render()
 
     await user.open("/new_project")
-    user.find(content="Next: Select Dataset").click()
-    await user.should_see("Please enter a project name")
+    interaction = user.find(content="Next: Select Dataset")
+    assert any(not el.enabled for el in interaction.elements)
+    interaction.click()
+    assert gui_session.new_project_name is None
 
 
 async def test_new_project_sets_session_and_advances_name(

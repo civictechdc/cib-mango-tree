@@ -133,11 +133,6 @@ def test_hashtag_analyzer():
         outputs={
             OUTPUT_GINI: JsonTestData(
                 filepath=os.path.join(test_data_dir, "hashtag_test_output.json"),
-                semantics={
-                    OUTPUT_COL_USERS: identifier,
-                    OUTPUT_COL_COUNT: integer_catch_all,
-                    OUTPUT_GINI: float_catch_all,
-                },
             )
         },
     )

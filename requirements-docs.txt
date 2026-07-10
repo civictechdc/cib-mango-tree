@@ -4,8 +4,9 @@ aiofiles==25.1.0
     # via nicegui
 aiohappyeyeballs==2.6.1
     # via aiohttp
-aiohttp==3.13.5
+aiohttp==3.14.1
     # via
+    #   cibmangotree (pyproject.toml)
     #   nicegui
     #   python-socketio
 aiosignal==1.4.0
@@ -236,6 +237,7 @@ tomli==2.4.1
     # via zensical
 typing-extensions==4.15.0
     # via
+    #   aiohttp
     #   aiosignal
     #   anyio
     #   fastapi

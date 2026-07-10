@@ -17,16 +17,16 @@
 </p>
 
 > [!NOTE]
-> **v0.11.0-alpha** is now available with a new GUI interface! [Download the pre-release](https://github.com/CIB-Mango-Tree/cib-mango-tree/releases/tag/v0.11.0-alpha)
+> Starting with **v0.11.0** we have new GUI interface! [Download the release](https://github.com/CIB-Mango-Tree/cib-mango-tree/releases/tag/v0.11.0)
 > 
-> The latest stable release (v0.10.2) still uses the terminal interface.
+> The last version to use the terminal user interface was v0.10.2
 
 ## About
 
 CIB Mango Tree is a Python-based, iteractive open source toolkit for detecting coordinated inauthentic behavior (CIB) in social media datasets. It is designed for researchers, data journalists, fact-checkers, and watchdogs working to identify inauthentic activity online. For more about the project, visit the project main home page: [cibmangotree.org](https://cibmangotree.org)
 
 <p align="center">
-<img src="./docs/img/cibmt_welcome_screen.png" alt="CIBMT Welcome Screen" style="width:650px"/>
+<img src="./docs/img/cibmt_overview.png" alt="CIBMT Welcome Screen" style="width:750px"/>
 </p>
 
 CIB Mango Tree is a project of [Civic Tech DC](https://www.civictechdc.org/), a nonprofit community of volunteers using open-source technology to support civic engagement, strengthen democracy, and empower public-interest initiatives.
@@ -38,7 +38,9 @@ The latest release is available under Assets in the Releases tab:
 [CIB Mango Tree latest](https://github.com/civictechdc/cib-mango-tree/releases/latest)
 
 > [!NOTE]
-> **v0.11.0-alpha** is available with a new GUI interface! [Download the pre-release](https://github.com/CIB-Mango-Tree/cib-mango-tree/releases/tag/v0.11.0-alpha)
+> Starting with **v0.11.0** we have new GUI interface! [Download the release](https://github.com/CIB-Mango-Tree/cib-mango-tree/releases/tag/v0.11.0)
+> 
+> The last version to use the terminal user interface was v0.10.2
 
 ## Contributing
 

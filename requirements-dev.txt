@@ -4,8 +4,9 @@ aiofiles==25.1.0
     # via nicegui
 aiohappyeyeballs==2.6.1
     # via aiohttp
-aiohttp==3.13.5
+aiohttp==3.14.1
     # via
+    #   cibmangotree (pyproject.toml)
     #   nicegui
     #   python-socketio
 aiosignal==1.4.0
@@ -145,8 +146,10 @@ packaging==26.2
     #   pytest
 pathspec==1.1.1
     # via black
-pip==26.1.1
-    # via pip-api
+pip==26.1.2
+    # via
+    #   cibmangotree (pyproject.toml:dev)
+    #   pip-api
 pip-api==0.0.34
     # via pip-audit
 pip-audit==2.10.0
@@ -289,6 +292,7 @@ tomli-w==1.2.0
     # via pip-audit
 typing-extensions==4.15.0
     # via
+    #   aiohttp
     #   aiosignal
     #   anyio
     #   cyclonedx-python-lib

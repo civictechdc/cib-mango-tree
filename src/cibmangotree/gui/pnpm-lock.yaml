@@ -10,7 +10,7 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.3
-        version: 6.0.4(vite@7.3.1)(vue@3.5.27(typescript@5.9.3))
+        version: 6.0.4(vite@7.3.6)(vue@3.5.27(typescript@5.9.3))
       '@vue/tsconfig':
         specifier: ^0.8.1
         version: 0.8.1(typescript@5.9.3)(vue@3.5.27(typescript@5.9.3))
@@ -18,17 +18,17 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
       vite:
-        specifier: ^7.3.1
-        version: 7.3.1
+        specifier: ^7.3.5
+        version: 7.3.6
       vite-plugin-checker:
         specifier: ^0.12.0
-        version: 0.12.0(typescript@5.9.3)(vite@7.3.1)(vue-tsc@3.2.4(typescript@5.9.3))
+        version: 0.12.0(typescript@5.9.3)(vite@7.3.6)(vue-tsc@3.2.4(typescript@5.9.3))
       vite-plugin-css-injected-by-js:
         specifier: ^3.5.2
-        version: 3.5.2(vite@7.3.1)
+        version: 3.5.2(vite@7.3.6)
       vite-plugin-lib-inject-css:
         specifier: ^2.2.2
-        version: 2.2.2(vite@7.3.1)
+        version: 2.2.2(vite@7.3.6)
       vue:
         specifier: ^3.5.27
         version: 3.5.27(typescript@5.9.3)
@@ -614,8 +614,8 @@ packages:
     peerDependencies:
       vite: '*'
 
-  vite@7.3.1:
-    resolution: {integrity: sha512-w+N7Hifpc3gRjZ63vYBXA56dvvRlNWRczTdmCBBa+CotUzAPf5b7YMdMR/8CQoeYE5LX3W4wj6RYTgonm1b9DA==}
+  vite@7.3.6:
+    resolution: {integrity: sha512-4XP60spRGjSZFf1qYH+dJIkK2znL3zQfl9KkOV9MkkRR/3Dls0dxaBsQPTloEc5BLXWPL9vsOxopxyKoMmDueg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -890,10 +890,10 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
-  '@vitejs/plugin-vue@6.0.4(vite@7.3.1)(vue@3.5.27(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.4(vite@7.3.6)(vue@3.5.27(typescript@5.9.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.2
-      vite: 7.3.1
+      vite: 7.3.6
       vue: 3.5.27(typescript@5.9.3)
 
   '@volar/language-core@2.4.27':
@@ -1100,7 +1100,7 @@ snapshots:
 
   unicorn-magic@0.3.0: {}
 
-  vite-plugin-checker@0.12.0(typescript@5.9.3)(vite@7.3.1)(vue-tsc@3.2.4(typescript@5.9.3)):
+  vite-plugin-checker@0.12.0(typescript@5.9.3)(vite@7.3.6)(vue-tsc@3.2.4(typescript@5.9.3)):
     dependencies:
       '@babel/code-frame': 7.29.0
       chokidar: 4.0.3
@@ -1109,24 +1109,24 @@ snapshots:
       picomatch: 4.0.3
       tiny-invariant: 1.3.3
       tinyglobby: 0.2.15
-      vite: 7.3.1
+      vite: 7.3.6
       vscode-uri: 3.1.0
     optionalDependencies:
       typescript: 5.9.3
       vue-tsc: 3.2.4(typescript@5.9.3)
 
-  vite-plugin-css-injected-by-js@3.5.2(vite@7.3.1):
+  vite-plugin-css-injected-by-js@3.5.2(vite@7.3.6):
     dependencies:
-      vite: 7.3.1
+      vite: 7.3.6
 
-  vite-plugin-lib-inject-css@2.2.2(vite@7.3.1):
+  vite-plugin-lib-inject-css@2.2.2(vite@7.3.6):
     dependencies:
       '@ast-grep/napi': 0.36.3
       magic-string: 0.30.21
       picocolors: 1.1.1
-      vite: 7.3.1
+      vite: 7.3.6
 
-  vite@7.3.1:
+  vite@7.3.6:
     dependencies:
       esbuild: 0.27.2
       fdir: 6.5.0(picomatch@4.0.3)

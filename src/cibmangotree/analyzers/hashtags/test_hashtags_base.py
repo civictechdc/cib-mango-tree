@@ -6,7 +6,9 @@ import polars as pl
 from cibmangotree.analyzer_interface.params import TimeBinningValue
 from cibmangotree.preprocessing.series_semantic import (
     datetime_string,
+    float_catch_all,
     identifier,
+    integer_catch_all,
     text_catch_all,
 )
 from cibmangotree.testing import CsvTestData, JsonTestData, test_primary_analyzer
@@ -106,7 +108,7 @@ def test_hashtag_analysis_handles_nulls():
 
     result = hashtag_analysis(df, every="1h")
 
-    all_users = result[OUTPUT_COL_USERS].explode().unique().to_list()
+    all_users = result[OUTPUT_COL_USERS].explode(empty_as_null=True).unique().to_list()
     assert "user1" in all_users
     assert "user3" in all_users
     assert "user2" not in all_users
@@ -120,7 +122,7 @@ def test_hashtag_analyzer():
         interface,
         main,  #  the analyzer's entry point.
         input=CsvTestData(
-            os.path.join(test_data_dir, "hashtag_test_input.csv"),
+            filepath=os.path.join(test_data_dir, "hashtag_test_input.csv"),
             semantics={
                 COL_AUTHOR_ID: identifier,
                 COL_TIME: datetime_string,
@@ -130,7 +132,7 @@ def test_hashtag_analyzer():
         params={"time_window": TimeBinningValue(unit="hour", amount=12)},
         outputs={
             OUTPUT_GINI: JsonTestData(
-                os.path.join(test_data_dir, "hashtag_test_output.json")
+                filepath=os.path.join(test_data_dir, "hashtag_test_output.json"),
             )
         },
     )

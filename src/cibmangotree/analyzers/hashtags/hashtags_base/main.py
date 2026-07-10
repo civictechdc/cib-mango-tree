@@ -89,7 +89,7 @@ def hashtag_analysis(
     with progress("Counting hashtags..."):
         # compute gini per timewindow
         df_out = (
-            df_input.explode(pl.col(COL_POST))
+            df_input.explode(pl.col(COL_POST), empty_as_null=True)
             .group_by_dynamic(
                 pl.col(COL_TIME), every=every, period=every, start_by="datapoint"
             )

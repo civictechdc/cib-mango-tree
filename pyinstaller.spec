@@ -98,7 +98,7 @@ if sys.platform == "darwin":
     app = BUNDLE(
         coll,
         name='CIBMangoTree.app',
-        icon=None,  # Add icon path when available (e.g., 'icon.icns')
+        icon='cibmt.icns',
         bundle_identifier='org.civictechdc.cibmangotree',
         info_plist={
             'NSPrincipalClass': 'NSApplication',
@@ -118,7 +118,7 @@ else:
         strip=False,
         upx=True,
         console=False,  # No console window for GUI app
-        icon=None,  # Add icon path when available (e.g., 'icon.ico' for Windows)
+        icon='cibmt.ico',
     )
 
     coll = COLLECT(

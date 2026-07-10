@@ -2,7 +2,7 @@
 
 Before following this workflow please refer to our [**New Contributor Guide**](./new_contributor_guide.md) page for instructions on installing dependencies and setting up your development environment.
 
-All changes should be made in a forked repository, submitted via pull request to the upstream `develop` branch which will be later merged into `main` for a new release by maintainers.
+All changes should be made in a forked repository, submitted via pull request to the upstream `main` branch which will be used for a new release by maintainers.
 
 
 ## Opening a pull request (PR)
@@ -33,11 +33,11 @@ All changes should be made in a forked repository, submitted via pull request to
 
 4. **Create a feature branch**
 
-      Branch from `develop` using `feature/<name>` or `bugfix/<name>`:
+      Branch from `main` using `feature/<name>` or `bugfix/<name>`:
 
       ```shell
-      git checkout develop
-      git pull upstream develop
+      git checkout main
+      git pull upstream main
       git checkout -b feature/new-feature
       ```
 
@@ -57,7 +57,7 @@ All changes should be made in a forked repository, submitted via pull request to
     - Navigate to the original repository on GitHub.
     - Click *Pull requests* --> *New pull request*.
     - Click *Compare across forks*.
-    - Set the base repository to `ORIGINAL-OWNER/REPOSITORY-NAME` and base branch to `develop`.
+    - Set the base repository to `ORIGINAL-OWNER/REPOSITORY-NAME` and base branch to `main`.
     - Set the head repository to `YOUR-USERNAME/REPOSITORY-NAME` and compare branch to `feature/new-feature`.
     - Click *Create pull request* and fill in the details.
     - Address any review feedback.
@@ -67,22 +67,19 @@ All changes should be made in a forked repository, submitted via pull request to
       Regularly sync your fork with the upstream repository:
 
       ```shell
-      git checkout develop.       # switch to local develop branch
-      git pull upstream develop   # sync the original branch with your local branch
-      git push origin develop     # update branch on your remote fork with synced local branch
+      git checkout main.       # switch to local main branch
+      git pull upstream main   # sync the original branch with your local branch
+      git push origin main     # update branch on your remote fork with synced local branch
       ```
 
 8. **After merge & clean up**
 
-    - After your PR is approved and merged into upstream `develop`, delete your feature branch:
+    - After your PR is approved and merged into upstream `main`, delete your feature branch:
 
       ```shell
-      git checkout develop
+      git checkout main
       git branch -d feature/new-feature
       git push origin --delete feature/new-feature
       ```
 
-9. **Release**
-
-      - When `develop` is clean and ready for a new major release, maintainers will merge `develop` into `main` and create a new release (with your contributions included).
 

@@ -27,7 +27,7 @@ uv run pytest -v
 ## Implementing tests
 
 The `testing` module provides testers for the primary and
-secondary analyzer modules. See the [example](https://github.com/civictechdc/cib-mango-tree/blob/develop/src/cibmangotree/analyzers/example/README.md) for further references.
+secondary analyzer modules. See the [example](https://github.com/civictechdc/cib-mango-tree/blob/main/src/cibmangotree/analyzers/example/README.md) for further references.
 
 
 ### Test Data

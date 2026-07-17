@@ -22,6 +22,10 @@ dependencies = [
     "nicegui[native]>=3.12.0",
     # TODO: Remove once nicegui updates aiohttp transitive dep (CVE-2026-34993, CVE-2026-47265)
     "aiohttp>=3.14.0",
+    # TODO: add alternative GTK dependencies
+    "pyqt6>=6.11.0 ; sys_platform == 'linux'",
+    "qtpy>=2.4.3 ; sys_platform == 'linux'",
+    "pyqt6-webengine>=6.11.0 ; sys_platform == 'linux'",
 ]
 
 [dependency-groups]

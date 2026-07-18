@@ -74,9 +74,17 @@ def _create_summary_table(
     Returns:
         Joined and sorted DataFrame
     """
+    # `words` is the final sort key purely as a tiebreaker: the three statistical keys
+    # tie frequently, and without a total ordering the row order of this output (and
+    # so of the parquet written from it) varies between runs on identical input.
     return df_ngrams.join(df_ngram_stats, on=COL_NGRAM_ID, how="inner").sort(
-        [COL_NGRAM_LENGTH, COL_NGRAM_TOTAL_REPS, COL_NGRAM_DISTINCT_POSTER_COUNT],
-        descending=True,
+        [
+            COL_NGRAM_LENGTH,
+            COL_NGRAM_TOTAL_REPS,
+            COL_NGRAM_DISTINCT_POSTER_COUNT,
+            COL_NGRAM_WORDS,
+        ],
+        descending=[True, True, True, False],
     )
 
 
@@ -129,11 +137,12 @@ def _create_full_report_slice(
                 COL_NGRAM_LENGTH,
                 COL_NGRAM_TOTAL_REPS,
                 COL_NGRAM_DISTINCT_POSTER_COUNT,
+                COL_NGRAM_WORDS,
                 COL_NGRAM_REPS_PER_USER,
                 COL_AUTHOR_ID,
                 COL_MESSAGE_SURROGATE_ID,
             ],
-            descending=[True, True, True, True, False, False],
+            descending=[True, True, True, False, True, False, False],
         )
     )
 

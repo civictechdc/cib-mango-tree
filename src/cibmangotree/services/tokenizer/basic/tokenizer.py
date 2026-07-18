@@ -178,6 +178,12 @@ class BasicTokenizer(AbstractTokenizer):
             # This maintains compatibility with old tokenizer behavior for edge cases
             return [text.strip()]
 
+        # Tokens are substrings of `text`, so if the message as a whole contains no
+        # character-level script characters then no individual token can either.
+        # Checking once here lets the common all-Latin case skip the per-token
+        # mixed-script walk entirely.
+        text_has_char_level = self._CHAR_LEVEL_PATTERN.search(text) is not None
+
         # Apply postprocessing for language-specific behavior and configuration filtering
         tokens = []
         for token in raw_tokens:
@@ -202,8 +208,11 @@ class BasicTokenizer(AbstractTokenizer):
                     tokens.append(token)
             elif language_family == LanguageFamily.MIXED:
                 # For mixed script, break down character-level script parts but keep Latin parts whole
-                processed_tokens = self._process_mixed_script_token(token)
-                tokens.extend(processed_tokens)
+                if text_has_char_level:
+                    processed_tokens = self._process_mixed_script_token(token)
+                    tokens.extend(processed_tokens)
+                else:
+                    tokens.append(token)
             else:
                 tokens.append(token)
 

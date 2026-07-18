@@ -65,6 +65,7 @@ class GuiSession(BaseModel):
 
     # Source tracking flags
     project_loaded_from_storage: bool = False
+    project_just_created: bool = False
     analysis_loaded_from_storage: bool = False
 
     # Allow arbitrary types (for NiceGUI components, ImporterSession, etc.)
@@ -85,6 +86,7 @@ class GuiSession(BaseModel):
         self.new_project_name = None
         self.import_session = None
         self.project_loaded_from_storage = False
+        self.project_just_created = False
 
     def reset_analysis_workflow(self) -> None:
         """Clear analysis workflow state."""

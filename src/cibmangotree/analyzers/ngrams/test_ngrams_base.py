@@ -25,7 +25,6 @@ from .ngrams_base.interface import (
     interface,
 )
 from .ngrams_base.main import (
-    _create_ngram_definitions,
     _extract_ngrams_from_messages,
     _preprocess_messages,
     main,
@@ -234,47 +233,74 @@ def test_preprocess_messages(df_raw_input):
     assert result[COL_AUTHOR_ID].null_count() == 0
 
 
+def _ngram_id_for(df_ngram_defs: pl.DataFrame, words: str) -> int:
+    """Look up the surrogate id assigned to an n-gram. Ids are not stable values."""
+    match = df_ngram_defs.filter(pl.col("words") == words)
+    assert match.height == 1, f"expected exactly one definition for {words!r}"
+    return match["ngram_id"][0]
+
+
 def test_extract_ngrams_from_messages(df_raw_input, tokenizer_config_fixture):
     """Test n-gram extraction with within-message deduplication"""
     df_preprocessed = _preprocess_messages(df_raw_input)
-    df_message_ngrams, ngrams_by_id = _extract_ngrams_from_messages(
+    df_message_ngrams, df_ngram_defs = _extract_ngrams_from_messages(
         df_preprocessed, min_n=3, max_n=4, tokenizer_config=tokenizer_config_fixture
     )
 
     # Check "go go go" appears 3 times (once per message)
-    go_ngram_id = ngrams_by_id["go go go"]
+    go_ngram_id = _ngram_id_for(df_ngram_defs, "go go go")
     go_count = df_message_ngrams.filter(pl.col("ngram_id") == go_ngram_id).height
     assert go_count == 3, "go go go should appear in all 3 messages"
 
     # Check "it's very bad" appears 2 times (msg_002, msg_003)
     # Even though msg_003 has it twice, within-message dedup should keep only 1
-    bad_ngram_id = ngrams_by_id["it's very bad"]
+    bad_ngram_id = _ngram_id_for(df_ngram_defs, "it's very bad")
     bad_count = df_message_ngrams.filter(pl.col("ngram_id") == bad_ngram_id).height
     assert bad_count == 2, "it's very bad should appear in 2 messages (deduplicated)"
 
     # Check total unique n-grams detected
-    assert len(ngrams_by_id) > 2, "Should detect multiple unique n-grams"
+    assert df_ngram_defs.height > 2, "Should detect multiple unique n-grams"
 
 
-def test_create_ngram_definitions():
-    """Test n-gram definition table creation"""
-    mock_ngrams = {
-        "go go go": 0,
-        "it's very bad": 1,
-        "go it's very": 2,
-    }
+def test_extract_ngrams_drops_single_message_ngrams(
+    df_raw_input, tokenizer_config_fixture
+):
+    """N-grams occurring in only one message are dropped (ngram_stats filters them)."""
+    df_preprocessed = _preprocess_messages(df_raw_input)
+    df_message_ngrams, df_ngram_defs = _extract_ngrams_from_messages(
+        df_preprocessed, min_n=3, max_n=4, tokenizer_config=tokenizer_config_fixture
+    )
 
-    result = _create_ngram_definitions(mock_ngrams)
+    # "later it's very" occurs in exactly one message, so it must not be emitted
+    assert df_ngram_defs.filter(pl.col("words") == "later it's very").height == 0
+
+    # Every surviving n-gram must appear in at least two messages
+    counts = df_message_ngrams.group_by("ngram_id").len()
+    assert counts["len"].min() > 1, "no n-gram should survive with a single occurrence"
+
+    # And every emitted instance must resolve to a definition
+    assert set(df_message_ngrams["ngram_id"].unique()) == set(df_ngram_defs["ngram_id"])
+
+
+def test_ngram_definitions_structure(df_raw_input, tokenizer_config_fixture):
+    """Test n-gram definition table structure and computed lengths"""
+    df_preprocessed = _preprocess_messages(df_raw_input)
+    _, result = _extract_ngrams_from_messages(
+        df_preprocessed, min_n=3, max_n=4, tokenizer_config=tokenizer_config_fixture
+    )
 
     # Check structure
     assert "ngram_id" in result.columns
     assert "words" in result.columns
     assert "n" in result.columns
-    assert result.height == 3
+
+    # Ids are dense and unique
+    assert result["ngram_id"].n_unique() == result.height
+    assert sorted(result["ngram_id"].to_list()) == list(range(result.height))
 
     # Check n-gram lengths calculated correctly
-    assert result.filter(pl.col("ngram_id") == 0)["n"][0] == 3
-    assert result.filter(pl.col("ngram_id") == 1)["n"][0] == 3
+    assert result.filter(pl.col("words") == "go go go")["n"][0] == 3
+    assert result.filter(pl.col("words") == "go go go it's")["n"][0] == 4
 
 
 # Integration test

@@ -65,9 +65,95 @@ def _generate_test_input_data():
     return df_input
 
 
+def _generate_expected_outputs() -> None:
+    """
+    Regenerate the expected output parquets by running the analyzers on the input.
+
+    These files are the fixtures the analyzer tests compare against, so only
+    regenerate them when the output contract has deliberately changed, and inspect
+    the diff before committing.
+    """
+    # Imported here so generating the input CSV alone does not require the analyzers.
+    from cibmangotree.analyzer_interface.context import InputTableReader
+    from cibmangotree.preprocessing.series_semantic import (
+        datetime_string,
+        identifier,
+        text_catch_all,
+    )
+    from cibmangotree.testing.context import (
+        TestPrimaryAnalyzerContext,
+        TestSecondaryAnalyzerContext,
+    )
+
+    from ..ngrams_base.interface import (
+        OUTPUT_MESSAGE,
+        OUTPUT_MESSAGE_NGRAMS,
+        OUTPUT_NGRAM_DEFS,
+    )
+    from ..ngrams_base.main import main as primary_main
+    from ..ngrams_stats.main import main as secondary_main
+
+    semantics = {
+        TEST_COL_AUTHOR_ID: identifier,
+        TEST_COL_MESSAGE_ID: identifier,
+        TEST_COL_MESSAGE_TEXT: text_catch_all,
+        TEST_COL_MESSAGE_TIMESTAMP: datetime_string,
+    }
+
+    df_input = pl.read_csv(TEST_DATA_DIR / "ngrams_test_input.csv")
+    input_parquet = TEST_DATA_DIR / "_input.parquet"
+    df_input.select(
+        [
+            pl.col(name)
+            .map_batches(sem.try_convert, return_dtype=sem.return_dtype)
+            .alias(name)
+            for name, sem in semantics.items()
+        ]
+    ).write_parquet(input_parquet)
+
+    class _Reader(InputTableReader):
+        def __init__(self, parquet_path: str):
+            self._parquet_path = parquet_path
+
+        @property
+        def parquet_path(self) -> str:
+            return self._parquet_path
+
+        def preprocess(self, df: pl.DataFrame) -> pl.DataFrame:
+            return df
+
+    class _Ctx(TestPrimaryAnalyzerContext):
+        def input(self) -> InputTableReader:
+            return _Reader(self.input_parquet_path)
+
+    primary_main(
+        _Ctx(
+            temp_dir=str(TEST_DATA_DIR),
+            input_parquet_path=str(input_parquet),
+            output_parquet_root_path=str(TEST_DATA_DIR),
+            param_values={"min_n": 3, "max_n": 4},
+        )
+    )
+
+    secondary_main(
+        TestSecondaryAnalyzerContext(
+            primary_output_parquet_paths={
+                output: str(TEST_DATA_DIR / f"{output}.parquet")
+                for output in (OUTPUT_MESSAGE_NGRAMS, OUTPUT_NGRAM_DEFS, OUTPUT_MESSAGE)
+            },
+            output_parquet_root_path=str(TEST_DATA_DIR),
+            primary_param_values={"min_n": 3, "max_n": 4},
+        )
+    )
+
+    input_parquet.unlink()
+
+
 if __name__ == "__main__":
 
     df_input = _generate_test_input_data()
 
     # Save all files
     df_input.write_csv(TEST_DATA_DIR / "ngrams_test_input.csv")
+
+    _generate_expected_outputs()

@@ -13,6 +13,9 @@ from cibmangotree.gui.theme import MANGO_DARK_GREEN, MANGO_ORANGE
 
 QUEUE_POLL_INTERVAL = 0.05
 
+# Upper bound on messages handled per poll tick.
+MAX_MESSAGES_PER_POLL = 500
+
 
 class RunAnalysisStep:
     """Step 4: Execute the analysis with progress tracking."""
@@ -148,15 +151,8 @@ class RunAnalysisStep:
         step_rows: dict[str, tuple[ui.spinner, ui.icon, ui.label]] = {}
         current_step_name: str = None
 
-        def _poll_queue():
+        def _handle_message(msg: AnalysisQueueMessage) -> None:
             nonlocal analysis_complete, current_step_name
-
-            try:
-                msg_dict = queue.get_nowait()
-            except Empty:
-                return
-
-            msg = AnalysisQueueMessage(**msg_dict)
 
             if msg.type == "analyzer_start":
                 analyzer_header.text = msg.analyzer_name or "Analyzer"
@@ -228,6 +224,14 @@ class RunAnalysisStep:
                 else:
                     self.page.notify_warning("Analysis was canceled")
                 cancel_btn.disable()
+
+        def _poll_queue():
+            for _ in range(MAX_MESSAGES_PER_POLL):
+                try:
+                    msg_dict = queue.get_nowait()
+                except Empty:
+                    return
+                _handle_message(AnalysisQueueMessage(**msg_dict))
 
         async def run_analysis_task():
             try:

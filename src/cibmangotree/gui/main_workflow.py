@@ -14,7 +14,6 @@ from cibmangotree.gui.pages import (
     PreviewDatasetPage,
     SelectAnalyzerForkPage,
     SelectPreviousAnalyzerPage,
-    SelectProjectPage,
     StartPage,
 )
 from cibmangotree.gui.routes import gui_routes
@@ -38,12 +37,6 @@ def gui_main(app: App):
     def start_page():
         """Main/home page using GuiPage abstraction."""
         page = StartPage(session=gui_session)
-        page.render()
-
-    @ui.page(gui_routes.select_project)
-    def select_project_page():
-        """Sub-page showing list of existing projects using GuiPage abstraction."""
-        page = SelectProjectPage(session=gui_session)
         page.render()
 
     @ui.page(gui_routes.import_dataset)

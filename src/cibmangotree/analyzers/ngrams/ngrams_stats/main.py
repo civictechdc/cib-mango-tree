@@ -74,9 +74,17 @@ def _create_summary_table(
     Returns:
         Joined and sorted DataFrame
     """
+    # `words` is the final sort key purely as a tiebreaker: the three statistical keys
+    # tie frequently, and without a total ordering the row order of this output (and
+    # so of the parquet written from it) varies between runs on identical input.
     return df_ngrams.join(df_ngram_stats, on=COL_NGRAM_ID, how="inner").sort(
-        [COL_NGRAM_LENGTH, COL_NGRAM_TOTAL_REPS, COL_NGRAM_DISTINCT_POSTER_COUNT],
-        descending=True,
+        [
+            COL_NGRAM_LENGTH,
+            COL_NGRAM_TOTAL_REPS,
+            COL_NGRAM_DISTINCT_POSTER_COUNT,
+            COL_NGRAM_WORDS,
+        ],
+        descending=[True, True, True, False],
     )
 
 
@@ -129,11 +137,12 @@ def _create_full_report_slice(
                 COL_NGRAM_LENGTH,
                 COL_NGRAM_TOTAL_REPS,
                 COL_NGRAM_DISTINCT_POSTER_COUNT,
+                COL_NGRAM_WORDS,
                 COL_NGRAM_REPS_PER_USER,
                 COL_AUTHOR_ID,
                 COL_MESSAGE_SURROGATE_ID,
             ],
-            descending=[True, True, True, True, False, False],
+            descending=[True, True, True, False, True, False, False],
         )
     )
 
@@ -158,7 +167,10 @@ def main(context: SecondaryAnalyzerContext):
     df_message_ngrams_schema = df_message_ngrams.to_arrow().schema
     df_ngram_summary_schema = df_ngram_summary.to_arrow().schema
 
-    average_cardinality_explosion_factor = df_message_ngrams.height // df_ngrams.height
+    # Guard against divide-by-zero on an empty definitions table
+    average_cardinality_explosion_factor = (
+        df_message_ngrams.height // df_ngrams.height if df_ngrams.height else 1
+    )
 
     with progress("Writing full report") as reporter:
         with pq.ParquetWriter(

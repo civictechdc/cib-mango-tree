@@ -44,6 +44,12 @@ class BasicTokenizer(AbstractTokenizer):
             r"\u1780-\u17ff]"  # Khmer
         )
 
+        # Resolve config-derived patterns once instead of per-call
+        self._exclusion_pattern = self._patterns.get_exclusion_pattern(self._config)
+        self._comprehensive_pattern = self._patterns.get_comprehensive_pattern(
+            self._config
+        )
+
     def tokenize(self, text: str) -> TokenList:
         """
         Tokenize input text into a list of tokens.
@@ -149,7 +155,7 @@ class BasicTokenizer(AbstractTokenizer):
 
         # Remove excluded entities (URLs/emails) from text if they are disabled
         # This prevents them from being tokenized into component words
-        exclusion_pattern = self._patterns.get_exclusion_pattern(self._config)
+        exclusion_pattern = self._exclusion_pattern
         if exclusion_pattern:
             # Replace excluded entities with spaces to maintain word boundaries
             text = exclusion_pattern.sub(" ", text)
@@ -161,7 +167,7 @@ class BasicTokenizer(AbstractTokenizer):
 
         # Get comprehensive pattern based on configuration
         # This single pattern finds ALL tokens in document order
-        comprehensive_pattern = self._patterns.get_comprehensive_pattern(self._config)
+        comprehensive_pattern = self._comprehensive_pattern
 
         # Single regex call gets all tokens in order - this is the key optimization!
         raw_tokens = comprehensive_pattern.findall(text)
@@ -171,6 +177,12 @@ class BasicTokenizer(AbstractTokenizer):
             # For pure punctuation or unrecognized content, return as single token
             # This maintains compatibility with old tokenizer behavior for edge cases
             return [text.strip()]
+
+        # Tokens are substrings of `text`, so if the message as a whole contains no
+        # character-level script characters then no individual token can either.
+        # Checking once here lets the common all-Latin case skip the per-token
+        # mixed-script walk entirely.
+        text_has_char_level = self._CHAR_LEVEL_PATTERN.search(text) is not None
 
         # Apply postprocessing for language-specific behavior and configuration filtering
         tokens = []
@@ -196,8 +208,11 @@ class BasicTokenizer(AbstractTokenizer):
                     tokens.append(token)
             elif language_family == LanguageFamily.MIXED:
                 # For mixed script, break down character-level script parts but keep Latin parts whole
-                processed_tokens = self._process_mixed_script_token(token)
-                tokens.extend(processed_tokens)
+                if text_has_char_level:
+                    processed_tokens = self._process_mixed_script_token(token)
+                    tokens.extend(processed_tokens)
+                else:
+                    tokens.append(token)
             else:
                 tokens.append(token)
 
@@ -260,7 +275,7 @@ class BasicTokenizer(AbstractTokenizer):
 
     def _contains_char_level_chars(self, token: str) -> bool:
         """Check if token contains any character-level script characters."""
-        return any(self._is_char_level_script(char) for char in token)
+        return self._CHAR_LEVEL_PATTERN.search(token) is not None
 
     def _is_pure_char_level_token(self, token: str) -> bool:
         """Check if token contains only character-level script characters."""
@@ -271,14 +286,12 @@ class BasicTokenizer(AbstractTokenizer):
         if not self._contains_char_level_chars(token):
             return [token]
 
-        # Check if token mixes Latin with CJK
         has_latin = any(c.isascii() and c.isalpha() for c in token)
-        has_cjk = any(self._is_char_level_script(c) for c in token)
 
         # Don't apply mixed-script preservation to social media entities
         is_social_entity = token.startswith(("@", "#", "$"))
 
-        if has_latin and has_cjk and not is_social_entity:
+        if has_latin and not is_social_entity:
             # Mixed script - keep intact (brand names, bot tricks)
             return [token]
 

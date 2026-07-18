@@ -14,8 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Improved ngram analysis runtime by [@nrposner]
-- Change the back/cancel buttons to red [@KristijanArmeni]
-- Add notification button when project is created [@KristijanArmeni]
+- Change the back/cancel buttons to red by [@KristijanArmeni]
+- Add notification button when project is created by [@KristijanArmeni]
+- Enable sorting in the project overview grid by [@KristijanArmeni]
 
 ### Deprecated
 

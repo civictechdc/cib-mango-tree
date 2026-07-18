@@ -17,7 +17,7 @@ class SelectAnalyzerForkPage(GuiPage):
                 else ""
             ),
             show_back_button=True,
-            back_route=gui_routes.select_project,
+            back_route=gui_routes.root,
             show_footer=True,
         )
 

@@ -355,7 +355,7 @@ class GuiPage(BaseModel, abc.ABC):
     def require_project(self) -> bool:
         if not self.session.current_project:
             self.notify_warning("No project selected. Redirecting...")
-            self.navigate_to(gui_routes.select_project)
+            self.navigate_to(gui_routes.root)
             return False
         return True
 

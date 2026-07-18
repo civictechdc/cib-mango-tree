@@ -13,19 +13,30 @@ _COLUMNS = [
         "label": "Project name",
         "field": "project_name",
         "align": "left",
+        "sortable": True,
     },
-    {"name": "dataset", "label": "Dataset", "field": "dataset", "align": "left"},
+    {
+        "name": "dataset",
+        "label": "Dataset",
+        "field": "dataset",
+        "align": "left",
+        "sortable": True,
+    },
     {
         "name": "date_created",
         "label": "Date Created",
         "field": "date_created",
         "align": "left",
+        "sortable": True,
+        ":sort": "(a, b, rowA, rowB) => (rowA.date_created_ts ?? 0) - (rowB.date_created_ts ?? 0)",
     },
     {
         "name": "date_modified",
         "label": "Date Last Modified",
         "field": "date_modified",
         "align": "left",
+        "sortable": True,
+        ":sort": "(a, b, rowA, rowB) => (rowA.date_modified_ts ?? 0) - (rowB.date_modified_ts ?? 0)",
     },
 ]
 
@@ -134,9 +145,11 @@ class StartPage(GuiPage):
                     "project_name": proj.display_name,
                     "dataset": proj.model.dataset_name or "—",
                     "date_created": self._format_timestamp(proj.model.create_timestamp),
+                    "date_created_ts": proj.model.create_timestamp,
                     "date_modified": self._format_timestamp(
                         proj.model.modified_timestamp
                     ),
+                    "date_modified_ts": proj.model.modified_timestamp,
                 }
             )
         return rows

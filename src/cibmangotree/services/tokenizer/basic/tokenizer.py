@@ -44,6 +44,12 @@ class BasicTokenizer(AbstractTokenizer):
             r"\u1780-\u17ff]"  # Khmer
         )
 
+        # Resolve config-derived patterns once instead of per-call
+        self._exclusion_pattern = self._patterns.get_exclusion_pattern(self._config)
+        self._comprehensive_pattern = self._patterns.get_comprehensive_pattern(
+            self._config
+        )
+
     def tokenize(self, text: str) -> TokenList:
         """
         Tokenize input text into a list of tokens.
@@ -149,7 +155,7 @@ class BasicTokenizer(AbstractTokenizer):
 
         # Remove excluded entities (URLs/emails) from text if they are disabled
         # This prevents them from being tokenized into component words
-        exclusion_pattern = self._patterns.get_exclusion_pattern(self._config)
+        exclusion_pattern = self._exclusion_pattern
         if exclusion_pattern:
             # Replace excluded entities with spaces to maintain word boundaries
             text = exclusion_pattern.sub(" ", text)
@@ -161,7 +167,7 @@ class BasicTokenizer(AbstractTokenizer):
 
         # Get comprehensive pattern based on configuration
         # This single pattern finds ALL tokens in document order
-        comprehensive_pattern = self._patterns.get_comprehensive_pattern(self._config)
+        comprehensive_pattern = self._comprehensive_pattern
 
         # Single regex call gets all tokens in order - this is the key optimization!
         raw_tokens = comprehensive_pattern.findall(text)

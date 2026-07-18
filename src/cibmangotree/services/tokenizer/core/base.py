@@ -10,6 +10,36 @@ from typing import Optional
 
 from .types import TokenizerConfig, TokenList
 
+# Constant emoji code point tables
+_EMOJI_RANGES = (
+    (0x1F600, 0x1F64F),  # Emoticons
+    (0x1F300, 0x1F5FF),  # Misc Symbols & Pictographs
+    (0x1F680, 0x1F6FF),  # Transport & Map
+    (0x1F1E6, 0x1F1FF),  # Regional Indicators
+    (0x2600, 0x26FF),  # Misc symbols
+    (0x2700, 0x27BF),  # Dingbats
+    (0x1F900, 0x1F9FF),  # Supplemental Symbols & Pictographs
+    (0x1FA70, 0x1FAFF),  # Symbols & Pictographs Extended-A
+)
+_EMOJI_MODIFIERS = frozenset({0x200D, 0xFE0E, 0xFE0F})  # ZWJ, VS15, VS16
+_EMOJI_SKIN_TONE = (0x1F3FB, 0x1F3FF)
+_EMOJI_TAGS = (0xE0020, 0xE007F)  # Emoji tag sequences
+
+
+def _in_any_range(cp: int, ranges) -> bool:
+    for a, b in ranges:
+        if a <= cp <= b:
+            return True
+    return False
+
+
+def _is_emoji_modifier(cp: int) -> bool:
+    return (
+        cp in _EMOJI_MODIFIERS
+        or _EMOJI_SKIN_TONE[0] <= cp <= _EMOJI_SKIN_TONE[1]
+        or _EMOJI_TAGS[0] <= cp <= _EMOJI_TAGS[1]
+    )
+
 
 class AbstractTokenizer(ABC):
     """
@@ -144,36 +174,15 @@ class AbstractTokenizer(ABC):
         if not token:
             return False
 
-        # Accept sequences made of emoji code points plus common modifiers
-        EMOJI_RANGES = (
-            (0x1F600, 0x1F64F),  # Emoticons
-            (0x1F300, 0x1F5FF),  # Misc Symbols & Pictographs
-            (0x1F680, 0x1F6FF),  # Transport & Map
-            (0x1F1E6, 0x1F1FF),  # Regional Indicators
-            (0x2600, 0x26FF),  # Misc symbols
-            (0x2700, 0x27BF),  # Dingbats
-            (0x1F900, 0x1F9FF),  # Supplemental Symbols & Pictographs
-            (0x1FA70, 0x1FAFF),  # Symbols & Pictographs Extended-A
-        )
-        MODIFIERS = {0x200D, 0xFE0E, 0xFE0F}  # ZWJ, VS15, VS16
-        SKIN_TONE = (0x1F3FB, 0x1F3FF)
-        TAGS = (0xE0020, 0xE007F)  # Emoji tag sequences
-
-        def in_any_range(cp: int, ranges) -> bool:
-            for a, b in ranges:
-                if a <= cp <= b:
-                    return True
+        # Every emoji code point and modifier lies above the ASCII range, so an
+        # all-ASCII token can never be an emoji. This is the overwhelmingly common
+        # case and resolves in a single C-level call.
+        if token.isascii():
             return False
 
-        def is_modifier(cp: int) -> bool:
-            return (
-                cp in MODIFIERS
-                or SKIN_TONE[0] <= cp <= SKIN_TONE[1]
-                or TAGS[0] <= cp <= TAGS[1]
-            )
-
+        # Accept sequences made of emoji code points plus common modifiers
         for ch in token:
             cp = ord(ch)
-            if not (in_any_range(cp, EMOJI_RANGES) or is_modifier(cp)):
+            if not (_in_any_range(cp, _EMOJI_RANGES) or _is_emoji_modifier(cp)):
                 return False
         return True

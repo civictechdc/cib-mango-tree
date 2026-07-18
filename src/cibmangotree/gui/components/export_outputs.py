@@ -190,7 +190,9 @@ class ExportDialog(ui.dialog):
                         self._add_checkbox_group("Secondary Outputs", sec_outputs)
 
             with ui.row().classes("w-full justify-end gap-2"):
-                ui.button("Cancel", on_click=self.close, color="secondary")
+                ui.button("Cancel", on_click=self.close, color="cancel").props(
+                    "outline"
+                )
                 self.select_outputs_next = ui.button(
                     "Next",
                     on_click=self._go_to_configure_export,
@@ -280,9 +282,9 @@ class ExportDialog(ui.dialog):
                 ui.button(
                     "Back",
                     on_click=lambda: self._show_step("select_outputs"),
-                    color="secondary",
+                    color="cancel",
                     icon="arrow_back",
-                )
+                ).props("outline")
                 ui.button(
                     "Start Export",
                     on_click=self._handle_start_export,
@@ -342,7 +344,7 @@ class ExportDialog(ui.dialog):
                     color="primary",
                     icon="folder_open",
                 )
-                ui.button("Close", on_click=self.close, color="secondary")
+                ui.button("Close", on_click=self.close, color="cancel").props("outline")
 
     def _start_export(self):
         if self.format is None:

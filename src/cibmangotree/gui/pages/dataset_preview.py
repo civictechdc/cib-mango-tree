@@ -145,6 +145,7 @@ class PreviewDatasetPage(GuiPage):
 
                     # Store project in session
                     self.session.current_project = project
+                    self.session.project_just_created = True
 
                     # Navigate to analyzer selection
                     self.navigate_to(gui_routes.configure_analysis)

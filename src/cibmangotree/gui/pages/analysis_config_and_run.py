@@ -57,6 +57,12 @@ class AnalysisConfigAndRunPage(GuiPage):
         if not self.require_project():
             return
 
+        if self.session.project_just_created and self.session.current_project:
+            self.session.project_just_created = False
+            self.notify_success(
+                f"Project '{self.session.current_project.display_name}' created successfully!"
+            )
+
         with self.centered_content(max_width="1200px", justify="start", padding="2rem"):
             with (
                 ui.stepper()

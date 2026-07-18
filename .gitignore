@@ -18,3 +18,4 @@ node_modules
 # cursor
 ./gui/.cursor 
 *.egg-info
+/confirmed_russia_troll_tweets_preproc.csv

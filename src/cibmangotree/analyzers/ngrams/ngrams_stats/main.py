@@ -158,7 +158,10 @@ def main(context: SecondaryAnalyzerContext):
     df_message_ngrams_schema = df_message_ngrams.to_arrow().schema
     df_ngram_summary_schema = df_ngram_summary.to_arrow().schema
 
-    average_cardinality_explosion_factor = df_message_ngrams.height // df_ngrams.height
+    # Guard against divide-by-zero on an empty definitions table
+    average_cardinality_explosion_factor = (
+        df_message_ngrams.height // df_ngrams.height if df_ngrams.height else 1
+    )
 
     with progress("Writing full report") as reporter:
         with pq.ParquetWriter(

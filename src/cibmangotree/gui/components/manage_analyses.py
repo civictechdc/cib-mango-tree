@@ -73,7 +73,7 @@ class ManageAnalysisDialog(ui.dialog):
                 ui.button(
                     "Close",
                     on_click=self._handle_close,
-                    color="secondary",
+                    color="cancel",
                 ).props("outline")
 
                 ui.button(
@@ -161,7 +161,7 @@ class ManageAnalysisDialog(ui.dialog):
                 ui.button(
                     "Cancel",
                     on_click=lambda: dialog.submit(False),
-                    color="secondary",
+                    color="cancel",
                 ).props("outline")
 
                 ui.button(

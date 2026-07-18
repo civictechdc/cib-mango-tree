@@ -207,7 +207,7 @@ class StartPage(GuiPage):
             ui.label("This action cannot be undone.").classes("text-warning q-mb-lg")
             with ui.row().classes("w-full justify-end gap-2"):
                 ui.button(
-                    "Cancel", on_click=lambda: dialog.submit(False), color="secondary"
+                    "Cancel", on_click=lambda: dialog.submit(False), color="cancel"
                 ).props("outline")
                 ui.button(
                     "Delete", on_click=lambda: dialog.submit(True), color="negative"

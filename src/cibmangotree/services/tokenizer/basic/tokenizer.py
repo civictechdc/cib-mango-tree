@@ -266,7 +266,7 @@ class BasicTokenizer(AbstractTokenizer):
 
     def _contains_char_level_chars(self, token: str) -> bool:
         """Check if token contains any character-level script characters."""
-        return any(self._is_char_level_script(char) for char in token)
+        return self._CHAR_LEVEL_PATTERN.search(token) is not None
 
     def _is_pure_char_level_token(self, token: str) -> bool:
         """Check if token contains only character-level script characters."""

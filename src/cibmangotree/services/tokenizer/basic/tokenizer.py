@@ -277,14 +277,12 @@ class BasicTokenizer(AbstractTokenizer):
         if not self._contains_char_level_chars(token):
             return [token]
 
-        # Check if token mixes Latin with CJK
         has_latin = any(c.isascii() and c.isalpha() for c in token)
-        has_cjk = any(self._is_char_level_script(c) for c in token)
 
         # Don't apply mixed-script preservation to social media entities
         is_social_entity = token.startswith(("@", "#", "$"))
 
-        if has_latin and has_cjk and not is_social_entity:
+        if has_latin and not is_social_entity:
             # Mixed script - keep intact (brand names, bot tricks)
             return [token]
 

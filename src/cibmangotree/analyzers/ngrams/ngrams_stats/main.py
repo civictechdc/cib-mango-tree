@@ -208,5 +208,4 @@ def main(context: SecondaryAnalyzerContext):
                 )
 
                 writer.write_table(df_output.to_arrow())
-                report_total_processed += df_ngram_summary_slice.height
                 reporter.update(report_total_processed / df_ngram_summary.height)

@@ -32,7 +32,7 @@ class NewProjectDialog(ui.dialog):
                 ui.button(
                     "Cancel",
                     on_click=self._handle_cancel,
-                    color="secondary",
+                    color="cancel",
                 ).props("outline")
 
                 ui.button(

@@ -137,6 +137,7 @@ class GuiPage(BaseModel, abc.ABC):
             primary=gui_colors.primary,
             secondary=gui_colors.secondary,
             accent=gui_colors.accent,
+            cancel=gui_colors.cancel,
         )
 
     def _render_header(self) -> None:

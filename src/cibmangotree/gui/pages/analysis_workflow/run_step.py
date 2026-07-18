@@ -128,7 +128,7 @@ class RunAnalysisStep:
                 cancel_btn = ui.button(
                     "Cancel Analysis",
                     icon="stop",
-                    color="secondary",
+                    color="cancel",
                     on_click=lambda: cancel_event.set(),
                 ).props("outline")
                 cancel_btn.set_visibility(False)

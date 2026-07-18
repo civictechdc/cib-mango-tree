@@ -56,7 +56,7 @@ class ManageProjectsDialog(ui.dialog):
                 ui.button(
                     "Cancel",
                     on_click=self._handle_cancel,
-                    color="secondary",
+                    color="cancel",
                 ).props("outline")
 
                 ui.button("Delete", on_click=self._handle_delete, color="primary")
@@ -122,7 +122,7 @@ class ManageProjectsDialog(ui.dialog):
                 ui.button(
                     "Cancel",
                     on_click=lambda: dialog.submit(False),
-                    color="secondary",
+                    color="cancel",
                 ).props("outline")
 
                 ui.button(

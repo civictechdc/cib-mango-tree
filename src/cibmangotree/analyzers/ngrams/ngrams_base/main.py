@@ -1,3 +1,7 @@
+import os
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from math import ceil
+
 import polars as pl
 
 from cibmangotree.analyzer_interface.context import (
@@ -49,15 +53,101 @@ def _preprocess_messages(df_input: pl.DataFrame) -> pl.DataFrame:
     return df_input
 
 
+# Below this many messages, process startup is more work than we save by parallelizing.
+MIN_ROWS_FOR_PARALLEL = 5_000
+
+# Several chunks per worker so uneven message lengths still balance across cores.
+CHUNKS_PER_WORKER = 4
+
+
+def _emit_ngram_pairs(
+    payload: tuple[list[int], list[str], int, int, TokenizerConfig],
+) -> pl.DataFrame:
+    """
+    Tokenize a chunk of messages and emit one row per (message, distinct n-gram).
+
+    Intended to be dispatched to worker processes, and thus only takes picklable
+    arguments. It does not assign n-gram ids at this stage, in order to avoid
+    a cross-chunk counter.
+
+    Args:
+        payload: (surrogate_ids, texts, min_n, max_n, tokenizer_config)
+
+    Returns:
+        DataFrame with columns [message_surrogate_id, words]
+    """
+    surrogate_ids, texts, min_n, max_n, tokenizer_config = payload
+
+    out_surrogate_ids: list[int] = []
+    out_words: list[str] = []
+
+    for surrogate_id, text in zip(surrogate_ids, texts):
+        tokens = tokenize_text(text, tokenizer_config)
+
+        # this will track within message repetitions
+        seen_ngrams_in_message = set()
+
+        for ngram in ngrams(tokens, min_n, max_n):
+            serialized_ngram = serialize_ngram(ngram)
+
+            # skip repetitions of already detected ngrams
+            if serialized_ngram in seen_ngrams_in_message:
+                continue
+            seen_ngrams_in_message.add(serialized_ngram)
+
+            out_surrogate_ids.append(surrogate_id)
+            out_words.append(serialized_ngram)
+
+    return pl.DataFrame(
+        {
+            COL_MESSAGE_SURROGATE_ID: pl.Series(out_surrogate_ids, dtype=pl.Int64),
+            COL_NGRAM_WORDS: pl.Series(out_words, dtype=pl.String),
+        }
+    )
+
+
+def _run_chunks(
+    payloads: list[tuple], max_workers: int, progress_callback=None
+) -> list[pl.DataFrame]:
+    """Run _emit_ngram_pairs over payloads, in worker processes when worthwhile."""
+    total = len(payloads)
+
+    if max_workers <= 1:
+        frames = []
+        for done, payload in enumerate(payloads, start=1):
+            frames.append(_emit_ngram_pairs(payload))
+            if progress_callback:
+                progress_callback(done / total)
+        return frames
+    else:
+        results: dict[int, pl.DataFrame] = {}
+        with ProcessPoolExecutor(max_workers=max_workers) as executor:
+            futures = {
+                executor.submit(_emit_ngram_pairs, payload): index
+                for index, payload in enumerate(payloads)
+            }
+            for done, future in enumerate(as_completed(futures), start=1):
+                results[futures[future]] = future.result()
+                if progress_callback:
+                    progress_callback(done / total)
+
+        # Reassemble in submission order so the output does not depend on completion order.
+        return [results[index] for index in range(total)]
+
+
 def _extract_ngrams_from_messages(
     df_input: pl.DataFrame,
     min_n: int,
     max_n: int,
     tokenizer_config: TokenizerConfig,
     progress_callback=None,
-) -> tuple[pl.DataFrame, dict[str, int]]:
+    max_workers: int | None = None,
+) -> tuple[pl.DataFrame, pl.DataFrame]:
     """
     Extract n-grams from messages with within-message deduplication.
+
+    N-grams occurring in only one message are dropped immediately. These make up
+    the great majority of distinct n-grams on a typical corpus.
 
     Args:
         df_input: Preprocessed dataframe with messages
@@ -65,67 +155,67 @@ def _extract_ngrams_from_messages(
         max_n: Maximum n-gram length
         tokenizer_config: Configuration for text tokenization
         progress_callback: Optional callback for progress reporting
+        max_workers: Worker processes to use. Defaults to one per available core.
 
     Returns:
-        Tuple of (df_message_ngrams, ngrams_by_id) where:
+        Tuple of (df_message_ngrams, df_ngram_defs) where:
         - df_message_ngrams: DataFrame with columns [message_surrogate_id, ngram_id]
-        - ngrams_by_id: Dict mapping serialized n-gram strings to n-gram IDs
+        - df_ngram_defs: DataFrame with columns [ngram_id, words, n]
     """
+    surrogate_ids = df_input[COL_MESSAGE_SURROGATE_ID].to_list()
+    texts = df_input[COL_MESSAGE_TEXT].to_list()
 
-    def get_ngram_rows(ngrams_by_id: dict[str, int]):
-        num_rows = df_input.height
-        current_row = 0
+    if max_workers is None:
+        max_workers = os.cpu_count() or 1
+    if df_input.height < MIN_ROWS_FOR_PARALLEL:
+        max_workers = 1
 
-        for row in df_input.iter_rows(named=True):
-            tokens = tokenize_text(row[COL_MESSAGE_TEXT], tokenizer_config)
+    n_chunks = 1 if max_workers <= 1 else max_workers * CHUNKS_PER_WORKER
+    chunk_size = max(1, ceil(df_input.height / n_chunks))
+    payloads = [
+        (
+            surrogate_ids[start : start + chunk_size],
+            texts[start : start + chunk_size],
+            min_n,
+            max_n,
+            tokenizer_config,
+        )
+        for start in range(0, df_input.height, chunk_size)
+    ]
 
-            # this will track within message repetitions
-            seen_ngrams_in_message = set()
+    frames = _run_chunks(payloads, max_workers, progress_callback)
+    df_pairs = pl.concat(frames) if frames else _empty_pairs_frame()
 
-            for ngram in ngrams(tokens, min_n, max_n):
-                serialized_ngram = serialize_ngram(ngram)
+    # Sorting before assigning ids keeps ngram_id stable across runs: group_by output
+    # order is not deterministic, and the ids feed the sort order of the outputs.
+    df_ngram_defs = (
+        df_pairs.group_by(COL_NGRAM_WORDS)
+        .len()
+        .filter(pl.col("len") > 1)
+        .select(COL_NGRAM_WORDS)
+        .sort(COL_NGRAM_WORDS)
+        .with_row_index(COL_NGRAM_ID)
+        .with_columns(
+            pl.col(COL_NGRAM_ID).cast(pl.Int64),
+            pl.col(COL_NGRAM_WORDS).str.split(" ").list.len().alias(COL_NGRAM_LENGTH),
+        )
+    )
 
-                # skip repetitions of already detected ngrams
-                if serialized_ngram in seen_ngrams_in_message:
-                    continue
-                seen_ngrams_in_message.add(serialized_ngram)
+    df_message_ngrams = df_pairs.join(
+        df_ngram_defs.select(COL_NGRAM_WORDS, COL_NGRAM_ID),
+        on=COL_NGRAM_WORDS,
+        how="inner",
+    ).select(COL_MESSAGE_SURROGATE_ID, COL_NGRAM_ID)
 
-                # generate ngram ids (by counting)
-                if serialized_ngram not in ngrams_by_id:
-                    ngrams_by_id[serialized_ngram] = len(ngrams_by_id)
-                ngram_id = ngrams_by_id[serialized_ngram]
-
-                yield {
-                    COL_MESSAGE_SURROGATE_ID: row[COL_MESSAGE_SURROGATE_ID],
-                    COL_NGRAM_ID: ngram_id,
-                }
-            current_row = current_row + 1
-            if current_row % 100 == 0 and progress_callback:
-                progress_callback(current_row / num_rows)
-
-    ngrams_by_id: dict[str, int] = {}
-    df_ngram_instances = pl.DataFrame(get_ngram_rows(ngrams_by_id))
-
-    return df_ngram_instances, ngrams_by_id
+    return df_message_ngrams, df_ngram_defs
 
 
-def _create_ngram_definitions(ngrams_by_id: dict[str, int]) -> pl.DataFrame:
-    """
-    Create n-gram definitions table with IDs, words, and lengths.
-
-    Args:
-        ngrams_by_id: Dict mapping serialized n-gram strings to n-gram IDs
-
-    Returns:
-        DataFrame with columns [ngram_id, ngram_words, ngram_length]
-    """
+def _empty_pairs_frame() -> pl.DataFrame:
     return pl.DataFrame(
         {
-            COL_NGRAM_ID: list(ngrams_by_id.values()),
-            COL_NGRAM_WORDS: list(ngrams_by_id.keys()),
+            COL_MESSAGE_SURROGATE_ID: pl.Series([], dtype=pl.Int64),
+            COL_NGRAM_WORDS: pl.Series([], dtype=pl.String),
         }
-    ).with_columns(
-        [pl.col(COL_NGRAM_WORDS).str.split(" ").list.len().alias(COL_NGRAM_LENGTH)]
     )
 
 
@@ -153,19 +243,18 @@ def main(context: PrimaryAnalyzerContext):
         df_input = _preprocess_messages(df_input)
 
     with progress("Detecting n-grams") as reporter:
-        df_ngram_instances, ngrams_by_id = _extract_ngrams_from_messages(
+        df_ngram_instances, df_ngram_defs = _extract_ngrams_from_messages(
             df_input, min_n, max_n, tokenizer_config, reporter.update
         )
 
     with progress("Fetching n-gram statistics"):
         (
-            pl.DataFrame(df_ngram_instances)
-            .sort(by=[COL_MESSAGE_SURROGATE_ID, COL_NGRAM_ID])
-            .write_parquet(context.output(OUTPUT_MESSAGE_NGRAMS).parquet_path)
+            df_ngram_instances.sort(
+                by=[COL_MESSAGE_SURROGATE_ID, COL_NGRAM_ID]
+            ).write_parquet(context.output(OUTPUT_MESSAGE_NGRAMS).parquet_path)
         )
 
     with progress("Outputting n-gram definitions"):
-        df_ngram_defs = _create_ngram_definitions(ngrams_by_id)
         df_ngram_defs.write_parquet(context.output(OUTPUT_NGRAM_DEFS).parquet_path)
 
     with progress("Outputting messages"):

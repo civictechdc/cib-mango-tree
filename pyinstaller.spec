@@ -6,7 +6,10 @@ from PyInstaller.building.build_main import Analysis, COLLECT, BUNDLE
 import sys
 import os
 import site
+from pathlib import Path
 
+version_file = Path(os.path.dirname(SPEC)) / "VERSION"
+app_version = version_file.read_text().strip().lstrip("v") if version_file.exists() else "dev"
 
 site_packages_path = None
 block_cipher = None
@@ -103,7 +106,7 @@ if sys.platform == "darwin":
         info_plist={
             'NSPrincipalClass': 'NSApplication',
             'NSHighResolutionCapable': 'True',
-            'CFBundleShortVersionString': '0.9.0',
+            'CFBundleShortVersionString': app_version,
             'CFBundleName': 'CIB Mango Tree',  # Display name (can have spaces)
         },
     )

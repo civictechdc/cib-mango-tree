@@ -19,6 +19,7 @@ from cibmangotree.gui.components.exit_confirmation import ExitConfirmationDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import gui_colors, gui_urls
+from cibmangotree.meta.get_version import get_version
 
 
 class GuiPage(BaseModel, abc.ABC):
@@ -243,7 +244,11 @@ class GuiPage(BaseModel, abc.ABC):
             ):
                 # Left: License
                 with ui.element("div").classes("flex items-center"):
-                    ui.label("MIT License").classes("text-sm text-bold")
+                    version = get_version()
+                    version_str = f"{version}" if version else "dev"
+                    ui.label("MIT License · " + version_str).classes(
+                        "text-sm text-bold"
+                    )
 
                 # Center: Project attribution
                 with ui.element("div").classes("flex items-center gap-2"):

@@ -1,19 +1,19 @@
-import os
-from functools import lru_cache
+import sys
 from pathlib import Path
 
 
-@lru_cache(maxsize=1)
 def get_version():
-    root_path = str(Path(__file__).resolve().parents[3])
-    version_path = os.path.join(root_path, "VERSION")
-    try:
-        with open(version_path, "r") as version_file:
-            return version_file.read().strip()
-    except FileNotFoundError:
-        return None
-    except PermissionError:  # Swallow this for now
-        return None
+    """Return version string if running as a bundled app, else None.
+
+    Bundled apps have a VERSION file at the root of the PyInstaller
+    extraction directory (sys._MEIPASS). Development runs always
+    return None so the GUI shows "dev".
+    """
+    if getattr(sys, "frozen", False):
+        version_path = Path(sys._MEIPASS) / "VERSION"
+        if version_path.exists():
+            return version_path.read_text().strip()
+    return None
 
 
 def is_distributed():

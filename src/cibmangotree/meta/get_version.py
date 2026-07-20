@@ -5,7 +5,7 @@ from pathlib import Path
 
 @lru_cache(maxsize=1)
 def get_version():
-    root_path = str(Path(__file__).resolve().parent.parent)
+    root_path = str(Path(__file__).resolve().parents[3])
     version_path = os.path.join(root_path, "VERSION")
     try:
         with open(version_path, "r") as version_file:

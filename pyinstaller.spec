@@ -9,7 +9,7 @@ import site
 from pathlib import Path
 
 version_file = Path(os.path.dirname(SPEC)) / "VERSION"
-app_version = version_file.read_text().lstrip("v") if version_file.exists() else "dev"
+app_version = version_file.read_text().strip().lstrip("v") if version_file.exists() else "dev"
 
 site_packages_path = None
 block_cipher = None

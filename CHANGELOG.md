@@ -22,10 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- cleanup dead code around project_select.py by [@KristijanArmeni]
+- Cleanup dead code around project_select.py by [@KristijanArmeni]
 
 ### Fixed
 
-- add missing dependencies on Linux by [@llotenberg]
+- Add missing dependencies when running on Linux by [@llotenberg]
 
 ### Security

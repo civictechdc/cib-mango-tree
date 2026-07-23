@@ -4,7 +4,7 @@ site_author = "CIB Mango Tree"
 site_description = "An interactive python terminal UI wrapper for Mango Tree analyzers."
 site_url = "https://cibmangotree.org"
 repo_url = "https://github.com/civictechdc/cib-mango-tree"
-copyright = "Copyright &copy; 2025 CIB Mango Tree"
+copyright = "Copyright &copy; 2026 CIB Mango Tree"
 extra_css = ["stylesheets/extra.css"]
 
 nav = [
@@ -22,11 +22,9 @@ nav = [
             {"Technical Guides" = [
                 "guides/contributing/github_workflow.md",
                 "guides/contributing/analyzers.md",
-                {"Implementing Dashboards" = [
-                    "guides/contributing/dashboards/shiny.md",
-                ]},
                 "guides/contributing/logging.md",
                 "guides/contributing/testing.md",
+                "guides/contributing/profiling.md",
                 "guides/contributing/ai_assisted_dev.md",
             ]},
         ]},

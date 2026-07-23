@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add CHANGELOG.md and release checklist by [@KristijanArmeni]
+- Add profiling.md to docs by [@nrposner] & [@KristijanArmeni]
 
 ### Changed
 
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change the back/cancel buttons to red by [@KristijanArmeni]
 - Add notification button when project is created by [@KristijanArmeni]
 - Enable sorting in the project overview grid by [@KristijanArmeni]
+- Fix version setting in pyinstaller.spec (MacOS) and GUI footer by [@KristijanArmeni]  
 
 ### Deprecated
 

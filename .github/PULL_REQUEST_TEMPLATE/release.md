@@ -39,7 +39,8 @@ labels: release
    ```
 5. Verify and commit:
    - Run `pnpm audit` again to confirm CVEs are resolved
-   - Commit updated `package.json`, `pnpm-lock.yaml`, and rebuilt `components/dist/UploadButton.js`
+   - Commit updated `package.json`, `pnpm-lock.yaml`,  
+   - Check that `components/dist/UploadButton.js` has been regenerated(run `ls -l components/dist/UploadButton.js`), commit if need be  
 
 </details>
 

@@ -23,8 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add CHANGELOG.md and release checklist by [@KristijanArmeni]
-- Add profiling.md to docs by [@nrposner] & [@KristijanArmeni]
+- Add `CHANGELOG.md` and release checklist `release.md` by [@KristijanArmeni]
+- Add `profiling.md` to docs by [@nrposner] & [@KristijanArmeni]
 
 ### Changed
 
@@ -33,8 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add notification button when project is created by [@KristijanArmeni]
 - Enable sorting in the project overview grid by [@KristijanArmeni]
 - Fix version setting in pyinstaller.spec (MacOS) and GUI footer by [@KristijanArmeni]  
-
-### Deprecated
+- Update JavaScript dependencies to address CVEs in rollup, picomatch, and postcss by [@KristijanArmeni]  
 
 ### Removed
 
@@ -43,8 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Add missing dependencies when running on Linux by [@llotenberg]
-
-### Security
 
 [@KristijanArmeni]: https://github.com/KristijanArmeni
 [@nrposner]: https://github.com/nrposner

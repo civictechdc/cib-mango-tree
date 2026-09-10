@@ -1,12 +1,12 @@
 # CIB Mango Tree — AI Use Policy
 
 **Effective:** August 2026
-**Applies to:** CIB Mango Tree staff and contributors
+**Applies to:** CIB Mango Tree contributors
 
 ### In short
 
-1. Do not put secrets or private data into AI unless the service is approved for that information.
-2. You remain responsible — review AI output before you commit, ship, or rely on it.
+1. You remain responsible — review AI output before you commit, ship, or rely on it.
+2. Do not put secrets or private data into AI unless the service is approved for that information.
 3. When unsure, stop and ask before proceeding.
 
 ## 1. Purpose
@@ -34,19 +34,19 @@ AI is a tool, not an authority. Use it to accelerate your work, not to replace e
 
 **Do not put confidential or sensitive information into an AI service unless that service has been explicitly approved for that information.**
 
-Never provide an AI service with:
-
-- Passwords, API keys, tokens, certificates, or other credentials
-- Customer or user personal information
-- Confidential business information
-- Private financial, personnel, or contractual information
-- Security-sensitive information that does not need to be disclosed
-- Information that CIB Mango Tree is contractually or legally required to protect
-
 Concrete examples of what **not** to paste into an AI chat or agent:
 
 - Contents of `.env` files, signing certificates, or store/partner portal secrets
 - Real customer datasets, exports with personal identifiers, or production database dumps
+
+Never provide an AI service with:
+
+- Passwords, API keys, tokens, certificates, or other credentials
+- User personal information
+- Confidential information
+- Private financial, personnel, or contractual information
+- Security-sensitive information that does not need to be disclosed
+- Information that CIB Mango Tree is contractually or legally required to protect
 
 When working with AI, use the minimum information necessary. Prefer sanitized, synthetic, or representative data whenever possible — for example, fake names and IDs in a small sample file instead of a live export.
 
@@ -58,7 +58,8 @@ AI-generated code, documentation, analysis, or other output must be reviewed bef
 
 For software, review should include the same things we would review in human-written code:
 
-- Does it actually work?
+- Does it address the specific problem addressed in the issue?
+- Is it reviewable by a human, within a reasonable timeframe?
 - Is it secure?
 - Is it maintainable?
 - Does it introduce unnecessary dependencies?

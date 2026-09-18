@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import TypeVar
 
 import polars as pl
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from cibmangotree.preprocessing.series_semantic import SeriesSemantic
 
@@ -115,8 +115,14 @@ class ParquetTestData(FileTestData):
 
 
 class PolarsTestData(TestData):
-    def __init__(self, df: pl.DataFrame):
-        self.df = df
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    df: pl.DataFrame
+
+    def __init__(
+        self, df: pl.DataFrame, *, semantics: dict[str, SeriesSemantic] = dict()
+    ):
+        super().__init__(df=df, semantics=semantics)
 
     def _load_as_polars(self) -> pl.DataFrame:
         return self.df

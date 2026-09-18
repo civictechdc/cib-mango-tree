@@ -16,6 +16,7 @@ dependencies = [
     "filelock>=3.16.1",
     "pyarrow>=17.0.0",
     "fastexcel>=0.13.0",
+    "huggingface_hub>=0.26.2",
     "python-json-logger>=2.0.7",
     "regex>=2025.9.1",
     "urllib3>=2.7.0",
@@ -60,9 +61,19 @@ exclude-newer = "7 days"
 
 [tool.black]
 target-version = ["py312"]
+# Black's built-in defaults only exclude a directory literally named
+# `.venv`; without this, running `black .` from the repo root reformats
+# third-party vendor code inside any differently-named venv (e.g. `.venv-app`),
+# which can silently break packages that rely on a specific import order.
+extend-exclude = '''
+(
+  ^/\.venv.*
+)
+'''
 
 [tool.isort]
 profile = "black"
+skip_glob = [".venv*/**"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

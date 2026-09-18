@@ -1,4 +1,6 @@
 venv
+.venv
+.venv-app
 __pycache__
 __private__
 /build

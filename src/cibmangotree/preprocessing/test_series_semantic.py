@@ -95,6 +95,71 @@ def test_native_types_inference():
     assert infer_series_semantic(datetime_series).semantic_name == "native_datetime"
 
 
+def _apply_via_map_batches(series: pl.Series, semantic) -> pl.Series:
+    """
+    Apply a semantic's try_convert exactly the way the real preprocessing
+    pipeline does (context/__init__.py's preprocess()), via
+    `pl.col(...).map_batches(try_convert, return_dtype=...)` in a DataFrame
+    expression context - this is what actually enforces that try_convert's
+    output matches the declared return_dtype.
+    """
+    df = pl.DataFrame({series.name: series})
+    return df.select(
+        pl.col(series.name).map_batches(
+            semantic.try_convert, return_dtype=semantic.return_dtype
+        )
+    )[series.name]
+
+
+def test_timestamp_milliseconds_recognition_and_conversion():
+    """
+    Regression test: try_convert's actual output dtype must match the
+    declared return_dtype exactly, since preprocess() calls
+    `pl.col(...).map_batches(try_convert, return_dtype=...)`, which raises
+    a SchemaError on any mismatch (previously this semantic produced
+    Datetime("ms") while declaring Datetime, which polars resolves to
+    Datetime("us") - always a mismatch).
+    """
+    series = pl.Series("created_at", [1657559184000.0, 1657559181000.0])
+    semantic = infer_series_semantic(series)
+    assert semantic is not None
+    assert semantic.semantic_name == "timestamp_milliseconds"
+
+    result = _apply_via_map_batches(series, semantic)
+    assert result.dtype == semantic.return_dtype
+    assert result[0] == datetime(2022, 7, 11, 17, 6, 24)
+
+
+def test_timestamp_seconds_recognition_and_conversion():
+    """See test_timestamp_milliseconds_recognition_and_conversion."""
+    series = pl.Series("created_at", [1657559184.0, 1657559181.0])
+    semantic = infer_series_semantic(series)
+    assert semantic is not None
+    assert semantic.semantic_name == "timestamp_seconds"
+
+    result = _apply_via_map_batches(series, semantic)
+    assert result.dtype == semantic.return_dtype
+    assert result[0] == datetime(2022, 7, 11, 17, 6, 24)
+
+
+def test_native_datetime_normalizes_precision_to_match_return_dtype():
+    """
+    Regression test: a native datetime column can arrive at any precision
+    (e.g. milliseconds, from a Parquet-backed import), but try_convert must
+    normalize it to match the single fixed return_dtype declared - a plain
+    pass-through previously broke for any non-"us" precision source.
+    """
+    series = pl.Series(
+        "dt", [datetime(2022, 7, 11, 17, 6, 24), datetime(2022, 7, 11, 17, 6, 21)]
+    ).cast(pl.Datetime(time_unit="ms"))
+    semantic = infer_series_semantic(series)
+    assert semantic is not None
+    assert semantic.semantic_name == "native_datetime"
+
+    result = _apply_via_map_batches(series, semantic)
+    assert result.dtype == semantic.return_dtype
+
+
 def test_threshold_behavior():
     """Test that recognition threshold works correctly"""
 

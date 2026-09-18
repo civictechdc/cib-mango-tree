@@ -127,7 +127,10 @@ native_date = SeriesSemantic(
 native_datetime = SeriesSemantic(
     semantic_name="native_datetime",
     column_type=pl.Datetime,
-    try_convert=lambda s: s,
+    # Normalize to a fixed time unit: a source column can be stored at any
+    # precision (ms/us/ns), but return_dtype below declares a single fixed
+    # dtype, and map_batches() requires the actual output to match it exactly.
+    try_convert=lambda s: s.cast(pl.Datetime(time_unit="us")),
     validate_result=lambda s: constant_series(s, True),
     data_type="datetime",
     return_dtype=pl.Datetime,
@@ -172,7 +175,8 @@ time_string = SeriesSemantic(
 timestamp_seconds = SeriesSemantic(
     semantic_name="timestamp_seconds",
     column_type=lambda dt: dt.is_numeric(),
-    try_convert=lambda s: (s * 1_000).cast(pl.Datetime(time_unit="ms")),
+    # Normalized to "us" to match return_dtype below (see native_datetime).
+    try_convert=lambda s: (s * 1_000_000).cast(pl.Datetime(time_unit="us")),
     validate_result=lambda s: (s > datetime(2000, 1, 1)) & (s < datetime(2100, 1, 1)),
     data_type="datetime",
     return_dtype=pl.Datetime,
@@ -181,7 +185,8 @@ timestamp_seconds = SeriesSemantic(
 timestamp_milliseconds = SeriesSemantic(
     semantic_name="timestamp_milliseconds",
     column_type=lambda dt: dt.is_numeric(),
-    try_convert=lambda s: s.cast(pl.Datetime(time_unit="ms")),
+    # Normalized to "us" to match return_dtype below (see native_datetime).
+    try_convert=lambda s: (s * 1_000).cast(pl.Datetime(time_unit="us")),
     validate_result=lambda s: (s > datetime(2000, 1, 1)) & (s < datetime(2100, 1, 1)),
     data_type="datetime",
     return_dtype=pl.Datetime,

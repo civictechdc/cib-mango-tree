@@ -10,6 +10,7 @@ from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.importing.csv import CSVImporter
 from cibmangotree.importing.excel import ExcelImporter
+from cibmangotree.importing.huggingface import HuggingFaceImportSession
 
 importers = [CSVImporter(), ExcelImporter()]
 
@@ -35,7 +36,10 @@ class PreviewDatasetPage(GuiPage):
         )
 
     def requires_exit_confirmation(self) -> bool:
-        return self.session.selected_file is not None
+        return (
+            self.session.selected_file is not None
+            or self.session.import_session is not None
+        )
 
     def get_exit_confirmation_message(self) -> str:
         return "No project has been created yet. Leave anyway?"
@@ -44,6 +48,10 @@ class PreviewDatasetPage(GuiPage):
         self.session.reset_project_workflow()
 
     def _selected_file_does_not_exists(self) -> bool:
+        # A session already resolved elsewhere (e.g. a Hugging Face URL import
+        # on ImportDatasetPage) has no uploaded bytes to check for.
+        if self.session.import_session is not None:
+            return False
         return (
             not self.session.selected_file_content_type
             or not self.session.selected_file
@@ -57,28 +65,32 @@ class PreviewDatasetPage(GuiPage):
             self.navigate_to(gui_routes.import_dataset)
             return
 
-        # Auto-detect importer
-        importer = None
-        for imp in importers:
-            if imp.suggest(cast(str, self.session.selected_file_content_type)):
-                importer = imp
-                break
-
-        if not importer:
-            self.notify_error("Could not detect file format")
-            self.navigate_to(gui_routes.import_dataset)
-            return
-
         # Initialize import session and load preview
         try:
-            import_session = importer.init_session(
-                cast(BytesIO, self.session.selected_file)
-            )
-            if not import_session:
-                raise ValueError("Failed to initialize import session")
+            if self.session.import_session is not None:
+                # Already resolved (e.g. a Hugging Face URL import).
+                import_session = self.session.import_session
+            else:
+                # Auto-detect importer from the uploaded file's content type
+                importer = None
+                for imp in importers:
+                    if imp.suggest(cast(str, self.session.selected_file_content_type)):
+                        importer = imp
+                        break
 
-            # Store session for later use
-            self.session.import_session = import_session
+                if not importer:
+                    self.notify_error("Could not detect file format")
+                    self.navigate_to(gui_routes.import_dataset)
+                    return
+
+                import_session = importer.init_session(
+                    cast(BytesIO, self.session.selected_file)
+                )
+                if not import_session:
+                    raise ValueError("Failed to initialize import session")
+
+                # Store session for later use
+                self.session.import_session = import_session
 
             N_ROWS_FOR_PREVIEW = 5
             import_preview = import_session.load_preview(n_records=N_ROWS_FOR_PREVIEW)
@@ -168,12 +180,16 @@ class PreviewDatasetPage(GuiPage):
 
                 # Bottom Actions
                 with ui.row().classes("w-full justify-center gap-2"):
-                    ui.button(
-                        "There's something wrong",
-                        icon="close",
-                        color="negative",
-                        on_click=open_import_options,
-                    ).props("no-caps")
+                    # Hugging Face imports have no local options to adjust
+                    # (no delimiter/sheet choice) - only offer the dialog for
+                    # importers that actually have configurable options.
+                    if not isinstance(import_session, HuggingFaceImportSession):
+                        ui.button(
+                            "There's something wrong",
+                            icon="close",
+                            color="negative",
+                            on_click=open_import_options,
+                        ).props("no-caps")
 
                     ui.button(
                         "Looks good, let's proceed",

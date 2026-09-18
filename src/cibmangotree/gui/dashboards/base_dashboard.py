@@ -163,7 +163,13 @@ class BaseDashboardPage(GuiPage, abc.ABC):
     def _show_content(self, loading_container: ui.column, content_container: ui.column):
         """Switch from loading state to content display."""
         loading_container.style("display: none;")
-        content_container.style("display: block;")
+        # The fixed height on content_container only exists to reserve space
+        # while the spinner is showing (see _create_loading_container). Real
+        # content (chart + table stacked) is usually taller than that
+        # placeholder height, so switch to "auto" here - otherwise the extra
+        # content is clipped/overlaps whatever follows instead of being
+        # fully visible and independently scrollable.
+        content_container.style("display: block; height: auto;")
 
     def _show_error(
         self,

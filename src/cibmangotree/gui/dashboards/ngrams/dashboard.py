@@ -342,16 +342,25 @@ class NgramsDashboardPage(BaseDashboardPage):
             return
 
         try:
-            self._df_stats_sampled, self._sampling_metadata = await run.cpu_bound(
+            sampled_result = await run.cpu_bound(
                 sample_ngram_data,
                 self._df_stats,
                 50000,
             )
+            if sampled_result is None:
+                # run.cpu_bound() returns None (rather than raising) if the
+                # task was cancelled or the app is shutting down - retry once
+                # rather than crash unpacking the result below.
+                sampled_result = sample_ngram_data(self._df_stats, 50000)
+            self._df_stats_sampled, self._sampling_metadata = sampled_result
+
             option = await run.cpu_bound(
                 plot_scatter_echart,
                 self._df_stats_sampled,
                 False,
             )
+            if option is None:
+                option = plot_scatter_echart(self._df_stats_sampled, False)
         except Exception as exc:
             if self._chart_loading is not None:
                 self._show_error(self._chart_loading, f"Could not build chart: {exc}")
@@ -424,6 +433,11 @@ class NgramsDashboardPage(BaseDashboardPage):
                 df_stats,
                 False,
             )
+            if option is None:
+                # run.cpu_bound() returns None (rather than raising) if the
+                # task was cancelled or the app is shutting down - retry once
+                # rather than crash on the update() call below.
+                option = plot_scatter_echart(df_stats, False)
         except Exception as exc:
             self.notify_error(f"Could not load full dataset: {exc}")
             if self._show_all_btn is not None:

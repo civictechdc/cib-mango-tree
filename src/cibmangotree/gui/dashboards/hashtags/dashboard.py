@@ -8,7 +8,7 @@ Layout:
 - Bottom: Tweet Explorer (AG-Grid) — shows tweets for selected user/hashtag/window
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import polars as pl
 from nicegui import run, ui
@@ -20,6 +20,7 @@ from cibmangotree.analyzers.hashtags.hashtags_base.interface import (
     COL_TIME,
     OUTPUT_COL_HASHTAGS,
     OUTPUT_COL_TIMESPAN,
+    PARAM_TIME_WINDOW,
     PRIMARY_OUTPUT_DATETIME_FORMAT,
     SECONDARY_COL_HASHTAG_PERC,
     SECONDARY_COL_USERS_ALL,
@@ -105,6 +106,12 @@ class HashtagsDashboardPage(BaseDashboardPage):
             if self._gini_loading is not None:
                 self._show_error(self._gini_loading, f"Could not build chart: {exc}")
             return
+
+        if option is None:
+            # run.cpu_bound() returns None (rather than raising) if the task
+            # was cancelled or the app is shutting down - retry once rather
+            # than crash on the update() call below.
+            option = plot_gini_echart(self._df_primary, self._smooth)
 
         if (
             self._gini_chart is None
@@ -239,6 +246,14 @@ class HashtagsDashboardPage(BaseDashboardPage):
                 self._hashtag_loading, f"Could not analyze time window: {exc}"
             )
             return
+
+        if df_secondary is None:
+            # run.cpu_bound() returns None (rather than raising) if the task
+            # was cancelled or the app is shutting down - retry once rather
+            # than crash on the is_empty() check below.
+            df_secondary = secondary_analyzer(
+                self._df_primary, self._selected_timewindow
+            )
 
         if df_secondary.is_empty():
             self._show_error(
@@ -436,6 +451,18 @@ class HashtagsDashboardPage(BaseDashboardPage):
             self._show_error(self._tweet_loading, f"Could not filter tweets: {exc}")
             return
 
+        if df_tweets is None:
+            # run.cpu_bound() returns None (rather than raising) if the task
+            # was cancelled or the app is shutting down - retry once rather
+            # than crash on the is_empty() check below.
+            df_tweets = self._filter_tweets(
+                self._df_raw,
+                self._selected_user,
+                self._selected_hashtag,
+                self._selected_timewindow,
+                timewindow_end,
+            )
+
         if df_tweets.is_empty():
             self._show_error(self._tweet_loading, "No tweets found for this selection.")
             return
@@ -454,7 +481,11 @@ class HashtagsDashboardPage(BaseDashboardPage):
     ) -> pl.DataFrame:
         return (
             df_raw.filter(
-                pl.col(COL_AUTHOR_ID) == user,
+                # user is always a string (see extract_users_for_hashtag) so
+                # that large numeric ids survive the browser round-trip
+                # intact; cast this side to match regardless of the raw
+                # column's own dtype.
+                pl.col(COL_AUTHOR_ID).cast(pl.Utf8) == user,
                 pl.col(COL_TIME).is_between(time_start, time_end),
                 pl.col(COL_POST).str.contains(hashtag, literal=True),
             )
@@ -506,13 +537,35 @@ class HashtagsDashboardPage(BaseDashboardPage):
         if self._tweet_loading is not None:
             self._show_error(self._tweet_loading, "Select a user to see their posts.")
 
-    def _get_time_step(self):
-        if self._df_primary is None or len(self._df_primary) < 2:
+    def _get_time_step(self) -> timedelta | None:
+        if self._df_primary is not None and len(self._df_primary) >= 2:
+            return (
+                self._df_primary[OUTPUT_COL_TIMESPAN][1]
+                - self._df_primary[OUTPUT_COL_TIMESPAN][0]
+            )
+        # Only one time window exists in this analysis, so there's no second
+        # row to infer a bucket duration from - fall back to the analysis's
+        # actually configured bin size instead of giving up. Without this,
+        # any dataset whose activity all falls into a single time bucket
+        # could never show tweets for any user (there'd be no way to know
+        # where that bucket ends).
+        return self._get_configured_time_step()
+
+    def _get_configured_time_step(self) -> timedelta | None:
+        analysis = self.session.current_analysis
+        if analysis is None:
             return None
-        return (
-            self._df_primary[OUTPUT_COL_TIMESPAN][1]
-            - self._df_primary[OUTPUT_COL_TIMESPAN][0]
-        )
+        time_window = analysis.param_values.get(PARAM_TIME_WINDOW)
+        if time_window is None:
+            return None
+        try:
+            start = datetime(2000, 1, 1)
+            end = (
+                pl.Series([start]).dt.offset_by(time_window.to_polars_truncate_spec())
+            ).item()
+            return end - start
+        except Exception:
+            return None
 
     def render_content(self) -> None:
         ui.add_css("""

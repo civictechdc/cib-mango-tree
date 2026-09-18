@@ -159,7 +159,13 @@ def extract_users_for_hashtag(
 
     users_col = hashtag_rows[SECONDARY_COL_USERS_ALL].to_list()[0]
     return (
+        # Cast to string before this ever reaches the browser: a numeric
+        # user id (e.g. a Twitter/X-style snowflake id) can exceed
+        # JavaScript's 2^53 safe integer range, silently getting rounded to
+        # a different value on the client and back - which then never
+        # matches the original id when the user clicks a row.
         pl.DataFrame({SECONDARY_COL_USERS_ALL: users_col})
+        .with_columns(pl.col(SECONDARY_COL_USERS_ALL).cast(pl.Utf8))
         .group_by(SECONDARY_COL_USERS_ALL)
         .agg(pl.count().alias("count"))
         .sort("count", descending=True)

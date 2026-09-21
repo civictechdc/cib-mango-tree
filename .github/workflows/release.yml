@@ -90,10 +90,11 @@ jobs:
   publish_msix:
     needs: [call-build_gui]
     if: >-
-      github.ref_type == 'tag' &&
-      !contains(github.ref_name, '-alpha') &&
-      !contains(github.ref_name, '-beta') &&
-      !contains(github.ref_name, '-rc')
+      github.ref_type == 'tag'
+    # github.ref_type == 'tag' &&
+    # !contains(github.ref_name, '-alpha') &&
+    # !contains(github.ref_name, '-beta') &&
+    # !contains(github.ref_name, '-rc')
     runs-on: windows-latest
     # Editor may warn "Context access might be invalid" for these — custom secrets/vars live in
     # GitHub Settings, not this file. Safe to ignore if they are configured on the repo.

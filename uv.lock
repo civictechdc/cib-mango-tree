@@ -3,7 +3,7 @@ revision = 3
 requires-python = ">=3.12"
 
 [options]
-exclude-newer = "2026-09-14T23:19:26.942774Z"
+exclude-newer = "2026-09-14T23:36:33.504717Z"
 exclude-newer-span = "P7D"
 
 [[package]]
@@ -379,7 +379,7 @@ wheels = [
 
 [[package]]
 name = "cibmangotree"
-version = "0.13.0a0"
+version = "0.13.0"
 source = { editable = "." }
 dependencies = [
     { name = "aiohttp" },

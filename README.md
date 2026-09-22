@@ -51,6 +51,10 @@ If you are already familiar with the bigger picture, head over to the [Installat
 
 This repository includes hybrid AI documentation enhanced with semantic code analysis. Please see our short [AI-assisted Development Guide](https://civictechdc.github.io/cib-mango-tree/guides/contributing/ai_assisted_dev).
 
+## AI policy
+
+Contributors using AI tools should follow the project [AI Use Policy](AI_POLICY.md).
+
 ## License
 
 This project is licensed under the [MIT License](https://opensource.org/license/mit).

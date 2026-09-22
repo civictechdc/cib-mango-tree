@@ -6,6 +6,14 @@ from cibmangotree.gui.base import GuiPage
 from cibmangotree.gui.components import NewProjectDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    ROW_ACTIONS,
+    ROW_CENTERED,
+    STYLE_CENTERED,
+    TEXT_HEADING,
+    TEXT_MUTED,
+    TEXT_WARNING_NOTE,
+)
 
 _COLUMNS = [
     {
@@ -88,14 +96,14 @@ class StartPage(GuiPage):
 
         with self.centered_content(height="auto", padding="2rem"):
             ui.html(self._load_svg_icon("cibmt_logo"), sanitize=False).classes(
-                "size-24 q-mb-md"
+                "size-24 mb-4"
             )
 
             with ui.column().classes("w-full") as container:
-                container.style("max-width: 960px; margin: 0 auto;")
+                container.style(STYLE_CENTERED)
 
-                with ui.row().classes("w-full items-center"):
-                    ui.label("Projects").classes("text-h6 text-gray-600")
+                with ui.row().classes(ROW_CENTERED):
+                    ui.label("Projects").classes(f"{TEXT_HEADING} {TEXT_MUTED}")
                     ui.space()
                     ui.button(
                         "Create New",
@@ -106,7 +114,7 @@ class StartPage(GuiPage):
 
                 self._build_table()
 
-                with ui.row().classes("w-full gap-4 q-mt-md justify-end"):
+                with ui.row().classes("w-full gap-4 mt-4 justify-end"):
                     self._delete_button = ui.button(
                         "Delete",
                         on_click=self._handle_delete_project,
@@ -219,9 +227,9 @@ class StartPage(GuiPage):
         project_name = selected["project_name"]
 
         with ui.dialog() as dialog, ui.card():
-            ui.label(f"Delete project '{project_name}'?").classes("q-mb-md")
-            ui.label("This action cannot be undone.").classes("text-warning q-mb-lg")
-            with ui.row().classes("w-full justify-end gap-2"):
+            ui.label(f"Delete project '{project_name}'?").classes("mb-4")
+            ui.label("This action cannot be undone.").classes(TEXT_WARNING_NOTE)
+            with ui.row().classes(ROW_ACTIONS):
                 ui.button(
                     "Cancel", on_click=lambda: dialog.submit(False), color="cancel"
                 ).props("outline")

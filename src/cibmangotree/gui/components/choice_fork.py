@@ -13,7 +13,7 @@ def two_button_choice_fork_content(
     right_button_icon: str,
 ) -> None:
     # Prompt label
-    ui.label(prompt).classes("q-mb-lg").style("font-size: 1.05rem")
+    ui.label(prompt).classes("mb-6").style("font-size: 1.05rem")
 
     # Action buttons row
     with ui.row().classes("gap-4"):

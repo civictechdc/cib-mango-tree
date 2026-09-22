@@ -46,6 +46,10 @@ New contributions are welcome! Before contributing, please check out our [Techni
 
 If you are already familiar with the bigger picture, head over to the [Installation guide](https://civictechdc.github.io/cib-mango-tree/guides/get-started/installation/) in our docs to see how to setup your development environment.
 
+### Styling
+
+The [Styling Guide](https://civictechdc.github.io/cib-mango-tree/guides/contributing/styling) is for contributors working on the application's frontend. Its goal is to keep frontend contributions consistent and easier to understand and maintain as the project evolves.
+
 
 ### AI-assisted development.
 

@@ -10,6 +10,15 @@ from typing import Callable
 
 from nicegui import ui
 
+from cibmangotree.gui.theme import (
+    ICON_INFO,
+    ROW_LABEL_ICON,
+    ROW_LAYOUT,
+    STYLE_LABEL_GUTTER,
+    TEXT_FIELD_LABEL,
+    TEXT_MUTED,
+    TEXT_TOOLTIP_BODY,
+)
 from cibmangotree.importing.csv import CsvImportSession
 from cibmangotree.importing.excel import ExcelImportSession
 
@@ -74,13 +83,11 @@ class ImportOptionsDialog(ui.dialog):
         """Build CSV-specific configuration controls."""
         session = self.import_session
 
-        ROW_LAYOUT = "w-full items-center gap-2 mb-2"
-
         # Row 1: Column Separator
         with ui.row().classes(ROW_LAYOUT):
-            with ui.row().classes("items-center gap-1").style("min-width: 160px"):
-                ui.label("Column separator:").classes("text-base font-bold")
-                with ui.icon("info").classes("text-grey-6 cursor-pointer"):
+            with ui.row().classes(ROW_LABEL_ICON).style(STYLE_LABEL_GUTTER):
+                ui.label("Column separator:").classes(TEXT_FIELD_LABEL)
+                with ui.icon("info").classes(ICON_INFO):
                     with (
                         ui.tooltip()
                         .classes("w-64")
@@ -92,7 +99,7 @@ class ImportOptionsDialog(ui.dialog):
                             "Data files separate columns by commas, semicolons, pipes, or "
                             "tabs (empty space). Open your data file in a text editor to "
                             "visually determine what symbols are separating your columns."
-                        ).classes("text-base leading-relaxed whitespace-normal")
+                        ).classes(TEXT_TOOLTIP_BODY)
             self.separator_toggle = ui.toggle(
                 {
                     ",": "Comma (,)",
@@ -105,9 +112,9 @@ class ImportOptionsDialog(ui.dialog):
 
         # Row 2: Quote Character
         with ui.row().classes(ROW_LAYOUT):
-            with ui.row().classes("items-center gap-1").style("min-width: 160px"):
-                ui.label("Quote character:").classes("text-base font-bold")
-                with ui.icon("info").classes("text-grey-6 cursor-pointer"):
+            with ui.row().classes(ROW_LABEL_ICON).style(STYLE_LABEL_GUTTER):
+                ui.label("Quote character:").classes(TEXT_FIELD_LABEL)
+                with ui.icon("info").classes(ICON_INFO):
                     with (
                         ui.tooltip()
                         .classes("w-64")
@@ -121,7 +128,7 @@ class ImportOptionsDialog(ui.dialog):
                             "contains a comma or a line break. The default quote character "
                             'is a double quote ("), but your dataset might use a single '
                             "quote (')."
-                        ).classes("text-base leading-relaxed whitespace-normal")
+                        ).classes(TEXT_TOOLTIP_BODY)
             self.quote_toggle = ui.toggle(
                 {
                     '"': 'Double quote (")',
@@ -132,9 +139,9 @@ class ImportOptionsDialog(ui.dialog):
 
         # Row 3: Has Header
         with ui.row().classes(ROW_LAYOUT):
-            with ui.row().classes("items-center gap-1").style("min-width: 160px"):
-                ui.label("Has header:").classes("text-base font-bold")
-                with ui.icon("info").classes("text-grey-6 cursor-pointer"):
+            with ui.row().classes(ROW_LABEL_ICON).style(STYLE_LABEL_GUTTER):
+                ui.label("Has header:").classes(TEXT_FIELD_LABEL)
+                with ui.icon("info").classes(ICON_INFO):
                     with (
                         ui.tooltip()
                         .classes("w-64")
@@ -146,7 +153,7 @@ class ImportOptionsDialog(ui.dialog):
                             "Some datasets feature a header row with the title of the "
                             "dataset, which does not contain data in individual columns. "
                             'If your dataset has this, click "yes" here, and vice versa.'
-                        ).classes("text-base leading-relaxed whitespace-normal")
+                        ).classes(TEXT_TOOLTIP_BODY)
             self.header_toggle = ui.toggle(
                 {True: "Yes", False: "No"},
                 value=session.has_header,
@@ -154,9 +161,9 @@ class ImportOptionsDialog(ui.dialog):
 
         # Row 4: Skip Rows
         with ui.row().classes(ROW_LAYOUT):
-            with ui.row().classes("items-center gap-1").style("min-width: 160px"):
-                ui.label("Skip rows:").classes("text-base font-bold")
-                with ui.icon("info").classes("text-grey-6 cursor-pointer"):
+            with ui.row().classes(ROW_LABEL_ICON).style(STYLE_LABEL_GUTTER):
+                ui.label("Skip rows:").classes(TEXT_FIELD_LABEL)
+                with ui.icon("info").classes(ICON_INFO):
                     with (
                         ui.tooltip()
                         .classes("w-64")
@@ -168,7 +175,7 @@ class ImportOptionsDialog(ui.dialog):
                             "Some datasets begin with multiple rows that contain titles, "
                             "blurbs, or other irrelevant information. Count the number of "
                             "these rows and enter the corresponding number to skip them"
-                        ).classes("text-base leading-relaxed whitespace-normal")
+                        ).classes(TEXT_TOOLTIP_BODY)
             self.skip_rows_input = ui.number(
                 label="Number of rows to skip at start",
                 value=session.skip_rows,
@@ -186,11 +193,11 @@ class ImportOptionsDialog(ui.dialog):
         """Build Excel-specific configuration controls."""
         session = self.import_session
 
-        ui.label("Excel Import Options").classes("text-sm text-gray-600 mb-2")
+        ui.label("Excel Import Options").classes(f"text-sm {TEXT_MUTED} mb-2")
         ui.label(f"Sheet: {session.selected_sheet}").classes("text-base")
 
         # Future enhancement: Add sheet selector dropdown
-        ui.label("(Sheet selection coming soon)").classes("text-sm text-gray-500 mt-2")
+        ui.label("(Sheet selection coming soon)").classes(f"text-sm {TEXT_MUTED} mt-2")
 
     async def _handle_retry(self):
         """Handle retry import button click."""

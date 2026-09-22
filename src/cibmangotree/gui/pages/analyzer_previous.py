@@ -8,6 +8,7 @@ from cibmangotree.gui.components.analysis_utils import present_timestamp
 from cibmangotree.gui.components.manage_analyses import ManageAnalysisDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import TEXT_MUTED
 
 
 class SelectPreviousAnalyzerPage(GuiPage):
@@ -58,7 +59,7 @@ class SelectPreviousAnalyzerPage(GuiPage):
             if self.analysis_contexts:
                 self._render_previous_analyses_grid()
             else:
-                ui.label("No previous tests have been found.").classes("text-grey")
+                ui.label("No previous tests have been found.").classes(TEXT_MUTED)
 
             async def _on_proceed():
                 """Handle proceed button click."""

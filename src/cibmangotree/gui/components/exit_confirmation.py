@@ -26,7 +26,7 @@ class ExitConfirmationDialog(ui.dialog):
     ):
         super().__init__()
         with self, ui.card().classes("w-80 items-center"):
-            ui.label(message).classes("text-center q-mb-md")
+            ui.label(message).classes("text-center mb-4")
             with ui.row().classes("gap-2"):
                 ui.button(
                     cancel_text,

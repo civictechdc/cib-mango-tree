@@ -14,8 +14,7 @@ from cibmangotree.analyzers.hashtags.hashtags_base.interface import (
     OUTPUT_COL_TIMESPAN,
     PRIMARY_OUTPUT_DATETIME_FORMAT,
 )
-
-MANGO_DARK_ORANGE = "#f3921e"
+from cibmangotree.gui.theme import CHART_HIGHLIGHT, MANGO_ORANGE
 
 
 def _format_date_for_axis(ts: datetime, is_hourly: bool) -> str:
@@ -74,7 +73,7 @@ def plot_gini_echart(
             "emphasis": {
                 "showSymbol": True,
                 "itemStyle": {
-                    "color": "#d62728",
+                    "color": CHART_HIGHLIGHT,
                     "symbolSize": 12,
                     "shadowBlur": 10,
                     "shadowColor": "rgba(0, 0, 0, 0.3)",
@@ -101,13 +100,13 @@ def plot_gini_echart(
                 "name": "Smoothed",
                 "type": "line",
                 "data": smooth_series_data,
-                "lineStyle": {"color": MANGO_DARK_ORANGE, "width": 2},
-                "itemStyle": {"color": MANGO_DARK_ORANGE},
+                "lineStyle": {"color": MANGO_ORANGE, "width": 2},
+                "itemStyle": {"color": MANGO_ORANGE},
                 "showSymbol": False,
                 "emphasis": {
                     "showSymbol": True,
                     "itemStyle": {
-                        "color": "#d62728",
+                        "color": CHART_HIGHLIGHT,
                         "symbolSize": 12,
                         "shadowBlur": 10,
                         "shadowColor": "rgba(0, 0, 0, 0.3)",

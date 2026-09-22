@@ -56,7 +56,7 @@ class PostAnalysisPage(GuiPage):
                 self.notify_error(f"Could not open results folder: {e}")
 
         with self.centered_content():
-            ui.label("What would you like to do next?").classes("q-mb-lg").style(
+            ui.label("What would you like to do next?").classes("mb-6").style(
                 "font-size: 1.05rem"
             )
 

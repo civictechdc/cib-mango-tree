@@ -5,6 +5,12 @@ from nicegui import ui
 from cibmangotree.app.analysis_context import AnalysisContext
 from cibmangotree.gui.components.analysis_utils import present_timestamp
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    ROW_ACTIONS,
+    TEXT_MUTED,
+    TEXT_SECTION_HEADING,
+    TEXT_WARNING_NOTE,
+)
 
 
 class ManageAnalysisDialog(ui.dialog):
@@ -37,11 +43,11 @@ class ManageAnalysisDialog(ui.dialog):
         # Build dialog UI
         with self, ui.card().classes("w-full"):
             # Dialog title
-            ui.label("Manage Analyses").classes("text-h6 q-mb-md")
+            ui.label("Manage Analyses").classes(TEXT_SECTION_HEADING)
 
             # Check if there are analyses to display
             if not self.analysis_contexts:
-                ui.label("No analyses found").classes("text-grey q-mb-md")
+                ui.label("No analyses found").classes(f"{TEXT_MUTED} mb-4")
             else:
                 # Analyses grid — multiRow selection enabled
                 self.grid = ui.aggrid(
@@ -69,7 +75,7 @@ class ManageAnalysisDialog(ui.dialog):
                 ).classes("w-full h-96")
 
             # Action buttons
-            with ui.row().classes("w-full justify-end gap-2 mt-4"):
+            with ui.row().classes(f"{ROW_ACTIONS} mt-4"):
                 ui.button(
                     "Close",
                     on_click=self._handle_close,
@@ -152,12 +158,10 @@ class ManageAnalysisDialog(ui.dialog):
             description = f"{count} analyses"
 
         with ui.dialog() as dialog, ui.card():
-            ui.label(f"Are you sure you want to delete {description}?").classes(
-                "q-mb-md"
-            )
-            ui.label("This action cannot be undone.").classes("text-warning q-mb-lg")
+            ui.label(f"Are you sure you want to delete {description}?").classes("mb-4")
+            ui.label("This action cannot be undone.").classes(TEXT_WARNING_NOTE)
 
-            with ui.row().classes("w-full justify-end gap-2"):
+            with ui.row().classes(ROW_ACTIONS):
                 ui.button(
                     "Cancel",
                     on_click=lambda: dialog.submit(False),

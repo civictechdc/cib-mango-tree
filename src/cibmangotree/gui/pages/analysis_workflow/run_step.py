@@ -9,7 +9,15 @@ from cibmangotree.app.analysis_context import AnalysisContext, AnalysisQueueMess
 from cibmangotree.gui.base import GuiPage
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
-from cibmangotree.gui.theme import MANGO_DARK_GREEN, MANGO_ORANGE
+from cibmangotree.gui.theme import (
+    CARD_CONTENT,
+    COL_STACK,
+    MANGO_DARK_GREEN,
+    MANGO_ORANGE,
+    STYLE_CENTERED,
+    TEXT_MUTED,
+    TEXT_STEP_TITLE,
+)
 
 QUEUE_POLL_INTERVAL = 0.05
 
@@ -32,21 +40,17 @@ class RunAnalysisStep:
         params = self.session.analysis_params
 
         if not analyzer:
-            ui.label("Please select an analyzer first").classes("text-grey")
+            ui.label("Please select an analyzer first").classes(TEXT_MUTED)
             return
 
         if not column_mapping:
-            ui.label("Please map columns first").classes("text-grey")
+            ui.label("Please map columns first").classes(TEXT_MUTED)
             return
 
-        with (
-            ui.column()
-            .classes("w-full items-center gap-6")
-            .style("max-width: 960px; margin: 0 auto;")
-        ):
-            ui.label("Configuration Summary").classes("text-lg font-bold mb-4")
+        with ui.column().classes("w-full items-center gap-6").style(STYLE_CENTERED):
+            ui.label("Configuration Summary").classes(TEXT_STEP_TITLE)
 
-            with ui.card().classes("w-full p-4 no-shadow border border-gray-200"):
+            with ui.card().classes(CARD_CONTENT):
                 with ui.column().classes("gap-2"):
                     ui.label(
                         f"Analyzer: {analyzer.name if analyzer else 'Not selected'}"
@@ -119,13 +123,13 @@ class RunAnalysisStep:
             analyzer_header = ui.label(analyzer.name).classes("text-xl font-semibold")
             status_label = (
                 ui.label("Initializing...")
-                .classes("text-base text-medium")
+                .classes("text-base font-medium")
                 .style(f"color: {MANGO_ORANGE}")
             )
 
-            step_list_container = ui.column().classes("w-full gap-1 mt-4")
+            step_list_container = ui.column().classes(f"{COL_STACK} mt-4")
 
-            log_container = ui.column().classes("w-full gap-1 mt-2")
+            log_container = ui.column().classes(f"{COL_STACK} mt-2")
 
             with ui.row().classes("gap-4 mt-4"):
                 cancel_btn = ui.button(
@@ -168,7 +172,7 @@ class RunAnalysisStep:
 
                 if current_step_name and current_step_name in step_rows:
                     _, _, prev_label = step_rows[current_step_name]
-                    prev_label.classes(add="text-gray-600", remove="text-medium")
+                    prev_label.classes(add=TEXT_MUTED, remove="font-medium")
                     prev_label.style("")
 
                 current_step_name = step_name
@@ -181,7 +185,7 @@ class RunAnalysisStep:
                             "check_circle", color=MANGO_DARK_GREEN, size="sm"
                         )
                         checkmark.set_visibility(False)
-                        label = ui.label(step_name).classes("text-medium")
+                        label = ui.label(step_name).classes("font-medium")
                 step_rows[step_name] = (spinner, checkmark, label)
 
             elif msg.type == "step_finish":
@@ -189,7 +193,7 @@ class RunAnalysisStep:
                     spinner, checkmark, label = step_rows[current_step_name]
                     spinner.set_visibility(False)
                     checkmark.set_visibility(True)
-                    label.classes(add="text-gray-600", remove="text-medium")
+                    label.classes(add=TEXT_MUTED, remove="font-medium")
                     label.style("")
                     label.text = current_step_name
                 current_step_name = None

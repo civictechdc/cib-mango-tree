@@ -8,3 +8,12 @@ repos:
     rev: 26.3.1
     hooks:
       - id: black
+
+  - repo: local
+    hooks:
+      - id: gui-styles
+        name: GUI styling convention
+        entry: python src/cibmangotree/gui/_style_rules.py --fix
+        language: system
+        types: [python]
+        files: ^src/cibmangotree/gui/(?!tests/)

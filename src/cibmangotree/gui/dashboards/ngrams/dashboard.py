@@ -13,6 +13,8 @@ from cibmangotree.analyzers.ngrams.ngrams_base.interface import (
     COL_MESSAGE_SURROGATE_ID,
     COL_MESSAGE_TEXT,
     OUTPUT_MESSAGE,
+    COL_AUTHOR_ID,
+    COL_MESSAGE_TIMESTAMP,
 )
 from cibmangotree.analyzers.ngrams.ngrams_stats.interface import (
     COL_NGRAM_WORDS,
@@ -76,6 +78,11 @@ class NgramsDashboardPage(BaseDashboardPage):
         self._grid_content: ui.column | None = None
         self._sampling_label: ui.label | None = None
         self._show_all_btn: ui.button | None = None
+
+        #Popup 
+        self._oldest_post: str | None = None
+        self._newest_post: str | None = None
+        
 
     def _get_top_n_summary(self, n: int = 100) -> pl.DataFrame:
         df = self._get_filtered_stats()
@@ -207,6 +214,66 @@ class NgramsDashboardPage(BaseDashboardPage):
 
     def _clear_all_highlights(self) -> None:
         self._chart.run_chart_method("dispatchAction", {"type": "downplay"})
+
+    #For cell clicking
+    def _handle_cell_click(self, e) -> None:
+        data = e.args 
+        if not data or "data" not in data: 
+            return
+        
+        user = data["data"].get("User ID")
+        if not user:
+            return    
+
+        col_id = data['colId']
+        if col_id == "User ID":
+            self._open_user_popup(user)
+
+    #Popup
+    def _open_user_popup(self, user) -> None:
+        posts = (
+            pl.scan_parquet(self._messages_path)
+            .filter(pl.col(COL_AUTHOR_ID) == user)
+            .select(COL_MESSAGE_TIMESTAMP, COL_MESSAGE_TEXT)
+            .collect()
+        )
+        total_num_posts = posts.height
+        self._oldest_post = posts[COL_MESSAGE_TIMESTAMP].min()
+        self._newest_post = posts[COL_MESSAGE_TIMESTAMP].max()
+
+        posts = posts.with_columns(pl.col(COL_MESSAGE_TIMESTAMP).dt.strftime("%B %d, %Y %H:%M:%S"))
+
+       
+        with ui.dialog() as dialog, ui.card().classes("w-full").style("max-width: none"):
+            with ui.row().classes("w-full justify-between items-center"):
+                ui.label(f"User Viewer - {user}").classes("text-h6")
+                ui.button(icon="close", on_click=dialog.close).props("flat round dense") 
+            with ui.row().classes("text-body2 text-grey-7 gap-7"):
+                ui.label(f"Total Posts: {total_num_posts}")
+                ui.label(f"First Post: { self._oldest_post.strftime("%H:%M:%S %d/%M/%Y") }")
+                ui.label(f"Last Post: { self._newest_post.strftime("%H:%M:%S %d/%M/%Y") }")
+            ui.aggrid(
+                        {
+                        "columnDefs": [
+                            {"headerName": "Post Content", "field": COL_MESSAGE_TEXT},
+                            {"headerName": "Timestamp", "field": COL_MESSAGE_TIMESTAMP}
+                        ],
+                        "rowData": posts.to_dicts(),
+                        "defaultColDef": {
+                            "sortable": True,
+                            "filter": True,
+                            "resizable": True,
+                            },
+                        "tooltipShowDelay": 200,
+                        "tooltipSwitchShowDelay": 70,
+                        ":tooltipValueGetter": "(params) => params.value"
+                        },
+                        theme="quartz",
+                    ).classes("w-full").style("height: 400px")   
+                    
+        dialog.open()
+        
+
 
     def _handle_point_click(self, e) -> None:
         clicked_words = e.data.get("words")
@@ -490,7 +557,6 @@ class NgramsDashboardPage(BaseDashboardPage):
                             .classes("w-full")
                             .style("height: 500px")
                         )
-
                 with ui.row().classes("w-full items-center gap-4"):
                     self._sampling_label = ui.label("").classes(
                         "text-body2 text-grey-7"
@@ -530,5 +596,7 @@ class NgramsDashboardPage(BaseDashboardPage):
                             .classes("w-full")
                             .style("height: 400px")
                         )
+                        #For popup
+                        self._grid.on("cellClicked", self._handle_cell_click)
 
         ui.timer(0, self._load_and_render_async, once=True)

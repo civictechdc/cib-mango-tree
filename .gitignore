@@ -8,6 +8,5 @@ __private__
 VERSION
 *.DS_Store
 .env*
-.serena/cache
 .specify/
 *.egg-info

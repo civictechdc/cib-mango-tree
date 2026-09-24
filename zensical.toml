@@ -25,7 +25,6 @@ nav = [
                 "guides/contributing/logging.md",
                 "guides/contributing/testing.md",
                 "guides/contributing/profiling.md",
-                "guides/contributing/ai_assisted_dev.md",
             ]},
         ]},
         {"Design Philosophy" = [

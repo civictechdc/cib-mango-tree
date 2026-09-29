@@ -60,6 +60,8 @@ jobs:
 
     name: ${{ matrix.platform_name }}
     runs-on: ${{ matrix.os }}
+    env:
+      artifact_path: ""
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -73,6 +75,9 @@ jobs:
         uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v8.0.0
         with:
           enable-cache: true
+          # Distinct from test.yml pytest jobs: both use setup-uv on windows-2022 /
+          # macos-15 in the same Tests run, without this suffix they would share one cache key, resulting in warnings in the CI run.
+          cache-suffix: gui
 
       - name: Install dependencies
         run: uv sync --locked --no-dev
@@ -128,6 +133,104 @@ jobs:
 
       - name: Test executable with --noop
         run: ${{ matrix.check_command }}
+
+      - name: Package Windows - MSIX
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          $pyproject = Get-Content pyproject.toml -Raw
+          if ($pyproject -notmatch '(?m)^version = "([^"]+)"') {
+            throw "Could not read version from pyproject.toml"
+          }
+
+          $parts = $Matches[1].TrimStart("v").Split(".")
+          while ($parts.Count -lt 4) { $parts += "0" }
+          $msixVersion = ($parts[0..3] -join ".")
+
+          Write-Host "MSIX Identity Version: $msixVersion"
+
+          $root = (Get-Location).Path
+          $packRoot = Join-Path $root "msix_payload"
+
+          if (Test-Path $packRoot) {
+            Remove-Item $packRoot -Recurse -Force
+          }
+
+          New-Item -ItemType Directory -Path $packRoot | Out-Null
+
+          Copy-Item `
+            -Path (Join-Path $root "dist\CIBMangoTree\*") `
+            -Destination $packRoot `
+            -Recurse
+
+          Copy-Item `
+            -Path (Join-Path $root "packaging\msix\AppxManifest.xml") `
+            -Destination (Join-Path $packRoot "AppxManifest.xml")
+
+          Copy-Item `
+            -Path (Join-Path $root "packaging\msix\Assets") `
+            -Destination (Join-Path $packRoot "Assets") `
+            -Recurse
+
+          $manifestPath = Join-Path $packRoot "AppxManifest.xml"
+          $manifest = [System.IO.File]::ReadAllText($manifestPath)
+
+          # Stamp the version supplied by pyproject.toml.
+          $manifest = $manifest -replace `
+            'Version="0\.0\.0\.0"', `
+            "Version=`"$msixVersion`""
+
+          $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+          [System.IO.File]::WriteAllText($manifestPath, $manifest, $utf8NoBom)
+
+          # Verify the Microsoft Store identity from AppxManifest.xml.
+          if ($manifest -notmatch 'Name="AlternativeNewsweeklyFoun\.CIBMangoTree"') {
+            throw "MSIX manifest has an unexpected Identity Name."
+          }
+
+          if ($manifest -notmatch 'Publisher="CN=C14B7C4E-669C-42C0-8DC2-159FACF8C396"') {
+            throw "MSIX manifest has an unexpected Publisher."
+          }
+
+          if ($manifest -notmatch '<PublisherDisplayName>Alternative Newsweekly Foundation</PublisherDisplayName>') {
+            throw "MSIX manifest has an unexpected PublisherDisplayName."
+          }
+
+          if ($manifest -notmatch "Version=`"$msixVersion`"") {
+            throw "MSIX manifest version was not stamped correctly."
+          }
+
+          Write-Host "MSIX manifest identity verified."
+          Write-Host "  Name: AlternativeNewsweeklyFoun.CIBMangoTree"
+          Write-Host "  Publisher: CN=C14B7C4E-669C-42C0-8DC2-159FACF8C396"
+          Write-Host "  Publisher Display Name: Alternative Newsweekly Foundation"
+          Write-Host "  Version: $msixVersion"
+
+          $makeappx = @(
+            Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\makeappx.exe" -ErrorAction SilentlyContinue
+            Get-Item "${env:ProgramFiles(x86)}\Windows Kits\10\App Certification Kit\makeappx.exe" -ErrorAction SilentlyContinue
+          ) |
+            Where-Object { $_ -ne $null } |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1
+
+          if (-not $makeappx) {
+            throw "MakeAppx.exe not found. Install the Windows SDK on this runner."
+          }
+
+          Write-Host "Using $($makeappx.FullName)"
+
+          $msixPath = Join-Path $root "dist\${{ matrix.artifact_name }}.msix"
+
+          & $makeappx.FullName pack /d $packRoot /p $msixPath /o /v
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "MakeAppx pack failed with exit code $LASTEXITCODE"
+          }
+
+          Get-Item $msixPath | Format-List Name, Length, FullName
 
       - name: Clean up redundant onedir folder
         if: runner.os == 'macOS'
@@ -190,3 +293,10 @@ jobs:
         with:
           name: ${{ matrix.artifact_name }}
           path: ${{ env.artifact_path }}
+
+      - name: Upload MSIX artifact
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.artifact_name }}_msix
+          path: dist/${{ matrix.artifact_name }}.msix

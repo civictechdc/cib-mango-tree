@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cibmangotree"
-version = "0.12.0"
+version = "0.13.0"
 description = "Interactive social media data analysis tool"
 requires-python = ">=3.12"
 dependencies = [
@@ -21,7 +21,7 @@ dependencies = [
     "urllib3>=2.7.0",
     "nicegui[native]>=3.12.0",
     # TODO: Remove once nicegui updates aiohttp transitive dep (CVE-2026-34993, CVE-2026-47265)
-    "aiohttp>=3.14.0",
+    "aiohttp>=3.14.2",
     # TODO: add alternative GTK dependencies
     "pyqt6>=6.11.0 ; sys_platform == 'linux'",
     "qtpy>=2.4.3 ; sys_platform == 'linux'",
@@ -40,7 +40,7 @@ dev = [
     "pyinstaller>=6.14.1",
     "pip-audit>=2.7.0",
     # TODO: Remove once pip-api updates pip transitive dep (PYSEC-2026-196)
-    "pip>=26.1.2",
+    "pip>=26.2",
 ]
 docs = [
     "zensical",

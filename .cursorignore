@@ -1,0 +1,27 @@
+# Reduce indexing noise for Cursor; do not replace .gitignore
+
+# Virtual envs & caches
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+.benchmarks/
+.serena/cache/
+.specify/
+node_modules/
+
+# Build / docs output
+build/
+dist/
+site/
+analysis_outputs/
+
+# Large / generated
+*.egg-info/
+uv.lock
+pylock.toml
+*.icns
+*.ico
+
+# Local personal notes stay available if opened explicitly, but skip bulk index
+mjb_notes/

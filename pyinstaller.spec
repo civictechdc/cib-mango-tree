@@ -8,7 +8,7 @@ import os
 import site
 from pathlib import Path
 
-version_file = Path(os.path.dirname(SPEC)) / "VERSION"
+version_file = Path(os.path.dirname(SPEC)) / "VERSION"  # pyright: ignore[reportUndefinedVariable]. pyright complains about SPEC being undefined
 app_version = version_file.read_text().strip().lstrip("v") if version_file.exists() else "dev"
 
 site_packages_path = None

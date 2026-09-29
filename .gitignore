@@ -1,0 +1,24 @@
+venv
+__pycache__
+__private__
+/build
+/dist
+/analysis_outputs
+/site
+VERSION
+*.DS_Store
+.env*
+.specify/
+node_modules
+./gui/components/dist
+
+.vscode
+
+# cursor
+./gui/.cursor 
+*.egg-info
+/confirmed_russia_troll_tweets_preproc.csv
+
+# Local personal notes (not tracked)
+/mjb_notes/
+.cursor/

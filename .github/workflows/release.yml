@@ -86,3 +86,52 @@ jobs:
             3. For first launch, right-click → "Open" to bypass Gatekeeper if needed
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish_msix:
+    needs: [call-build_gui]
+    if: >-
+      github.ref_type == 'tag'
+    # github.ref_type == 'tag' &&
+    # !contains(github.ref_name, '-alpha') &&
+    # !contains(github.ref_name, '-beta') &&
+    # !contains(github.ref_name, '-rc')
+    runs-on: windows-latest
+    # Editor may warn "Context access might be invalid" for these — custom secrets/vars live in
+    # GitHub Settings, not this file. Safe to ignore if they are configured on the repo.
+    env:
+      AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+      SELLER_ID: ${{ secrets.SELLER_ID }}
+      AZURE_AD_APPLICATION_CLIENT_ID: ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }}
+      AZURE_AD_APPLICATION_SECRET: ${{ secrets.AZURE_AD_APPLICATION_SECRET }}
+      STORE_PRODUCT_ID: ${{ vars.STORE_PRODUCT_ID }}
+    steps:
+      - name: Download MSIX artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: CIBMangoTree_windows_msix
+          path: msix
+
+      - name: Configure Microsoft Store CLI
+        uses: microsoft/microsoft-store-apppublisher@v1.1
+
+      - name: Authenticate msstore
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          msstore reconfigure `
+            --tenantId $env:AZURE_AD_TENANT_ID `
+            --sellerId $env:SELLER_ID `
+            --clientId $env:AZURE_AD_APPLICATION_CLIENT_ID `
+            --clientSecret $env:AZURE_AD_APPLICATION_SECRET
+
+      # This is where the MSIX file actually gets pushed to the Store.
+      - name: Publish to Microsoft Store
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $msix = Join-Path $env:GITHUB_WORKSPACE "msix/CIBMangoTree_windows.msix"
+          if (-not (Test-Path $msix)) {
+            throw "MSIX not found at $msix"
+          }
+          Get-Item $msix | Format-List Name, Length, FullName
+          msstore publish $msix -id $env:STORE_PRODUCT_ID

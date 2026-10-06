@@ -257,7 +257,11 @@ class NgramsDashboardPage(BaseDashboardPage):
             ui.aggrid(
                 {
                     "columnDefs": [
-                        {"headerName": "Post Content", "field": COL_MESSAGE_TEXT},
+                        {
+                            "headerName": "Post Content",
+                            "field": COL_MESSAGE_TEXT,
+                            ":tooltipValueGetter": "(params) => params.value",
+                        },
                         {"headerName": "Timestamp", "field": COL_MESSAGE_TIMESTAMP},
                     ],
                     "rowData": posts.to_dicts(),
@@ -268,7 +272,6 @@ class NgramsDashboardPage(BaseDashboardPage):
                     },
                     "tooltipShowDelay": 200,
                     "tooltipSwitchShowDelay": 70,
-                    ":tooltipValueGetter": "(params) => params.value",
                 },
                 theme="quartz",
             ).classes("w-full").style("height: 400px")

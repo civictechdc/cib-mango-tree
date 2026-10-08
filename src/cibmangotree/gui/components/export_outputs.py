@@ -8,7 +8,13 @@ from nicegui import run, ui
 from pydantic import BaseModel, Field
 
 from cibmangotree.app import AnalysisContext, AnalysisOutputContext
-from cibmangotree.gui.theme import MANGO_DARK_GREEN
+from cibmangotree.gui.theme import (
+    COL_STACK,
+    MANGO_DARK_GREEN,
+    ROW_ACTIONS,
+    TEXT_HEADING,
+    TEXT_SECTION_HEADING,
+)
 from cibmangotree.gui.utils import open_directory_explorer
 from cibmangotree.storage import SupportedOutputExtension
 
@@ -151,7 +157,7 @@ class ExportDialog(ui.dialog):
     def _add_checkbox_group(
         self, label_text: str, outputs: list[AnalysisOutputContext]
     ):
-        ui.label(label_text).classes("text-subtitle2 text-weight-bold q-mt-sm")
+        ui.label(label_text).classes("text-subtitle2 font-bold mt-2")
         ui.separator()
         for output in outputs:
             cb = ui.checkbox(
@@ -163,10 +169,10 @@ class ExportDialog(ui.dialog):
     def _build_select_outputs(self):
         self.select_outputs = ui.column().classes("w-full")
         with self.select_outputs:
-            ui.label("Select outputs to export").classes("text-h6 q-mb-md")
+            ui.label("Select outputs to export").classes(TEXT_SECTION_HEADING)
 
             self.output_checkboxes: list[tuple[AnalysisOutputContext, ui.checkbox]] = []
-            self.checkbox_container = ui.column().classes("w-full gap-1 mb-4")
+            self.checkbox_container = ui.column().classes(f"{COL_STACK} mb-4")
 
             with self.checkbox_container:
                 primary_outputs = [o for o in self.outputs if o.secondary_spec is None]
@@ -189,7 +195,7 @@ class ExportDialog(ui.dialog):
                         ]
                         self._add_checkbox_group("Secondary Outputs", sec_outputs)
 
-            with ui.row().classes("w-full justify-end gap-2"):
+            with ui.row().classes(ROW_ACTIONS):
                 ui.button("Cancel", on_click=self.close, color="cancel").props(
                     "outline"
                 )
@@ -219,7 +225,7 @@ class ExportDialog(ui.dialog):
     def _build_configure_export(self):
         self.configure_export = ui.column().classes("w-full")
         with self.configure_export:
-            ui.label("Configure export").classes("text-h6 q-mb-md")
+            ui.label("Configure export").classes(TEXT_SECTION_HEADING)
 
             is_hashtags = self.analysis_context.analyzer_id == "hashtags"
             format_options: dict[str, str] = {}
@@ -231,19 +237,17 @@ class ExportDialog(ui.dialog):
             self.format_toggle = ui.toggle(
                 format_options,
                 value=list(format_options.keys())[0],
-            ).classes("q-mb-md")
+            ).classes("mb-4")
 
             self.chunking_visible = False
             self.chunking_section = ui.column().classes("w-full")
             self.chunking_section.set_visibility(False)
             with self.chunking_section:
-                ui.label("Chunking options").classes(
-                    "text-subtitle2 text-weight-bold q-mt-sm"
-                )
+                ui.label("Chunking options").classes("text-subtitle2 font-bold mt-2")
                 ui.label(
                     f"Control how outputs larger than "
                     f"{LARGE_OUTPUT_THRESHOLD:,} rows are saved."
-                ).classes("q-mb-md text-sm")
+                ).classes("mb-4 text-sm")
 
                 settings = self.analysis_context.app_context.settings
                 current_chunk = settings.export_chunk_size
@@ -257,7 +261,7 @@ class ExportDialog(ui.dialog):
                 self.chunk_toggle = ui.toggle(
                     {True: "Break into chunks", False: "Export in a single file"},
                     value=default_toggle,
-                ).classes("q-mb-md")
+                ).classes("mb-4")
 
                 self.chunk_size_input = ui.number(
                     "Rows per chunk",
@@ -267,7 +271,7 @@ class ExportDialog(ui.dialog):
                         else LARGE_OUTPUT_THRESHOLD
                     ),
                     min=100,
-                ).classes("q-mb-md")
+                ).classes("mb-4")
 
                 if not is_current_chunking:
                     self.chunk_size_input.set_visibility(False)
@@ -278,7 +282,7 @@ class ExportDialog(ui.dialog):
                     )
                 )
 
-            with ui.row().classes("w-full justify-end gap-2"):
+            with ui.row().classes(ROW_ACTIONS):
                 ui.button(
                     "Back",
                     on_click=lambda: self._show_step("select_outputs"),
@@ -307,37 +311,37 @@ class ExportDialog(ui.dialog):
     def _build_export_progress(self):
         self.export_progress = ui.column().classes("w-full")
         with self.export_progress:
-            ui.label("Exporting...").classes("text-h6 q-mb-md")
+            ui.label("Exporting...").classes(TEXT_SECTION_HEADING)
 
             self.export_status_label = ui.label("Preparing...").classes(
-                "text-base q-mb-md"
+                "text-base mb-4"
             )
 
             self.export_progress_bar = (
                 ui.linear_progress(value=0, show_value=False)
-                .classes("w-full q-mb-md")
+                .classes("w-full mb-4")
                 .props("instant-feedback")
             )
 
-            self.output_status_container = ui.column().classes("w-full gap-1 mb-4")
+            self.output_status_container = ui.column().classes(f"{COL_STACK} mb-4")
 
     def _build_export_complete(self):
         self.export_complete = ui.column().classes("w-full")
         with self.export_complete:
-            with ui.row().classes("items-center gap-2 q-mb-md"):
+            with ui.row().classes("items-center gap-2 mb-4"):
                 self.complete_success_icon = ui.icon(
                     "check_circle", color=MANGO_DARK_GREEN, size="lg"
                 )
                 self.complete_error_icon = ui.icon(
                     "cancel", color="negative", size="lg"
                 )
-                self.complete_status_label = ui.label("").classes("text-h6")
+                self.complete_status_label = ui.label("").classes(TEXT_HEADING)
                 self.complete_success_icon.set_visibility(False)
                 self.complete_error_icon.set_visibility(False)
 
-            self.complete_message_container = ui.column().classes("w-full gap-1 mb-4")
+            self.complete_message_container = ui.column().classes(f"{COL_STACK} mb-4")
 
-            with ui.row().classes("w-full justify-end gap-2"):
+            with ui.row().classes(ROW_ACTIONS):
                 self.export_complete_open_folder = ui.button(
                     "Open exports folder",
                     on_click=self._open_folder,

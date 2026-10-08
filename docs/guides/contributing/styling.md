@@ -50,10 +50,14 @@ includes `text-grey-7`. Select the constant by the element's role.
 
 ## Initial rollout
 
-The convention currently applies to two pilot modules:
+The convention currently applies to these migrated modules:
 
 - `gui/pages/analysis_workflow/run_step.py`
 - `gui/components/analysis.py`
+- `gui/components/exit_confirmation.py`
+- `gui/components/export_outputs.py`
+- `gui/components/import_options.py`
+- `gui/components/new_project_dialog.py`
 
 Other GUI modules still use their existing styles and will migrate in separate
 PRs. Reusable layout helpers and loading/empty-state components are follow-up

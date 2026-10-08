@@ -1,4 +1,4 @@
-"""Check the two styling pilots without importing NiceGUI or changing files.
+"""Check the migrated GUI modules without importing NiceGUI or changing files.
 
 The hook and pytest use the same scanner. Widen GUARDED_PATHS and the hook's
 files pattern together as more modules are migrated. Only direct string and
@@ -18,6 +18,10 @@ GUI_ROOT = Path(__file__).resolve().parent
 REPO_ROOT = GUI_ROOT.parents[2]
 GUARDED_PATHS = (
     "components/analysis.py",
+    "components/exit_confirmation.py",
+    "components/export_outputs.py",
+    "components/import_options.py",
+    "components/new_project_dialog.py",
     "pages/analysis_workflow/run_step.py",
 )
 

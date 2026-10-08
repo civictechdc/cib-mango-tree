@@ -67,8 +67,14 @@ CARD_PARAM = f"w-72 p-4 {CARD_FLAT}"
 
 ROW_CENTERED = "w-full items-center"
 ROW_CENTERED_GAP = "items-center gap-1"
+ROW_LAYOUT = f"{ROW_CENTERED} gap-2 mb-2"
+ROW_ACTIONS = "w-full justify-end gap-2"
 COL_STACK = "w-full gap-1"
 
+TEXT_HEADING = "text-h6"
+TEXT_SECTION_HEADING = f"{TEXT_HEADING} mb-4"
+TEXT_TOOLTIP_BODY = "text-base leading-relaxed whitespace-normal"
+TEXT_FIELD_LABEL = "text-base font-bold"
 TEXT_MUTED = "text-grey-8"
 TEXT_STEP_TITLE = "text-lg font-bold mb-4"
 ICON_INFO = "text-grey-7 cursor-pointer"
@@ -77,3 +83,4 @@ ICON_INFO = "text-grey-7 cursor-pointer"
 # --- Inline style constants (NiceGUI .style()) ---------------------------
 
 STYLE_CENTERED = "max-width: 960px; margin: 0 auto;"
+STYLE_LABEL_MIN_WIDTH = "min-width: 160px"

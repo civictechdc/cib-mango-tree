@@ -39,6 +39,9 @@ a = Analysis(
         # Vue GUI components
         ('src/cibmangotree/gui/components/dist', 'cibmangotree/gui/components/dist'),
 
+        # Demo dataset (top-level folder next to the app binary)
+        ('src/cibmangotree/demo_data', 'demo_data'),
+
         # NiceGUI static files (required for GUI mode)
         (os.path.join(site_packages_path, 'nicegui'), 'nicegui'),
     ],

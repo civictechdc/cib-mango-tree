@@ -58,3 +58,22 @@ class GuiConstants(BaseModel):
 gui_colors = GuiColors()
 gui_urls = GuiURLS()
 gui_constants = GuiConstants(colors=gui_colors, urls=gui_urls)
+
+# --- Class-string constants (NiceGUI .classes()) -------------------------
+
+CARD_FLAT = "shadow-none border border-gray-200"
+CARD_CONTENT = f"w-full p-4 {CARD_FLAT}"
+CARD_PARAM = f"w-72 p-4 {CARD_FLAT}"
+
+ROW_CENTERED = "w-full items-center"
+ROW_CENTERED_GAP = "items-center gap-1"
+COL_STACK = "w-full gap-1"
+
+TEXT_MUTED = "text-grey-8"
+TEXT_STEP_TITLE = "text-lg font-bold mb-4"
+ICON_INFO = "text-grey-7 cursor-pointer"
+
+
+# --- Inline style constants (NiceGUI .style()) ---------------------------
+
+STYLE_CENTERED = "max-width: 960px; margin: 0 auto;"

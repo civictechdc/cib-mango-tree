@@ -140,13 +140,13 @@ jobs:
         id: get_version_tag
         if: ${{ github.ref_type == 'tag' }}
         run: |
-          python -c "with open('VERSION', 'w', encoding='utf-8') as f: f.write('${{ github.ref_name }}')"
+          uv run python -c "with open('VERSION', 'w', encoding='utf-8') as f: f.write('${{ github.ref_name }}')"
 
       - name: Print version string (for branch)
         id: get_version_branch
         if: ${{ github.ref_type != 'tag' }}
         run: |
-          python -c "with open('VERSION', 'w', encoding='utf-8') as f: f.write('${{ github.ref_name }}-${{ github.sha }}')"
+          uv run python -c "with open('VERSION', 'w', encoding='utf-8') as f: f.write('${{ github.ref_name }}-${{ github.sha }}')"
 
       - name: Build the executable
         env:

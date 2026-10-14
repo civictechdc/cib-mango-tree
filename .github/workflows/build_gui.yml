@@ -87,7 +87,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      # setup-python has no Debian container builds; Win/macOS keep using it.
       - name: Set up Python
+        if: ${{ !matrix.container }}
         uses: actions/setup-python@v6
         with:
           python-version-file: ".python-version"
@@ -99,6 +101,11 @@ jobs:
           # Distinct from test.yml pytest jobs: both use setup-uv on windows-2022 /
           # macos-15 / ubuntu in the same Tests run, without this suffix they would share one cache key, resulting in warnings in the CI run.
           cache-suffix: gui
+
+      # Distro containers (e.g. debian:bookworm): uv installs CPython from .python-version.
+      - name: Install Python with uv
+        if: ${{ matrix.container }}
+        run: uv python install
 
       - name: Install dependencies
         run: uv sync --locked --no-dev

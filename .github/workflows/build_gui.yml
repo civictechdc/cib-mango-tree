@@ -59,24 +59,16 @@ jobs:
             check_command: dist/CIBMangoTree.app/Contents/MacOS/CIBMangoTree --noop
           # One matrix row per Linux distro family. Distro-specific setup lives in
           # setup_command; shared steps (uv / pyinstaller / zip) stay below.
-          # Host runner is ubuntu-latest; container is the actual build OS.
-          # Prefer minimal Debian over Ubuntu/desktop images: match the target
-          # distro ABI, and avoid system Qt (fat images) confusing PyInstaller.
+          # Host runner is ubuntu-latest; container is the actual build OS (Debian).
           - platform_name: Debian
             artifact_name: CIBMangoTree_debian
             os: ubuntu-latest
             container: debian:bookworm
-            # bookworm is intentionally minimal. Install only what PyInstaller
-            # needs to resolve/collect Qt platform plugins (libqxcb.so); without
-            # them the zip dies at runtime with "Could not find ... plugin xcb".
-            # Do not swap in a desktop/Qt image — explicit apt deps stay clearer
-            # and safer than inheriting a full GUI stack. Only bring in what we need.
+            # Shared libs so PyInstaller can resolve/collect Qt plugins + WebEngine.
             setup_command: |
               export DEBIAN_FRONTEND=noninteractive
               if command -v sudo >/dev/null 2>&1; then SUDO=sudo; else SUDO=; fi
               $SUDO apt-get update
-              # binutils/zip/curl/git: build + packaging
-              # X11/xcb/GL: shared libs only (not system Qt packages)
               $SUDO apt-get install -y --no-install-recommends \
                 binutils zip curl ca-certificates git \
                 libgl1 libegl1 libxkbcommon0 libxkbcommon-x11-0 \
@@ -176,17 +168,27 @@ jobs:
           ls -lah dist/
           echo "Looking for: CIBMangoTree"
 
-      - name: Verify Linux Qt platform plugins
+      - name: Verify Linux Qt bundle pieces
         if: runner.os == 'Linux'
         shell: bash
         run: |
-          plugin="dist/CIBMangoTree/_internal/PyQt6/Qt6/plugins/platforms/libqxcb.so"
+          root="dist/CIBMangoTree/_internal"
+          plugin="$root/PyQt6/Qt6/plugins/platforms/libqxcb.so"
+          webengine="$(find "$root" -name QtWebEngineProcess -type f | head -1)"
+          missing=0
           if [ ! -f "$plugin" ]; then
             echo "Missing Qt xcb plugin: $plugin"
-            find dist/CIBMangoTree -iname '*qxcb*' -o -path '*/plugins/platforms/*' | head -100
-            exit 1
+            missing=1
+          else
+            echo "Found $plugin"
           fi
-          echo "Found $plugin"
+          if [ -z "$webengine" ]; then
+            echo "Missing QtWebEngineProcess under $root"
+            missing=1
+          else
+            echo "Found $webengine"
+          fi
+          exit "$missing"
 
       - name: Test executable with --noop
         run: ${{ matrix.check_command }}

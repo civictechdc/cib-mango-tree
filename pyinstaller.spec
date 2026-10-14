@@ -9,7 +9,8 @@ import os
 import site
 from pathlib import Path
 
-version_file = Path(os.path.dirname(SPEC)) / "VERSION"  # pyright: ignore[reportUndefinedVariable]. pyright complains about SPEC being undefined
+spec_dir = Path(os.path.dirname(SPEC))  # pyright: ignore[reportUndefinedVariable]. pyright complains about SPEC being undefined
+version_file = spec_dir / "VERSION"
 app_version = version_file.read_text().strip().lstrip("v") if version_file.exists() else "dev"
 
 site_packages_path = None
@@ -24,16 +25,16 @@ if site_packages_path is None:
   raise RuntimeError("The site-packages directory could not be found. Please setup the python envrionment correctly and try again...")
 
 # PyQt6 is loaded dynamically by pywebview; force collection on Linux so Qt
-# platform plugins (xcb) land in the onedir bundle.
+# platform plugins (xcb) and WebEngine land in the onedir bundle.
 extra_binaries = []
 extra_datas = []
 extra_hiddenimports = []
+linux_runtime_hooks = []
 if sys.platform.startswith("linux"):
-    for pkg in ("PyQt6", "qtpy"):
-        pkg_datas, pkg_binaries, pkg_hiddenimports = collect_all(pkg)
-        extra_datas += pkg_datas
-        extra_binaries += pkg_binaries
-        extra_hiddenimports += pkg_hiddenimports
+    pkg_datas, pkg_binaries, pkg_hiddenimports = collect_all("PyQt6")
+    extra_datas += pkg_datas
+    extra_binaries += pkg_binaries
+    extra_hiddenimports += pkg_hiddenimports
     extra_hiddenimports += [
         "PyQt6",
         "PyQt6.QtCore",
@@ -41,9 +42,11 @@ if sys.platform.startswith("linux"):
         "PyQt6.QtWidgets",
         "PyQt6.QtWebEngineCore",
         "PyQt6.QtWebEngineWidgets",
+        "qtpy",
         "webview",
         "webview.platforms.qt",
     ]
+    linux_runtime_hooks = [str(spec_dir / "packaging" / "pyi_rth_cibmt_linux_qt.py")]
 
 a = Analysis(
     ['src/cibmangotree/__main__.py'],  # Main entry point
@@ -90,7 +93,7 @@ a = Analysis(
         'pip',
         'wheel',
     ],
-    runtime_hooks=[],
+    runtime_hooks=linux_runtime_hooks,
 )
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)

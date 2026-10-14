@@ -11,6 +11,10 @@ This hook sets environment defaults so the frozen app prefers software rendering
 instead of depending on the host GPU stack. Defaults use setdefault / append so
 a user or wrapper can still override them.
 
+Do not set ``QSG_RHI_BACKEND=software`` — that value is invalid in Qt6 and causes
+a fallback to the default OpenGL/GLX path (which then fails with
+"Could not initialize GLX").
+
 Where it is used
 ----------------
 Listed in ``pyinstaller.spec`` as a Linux-only entry in ``Analysis(runtime_hooks=...)``.
@@ -34,5 +38,6 @@ def _append_chromium_flag(flag: str) -> None:
 if sys.platform.startswith("linux"):
     os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
     os.environ.setdefault("QT_QUICK_BACKEND", "software")
-    os.environ.setdefault("QSG_RHI_BACKEND", "software")
+    # Avoid GLX for the xcb platform window when no usable GL is present.
+    os.environ.setdefault("QT_XCB_GL_INTEGRATION", "none")
     _append_chromium_flag("--disable-gpu")

@@ -57,12 +57,19 @@ jobs:
               pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/CIBMangoTree_macos-arm64_signed.pkg" --sign "$APPLE_INST_CERT_ID"
             list_command: ls -ll dist
             check_command: dist/CIBMangoTree.app/Contents/MacOS/CIBMangoTree --noop
-          # Build inside Debian so the Linux zip matches the Debian target (not Ubuntu).
-          # Host runner is ubuntu-latest; the job container is the actual build OS.
-          - platform_name: Linux
-            artifact_name: CIBMangoTree_linux
+          # One matrix row per Linux distro family. Distro-specific setup lives in
+          # setup_command; shared steps (uv / pyinstaller / zip) stay below.
+          # Host runner is ubuntu-latest; container is the actual build OS.
+          - platform_name: Debian
+            artifact_name: CIBMangoTree_debian
             os: ubuntu-latest
             container: debian:bookworm
+            setup_command: |
+              export DEBIAN_FRONTEND=noninteractive
+              if command -v sudo >/dev/null 2>&1; then SUDO=sudo; else SUDO=; fi
+              $SUDO apt-get update
+              $SUDO apt-get install -y --no-install-recommends \
+                binutils zip curl ca-certificates git
             list_command: ls -ll dist
             check_command: dist/CIBMangoTree/CIBMangoTree --noop
 
@@ -75,12 +82,7 @@ jobs:
     steps:
       - name: Install Linux build dependencies
         if: runner.os == 'Linux'
-        run: |
-          export DEBIAN_FRONTEND=noninteractive
-          if command -v sudo >/dev/null 2>&1; then SUDO=sudo; else SUDO=; fi
-          $SUDO apt-get update
-          $SUDO apt-get install -y --no-install-recommends \
-            binutils zip curl ca-certificates git
+        run: ${{ matrix.setup_command }}
 
       - name: Checkout code
         uses: actions/checkout@v6

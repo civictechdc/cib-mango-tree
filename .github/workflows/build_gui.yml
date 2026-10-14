@@ -60,16 +60,33 @@ jobs:
           # One matrix row per Linux distro family. Distro-specific setup lives in
           # setup_command; shared steps (uv / pyinstaller / zip) stay below.
           # Host runner is ubuntu-latest; container is the actual build OS.
+          # Prefer minimal Debian over Ubuntu/desktop images: match the target
+          # distro ABI, and avoid system Qt (fat images) confusing PyInstaller.
           - platform_name: Debian
             artifact_name: CIBMangoTree_debian
             os: ubuntu-latest
             container: debian:bookworm
+            # bookworm is intentionally minimal. Install only what PyInstaller
+            # needs to resolve/collect Qt platform plugins (libqxcb.so); without
+            # them the zip dies at runtime with "Could not find ... plugin xcb".
+            # Do not swap in a desktop/Qt image — explicit apt deps stay clearer
+            # and safer than inheriting a full GUI stack. Only bring in what we need.
             setup_command: |
               export DEBIAN_FRONTEND=noninteractive
               if command -v sudo >/dev/null 2>&1; then SUDO=sudo; else SUDO=; fi
               $SUDO apt-get update
+              # binutils/zip/curl/git: build + packaging
+              # X11/xcb/GL: shared libs only (not system Qt packages)
               $SUDO apt-get install -y --no-install-recommends \
-                binutils zip curl ca-certificates git
+                binutils zip curl ca-certificates git \
+                libgl1 libegl1 libxkbcommon0 libxkbcommon-x11-0 \
+                libxcb1 libxcb-cursor0 libxcb-icccm4 libxcb-image0 \
+                libxcb-keysyms1 libxcb-render0 libxcb-render-util0 \
+                libxcb-shape0 libxcb-shm0 libxcb-xfixes0 libxcb-xinerama0 \
+                libxcb-randr0 libfontconfig1 libdbus-1-3 \
+                libnss3 libnspr4 libxcomposite1 libxdamage1 \
+                libxrandr2 libxtst6 libasound2 libglib2.0-0 \
+                libx11-6 libxext6 libxrender1 libxi6
             list_command: ls -ll dist
             check_command: dist/CIBMangoTree/CIBMangoTree --noop
 
@@ -158,6 +175,18 @@ jobs:
         run: |
           ls -lah dist/
           echo "Looking for: CIBMangoTree"
+
+      - name: Verify Linux Qt platform plugins
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          plugin="dist/CIBMangoTree/_internal/PyQt6/Qt6/plugins/platforms/libqxcb.so"
+          if [ ! -f "$plugin" ]; then
+            echo "Missing Qt xcb plugin: $plugin"
+            find dist/CIBMangoTree -iname '*qxcb*' -o -path '*/plugins/platforms/*' | head -100
+            exit 1
+          fi
+          echo "Found $plugin"
 
       - name: Test executable with --noop
         run: ${{ matrix.check_command }}

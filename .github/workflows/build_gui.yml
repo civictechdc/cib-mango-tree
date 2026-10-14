@@ -57,6 +57,12 @@ jobs:
               pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/CIBMangoTree_macos-arm64_signed.pkg" --sign "$APPLE_INST_CERT_ID"
             list_command: ls -ll dist
             check_command: dist/CIBMangoTree.app/Contents/MacOS/CIBMangoTree --noop
+          # ubuntu-22.04: older glibc so the artifact runs on Debian bookworm / Ubuntu 22.04+
+          - platform_name: Linux
+            artifact_name: CIBMangoTree_linux
+            os: ubuntu-22.04
+            list_command: ls -ll dist
+            check_command: dist/CIBMangoTree/CIBMangoTree --noop
 
     name: ${{ matrix.platform_name }}
     runs-on: ${{ matrix.os }}
@@ -76,8 +82,14 @@ jobs:
         with:
           enable-cache: true
           # Distinct from test.yml pytest jobs: both use setup-uv on windows-2022 /
-          # macos-15 in the same Tests run, without this suffix they would share one cache key, resulting in warnings in the CI run.
+          # macos-15 / ubuntu in the same Tests run, without this suffix they would share one cache key, resulting in warnings in the CI run.
           cache-suffix: gui
+
+      - name: Install Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y binutils zip
 
       - name: Install dependencies
         run: uv sync --locked --no-dev
@@ -267,15 +279,19 @@ jobs:
           if [ "${{ runner.os }}" = "macOS" ] && [ "${{ inputs.is_release }}" = "true" ]; then
             mv dist/${{matrix.artifact_name}}_signed.pkg dist/${{matrix.artifact_name}}.pkg
             echo "artifact_path=dist/${{matrix.artifact_name}}.pkg" >> $GITHUB_ENV
-          elif [ "${{ runner.os }}" = "Windows" ] && [ "${{ inputs.is_release }}" = "true" ]; then
-            powershell -Command "Compress-Archive -Path 'dist/CIBMangoTree' -DestinationPath 'dist/${{matrix.artifact_name}}.zip'"
-            echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
           elif [ "${{ runner.os }}" = "macOS" ]; then
             (cd dist && zip -r -y "${{matrix.artifact_name}}.zip" CIBMangoTree.app)
             echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
-          else
+          elif [ "${{ runner.os }}" = "Windows" ]; then
             powershell -Command "Compress-Archive -Path 'dist/CIBMangoTree' -DestinationPath 'dist/${{matrix.artifact_name}}.zip'"
             echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
+          elif [ "${{ runner.os }}" = "Linux" ]; then
+            chmod +x dist/CIBMangoTree/CIBMangoTree
+            (cd dist && zip -r "${{matrix.artifact_name}}.zip" CIBMangoTree)
+            echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
+          else
+            echo "Unsupported runner OS: ${{ runner.os }}"
+            exit 1
           fi
 
       - name: Clean up macOS artifacts

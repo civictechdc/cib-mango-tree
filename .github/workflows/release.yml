@@ -84,6 +84,10 @@ jobs:
             1. Download the `.pkg` installer for your architecture (`CIBMangoTree_macos-x86.pkg` or `CIBMangoTree_macos-arm64.pkg`)
             2. Run the installer to install to `/Applications/`
             3. For first launch, right-click → "Open" to bypass Gatekeeper if needed
+
+            ### Linux (Debian/Ubuntu)
+            1. Download `CIBMangoTree_linux.zip`
+            2. Extract and run `./CIBMangoTree/CIBMangoTree`
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

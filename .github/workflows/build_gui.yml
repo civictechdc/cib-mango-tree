@@ -57,18 +57,31 @@ jobs:
               pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/CIBMangoTree_macos-arm64_signed.pkg" --sign "$APPLE_INST_CERT_ID"
             list_command: ls -ll dist
             check_command: dist/CIBMangoTree.app/Contents/MacOS/CIBMangoTree --noop
-          # ubuntu-22.04: older glibc so the artifact runs on Debian bookworm / Ubuntu 22.04+
+          # Build inside Debian so the Linux zip matches the Debian target (not Ubuntu).
+          # Host runner is ubuntu-latest; the job container is the actual build OS.
           - platform_name: Linux
             artifact_name: CIBMangoTree_linux
-            os: ubuntu-22.04
+            os: ubuntu-latest
+            container: debian:bookworm
             list_command: ls -ll dist
             check_command: dist/CIBMangoTree/CIBMangoTree --noop
 
     name: ${{ matrix.platform_name }}
     runs-on: ${{ matrix.os }}
+    # Null/unset for Windows and macOS (no container key on those matrix rows).
+    container: ${{ matrix.container }}
     env:
       artifact_path: ""
     steps:
+      - name: Install Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          if command -v sudo >/dev/null 2>&1; then SUDO=sudo; else SUDO=; fi
+          $SUDO apt-get update
+          $SUDO apt-get install -y --no-install-recommends \
+            binutils zip curl ca-certificates git
+
       - name: Checkout code
         uses: actions/checkout@v6
 
@@ -84,12 +97,6 @@ jobs:
           # Distinct from test.yml pytest jobs: both use setup-uv on windows-2022 /
           # macos-15 / ubuntu in the same Tests run, without this suffix they would share one cache key, resulting in warnings in the CI run.
           cache-suffix: gui
-
-      - name: Install Linux build dependencies
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y binutils zip
 
       - name: Install dependencies
         run: uv sync --locked --no-dev

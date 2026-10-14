@@ -86,7 +86,7 @@ jobs:
             3. For first launch, right-click → "Open" to bypass Gatekeeper if needed
 
             ### Linux (Debian/Ubuntu)
-            1. Download `CIBMangoTree_linux.zip`
+            1. Download `CIBMangoTree_linux.zip` (built on Debian bookworm)
             2. Extract and run `./CIBMangoTree/CIBMangoTree`
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

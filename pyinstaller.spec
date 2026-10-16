@@ -46,7 +46,7 @@ if sys.platform.startswith("linux"):
         "webview",
         "webview.platforms.qt",
     ]
-    linux_runtime_hooks = [str(spec_dir / "packaging" / "pyi_rth_cibmt_linux_qt.py")]
+    linux_runtime_hooks = [str(spec_dir / "packaging" / "pyinstaller_runtime_hook_linux.py")]
 
 a = Analysis(
     ['src/cibmangotree/__main__.py'],  # Main entry point

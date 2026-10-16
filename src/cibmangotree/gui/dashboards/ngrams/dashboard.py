@@ -10,8 +10,10 @@ import polars as pl
 from nicegui import run, ui
 
 from cibmangotree.analyzers.ngrams.ngrams_base.interface import (
+    COL_AUTHOR_ID,
     COL_MESSAGE_SURROGATE_ID,
     COL_MESSAGE_TEXT,
+    COL_MESSAGE_TIMESTAMP,
     OUTPUT_MESSAGE,
 )
 from cibmangotree.analyzers.ngrams.ngrams_stats.interface import (
@@ -187,6 +189,9 @@ class NgramsDashboardPage(BaseDashboardPage):
                 }
                 if col == "Post content":
                     col_def[":tooltipValueGetter"] = "(params) => params.value"
+                if col == "User ID":
+                    col_def["cellStyle"] = {"cursor": "pointer"}
+                    col_def["cellClass"] = "clickable-user-cell"
                 column_defs.append(col_def)
             self._grid.options["columnDefs"] = column_defs
         self._grid.update()
@@ -207,6 +212,71 @@ class NgramsDashboardPage(BaseDashboardPage):
 
     def _clear_all_highlights(self) -> None:
         self._chart.run_chart_method("dispatchAction", {"type": "downplay"})
+
+    # For cell clicking
+    async def _handle_cell_click(self, e) -> None:
+        data = e.args
+        if not data or "data" not in data:
+            return
+
+        user = data["data"].get("User ID")
+        if not user:
+            return
+
+        col_id = data["colId"]
+        if col_id == "User ID":
+            await self._open_user_popup(user)
+
+    # Popup
+    async def _open_user_popup(self, user) -> None:
+        posts = await run.io_bound(
+            lambda: pl.scan_parquet(self._messages_path)
+            .filter(pl.col(COL_AUTHOR_ID) == user)
+            .select(COL_MESSAGE_TIMESTAMP, COL_MESSAGE_TEXT)
+            .collect()
+        )
+        total_num_posts = posts.height
+        oldest_post = posts[COL_MESSAGE_TIMESTAMP].min()
+        newest_post = posts[COL_MESSAGE_TIMESTAMP].max()
+
+        posts = posts.with_columns(
+            pl.col(COL_MESSAGE_TIMESTAMP).dt.strftime("%B %d, %Y %H:%M:%S")
+        )
+
+        with (
+            ui.dialog() as dialog,
+            ui.card().classes("w-full").style("max-width: 800px"),
+        ):
+            with ui.row().classes("w-full justify-between items-center"):
+                ui.label(f"User Viewer - {user}").classes("text-h6")
+                ui.button(icon="close", on_click=dialog.close).props("flat round dense")
+            with ui.row().classes("text-body2 text-grey-7 gap-7"):
+                ui.label(f"Total Posts: {total_num_posts}")
+                ui.label(f"First Post: {oldest_post.strftime('%H:%M:%S %d/%m/%Y')}")
+                ui.label(f"Last Post: {newest_post.strftime('%H:%M:%S %d/%m/%Y')}")
+            ui.aggrid(
+                {
+                    "columnDefs": [
+                        {
+                            "headerName": "Post Content",
+                            "field": COL_MESSAGE_TEXT,
+                            ":tooltipValueGetter": "(params) => params.value",
+                        },
+                        {"headerName": "Timestamp", "field": COL_MESSAGE_TIMESTAMP},
+                    ],
+                    "rowData": posts.to_dicts(),
+                    "defaultColDef": {
+                        "sortable": True,
+                        "filter": True,
+                        "resizable": True,
+                    },
+                    "tooltipShowDelay": 200,
+                    "tooltipSwitchShowDelay": 70,
+                },
+                theme="quartz",
+            ).classes("w-full").style("height: 400px")
+
+        dialog.open()
 
     def _handle_point_click(self, e) -> None:
         clicked_words = e.data.get("words")
@@ -465,6 +535,9 @@ class NgramsDashboardPage(BaseDashboardPage):
                 max-width: 450px !important;
                 word-wrap: break-word !important;
             }
+            .clickable-user-cell:hover {
+                font-weight: 600 !important;
+            }
         """)
         with ui.row().classes("w-full justify-center"):
             with ui.column().classes("w-3/4 q-pa-md gap-4"):
@@ -490,7 +563,6 @@ class NgramsDashboardPage(BaseDashboardPage):
                             .classes("w-full")
                             .style("height: 500px")
                         )
-
                 with ui.row().classes("w-full items-center gap-4"):
                     self._sampling_label = ui.label("").classes(
                         "text-body2 text-grey-7"
@@ -530,5 +602,7 @@ class NgramsDashboardPage(BaseDashboardPage):
                             .classes("w-full")
                             .style("height: 400px")
                         )
+                        # For popup
+                        self._grid.on("cellClicked", self._handle_cell_click)
 
         ui.timer(0, self._load_and_render_async, once=True)

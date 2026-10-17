@@ -57,16 +57,48 @@ jobs:
               pkgbuild --identifier "org.civictechdc.cibmangotree.gui" --timestamp --root /tmp/cibmangotree --install-location /Applications "./dist/CIBMangoTree_macos-arm64_signed.pkg" --sign "$APPLE_INST_CERT_ID"
             list_command: ls -ll dist
             check_command: dist/CIBMangoTree.app/Contents/MacOS/CIBMangoTree --noop
+          # One matrix row per Linux distro family. Distro-specific setup lives in
+          # setup_command; shared steps (uv / pyinstaller / zip) stay below.
+          # Host runner is ubuntu-latest; container is the actual build OS (Debian).
+          - platform_name: Debian
+            artifact_name: CIBMangoTree_debian
+            os: ubuntu-latest
+            container: debian:bookworm
+            # Shared libs so PyInstaller can resolve/collect Qt plugins + WebEngine.
+            setup_command: |
+              export DEBIAN_FRONTEND=noninteractive
+              if command -v sudo >/dev/null 2>&1; then SUDO=sudo; else SUDO=; fi
+              $SUDO apt-get update
+              $SUDO apt-get install -y --no-install-recommends \
+                binutils zip curl ca-certificates git \
+                libgl1 libegl1 libxkbcommon0 libxkbcommon-x11-0 \
+                libxcb1 libxcb-cursor0 libxcb-icccm4 libxcb-image0 \
+                libxcb-keysyms1 libxcb-render0 libxcb-render-util0 \
+                libxcb-shape0 libxcb-shm0 libxcb-xfixes0 libxcb-xinerama0 \
+                libxcb-randr0 libfontconfig1 libdbus-1-3 \
+                libnss3 libnspr4 libxcomposite1 libxdamage1 \
+                libxrandr2 libxtst6 libasound2 libglib2.0-0 \
+                libx11-6 libxext6 libxrender1 libxi6
+            list_command: ls -ll dist
+            check_command: dist/CIBMangoTree/CIBMangoTree --noop
 
     name: ${{ matrix.platform_name }}
     runs-on: ${{ matrix.os }}
+    # Null/unset for Windows and macOS (no container key on those matrix rows).
+    container: ${{ matrix.container }}
     env:
       artifact_path: ""
     steps:
+      - name: Install Linux build dependencies
+        if: runner.os == 'Linux'
+        run: ${{ matrix.setup_command }}
+
       - name: Checkout code
         uses: actions/checkout@v6
 
+      # setup-python has no Debian container builds; Win/macOS keep using it.
       - name: Set up Python
+        if: ${{ !matrix.container }}
         uses: actions/setup-python@v6
         with:
           python-version-file: ".python-version"
@@ -76,8 +108,13 @@ jobs:
         with:
           enable-cache: true
           # Distinct from test.yml pytest jobs: both use setup-uv on windows-2022 /
-          # macos-15 in the same Tests run, without this suffix they would share one cache key, resulting in warnings in the CI run.
+          # macos-15 / ubuntu in the same Tests run, without this suffix they would share one cache key, resulting in warnings in the CI run.
           cache-suffix: gui
+
+      # Distro containers (e.g. debian:bookworm): uv installs CPython from .python-version.
+      - name: Install Python with uv
+        if: ${{ matrix.container }}
+        run: uv python install
 
       - name: Install dependencies
         run: uv sync --locked --no-dev
@@ -112,13 +149,13 @@ jobs:
         id: get_version_tag
         if: ${{ github.ref_type == 'tag' }}
         run: |
-          python -c "with open('VERSION', 'w', encoding='utf-8') as f: f.write('${{ github.ref_name }}')"
+          uv run python -c "with open('VERSION', 'w', encoding='utf-8') as f: f.write('${{ github.ref_name }}')"
 
       - name: Print version string (for branch)
         id: get_version_branch
         if: ${{ github.ref_type != 'tag' }}
         run: |
-          python -c "with open('VERSION', 'w', encoding='utf-8') as f: f.write('${{ github.ref_name }}-${{ github.sha }}')"
+          uv run python -c "with open('VERSION', 'w', encoding='utf-8') as f: f.write('${{ github.ref_name }}-${{ github.sha }}')"
 
       - name: Build the executable
         env:
@@ -130,6 +167,28 @@ jobs:
         run: |
           ls -lah dist/
           echo "Looking for: CIBMangoTree"
+
+      - name: Verify Linux Qt bundle pieces
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          root="dist/CIBMangoTree/_internal"
+          plugin="$root/PyQt6/Qt6/plugins/platforms/libqxcb.so"
+          webengine="$(find "$root" -name QtWebEngineProcess -type f | head -1)"
+          missing=0
+          if [ ! -f "$plugin" ]; then
+            echo "Missing Qt xcb plugin: $plugin"
+            missing=1
+          else
+            echo "Found $plugin"
+          fi
+          if [ -z "$webengine" ]; then
+            echo "Missing QtWebEngineProcess under $root"
+            missing=1
+          else
+            echo "Found $webengine"
+          fi
+          exit "$missing"
 
       - name: Test executable with --noop
         run: ${{ matrix.check_command }}
@@ -267,15 +326,19 @@ jobs:
           if [ "${{ runner.os }}" = "macOS" ] && [ "${{ inputs.is_release }}" = "true" ]; then
             mv dist/${{matrix.artifact_name}}_signed.pkg dist/${{matrix.artifact_name}}.pkg
             echo "artifact_path=dist/${{matrix.artifact_name}}.pkg" >> $GITHUB_ENV
-          elif [ "${{ runner.os }}" = "Windows" ] && [ "${{ inputs.is_release }}" = "true" ]; then
-            powershell -Command "Compress-Archive -Path 'dist/CIBMangoTree' -DestinationPath 'dist/${{matrix.artifact_name}}.zip'"
-            echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
           elif [ "${{ runner.os }}" = "macOS" ]; then
             (cd dist && zip -r -y "${{matrix.artifact_name}}.zip" CIBMangoTree.app)
             echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
-          else
+          elif [ "${{ runner.os }}" = "Windows" ]; then
             powershell -Command "Compress-Archive -Path 'dist/CIBMangoTree' -DestinationPath 'dist/${{matrix.artifact_name}}.zip'"
             echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
+          elif [ "${{ runner.os }}" = "Linux" ]; then
+            chmod +x dist/CIBMangoTree/CIBMangoTree
+            (cd dist && zip -r "${{matrix.artifact_name}}.zip" CIBMangoTree)
+            echo "artifact_path=dist/${{matrix.artifact_name}}.zip" >> $GITHUB_ENV
+          else
+            echo "Unsupported runner OS: ${{ runner.os }}"
+            exit 1
           fi
 
       - name: Clean up macOS artifacts

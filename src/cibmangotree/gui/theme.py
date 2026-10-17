@@ -4,7 +4,7 @@ MANGO_DARK_GREEN = "#609949"
 MANGO_ORANGE = "#f3921e"
 MANGO_ORANGE_LIGHT = "#f9bc30"
 ACCENT = "white"
-CANCEL_RED = "#d32f2f"
+CANCEL_GRAY = "#424242"
 
 
 class GuiColors(BaseModel):
@@ -15,9 +15,8 @@ class GuiColors(BaseModel):
     primary: str = Field(default=MANGO_DARK_GREEN, description="Mango dark green")
     secondary: str = Field(default=MANGO_ORANGE_LIGHT, description="Mango orange light")
     accent: str = Field(default=ACCENT, description="Accent color")
-
     cancel: str = Field(
-        default=CANCEL_RED, description="Cancel/back/close action color"
+        default=CANCEL_GRAY, description="Cancel/back/close action color"
     )
 
     # Additional colors for reference

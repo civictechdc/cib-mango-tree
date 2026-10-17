@@ -396,7 +396,9 @@ class NgramsDashboardPage(BaseDashboardPage):
                     "This may cause the browser to slow down or become unresponsive."
                 ).classes("text-body2 text-grey-7")
                 with ui.row().classes("gap-4 justify-end"):
-                    ui.button("Cancel", on_click=dialog.close).props("flat")
+                    ui.button("Cancel", on_click=dialog.close, color="cancel").props(
+                        "flat"
+                    )
 
                     async def _confirm():
                         dialog.close()

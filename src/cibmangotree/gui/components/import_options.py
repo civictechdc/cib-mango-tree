@@ -71,7 +71,9 @@ class ImportOptionsDialog(ui.dialog):
 
             # Action buttons
             with ui.row().classes("w-full justify-end gap-2 mt-3"):
-                ui.button("Cancel", on_click=self.close).props("outline")
+                ui.button("Cancel", on_click=self.close, color="cancel").props(
+                    "outline"
+                )
                 ui.button(
                     "Retry Import",
                     icon="refresh",

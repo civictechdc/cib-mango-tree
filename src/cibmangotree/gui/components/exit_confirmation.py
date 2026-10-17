@@ -5,7 +5,7 @@ class ExitConfirmationDialog(ui.dialog):
     """Reusable confirmation dialog for page exit navigation.
 
     Subclasses ui.dialog to match the pattern used by
-    ManageProjectsDialog and ImportOptionsDialog.
+    ImportOptionsDialog.
 
     Usage:
         dialog = ExitConfirmationDialog(
@@ -31,6 +31,7 @@ class ExitConfirmationDialog(ui.dialog):
                 ui.button(
                     cancel_text,
                     on_click=lambda: self.submit(False),
+                    color="cancel",
                 ).props("flat")
                 ui.button(
                     confirm_text,

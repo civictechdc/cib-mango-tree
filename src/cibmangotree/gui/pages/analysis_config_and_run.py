@@ -117,7 +117,9 @@ class AnalysisConfigAndRunPage(GuiPage):
                     color="primary",
                     on_click=self._on_next_columns,
                 )
-                ui.button("Back", on_click=self.stepper.previous).props("flat")
+                ui.button("Back", on_click=self.stepper.previous, color="cancel").props(
+                    "flat"
+                )
 
     def _render_params_step(self) -> None:
         """Render Step 3: Parameter Configuration."""
@@ -133,7 +135,9 @@ class AnalysisConfigAndRunPage(GuiPage):
                     color="primary",
                     on_click=self._on_next_params,
                 )
-                ui.button("Back", on_click=self.stepper.previous).props("flat")
+                ui.button("Back", on_click=self.stepper.previous, color="cancel").props(
+                    "flat"
+                )
 
     def _render_run_step(self) -> None:
         """Render Step 4: Run Analysis."""
@@ -146,7 +150,9 @@ class AnalysisConfigAndRunPage(GuiPage):
                 self.steps["run"].render()
 
             with ui.stepper_navigation():
-                ui.button("Back", on_click=self.stepper.previous).props("flat")
+                ui.button("Back", on_click=self.stepper.previous, color="cancel").props(
+                    "flat"
+                )
 
     def _on_next_analyzer(self) -> None:
         """Handle Next from analyzer selection step."""

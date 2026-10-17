@@ -2,7 +2,7 @@
 
 from cibmangotree.gui.theme import (
     ACCENT,
-    CANCEL_GRAY,
+    CANCEL,
     MANGO_DARK_GREEN,
     MANGO_ORANGE,
     gui_colors,
@@ -13,7 +13,7 @@ from cibmangotree.gui.theme import (
 
 def test_gui_colors_defaults_match_brand_constants() -> None:
     assert gui_colors.primary == MANGO_DARK_GREEN
-    assert gui_colors.cancel == CANCEL_GRAY
+    assert gui_colors.cancel == CANCEL
     assert gui_colors.mango_orange == MANGO_ORANGE
     assert gui_colors.accent == ACCENT
 

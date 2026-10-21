@@ -2,6 +2,7 @@
 
 import logging
 import os
+import shutil
 from collections.abc import Generator
 from pathlib import Path
 
@@ -38,12 +39,16 @@ def nicegui_chrome_options() -> webdriver.ChromeOptions:
     chrome_options.add_argument("disable-search-engine-choice-screen")
     chrome_options.add_argument("no-sandbox")
     chrome_options.add_argument("headless")
-    # The shell has no display. --disable-gpu stops its GPU process, and the
-    # first canvas page then never answers on Linux and Windows. Bare
-    # --use-gl=angle stalls this shell, so the backend is SwiftShader.
-    chrome_options.add_argument("use-gl=angle")
-    chrome_options.add_argument("use-angle=swiftshader")
-    chrome_options.add_argument("enable-unsafe-swiftshader")
+    binary = _browser_binary()
+    if binary.name.startswith("chrome-headless-shell"):
+        # Bare --use-gl=angle stalls this shell. SwiftShader is the backend
+        # that answers on the first canvas page.
+        chrome_options.add_argument("use-gl=angle")
+        chrome_options.add_argument("use-angle=swiftshader")
+        chrome_options.add_argument("enable-unsafe-swiftshader")
+    else:
+        chrome_options.add_argument("disable-gpu")
+        chrome_options.add_argument("enable-unsafe-swiftshader")
     chrome_options.add_argument("window-size=600x600")
     chrome_options.add_experimental_option(
         "prefs",
@@ -54,8 +59,26 @@ def nicegui_chrome_options() -> webdriver.ChromeOptions:
         },
     )
     chrome_options.set_capability("goog:loggingPrefs", {"browser": "ALL"})
-    chrome_options.binary_location = str(chrome_headless_shell())
+    chrome_options.binary_location = str(binary)
     return chrome_options
+
+
+def _browser_binary() -> Path:
+    """Browser for the screen tests.
+
+    CHROME_BINARY is the Chrome already installed on a GitHub runner. The
+    headless shell is used everywhere else, including macOS CI.
+    """
+    configured = os.environ.get("CHROME_BINARY")
+    if not configured:
+        return chrome_headless_shell()
+    path = Path(configured)
+    if path.is_file():
+        return path
+    found = shutil.which(configured)
+    if found is None:
+        raise FileNotFoundError(f"CHROME_BINARY does not exist: {configured}")
+    return Path(found)
 
 
 def _path_without_chromedriver() -> str:
@@ -95,7 +118,7 @@ def nicegui_driver(
             options=nicegui_chrome_options,
         )
     except Exception as exc:
-        raise RuntimeError("Could not start chrome-headless-shell.") from exc
+        raise RuntimeError("Could not start the screen-test browser.") from exc
     finally:
         if previous is None:
             os.environ.pop("PATH", None)

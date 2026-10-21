@@ -38,9 +38,11 @@ def nicegui_chrome_options() -> webdriver.ChromeOptions:
     chrome_options.add_argument("disable-search-engine-choice-screen")
     chrome_options.add_argument("no-sandbox")
     chrome_options.add_argument("headless")
-    # The shell has no display. NiceGUI's local --use-gl=angle flag is for the
-    # Chrome app and stalls this shell's renderer on the first page.
-    chrome_options.add_argument("disable-gpu")
+    # The shell has no display. --disable-gpu stops its GPU process, and the
+    # first canvas page then never answers on Linux and Windows. Bare
+    # --use-gl=angle stalls this shell, so the backend is SwiftShader.
+    chrome_options.add_argument("use-gl=angle")
+    chrome_options.add_argument("use-angle=swiftshader")
     chrome_options.add_argument("enable-unsafe-swiftshader")
     chrome_options.add_argument("window-size=600x600")
     chrome_options.add_experimental_option(
@@ -99,6 +101,10 @@ def nicegui_driver(
             os.environ.pop("PATH", None)
         else:
             os.environ["PATH"] = previous
+    # A stuck renderer never returns a WebDriver command. The waits in the
+    # tests only run after that command returns, so each command is capped.
+    driver.command_executor._client_config.timeout = 30
+    driver.set_script_timeout(30)
     driver.implicitly_wait(Screen.IMPLICIT_WAIT)
     driver.set_page_load_timeout(20)
     yield driver

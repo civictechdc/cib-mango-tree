@@ -153,14 +153,16 @@ def _choose_toggle(screen: Screen, text: str) -> None:
         if not buttons:
             screen.wait(0.1)
             continue
-        element = buttons[0]
-        selected = element.get_attribute("aria-pressed") == "true" or (
-            "q-btn--active" in (element.get_attribute("class") or "")
-        )
-        if selected:
-            screen.wait(0.5)
-            return
+        # A dialog that is still opening replaces its buttons. The latest match
+        # is the one in the dialog that just opened.
+        element = buttons[-1]
         try:
+            selected = element.get_attribute("aria-pressed") == "true" or (
+                "q-btn--active" in (element.get_attribute("class") or "")
+            )
+            if selected:
+                screen.wait(0.5)
+                return
             screen.selenium.execute_script(
                 "arguments[0].scrollIntoView({block: 'center'});", element
             )

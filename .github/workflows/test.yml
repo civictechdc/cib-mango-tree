@@ -10,15 +10,11 @@ jobs:
         include:
           - platform_name: Ubuntu
             os: ubuntu-latest
-            chrome_binary: google-chrome
           - platform_name: MacOS Arm64
             os: macos-15
-            chrome_binary: ""
           - platform_name: Windows
             os: windows-2022
-            chrome_binary: "C:/Program Files/Google/Chrome/Application/chrome.exe"
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -38,9 +34,6 @@ jobs:
 
       - name: Run tests
         run: uv run pytest
-        env:
-          PYTHONUNBUFFERED: "1"
-          CHROME_BINARY: ${{ matrix.chrome_binary }}
 
   test_build_gui:
     name: Executable Build

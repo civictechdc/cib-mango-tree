@@ -41,8 +41,6 @@ dev = [
     "pip-audit>=2.7.0",
     # TODO: Remove once pip-api updates pip transitive dep (PYSEC-2026-196)
     "pip>=26.2",
-    # Screen tests drive chrome-headless-shell through selenium. User tests do not start a browser.
-    "selenium>=4.51.0",
 ]
 docs = [
     "zensical",

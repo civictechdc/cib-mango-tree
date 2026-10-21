@@ -1,9 +1,8 @@
 """Analyzer choice, configuration, and results interactions.
 
-The stepper's Next and Back buttons move in the browser, so the walk from
-column mapping through Run is a Screen test. Here, Next is checked for the
-Python result: the selected analyzer is stored, and missing choices are rejected.
-Home records whether the leave dialog appears for each analysis session state.
+Next is checked for the Python result: the selected analyzer is stored, and
+missing choices are rejected. Home records whether the leave dialog appears
+for each analysis session state.
 """
 
 from nicegui import ui

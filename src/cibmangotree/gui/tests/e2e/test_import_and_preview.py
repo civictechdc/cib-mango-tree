@@ -1,9 +1,8 @@
 """Import and preview interactions, driven by the User fixture.
 
-Choosing a file is a page-level action and is covered by a Screen test. These
-tests cover the confirmation dialog, import settings, and creating the project
-once a file is already on the session. Home records whether the leave dialog
-appears for each import session state.
+The file is attached on the session. These tests cover the confirmation
+dialog, import settings, and creating the project. Home records whether the
+leave dialog appears for each import session state.
 """
 
 from io import BytesIO

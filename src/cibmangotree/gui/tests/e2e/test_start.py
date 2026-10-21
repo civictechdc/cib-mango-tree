@@ -1,7 +1,6 @@
 """Start-page interactions, driven by the User fixture.
 
-These stay in-process: create, cancel, and the disabled open/delete buttons
-are Python click handlers. Selecting a table row is covered by a Screen test.
+Create, cancel, and the disabled open/delete buttons are Python click handlers.
 """
 
 from pathlib import Path

@@ -84,6 +84,40 @@ def _click_visible_button(screen: Screen, text: str, *, last: bool = False) -> N
     raise AssertionError(f"No visible button {text!r}")
 
 
+def _click_dialog_button(screen: Screen, text: str) -> None:
+    # The page behind a dialog can have its own button with the same label.
+    # The last button on the page is not always the one inside the dialog.
+    wanted = text.casefold()
+    deadline = time.time() + 5
+    while time.time() < deadline:
+        try:
+            buttons = [
+                element
+                for element in screen.selenium.find_elements(
+                    By.CSS_SELECTOR, ".q-dialog button.q-btn"
+                )
+                if " ".join((element.text or "").split()).casefold() == wanted
+                and element.is_displayed()
+            ]
+        except StaleElementReferenceException:
+            screen.wait(0.1)
+            continue
+        if not buttons:
+            screen.wait(0.1)
+            continue
+        element = buttons[-1]
+        try:
+            screen.selenium.execute_script(
+                "arguments[0].scrollIntoView({block: 'center'});", element
+            )
+            screen.selenium.execute_script("arguments[0].click();", element)
+        except StaleElementReferenceException:
+            screen.wait(0.1)
+            continue
+        return
+    raise AssertionError(f"No visible dialog button {text!r}")
+
+
 def _choose_toggle(screen: Screen, text: str) -> None:
     # The server learns the new value from the click. Retry Import can arrive
     # first and rerun with the previous separator, so wait until this option
@@ -353,7 +387,7 @@ def test_delete_selected_project(screen: Screen, ui_app: App) -> None:
 
     _click_visible_button(screen, "Delete")
     _wait_for(screen, "This action cannot be undone.")
-    _click_visible_button(screen, "Delete", last=True)
+    _click_dialog_button(screen, "Delete")
 
     _wait_for(screen, "Project 'Delete me' deleted")
     assert ui_app.list_projects() == []
@@ -609,7 +643,7 @@ def test_manage_analyses_lists_and_deletes_a_saved_analysis(
 
     _click_visible_button(screen, "Delete Selected")
     _wait_for(screen, "Are you sure you want to delete")
-    _click_visible_button(screen, "Delete", last=True)
+    _click_dialog_button(screen, "Delete")
     _wait_for(screen, "Deleted 1 analysis successfully.")
 
 

@@ -3,6 +3,7 @@
 import logging
 import os
 import shutil
+import sys
 from collections.abc import Generator
 from pathlib import Path
 
@@ -10,7 +11,10 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
-from cibmangotree.gui.tests.chrome_shell import chrome_headless_shell
+from cibmangotree.gui.tests.chrome_shell import (
+    chrome_headless_shell,
+    matching_chromedriver,
+)
 
 # Plugins must be listed here. Pytest does not load pytest_plugins from nested conftest files.
 # user_plugin drives Python UI actions in-process. screen_plugin is for actions that only
@@ -108,13 +112,19 @@ def nicegui_driver(
     """
     from nicegui.testing.screen import Screen
 
+    binary = Path(nicegui_chrome_options.binary_location)
+    # Pytest captures print() until the test ends. Write past that capture so
+    # the runner log shows this line while the browser is starting.
+    sys.__stdout__.write(f"Starting the screen-test browser: {binary.name}\n")
+    sys.__stdout__.flush()
+    driver_path = matching_chromedriver(binary)
     env = os.environ.copy()
     env["PATH"] = _path_without_chromedriver()
     previous = os.environ.get("PATH")
     os.environ["PATH"] = env["PATH"]
     try:
         driver = webdriver.Chrome(
-            service=Service(env=env),
+            service=Service(executable_path=str(driver_path), env=env),
             options=nicegui_chrome_options,
         )
     except Exception as exc:

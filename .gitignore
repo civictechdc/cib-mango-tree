@@ -13,6 +13,8 @@ node_modules
 ./gui/components/dist
 
 .vscode
+# Failed Screen tests write PNGs here. NiceGUI creates the directory itself.
+/screenshots
 
 # cursor
 ./gui/.cursor 

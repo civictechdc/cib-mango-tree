@@ -62,26 +62,60 @@ SupportedOutputExtension = Literal["parquet", "csv", "xlsx", "json"]
 
 
 class Storage:
-    def __init__(self, *, app_name: str, app_author: str):
+    def __init__(
+        self,
+        *,
+        app_name: str,
+        app_author: str,
+        data_dir: str | None = None,
+        cache_dir: str | None = None,
+    ):
+        """Open project storage.
+
+        data_dir and cache_dir let tests write somewhere other than the real
+        platformdirs location. They are included in pickle state because an
+        analysis worker rebuilds Storage from __getstate__.
+        """
         self.app_name = app_name
         self.app_author = app_author
-        self.user_data_dir = platformdirs.user_data_dir(
-            appname=app_name, appauthor=app_author, ensure_exists=True
-        )
-        self.temp_dir = platformdirs.user_cache_dir(
-            appname=app_name, appauthor=app_author, ensure_exists=True
-        )
+        self._data_dir = data_dir
+        self._cache_dir = cache_dir
+        if data_dir is None:
+            self.user_data_dir = platformdirs.user_data_dir(
+                appname=app_name, appauthor=app_author, ensure_exists=True
+            )
+            self.temp_dir = platformdirs.user_cache_dir(
+                appname=app_name, appauthor=app_author, ensure_exists=True
+            )
+        else:
+            self.user_data_dir = data_dir
+            os.makedirs(self.user_data_dir, exist_ok=True)
+            self.temp_dir = cache_dir or os.path.join(data_dir, "cache")
+            os.makedirs(self.temp_dir, exist_ok=True)
         self.db = TinyDB(self._get_db_path())
         with self._lock_database():
             self._bootstrap_analyses_v1()
 
         self.file_selector_state = AppFileSelectorStateManager(self)
 
+    def close(self) -> None:
+        self.db.close()
+
     def __getstate__(self):
-        return {"app_name": self.app_name, "app_author": self.app_author}
+        return {
+            "app_name": self.app_name,
+            "app_author": self.app_author,
+            "data_dir": self._data_dir,
+            "cache_dir": self._cache_dir,
+        }
 
     def __setstate__(self, state):
-        self.__init__(app_name=state["app_name"], app_author=state["app_author"])
+        self.__init__(
+            app_name=state["app_name"],
+            app_author=state["app_author"],
+            data_dir=state.get("data_dir"),
+            cache_dir=state.get("cache_dir"),
+        )
 
     def init_project(
         self,

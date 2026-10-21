@@ -84,6 +84,46 @@ def _click_visible_button(screen: Screen, text: str, *, last: bool = False) -> N
     raise AssertionError(f"No visible button {text!r}")
 
 
+def _choose_toggle(screen: Screen, text: str) -> None:
+    # The server learns the new value from the click. Retry Import can arrive
+    # first and rerun with the previous separator, so wait until this option
+    # is the selected one and the click has had time to be recorded.
+    wanted = text.casefold()
+    deadline = time.time() + 5
+    while time.time() < deadline:
+        try:
+            buttons = [
+                element
+                for element in screen.selenium.find_elements(
+                    By.CSS_SELECTOR, "button.q-btn"
+                )
+                if wanted in (element.text or "").casefold() and element.is_displayed()
+            ]
+        except StaleElementReferenceException:
+            screen.wait(0.1)
+            continue
+        if not buttons:
+            screen.wait(0.1)
+            continue
+        element = buttons[0]
+        selected = element.get_attribute("aria-pressed") == "true" or (
+            "q-btn--active" in (element.get_attribute("class") or "")
+        )
+        if selected:
+            screen.wait(0.5)
+            return
+        try:
+            screen.selenium.execute_script(
+                "arguments[0].scrollIntoView({block: 'center'});", element
+            )
+            screen.selenium.execute_script("arguments[0].click();", element)
+        except StaleElementReferenceException:
+            screen.wait(0.1)
+            continue
+        screen.wait(0.1)
+    raise AssertionError(f"{text!r} did not become selected")
+
+
 def _set_number(screen: Screen, value: str, *, index: int = -1) -> None:
     # Arrow keys change a number input without clearing it. Clearing the field
     # sends None through validation and NiceGUI records that as an error.
@@ -417,16 +457,15 @@ def test_hashtag_import_runs_and_exports(screen: Screen, ui_app: App) -> None:
     _wait_for(screen, "Quote character:")
     _wait_for(screen, "Has header:")
     _wait_for(screen, "Skip rows:")
-    _click_visible_button(screen, "Semicolon")
+    _choose_toggle(screen, "Semicolon")
     _click_visible_button(screen, "Retry Import")
-    _wait_for(screen, "Preview updated successfully!")
     _wait_for(screen, "No. detected columns: 1")
+    _wait_for(screen, "Preview updated successfully!")
 
     _click(screen, "There's something wrong")
     _wait_for(screen, "Column separator:")
-    _click_visible_button(screen, "Comma")
+    _choose_toggle(screen, "Comma")
     _click_visible_button(screen, "Retry Import")
-    _wait_for(screen, "Preview updated successfully!")
     _wait_for(screen, "No. detected columns: 3")
     _click(screen, "Looks good, let's proceed")
 

@@ -32,9 +32,6 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked --no-install-project
 
-      # Screen tests download chrome-headless-shell on first use. That program
-      # has no window and no Dock icon. Google Chrome is not installed here,
-      # because launching it puts an icon in the Dock even with --headless.
       - name: Run tests
         run: uv run pytest
 

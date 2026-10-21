@@ -73,12 +73,28 @@ def ui_data_dir():
         yield root
 
 
+def _release_analysis_workers() -> None:
+    """Stop analysis worker processes so they release the test database.
+
+    A finished run stays in NiceGUI's process pool. On Windows that keeps
+    db.json open, and the temporary project directory cannot be removed.
+    """
+    from nicegui import run as nicegui_run
+
+    pool = nicegui_run.process_pool
+    if pool is None or not getattr(pool, "_processes", None):
+        return
+    pool.shutdown(wait=True, cancel_futures=True)
+    nicegui_run.process_pool = None
+    nicegui_run.setup()
+
+
 @pytest.fixture
 def ui_app(ui_data_dir: Path) -> App:
     """Real app pointed at ui_data_dir.
 
-    The database is closed before the directory is deleted so Windows can
-    remove the TinyDB file.
+    The database is closed, and any analysis worker is stopped, before the
+    directory is deleted. Windows cannot remove a TinyDB file that is still open.
     """
     storage = Storage(
         app_name="MangoTango",
@@ -89,3 +105,4 @@ def ui_app(ui_data_dir: Path) -> App:
     app = App(context=AppContext(storage=storage, suite=suite))
     yield app
     storage.close()
+    _release_analysis_workers()

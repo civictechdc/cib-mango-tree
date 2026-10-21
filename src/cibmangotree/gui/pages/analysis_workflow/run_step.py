@@ -243,7 +243,6 @@ class RunAnalysisStep:
                     AnalysisContext.run_worker,
                     analysis.model,
                     analyzer.id,
-                    analysis.column_mapping,
                     input_columns_data,
                     secondary_analyzer_ids,
                     analysis.app_context.storage,

@@ -156,11 +156,6 @@ class SecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
             self.analysis.param_values, self.secondary_analyzer.base_analyzer
         )
 
-    def dependency(self, interface: SecondaryAnalyzerInterface) -> AssetsReader:
-        return SecondaryAnalyzerOutputReaderGroupContext(
-            analysis=self.analysis, secondary_analyzer_id=interface.id, store=self.store
-        )
-
     def temp_dir(self) -> str:
         return self.temp_dir
 
@@ -203,37 +198,6 @@ class PrimaryAnalyzerOutputTableReader(TableReader, BaseModel):
     @cached_property
     def parquet_path(self):
         return self.store.get_primary_output_parquet_path(self.analysis, self.output_id)
-
-
-class SecondaryAnalyzerOutputReaderGroupContext(AssetsReader, BaseModel):
-    analysis: AnalysisModel
-    secondary_analyzer_id: str
-    store: Storage
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    def table(self, output_id: str) -> TableReader:
-        return SecondaryAnalyzerOutputTableReader(
-            analysis=self.analysis,
-            secondary_analyzer_id=self.secondary_analyzer_id,
-            output_id=output_id,
-            store=self.store,
-        )
-
-
-class SecondaryAnalyzerOutputTableReader(TableReader, BaseModel):
-    analysis: AnalysisModel
-    secondary_analyzer_id: str
-    output_id: str
-    store: Storage
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    @cached_property
-    def parquet_path(self):
-        return self.store.get_secondary_output_parquet_path(
-            self.analysis, self.secondary_analyzer_id, self.output_id
-        )
 
 
 class SecondaryAnalyzerOutputWriter(TableWriter, BaseModel):

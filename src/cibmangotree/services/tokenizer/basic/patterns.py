@@ -7,7 +7,7 @@ regex and re modules.
 """
 
 import re
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict
 
 if TYPE_CHECKING:
     from ..core.types import TokenizerConfig
@@ -305,10 +305,6 @@ class TokenizerPatterns:
         _exclusion_pattern_cache[cache_key] = result
         return result
 
-    def list_patterns(self) -> List[str]:
-        """Get list of available pattern names."""
-        return list(self._patterns.keys())
-
     def _compile_patterns(self):
         """Compile all regex patterns with fallback support."""
 
@@ -368,9 +364,3 @@ def get_patterns() -> TokenizerPatterns:
     if _global_patterns is None:
         _global_patterns = TokenizerPatterns()
     return _global_patterns
-
-
-# Pattern categories for easy access
-SOCIAL_PATTERNS = ["url", "email", "mention", "hashtag"]
-LINGUISTIC_PATTERNS = ["word", "latin_word", "cjk_chars", "arabic_chars"]
-FORMATTING_PATTERNS = ["emoji", "numeric", "punctuation"]

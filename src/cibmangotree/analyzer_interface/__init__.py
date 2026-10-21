@@ -18,9 +18,7 @@ from .interface import (
 )
 from .params import (
     IntegerParam,
-    ParamType,
     ParamValue,
-    TimeBinningParam,
     TimeBinningValue,
 )
 from .suite import AnalyzerSuite

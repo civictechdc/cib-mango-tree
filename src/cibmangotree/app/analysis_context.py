@@ -1,4 +1,3 @@
-import os
 from functools import cached_property
 from multiprocessing import Event, Queue
 from tempfile import TemporaryDirectory
@@ -93,7 +92,6 @@ class AnalysisContext(BaseModel):
     def run_worker(
         analysis_model: AnalysisModel,
         analyzer_id: str,
-        column_mapping: dict[str, str],
         input_columns_data: dict[str, tuple[str, str]],
         secondary_analyzer_ids: list[str],
         storage: Storage,
@@ -110,7 +108,6 @@ class AnalysisContext(BaseModel):
         Args:
             analysis_model: The analysis model
             analyzer_id: The primary analyzer ID
-            column_mapping: Mapping from analyzer column names to user column names
             input_columns_data: Dict of analyzer_column_name -> (user_column_name, semantic_name)
             secondary_analyzer_ids: List of secondary analyzer IDs
             storage: Storage instance
@@ -274,9 +271,6 @@ class AnalysisContext(BaseModel):
     @property
     def export_root_path(self):
         return self.app_context.storage._get_project_exports_root_path(self.model)
-
-    def export_directory_exists(self) -> bool:
-        return os.path.exists(self.export_root_path)
 
     def get_all_exportable_outputs(self):
         from .analysis_output_context import AnalysisOutputContext

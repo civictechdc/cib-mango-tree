@@ -6,7 +6,7 @@ from typing import Callable
 import polars as pl
 from pydantic import BaseModel, ConfigDict
 
-from cibmangotree.analyzer_interface import ParamValue, SecondaryAnalyzerInterface
+from cibmangotree.analyzer_interface import ParamValue
 from cibmangotree.analyzer_interface.context import (
     AssetsReader,
     InputTableReader,
@@ -75,7 +75,6 @@ class TestOutputWriter(TableWriter):
 
 class TestSecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
     primary_output_parquet_paths: dict[str, str]
-    dependency_output_parquet_paths: dict[str, dict[str, str]] = dict()
     output_parquet_root_path: str
     primary_param_values: dict[str, ParamValue]
     progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
@@ -91,11 +90,6 @@ class TestSecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
     @property
     def base_params(self) -> dict[str, ParamValue]:
         return self.primary_param_values
-
-    def dependency(self, interface: SecondaryAnalyzerInterface) -> AssetsReader:
-        return TestOutputReaderGroupContext(
-            output_parquet_paths=self.dependency_output_parquet_paths[interface.id]
-        )
 
     def temp_dir(self) -> str:
         return TemporaryDirectory(delete=True).name

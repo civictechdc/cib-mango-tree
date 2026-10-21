@@ -45,31 +45,8 @@ class ImportDatasetPage(GuiPage):
 
     def render_content(self) -> None:
         """Render file selection interface."""
-        # Page state - store selected file path locally
-        selected_file_path = None
-
-        # Main content - centered vertically and horizontally
         with self.centered_content(max_width="800px"):
             ui.label("Choose a dataset file.").classes("text-lg")
-
-            # File info card (initially hidden)
-            file_info_card = ui.card().style("display: none;")
-            with file_info_card:
-                file_name_label = ui.label().classes("text-sm")
-                file_path_label = ui.label().classes("text-sm")
-                file_size_label = ui.label().classes("text-sm")
-                file_modified_label = ui.label().classes("text-sm")
-
-                with ui.row().classes("w-full justify-end gap-2 mt-4"):
-                    change_file_btn = ui.button(
-                        "Pick a different file",
-                        icon="edit",
-                        color="secondary",
-                        on_click=lambda: None,
-                    ).props("outline")
-                    preview_btn = ui.button(
-                        "Next: Preview Data", icon="arrow_forward", color="primary"
-                    )
 
             async def handle_upload(upload: UploadFile) -> None:
                 file_contents: bytes = await upload.read()

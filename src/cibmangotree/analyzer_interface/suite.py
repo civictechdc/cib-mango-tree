@@ -7,7 +7,6 @@ from cibmangotree.analyzer_interface import (
     AnalyzerDeclaration,
     AnalyzerInterface,
     SecondaryAnalyzerDeclaration,
-    SecondaryAnalyzerInterface,
 )
 from cibmangotree.meta import is_development
 
@@ -50,27 +49,9 @@ class AnalyzerSuite(BaseModel):
     def find_toposorted_secondary_analyzers(
         self, primary_analyzer: AnalyzerInterface
     ) -> list[SecondaryAnalyzerDeclaration]:
-        result: list[SecondaryAnalyzerDeclaration] = []
-        visited_ids: set[str] = set()
-
-        def visit(secondary_interface: SecondaryAnalyzerInterface):
-            if secondary_interface.id in visited_ids:
-                return
-            visited_ids.add(secondary_interface.id)
-            for dependency in secondary_interface.depends_on:
-                visit(dependency)
-
-            secondary_declaration = self._secondary_analyzers_by_base.get(
-                primary_analyzer.id, {}
-            ).get(secondary_interface.id)
-            assert secondary_declaration is not None
-            result.append(secondary_declaration)
-
-        for secondary in self._secondary_analyzers_by_base.get(
-            primary_analyzer.id, {}
-        ).values():
-            visit(secondary)
-        return result
+        return list(
+            self._secondary_analyzers_by_base.get(primary_analyzer.id, {}).values()
+        )
 
     def get_secondary_analyzer_by_id(self, analyzer_id, secondary_id):
         return self._secondary_analyzers_by_base.get(analyzer_id, {}).get(secondary_id)

@@ -11,17 +11,12 @@ and implement render_content().
 """
 
 import abc
-from collections.abc import Callable
-from typing import TYPE_CHECKING
 
-from nicegui import run, ui
+from nicegui import ui
 
 from cibmangotree.gui.base import GuiPage
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
-
-if TYPE_CHECKING:
-    import polars as pl
 
 
 class BaseDashboardPage(GuiPage, abc.ABC):
@@ -96,42 +91,6 @@ class BaseDashboardPage(GuiPage, abc.ABC):
             return storage.get_primary_output_parquet_path(analysis, output_id)
         except Exception:
             return None
-
-    async def load_parquet_async(
-        self,
-        output_id: str,
-        on_success: Callable[["pl.DataFrame"], None],
-        loading_container: ui.column | None = None,
-        content_container: ui.column | None = None,
-    ) -> None:
-        """
-        Load a parquet file asynchronously with loading/error handling.
-
-        Args:
-            output_id: Secondary output identifier to locate the parquet file.
-            on_success: Callback invoked with the loaded DataFrame on success.
-            loading_container: Container to show error in if loading fails.
-            content_container: Paired content container to reveal on success.
-        """
-        import polars as pl
-
-        path = self.get_output_parquet_path(output_id)
-        if path is None:
-            if loading_container is not None:
-                self._show_error(loading_container, "No analysis data found.")
-            return
-        try:
-            df = await run.io_bound(pl.read_parquet, path)
-            if df.is_empty():
-                if loading_container is not None:
-                    self._show_error(loading_container, "No data available.")
-                return
-            on_success(df)
-            if loading_container is not None and content_container is not None:
-                self._show_content(loading_container, content_container)
-        except Exception as exc:
-            if loading_container is not None:
-                self._show_error(loading_container, f"Could not load data: {exc}")
 
     def _create_loading_container(
         self, height: str = "500px"

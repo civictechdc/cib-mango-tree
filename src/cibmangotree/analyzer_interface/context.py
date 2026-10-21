@@ -1,11 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Optional, Protocol, TypeVar
+from typing import Protocol, TypeVar
 
 import polars as pl
-from polars import DataFrame
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
-from .interface import SecondaryAnalyzerInterface
 from .params import ParamValue
 
 
@@ -16,7 +14,7 @@ class ProgressReporterProtocol(Protocol):
         """Update progress value (0.0 to 1.0)."""
         ...
 
-    def finish(self, done_text: str = "Done!") -> None:
+    def finish(self) -> None:
         """Mark the step as complete."""
         ...
 
@@ -34,7 +32,7 @@ class NullProgressReporter:
     def update(self, value: float):
         pass
 
-    def finish(self, done_text: str = "Done!"):
+    def finish(self):
         pass
 
     def __enter__(self):
@@ -102,16 +100,6 @@ class BaseDerivedModuleContext(ABC, BaseModel):
         """
         Gets the base primary analyzer's context, which lets you inspect and load its
         outputs.
-        """
-        pass
-
-    @abstractmethod
-    def dependency(
-        self, secondary_interface: SecondaryAnalyzerInterface
-    ) -> "AssetsReader":
-        """
-        Gets the context of a secondary analyzer the current module depends on, which
-        lets you inspect and load its outputs.
         """
         pass
 

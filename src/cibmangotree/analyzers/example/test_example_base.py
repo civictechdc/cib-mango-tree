@@ -16,16 +16,13 @@ def test_example_base():
     test_primary_analyzer(
         interface,  # You provide the interface ...
         main,  # ... and the analyzer's entry point.
-        # There are also JsonTestData, ExcelTestData.
-        # You can also programmatically create a polars DataFrame
-        # and use PolarsTestData.
+        # You can also use JsonTestData.
         # The column names for the input and output data must match the
         # interface schema.
         input=CsvTestData(
             os.path.join(test_data_dir, "input.csv"),
             # Specifying the column semantics are optional, and are optional for
-            # each column. It's useful in CsvTestData, ExcelTestData, and
-            # JsonTestData if you have data that need to be interpreted into
+            # each column. It's useful in CsvTestData and JsonTestData if you have data that need to be interpreted into
             # types not directly supported by the file format like timestamp.
             semantics={"message_id": identifier},
             # This is optional; it lets you specify how the CSV file is read.

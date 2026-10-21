@@ -1,9 +1,6 @@
 from typing import Callable
 
-from .context import (
-    PrimaryAnalyzerContext,
-    SecondaryAnalyzerContext,
-)
+from .context import PrimaryAnalyzerContext, SecondaryAnalyzerContext
 from .interface import (
     AnalyzerInterface,
     SecondaryAnalyzerInterface,
@@ -50,7 +47,7 @@ class AnalyzerDeclaration(AnalyzerInterface):
 
 
 class SecondaryAnalyzerDeclaration(SecondaryAnalyzerInterface):
-    entry_point: Callable[["SecondaryAnalyzerContext"], None]
+    entry_point: Callable[[SecondaryAnalyzerContext], None]
 
     def __init__(self, interface: SecondaryAnalyzerInterface, main: Callable):
         """Creates a secondary analyzer declaration

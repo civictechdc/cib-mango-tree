@@ -28,7 +28,7 @@ class GUIProgressReporter:
             ).model_dump()
         )
 
-    def finish(self, done_text: str = "Done!"):
+    def finish(self):
         self.queue.put(
             AnalysisQueueMessage(
                 type="step_finish",

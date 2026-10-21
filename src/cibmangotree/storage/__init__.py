@@ -16,8 +16,6 @@ from xlsxwriter import Workbook
 from cibmangotree.analyzer_interface.interface import AnalyzerOutput
 from cibmangotree.analyzer_interface.params import ParamValue
 
-from .file_selector import FileSelectorStateManager
-
 
 class ProjectModel(BaseModel):
     class_: Literal["project"] = "project"
@@ -31,11 +29,6 @@ class ProjectModel(BaseModel):
 class SettingsModel(BaseModel):
     class_: Literal["settings"] = "settings"
     export_chunk_size: Optional[int | Literal[False]] = None
-
-
-class FileSelectionState(BaseModel):
-    class_: Literal["file_selector_state"] = "file_selector_state"
-    last_path: Optional[str] = None
 
 
 class AnalysisModel(BaseModel):
@@ -96,8 +89,6 @@ class Storage:
         with self._lock_database():
             self._bootstrap_analyses_v1()
 
-        self.file_selector_state = AppFileSelectorStateManager(self)
-
     def close(self) -> None:
         self.db.close()
 
@@ -157,13 +148,6 @@ class Storage:
             result.append(model)
         return sorted(result, key=lambda project: project.display_name)
 
-    def get_project(self, project_id: str):
-        q = Query()
-        project = self.db.search((q["class_"] == "project") & (q["id"] == project_id))
-        if project:
-            return ProjectModel(**project[0])
-        return None
-
     def delete_project(self, project_id: str):
         with self._lock_database():
             q = Query()
@@ -185,57 +169,6 @@ class Storage:
     def load_project_input(self, project_id: str, *, n_records: Optional[int] = None):
         input_path = self._get_project_input_path(project_id)
         return pl.read_parquet(input_path, n_rows=n_records)
-
-    def get_project_input_stats(self, project_id: str):
-        input_path = self._get_project_input_path(project_id)
-        num_rows = pl.scan_parquet(input_path).select(pl.count()).collect().item()
-        return TableStats(num_rows=num_rows)
-
-    def save_project_primary_outputs(
-        self, analysis: AnalysisModel, outputs: dict[str, pl.DataFrame]
-    ):
-        for output_id, output_df in outputs.items():
-            self._save_output(
-                os.path.join(
-                    self._get_project_primary_output_root_path(analysis),
-                    output_id,
-                ),
-                output_df,
-                "parquet",
-            )
-
-    def save_project_secondary_outputs(
-        self,
-        analysis: AnalysisModel,
-        secondary_id: str,
-        outputs: dict[str, pl.DataFrame],
-    ):
-        for output_id, output_df in outputs.items():
-            self._save_output(
-                os.path.join(
-                    self._get_project_secondary_output_root_path(
-                        analysis, secondary_id
-                    ),
-                    output_id,
-                ),
-                output_df,
-                "parquet",
-            )
-
-    def save_project_secondary_output(
-        self,
-        analysis: AnalysisModel,
-        secondary_id: str,
-        output_id: str,
-        output_df: pl.DataFrame,
-        extension: SupportedOutputExtension,
-    ):
-        root_path = self._get_project_secondary_output_root_path(analysis, secondary_id)
-        self._save_output(
-            os.path.join(root_path, output_id),
-            output_df,
-            extension,
-        )
 
     def _save_output(
         self,
@@ -260,23 +193,11 @@ class Storage:
             raise ValueError(f"Unsupported format: {extension}")
         return output_path
 
-    def load_project_primary_output(self, analysis: AnalysisModel, output_id: str):
-        output_path = self.get_primary_output_parquet_path(analysis, output_id)
-        return pl.read_parquet(output_path)
-
     def get_primary_output_parquet_path(self, analysis: AnalysisModel, output_id: str):
         return os.path.join(
             self._get_project_primary_output_root_path(analysis),
             f"{output_id}.parquet",
         )
-
-    def load_project_secondary_output(
-        self, analysis: AnalysisModel, secondary_id: str, output_id: str
-    ):
-        output_path = self.get_secondary_output_parquet_path(
-            analysis, secondary_id, output_id
-        )
-        return pl.read_parquet(output_path)
 
     def get_secondary_output_parquet_path(
         self, analysis: AnalysisModel, secondary_id: str, output_id: str
@@ -572,15 +493,6 @@ class Storage:
             self._get_project_path(analysis.project_id), analysis.path, "exports"
         )
 
-    def _get_web_presenter_state_path(self, analysis: AnalysisModel, presenter_id: str):
-        return os.path.join(
-            self._get_project_path(analysis.project_id),
-            analysis.path,
-            "web_presenters",
-            presenter_id,
-            "state",
-        )
-
     def _lock_database(self):
         """
         Locks the database to prevent concurrent access, in case multiple instances
@@ -630,10 +542,6 @@ class Storage:
             i += 1
 
 
-class TableStats(BaseModel):
-    num_rows: int
-
-
 def collect_dataframe_chunks(
     input: Iterable[pl.DataFrame], size_threshold: int
 ) -> Iterable[pl.DataFrame]:
@@ -659,27 +567,3 @@ def collect_dataframe_chunks(
 
     if output_buffer:
         yield pl.concat(output_buffer)
-
-
-class AppFileSelectorStateManager(FileSelectorStateManager):
-    def __init__(self, storage: "Storage"):
-        self.storage = storage
-
-    def get_current_path(self):
-        return self._load_state().last_path
-
-    def set_current_path(self, path: str):
-        self._save_state(path)
-
-    def _load_state(self):
-        q = Query()
-        state = self.storage.db.search(q["class_"] == "file_selector_state")
-        if state:
-            return FileSelectionState(**state[0])
-        return FileSelectionState()
-
-    def _save_state(self, last_path: str):
-        self.storage.db.upsert(
-            FileSelectionState(last_path=last_path).model_dump(),
-            Query()["class_"] == "file_selector_state",
-        )

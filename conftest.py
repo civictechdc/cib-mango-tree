@@ -1,8 +1,9 @@
 """Root pytest hooks: NiceGUI plugins must load from top-level conftest (pytest policy)."""
 
 import logging
-import shutil
+import os
 from collections.abc import Generator
+from pathlib import Path
 
 import pytest
 from selenium import webdriver
@@ -55,6 +56,22 @@ def nicegui_chrome_options() -> webdriver.ChromeOptions:
     return chrome_options
 
 
+def _path_without_chromedriver() -> str:
+    """Drop PATH entries that contain chromedriver.
+
+    Selenium Manager uses a chromedriver it finds on PATH. GitHub's macOS
+    image ships an older one than the chrome-headless-shell these tests
+    download, and that mismatch prevents the browser from starting.
+    """
+    name = "chromedriver.exe" if os.name == "nt" else "chromedriver"
+    kept = [
+        entry
+        for entry in os.environ.get("PATH", "").split(os.pathsep)
+        if entry and not (Path(entry) / name).is_file()
+    ]
+    return os.pathsep.join(kept)
+
+
 @pytest.fixture(scope="session")
 def nicegui_driver(
     nicegui_chrome_options: webdriver.ChromeOptions,
@@ -66,17 +83,22 @@ def nicegui_driver(
     """
     from nicegui.testing.screen import Screen
 
-    for executable_path in (None, shutil.which("chromedriver"), "chromedriver"):
-        try:
-            driver = webdriver.Chrome(
-                service=Service(executable_path=executable_path),
-                options=nicegui_chrome_options,
-            )
-            break
-        except Exception:
-            continue
-    else:
-        raise RuntimeError("Could not start chrome-headless-shell.")
+    env = os.environ.copy()
+    env["PATH"] = _path_without_chromedriver()
+    previous = os.environ.get("PATH")
+    os.environ["PATH"] = env["PATH"]
+    try:
+        driver = webdriver.Chrome(
+            service=Service(env=env),
+            options=nicegui_chrome_options,
+        )
+    except Exception as exc:
+        raise RuntimeError("Could not start chrome-headless-shell.") from exc
+    finally:
+        if previous is None:
+            os.environ.pop("PATH", None)
+        else:
+            os.environ["PATH"] = previous
     driver.implicitly_wait(Screen.IMPLICIT_WAIT)
     driver.set_page_load_timeout(20)
     yield driver

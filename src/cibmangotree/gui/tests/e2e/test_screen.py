@@ -84,9 +84,22 @@ def _click_visible_button(screen: Screen, text: str, *, last: bool = False) -> N
     raise AssertionError(f"No visible button {text!r}")
 
 
-def _click_dialog_button(screen: Screen, text: str) -> None:
-    # The page behind a dialog can have its own button with the same label.
-    # The last button on the page is not always the one inside the dialog.
+def _dialog_button_ids(screen: Screen) -> set[str]:
+    # A closed dialog stays in the page and can still look visible. Its buttons
+    # keep their ids, so a newly opened dialog is the one with new ids.
+    try:
+        return {
+            element.get_attribute("id") or ""
+            for element in screen.selenium.find_elements(
+                By.CSS_SELECTOR, ".q-dialog button.q-btn"
+            )
+            if element.is_displayed()
+        }
+    except StaleElementReferenceException:
+        return set()
+
+
+def _click_dialog_button(screen: Screen, text: str, previous_ids: set[str]) -> None:
     wanted = text.casefold()
     deadline = time.time() + 5
     while time.time() < deadline:
@@ -98,6 +111,7 @@ def _click_dialog_button(screen: Screen, text: str) -> None:
                 )
                 if " ".join((element.text or "").split()).casefold() == wanted
                 and element.is_displayed()
+                and (element.get_attribute("id") or "") not in previous_ids
             ]
         except StaleElementReferenceException:
             screen.wait(0.1)
@@ -385,9 +399,10 @@ def test_delete_selected_project(screen: Screen, ui_app: App) -> None:
     _wait_for(screen, "Delete me")
     assert [project.display_name for project in ui_app.list_projects()] == ["Delete me"]
 
+    previous_ids = _dialog_button_ids(screen)
     _click_visible_button(screen, "Delete")
     _wait_for(screen, "This action cannot be undone.")
-    _click_dialog_button(screen, "Delete")
+    _click_dialog_button(screen, "Delete", previous_ids)
 
     _wait_for(screen, "Project 'Delete me' deleted")
     assert ui_app.list_projects() == []
@@ -641,9 +656,10 @@ def test_manage_analyses_lists_and_deletes_a_saved_analysis(
     _wait_for(screen, "Hashtag analysis")
     _wait_for(screen, "Delete Selected")
 
+    previous_ids = _dialog_button_ids(screen)
     _click_visible_button(screen, "Delete Selected")
     _wait_for(screen, "Are you sure you want to delete")
-    _click_dialog_button(screen, "Delete")
+    _click_dialog_button(screen, "Delete", previous_ids)
     _wait_for(screen, "Deleted 1 analysis successfully.")
 
 

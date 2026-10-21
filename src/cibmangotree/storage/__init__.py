@@ -92,6 +92,9 @@ class Storage:
     def close(self) -> None:
         self.db.close()
 
+    def close(self) -> None:
+        self.db.close()
+
     def __getstate__(self):
         return {
             "app_name": self.app_name,

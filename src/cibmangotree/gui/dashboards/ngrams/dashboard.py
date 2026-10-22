@@ -596,6 +596,8 @@ class NgramsDashboardPage(BaseDashboardPage):
                                         "filter": True,
                                         "resizable": True,
                                     },
+                                    "enableCellTextSelection": True,
+                                    "ensureDomOrder": True,
                                     "tooltipShowDelay": 200,
                                     "tooltipSwitchShowDelay": 70,
                                 },

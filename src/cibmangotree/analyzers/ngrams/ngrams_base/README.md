@@ -16,17 +16,20 @@ Assuming the input dataframe:
 
 `main_.py` will write the tables with the following schemas to disk.
 
+With minimum length 3 and maximum length 4, a shorter phrase is left out of a post when that post contains a longer repeated phrase and the shorter one is a piece of it. `msg_001` has no phrase that repeats in another post, so it does not appear below.
+
 ### `OUTPUT_MESSAGE_NGRAMS`
 
 It provides mapping between each ngram and the messages it was detected in.
 
 | message_surrogate_id | ngram_id |
 |-------|-------|
-| 1  | 0  |
-| 1  | 1  |
-| 1  | 2  |
+| 2  | 0  |
 | 2  | 1  |
-| 2  | 4  |
+| 2  | 2  |
+| 3  | 0  |
+| 3  | 1  |
+| 3  | 2  |
 
 
 ### `OUTPUT_NGRAM_DEFS`
@@ -35,9 +38,9 @@ Provides mapping between `ngram_id`, the actual string and ngram-length.
 
 | ngram_id | words | n |
 |-------|-------| ------- |
-| 0  | go go go  | 3 |
-| 1  | go go go now  | 4 |
-| 2  | go go now  | 3 |
+| 0  | go go go it's  | 4 |
+| 1  | go go it's very  | 4 |
+| 2  | go it's very bad  | 4 |
 
 
 ### `OUTPUT_MESSAGE_AUTHORS`

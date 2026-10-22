@@ -31,11 +31,13 @@ TEST_DATA_DIR = Path(__file__).parent
 def _generate_test_input_data():
     """Generate comprehensive test data for ngrams analyzer."""
 
-    # Input dataset: 5 messages, 2 users
+    # Input dataset: 3 messages, 2 users
     # Designed to test:
-    # - "go go go": 3-gram appearing across 2 distinct users
-    # - "it's very bad:" 3-gram appearing across 2 distinct users and repeats within message once
-    # - other 3-grams (e.g. "later it's very", "go it's very") only occur once and should be filtered out
+    # - "go go go it's", "go go it's very", and "go it's very bad" repeat in msg_002 and msg_003
+    # - shorter subspans of those phrases ("go go go", "it's very bad") are removed from
+    #   those posts; "go go go" then occurs only in msg_001 and is dropped
+    # - "it's very bad" also repeats inside msg_003, which within-message dedup collapses
+    #   when max_n is 3 and no longer phrase subsumes it
 
     df_input = pl.DataFrame(
         {

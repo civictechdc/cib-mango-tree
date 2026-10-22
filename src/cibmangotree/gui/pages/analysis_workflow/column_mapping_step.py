@@ -74,9 +74,13 @@ class ColumnMappingStep:
                 )
                 is not None
             ]
+            if compatible_columns:
+                selectable_columns = compatible_columns
+            else:
+                selectable_columns = list(user_columns)
 
             dropdown_options = {
-                f"{user_col.name}": user_col.name for user_col in compatible_columns
+                f"{user_col.name}": user_col.name for user_col in selectable_columns
             }
 
             default_value = None
@@ -87,11 +91,23 @@ class ColumnMappingStep:
                     None,
                 )
 
+            warning = None
+            if not compatible_columns and user_columns:
+                warning = ui.label(
+                    "No column matched this type. Choose one manually."
+                ).classes("text-sm text-negative")
+                warning.set_visibility(default_value is None)
+
+            def on_mapping_change() -> None:
+                if warning is not None:
+                    warning.set_visibility(not dropdown.value)
+                self._update_preview()
+
             dropdown = (
                 ui.select(
                     options=list(dropdown_options.keys()),
                     value=default_value,
-                    on_change=lambda: self._update_preview(),
+                    on_change=on_mapping_change,
                 )
                 .classes("w-full mt-2")
                 .props("use-chips")

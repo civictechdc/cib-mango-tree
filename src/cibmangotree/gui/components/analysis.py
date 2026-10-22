@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 from nicegui import ui
 
 from cibmangotree.analyzer_interface import (
@@ -12,6 +14,7 @@ from cibmangotree.gui.theme import (
     ROW_CENTERED,
     ROW_CENTERED_GAP,
     TEXT_MUTED,
+    TEXT_TOOLTIP_BODY,
 )
 
 
@@ -27,6 +30,8 @@ class AnalysisParamsCard:
         self,
         params: list[AnalyzerParam],
         default_values: dict[str, ParamValue],
+        *,
+        on_change: Callable[[], None] | None = None,
     ):
         """
         Initialize the analysis parameters card.
@@ -34,9 +39,11 @@ class AnalysisParamsCard:
         Args:
             params: List of analyzer parameter specifications
             default_values: Dictionary of default parameter values
+            on_change: Called when a time-binning amount or unit changes
         """
         self.params = params
         self.default_values = default_values
+        self._on_change = on_change
         self.param_widgets: dict[str, tuple] = {}
 
         # Build the card UI
@@ -62,7 +69,8 @@ class AnalysisParamsCard:
                 ui.label(param.print_name).classes("font-bold")
                 if param.description:
                     with ui.icon("info").classes(ICON_INFO):
-                        ui.tooltip(param.description)
+                        with ui.tooltip().classes("w-64"):
+                            ui.label(param.description).classes(TEXT_TOOLTIP_BODY)
 
             param_type = param.type
             default_value = self.default_values.get(param.id)
@@ -113,6 +121,7 @@ class AnalysisParamsCard:
                     "second": "Second",
                 },
                 value=tb_default.unit if tb_default else "day",
+                on_change=self._notify_change,
             ).classes("w-32")
 
             amount_input = ui.number(
@@ -125,9 +134,14 @@ class AnalysisParamsCard:
                     "Must be at least 1": lambda v: v >= 1,
                     "Cannot exceed 1000": lambda v: v <= 1000,
                 },
+                on_change=self._notify_change,
             ).classes("w-24")
 
         self.param_widgets[param.id] = ("time_binning", unit_select, amount_input)
+
+    def _notify_change(self, _event=None) -> None:
+        if self._on_change is not None:
+            self._on_change()
 
     def get_param_values(self) -> dict[str, ParamValue]:
         """

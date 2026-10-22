@@ -139,6 +139,7 @@ class GuiPage(BaseModel, abc.ABC):
             secondary=gui_colors.secondary,
             accent=gui_colors.accent,
             cancel=gui_colors.cancel,
+            mango_orange=gui_colors.mango_orange,
         )
 
     def _render_header(self) -> None:
@@ -311,15 +312,15 @@ class GuiPage(BaseModel, abc.ABC):
 
     def notify_success(self, message: str) -> None:
         """Show success notification."""
-        ui.notify(message, type="positive", color="secondary")
+        ui.notify(message, type="positive", color="mango-orange")
 
     def notify_warning(self, message: str) -> None:
         """Show warning notification."""
-        ui.notify(message, type="warning")
+        ui.notify(message, type="warning", color="mango-orange")
 
     def notify_error(self, message: str) -> None:
         """Show error notification."""
-        ui.notify(message, type="negative")
+        ui.notify(message, type="negative", color="mango-orange")
 
     @contextmanager
     def centered_content(

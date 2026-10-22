@@ -29,7 +29,3 @@ class App(BaseModel):
             display_name=name, input_temp_file=temp_file.name, dataset_name=dataset_name
         )
         return ProjectContext(model=project_model, app_context=self.context)
-
-    @property
-    def file_selector_state(self):
-        return self.context.storage.file_selector_state

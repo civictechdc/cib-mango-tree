@@ -57,10 +57,6 @@ class ToggleButtonGroup:
         self.selected = button
         self.selected_text = button.text
 
-    def get_selected(self) -> ToggleButton | None:
-        """Get the currently selected button."""
-        return self.selected
-
     def get_selected_text(self) -> str | None:
         """Get the text of the currently selected button."""
         return self.selected.text if self.selected else None

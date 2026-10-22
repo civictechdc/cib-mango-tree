@@ -25,7 +25,6 @@ OUTPUT_COL_HASHTAGS = "hashtags"
 
 # Secondary analyzer output columns
 SECONDARY_COL_USERS_ALL = "users_all"
-SECONDARY_COL_USERS_UNIQUE = "users_unique"
 SECONDARY_COL_HASHTAG_PERC = "hashtag_perc"
 
 interface = AnalyzerInterface(

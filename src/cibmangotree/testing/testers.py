@@ -88,7 +88,6 @@ def test_secondary_analyzer(
     *,
     primary_params: dict[str, ParamValue] = dict(),
     primary_outputs: dict[str, TestData],
-    dependency_outputs: dict[str, dict[str, TestData]] = dict(),
     expected_outputs: dict[str, TestData],
 ):
     """
@@ -99,7 +98,6 @@ def test_secondary_analyzer(
         main (Callable[[SecondaryAnalyzerInterface], None]): The main function of the analyzer.
         primary_params (dict[str, ParamValue]): (Optional) The primary analysis parameters.
         primary_outputs (dict[str, TestData]): The primary output data, keyed by output ID.
-        dependency_outputs (dict[str, dict[str, TestData]]): The dependency output data, keyed by dependency ID and then by output ID.
         expected_outputs (dict[str, TestData]): The expected output data, keyed by output ID.
     """
     with ExitStack() as exit_stack:
@@ -108,24 +106,11 @@ def test_secondary_analyzer(
         actual_base_output_dir = exit_stack.enter_context(
             TemporaryDirectory(delete=True)
         )
-        actual_dependency_output_dirs = {
-            dependency_id: exit_stack.enter_context(TemporaryDirectory(delete=True))
-            for dependency_id in dependency_outputs.keys()
-        }
 
         for output_id, output_data in primary_outputs.items():
             output_data.convert_to_parquet(
                 os.path.join(actual_base_output_dir, f"{output_id}.parquet")
             )
-
-        for dependency_id, dependency_output in dependency_outputs.items():
-            for output_id, output_data in dependency_output.items():
-                output_data.convert_to_parquet(
-                    os.path.join(
-                        actual_dependency_output_dirs[dependency_id],
-                        f"{output_id}.parquet",
-                    )
-                )
 
         context = TestSecondaryAnalyzerContext(
             temp_dir=temp_dir,
@@ -133,16 +118,6 @@ def test_secondary_analyzer(
             primary_output_parquet_paths={
                 output_id: os.path.join(actual_base_output_dir, f"{output_id}.parquet")
                 for output_id in primary_outputs.keys()
-            },
-            dependency_output_parquet_paths={
-                dependency_id: {
-                    output_id: os.path.join(
-                        actual_dependency_output_dirs[dependency_id],
-                        f"{output_id}.parquet",
-                    )
-                    for output_id in dependency_output.keys()
-                }
-                for dependency_id, dependency_output in dependency_outputs.items()
             },
             output_parquet_root_path=actual_output_dir,
         )

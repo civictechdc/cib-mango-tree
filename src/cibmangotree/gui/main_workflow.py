@@ -21,16 +21,12 @@ from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
 
 
-# maing GUI entry point
-def gui_main(app: App):
-    """
-    Launch the NiceGUI interface with a minimal single screen.
+def register_pages(app: App) -> GuiSession:
+    """Register the real GUI routes and return the session they share.
 
-    Args:
-        app: The initialized App instance with storage and suite
+    Split from gui_main so UI tests can open these pages without starting the
+    native window. gui_main still calls this and then ui.run.
     """
-
-    # Initialize GUI session for state management
     gui_context = GUIContext(app=app)
     gui_session = GuiSession(context=gui_context)
 
@@ -95,6 +91,18 @@ def gui_main(app: App):
             page.render()
         else:
             PlaceholderDashboard(session=gui_session).render()
+
+    return gui_session
+
+
+def gui_main(app: App):
+    """
+    Launch the NiceGUI interface with a minimal single screen.
+
+    Args:
+        app: The initialized App instance with storage and suite
+    """
+    register_pages(app)
 
     nicegui_app.native.window_args["min_size"] = (1024, 710)
     ui.run(

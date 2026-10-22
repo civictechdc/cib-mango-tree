@@ -65,27 +65,6 @@ class TimeBinningValue(BaseModel):
 
         raise ValueError("Invalid time binning value")
 
-    def to_human_readable_text(self) -> str:
-        amount = self.amount
-        unit = self.unit
-
-        if unit == "year":
-            return f"{amount} year{'s' if amount > 1 else ''}"
-        if unit == "month":
-            return f"{amount} month{'s' if amount > 1 else ''}"
-        if unit == "week":
-            return f"{amount} week{'s' if amount > 1 else ''}"
-        if unit == "day":
-            return f"{amount} day{'s' if amount > 1 else ''}"
-        if unit == "hour":
-            return f"{amount} hour{'s' if amount > 1 else ''}"
-        if unit == "minute":
-            return f"{amount} minute{'s' if amount > 1 else ''}"
-        if unit == "second":
-            return f"{amount} second{'s' if amount > 1 else ''}"
-
-        raise ValueError("Invalid time binning value")
-
 
 ParamType = Union[TimeBinningParam, IntegerParam]
 

@@ -8,7 +8,6 @@ from .start import StartPage
 
 __all__ = [
     "StartPage",
-    "NewProjectPage",
     "ImportDatasetPage",
     "SelectAnalyzerForkPage",
     "SelectPreviousAnalyzerPage",

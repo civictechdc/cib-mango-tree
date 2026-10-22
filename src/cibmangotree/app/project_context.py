@@ -74,10 +74,6 @@ class ProjectContext(BaseModel):
         return self.app_context.storage.load_project_input(self.id, n_records=100)
 
     @cached_property
-    def data_row_count(self):
-        return self.app_context.storage.get_project_input_stats(self.id).num_rows
-
-    @cached_property
     def columns(self):
         return _get_columns_with_semantic(self.preview_data)
 

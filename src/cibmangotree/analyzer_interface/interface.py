@@ -174,15 +174,7 @@ class DerivedAnalyzerInterface(BaseAnalyzerInterface):
     base_analyzer: AnalyzerInterface
     """
   The base analyzer that this secondary analyzer extends. This is always a primary
-  analyzer. If your module depends on other secondary analyzers (which must have
-  the same base analyzer), you can specify them in the `depends_on` field.
-  """
-
-    depends_on: list["SecondaryAnalyzerInterface"] = []
-    """
-  A dictionary of secondary analyzers that must be run before the current analyzer
-  secondary analyzer is run. These secondary analyzers must have the same
-  primary base.
+  analyzer.
   """
 
 

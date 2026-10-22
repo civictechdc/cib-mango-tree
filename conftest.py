@@ -4,6 +4,8 @@ import logging
 
 import pytest
 
+# Plugins must be listed here. Pytest does not load pytest_plugins from nested conftest files.
+# user_plugin drives Python UI actions in-process.
 pytest_plugins = (
     "nicegui.testing.general_fixtures",
     "nicegui.testing.user_plugin",

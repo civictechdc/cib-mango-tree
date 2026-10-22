@@ -16,8 +16,6 @@ from xlsxwriter import Workbook
 from cibmangotree.analyzer_interface.interface import AnalyzerOutput
 from cibmangotree.analyzer_interface.params import ParamValue
 
-from .file_selector import FileSelectorStateManager
-
 
 class ProjectModel(BaseModel):
     class_: Literal["project"] = "project"
@@ -31,11 +29,6 @@ class ProjectModel(BaseModel):
 class SettingsModel(BaseModel):
     class_: Literal["settings"] = "settings"
     export_chunk_size: Optional[int | Literal[False]] = None
-
-
-class FileSelectionState(BaseModel):
-    class_: Literal["file_selector_state"] = "file_selector_state"
-    last_path: Optional[str] = None
 
 
 class AnalysisModel(BaseModel):
@@ -62,26 +55,61 @@ SupportedOutputExtension = Literal["parquet", "csv", "xlsx", "json"]
 
 
 class Storage:
-    def __init__(self, *, app_name: str, app_author: str):
+    def __init__(
+        self,
+        *,
+        app_name: str,
+        app_author: str,
+        data_dir: str | None = None,
+        cache_dir: str | None = None,
+    ):
+        """Open project storage.
+
+        data_dir and cache_dir let tests write somewhere other than the real
+        platformdirs location. They are included in pickle state because an
+        analysis worker rebuilds Storage from __getstate__.
+        """
         self.app_name = app_name
         self.app_author = app_author
-        self.user_data_dir = platformdirs.user_data_dir(
-            appname=app_name, appauthor=app_author, ensure_exists=True
-        )
-        self.temp_dir = platformdirs.user_cache_dir(
-            appname=app_name, appauthor=app_author, ensure_exists=True
-        )
+        self._data_dir = data_dir
+        self._cache_dir = cache_dir
+        if data_dir is None:
+            self.user_data_dir = platformdirs.user_data_dir(
+                appname=app_name, appauthor=app_author, ensure_exists=True
+            )
+            self.temp_dir = platformdirs.user_cache_dir(
+                appname=app_name, appauthor=app_author, ensure_exists=True
+            )
+        else:
+            self.user_data_dir = data_dir
+            os.makedirs(self.user_data_dir, exist_ok=True)
+            self.temp_dir = cache_dir or os.path.join(data_dir, "cache")
+            os.makedirs(self.temp_dir, exist_ok=True)
         self.db = TinyDB(self._get_db_path())
         with self._lock_database():
             self._bootstrap_analyses_v1()
 
-        self.file_selector_state = AppFileSelectorStateManager(self)
+    def close(self) -> None:
+        self.db.close()
+
+    def close(self) -> None:
+        self.db.close()
 
     def __getstate__(self):
-        return {"app_name": self.app_name, "app_author": self.app_author}
+        return {
+            "app_name": self.app_name,
+            "app_author": self.app_author,
+            "data_dir": self._data_dir,
+            "cache_dir": self._cache_dir,
+        }
 
     def __setstate__(self, state):
-        self.__init__(app_name=state["app_name"], app_author=state["app_author"])
+        self.__init__(
+            app_name=state["app_name"],
+            app_author=state["app_author"],
+            data_dir=state.get("data_dir"),
+            cache_dir=state.get("cache_dir"),
+        )
 
     def init_project(
         self,
@@ -123,13 +151,6 @@ class Storage:
             result.append(model)
         return sorted(result, key=lambda project: project.display_name)
 
-    def get_project(self, project_id: str):
-        q = Query()
-        project = self.db.search((q["class_"] == "project") & (q["id"] == project_id))
-        if project:
-            return ProjectModel(**project[0])
-        return None
-
     def delete_project(self, project_id: str):
         with self._lock_database():
             q = Query()
@@ -151,57 +172,6 @@ class Storage:
     def load_project_input(self, project_id: str, *, n_records: Optional[int] = None):
         input_path = self._get_project_input_path(project_id)
         return pl.read_parquet(input_path, n_rows=n_records)
-
-    def get_project_input_stats(self, project_id: str):
-        input_path = self._get_project_input_path(project_id)
-        num_rows = pl.scan_parquet(input_path).select(pl.count()).collect().item()
-        return TableStats(num_rows=num_rows)
-
-    def save_project_primary_outputs(
-        self, analysis: AnalysisModel, outputs: dict[str, pl.DataFrame]
-    ):
-        for output_id, output_df in outputs.items():
-            self._save_output(
-                os.path.join(
-                    self._get_project_primary_output_root_path(analysis),
-                    output_id,
-                ),
-                output_df,
-                "parquet",
-            )
-
-    def save_project_secondary_outputs(
-        self,
-        analysis: AnalysisModel,
-        secondary_id: str,
-        outputs: dict[str, pl.DataFrame],
-    ):
-        for output_id, output_df in outputs.items():
-            self._save_output(
-                os.path.join(
-                    self._get_project_secondary_output_root_path(
-                        analysis, secondary_id
-                    ),
-                    output_id,
-                ),
-                output_df,
-                "parquet",
-            )
-
-    def save_project_secondary_output(
-        self,
-        analysis: AnalysisModel,
-        secondary_id: str,
-        output_id: str,
-        output_df: pl.DataFrame,
-        extension: SupportedOutputExtension,
-    ):
-        root_path = self._get_project_secondary_output_root_path(analysis, secondary_id)
-        self._save_output(
-            os.path.join(root_path, output_id),
-            output_df,
-            extension,
-        )
 
     def _save_output(
         self,
@@ -226,23 +196,11 @@ class Storage:
             raise ValueError(f"Unsupported format: {extension}")
         return output_path
 
-    def load_project_primary_output(self, analysis: AnalysisModel, output_id: str):
-        output_path = self.get_primary_output_parquet_path(analysis, output_id)
-        return pl.read_parquet(output_path)
-
     def get_primary_output_parquet_path(self, analysis: AnalysisModel, output_id: str):
         return os.path.join(
             self._get_project_primary_output_root_path(analysis),
             f"{output_id}.parquet",
         )
-
-    def load_project_secondary_output(
-        self, analysis: AnalysisModel, secondary_id: str, output_id: str
-    ):
-        output_path = self.get_secondary_output_parquet_path(
-            analysis, secondary_id, output_id
-        )
-        return pl.read_parquet(output_path)
 
     def get_secondary_output_parquet_path(
         self, analysis: AnalysisModel, secondary_id: str, output_id: str
@@ -538,15 +496,6 @@ class Storage:
             self._get_project_path(analysis.project_id), analysis.path, "exports"
         )
 
-    def _get_web_presenter_state_path(self, analysis: AnalysisModel, presenter_id: str):
-        return os.path.join(
-            self._get_project_path(analysis.project_id),
-            analysis.path,
-            "web_presenters",
-            presenter_id,
-            "state",
-        )
-
     def _lock_database(self):
         """
         Locks the database to prevent concurrent access, in case multiple instances
@@ -596,10 +545,6 @@ class Storage:
             i += 1
 
 
-class TableStats(BaseModel):
-    num_rows: int
-
-
 def collect_dataframe_chunks(
     input: Iterable[pl.DataFrame], size_threshold: int
 ) -> Iterable[pl.DataFrame]:
@@ -625,27 +570,3 @@ def collect_dataframe_chunks(
 
     if output_buffer:
         yield pl.concat(output_buffer)
-
-
-class AppFileSelectorStateManager(FileSelectorStateManager):
-    def __init__(self, storage: "Storage"):
-        self.storage = storage
-
-    def get_current_path(self):
-        return self._load_state().last_path
-
-    def set_current_path(self, path: str):
-        self._save_state(path)
-
-    def _load_state(self):
-        q = Query()
-        state = self.storage.db.search(q["class_"] == "file_selector_state")
-        if state:
-            return FileSelectionState(**state[0])
-        return FileSelectionState()
-
-    def _save_state(self, last_path: str):
-        self.storage.db.upsert(
-            FileSelectionState(last_path=last_path).model_dump(),
-            Query()["class_"] == "file_selector_state",
-        )

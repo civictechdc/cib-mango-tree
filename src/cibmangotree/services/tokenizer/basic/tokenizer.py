@@ -94,45 +94,6 @@ class BasicTokenizer(AbstractTokenizer):
         """Check if character belongs to a character-level script."""
         return bool(self._CHAR_LEVEL_PATTERN.match(char))
 
-    def _get_char_script(self, char: str) -> str:
-        """
-        Get the script family for a character.
-
-        Args:
-            char: Character to analyze
-
-        Returns:
-            Script family name
-        """
-        code_point = ord(char)
-
-        # Latin script
-        if (
-            (0x0041 <= code_point <= 0x007A)
-            or (0x00C0 <= code_point <= 0x024F)
-            or (0x1E00 <= code_point <= 0x1EFF)
-        ):
-            return "latin"
-
-        # Korean Hangul (space-separated, NOT character-level!)
-        elif 0xAC00 <= code_point <= 0xD7AF:
-            return "korean"
-
-        # Character-level scripts (CJK, Thai, etc.)
-        elif self._is_char_level_script(char):
-            return "cjk"
-
-        # Arabic script
-        elif (
-            (0x0600 <= code_point <= 0x06FF)
-            or (0x0750 <= code_point <= 0x077F)
-            or (0x08A0 <= code_point <= 0x08FF)
-        ):
-            return "arabic"
-
-        else:
-            return "other"
-
     def _extract_tokens_ordered(
         self, text: str, language_family: LanguageFamily
     ) -> TokenList:
@@ -217,21 +178,6 @@ class BasicTokenizer(AbstractTokenizer):
                 tokens.append(token)
 
         return [token for token in tokens if token.strip()]
-
-    def _is_punctuation_only(self, token: str) -> bool:
-        """Check if token contains only punctuation."""
-        punctuation_chars = ".!?;:,()[]{}\"'-~`@#$%^&*+=<>/|\\"
-        return all(c in punctuation_chars for c in token)
-
-    def _is_numeric_only(self, token: str) -> bool:
-        """Check if token is purely numeric."""
-        return (
-            token.replace(".", "")
-            .replace(",", "")
-            .replace("%", "")
-            .replace("$", "")
-            .isdigit()
-        )
 
     def _is_url_like(self, token: str) -> bool:
         """Check if token looks like a URL."""

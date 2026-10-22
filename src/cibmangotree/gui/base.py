@@ -295,24 +295,6 @@ class GuiPage(BaseModel, abc.ABC):
         """
         ui.navigate.to(route)
 
-    def navigate_to_external(self, url: str) -> None:
-        """
-        Navigate to external URL in new tab.
-
-        Args:
-            url: External URL to open
-        """
-        ui.navigate.to(url, new_tab=True)
-
-    def go_back(self) -> None:
-        """Navigate to the configured back route."""
-        if self.back_route:
-            self.navigate_to(self.back_route)
-
-    def go_home(self) -> None:
-        """Navigate to home page."""
-        self.navigate_to("/")
-
     # utilities
     def _load_svg_icon(self, icon_name: str) -> str:
         """
@@ -362,13 +344,6 @@ class GuiPage(BaseModel, abc.ABC):
         if not self.session.current_project:
             self.notify_warning("No project selected. Redirecting...")
             self.navigate_to(gui_routes.root)
-            return False
-        return True
-
-    def require_file(self) -> bool:
-        if not self.session.selected_file:
-            self.notify_warning("No file selected. Redirecting...")
-            self.navigate_to(gui_routes.import_dataset)
             return False
         return True
 

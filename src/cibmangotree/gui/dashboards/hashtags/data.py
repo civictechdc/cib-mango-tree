@@ -1,16 +1,11 @@
 """
 Thin data loading wrappers for the hashtags analyzer.
 
-Provides functions to:
-- Load and transform raw input data (replicates factory.py logic)
-- Run secondary analysis on-demand from primary output
+Provides functions to load and transform hashtag analysis data.
 """
-
-from datetime import datetime
 
 import polars as pl
 
-from cibmangotree.analyzers.hashtags.hashtags_base.analysis import secondary_analyzer
 from cibmangotree.analyzers.hashtags.hashtags_base.interface import (
     COL_TIME,
     OUTPUT_COL_HASHTAGS,
@@ -115,25 +110,6 @@ def load_primary_output(session: GuiSession) -> pl.DataFrame:
         )
 
     return df
-
-
-def run_secondary_analysis(
-    df_primary: pl.DataFrame,
-    timewindow: datetime,
-) -> pl.DataFrame:
-    """
-    Run secondary analysis for a single timewindow.
-
-    Thin wrapper around secondary_analyzer() from the Shiny app.
-
-    Args:
-        df_primary: Primary output DataFrame with timewindow_start column.
-        timewindow: The selected timewindow start datetime.
-
-    Returns:
-        DataFrame with per-hashtag stats (hashtags, users_all, users_unique, hashtag_perc).
-    """
-    return secondary_analyzer(df_primary, timewindow)
 
 
 def extract_users_for_hashtag(

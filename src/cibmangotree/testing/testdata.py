@@ -104,22 +104,6 @@ class JsonTestData(FileTestData):
         return pl.read_json(self.filepath)
 
 
-class ExcelTestData(FileTestData):
-    def _load_as_polars(self) -> pl.DataFrame:
-        return pl.read_excel(self.filepath)
-
-
 class ParquetTestData(FileTestData):
     def _load_as_polars(self) -> pl.DataFrame:
         return pl.read_parquet(self.filepath)
-
-
-class PolarsTestData(TestData):
-    def __init__(self, df: pl.DataFrame):
-        self.df = df
-
-    def _load_as_polars(self) -> pl.DataFrame:
-        return self.df
-
-    def _scan_as_polars(self) -> pl.LazyFrame:
-        return self.df.lazy()

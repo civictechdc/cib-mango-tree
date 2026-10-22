@@ -47,46 +47,6 @@ TEST_TOKENIZED_EXPECTED = [
     "project",  # punctuation is now separated - better for n-gram analysis
 ]
 
-NGRAMS_EXPECTED_min1_max3 = [
-    ["mango"],
-    ["mango", "tree"],
-    ["mango", "tree", "is"],
-    ["tree"],
-    ["tree", "is"],
-    ["tree", "is", "an"],
-    ["is"],
-    ["is", "an"],
-    ["is", "an", "open"],
-    ["an"],
-    ["an", "open"],
-    ["an", "open", "source"],
-    ["open"],
-    ["open", "source"],
-    ["open", "source", "project"],
-    ["source"],
-    ["source", "project"],
-    ["project"],
-]
-
-NGRAMS_EXPECTED_min5_max7 = [
-    ["mango", "tree", "is", "an", "open"],
-    ["mango", "tree", "is", "an", "open", "source"],
-    ["mango", "tree", "is", "an", "open", "source", "project"],
-    ["tree", "is", "an", "open", "source"],
-    ["tree", "is", "an", "open", "source", "project"],
-    ["is", "an", "open", "source", "project"],
-]
-
-# if max ngram len is not found, it just returns all the shortest ngrams
-NGRAMS_EXPECTED_min5_max8 = [
-    ["mango", "tree", "is", "an", "open"],
-    ["mango", "tree", "is", "an", "open", "source"],
-    ["mango", "tree", "is", "an", "open", "source", "project"],
-    ["tree", "is", "an", "open", "source"],
-    ["tree", "is", "an", "open", "source", "project"],
-    ["is", "an", "open", "source", "project"],
-]
-
 
 def test_tokenize():
     # Configure tokenizer for clean word extraction (no social media entities)
@@ -193,24 +153,6 @@ def tokenizer_config_fixture():
         include_urls=True,
         min_token_length=1,
     )
-
-
-@pytest.fixture
-def expected_message_ngrams():
-    """Load expected message_ngrams output"""
-    return pl.read_parquet(Path(test_data_dir, "message_ngrams.parquet"))
-
-
-@pytest.fixture
-def expected_ngram_defs():
-    """Load expected ngram definitions output"""
-    return pl.read_parquet(Path(test_data_dir, "ngrams.parquet"))
-
-
-@pytest.fixture
-def expected_messages():
-    """Load expected message authors output"""
-    return pl.read_parquet(Path(test_data_dir, "message_authors.parquet"))
 
 
 # Unit tests for extracted functions

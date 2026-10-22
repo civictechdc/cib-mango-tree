@@ -102,8 +102,3 @@ class ParamsConfigStep:
         else:
             self.session.analysis_params = {}
         return True
-
-    def has_params(self) -> bool:
-        """Check if analyzer has configurable parameters."""
-        analyzer = self.session.selected_analyzer
-        return analyzer is not None and len(analyzer.params) > 0

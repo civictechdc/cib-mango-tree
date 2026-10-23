@@ -45,35 +45,24 @@ def test_compute_ngram_statistics(df_message_ngrams, df_messages, df_ngrams):
     # Check all n-grams have total_reps > 1
     assert result["total_reps"].min() > 1, "Single-occurrence n-grams not filtered"
 
-    # Check that only 1 occurs 3 times ("go go go")
-    assert result["total_reps"].max() == 3, "Max repetitions for 'go go go' is not 3"
-
+    # The repeated 4-grams each occur in msg_002 and msg_003. Shorter subspans
+    # of those phrases are not reported.
+    assert result["total_reps"].max() == 2
     assert result["distinct_posters"].max() == 2, "Wrong number of distinct posters"
+    assert df_ngrams.filter(pl.col("words") == "go go go").height == 0
+    assert df_ngrams.filter(pl.col("words") == "it's very bad").height == 0
 
     # Verify we have the expected columns
     assert "ngram_id" in result.columns
     assert "total_reps" in result.columns
     assert "distinct_posters" in result.columns
 
-    # Find the ngram_id with max total_reps and verify it's "go go go"
-    max_reps_row = result.filter(pl.col("total_reps") == result["total_reps"].max())
-    max_ngram_id = max_reps_row[0, "ngram_id"]
-
-    # Look up the ngram string from df_ngrams
-    ngram_string = df_ngrams.filter(pl.col("ngram_id") == max_ngram_id)[0, "words"]
-    assert ngram_string == "go go go", f"Expected 'go go go' but got '{ngram_string}'"
-
-    # Find "it's very bad" in df_ngrams and verify it's counted exactly twice
-    # That is, one repetition within message is ignored
-    its_very_bad_row = df_ngrams.filter(pl.col("words") == "it's very bad")
-    its_very_bad_id = its_very_bad_row[0, "ngram_id"]
-
-    # Look up its stats in result
-    its_very_bad_stats = result.filter(pl.col("ngram_id") == its_very_bad_id)
-    assert its_very_bad_stats.height == 1, "'it's very bad' should be in stats"
-    assert (
-        its_very_bad_stats[0, "total_reps"] == 2
-    ), "'it's very bad' should appear exactly 2 times (deduplicated)"
+    for words in ("go go go it's", "go go it's very", "go it's very bad"):
+        ngram_id = df_ngrams.filter(pl.col("words") == words)[0, "ngram_id"]
+        stats = result.filter(pl.col("ngram_id") == ngram_id)
+        assert stats.height == 1, f"{words!r} should be in stats"
+        assert stats[0, "total_reps"] == 2, f"{words!r} should appear in 2 messages"
+        assert stats[0, "distinct_posters"] == 2
 
 
 # Integration test

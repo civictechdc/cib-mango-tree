@@ -52,7 +52,9 @@ class NewProjectDialog(ui.dialog):
     def _handle_next(self) -> None:
         name = self.name_input.value
         if not name or not name.strip():
-            ui.notify("Please enter a project name", type="warning")
+            ui.notify(
+                "Please enter a project name", type="warning", color="mango-orange"
+            )
             return
 
         self.session.new_project_name = name.strip()

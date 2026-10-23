@@ -183,10 +183,13 @@ def _ngram_id_for(df_ngram_defs: pl.DataFrame, words: str) -> int:
 
 
 def test_extract_ngrams_from_messages(df_raw_input, tokenizer_config_fixture):
-    """Test n-gram extraction with within-message deduplication"""
+    """Test n-gram extraction with within-message deduplication.
+
+    max_n equals min_n so a longer repeated phrase cannot subsume these n-grams.
+    """
     df_preprocessed = _preprocess_messages(df_raw_input)
     df_message_ngrams, df_ngram_defs = _extract_ngrams_from_messages(
-        df_preprocessed, min_n=3, max_n=4, tokenizer_config=tokenizer_config_fixture
+        df_preprocessed, min_n=3, max_n=3, tokenizer_config=tokenizer_config_fixture
     )
 
     # Check "go go go" appears 3 times (once per message)
@@ -202,6 +205,73 @@ def test_extract_ngrams_from_messages(df_raw_input, tokenizer_config_fixture):
 
     # Check total unique n-grams detected
     assert df_ngram_defs.height > 2, "Should detect multiple unique n-grams"
+
+
+def _messages(texts: list[str]) -> pl.DataFrame:
+    return pl.DataFrame(
+        {
+            COL_MESSAGE_SURROGATE_ID: list(range(1, len(texts) + 1)),
+            COL_MESSAGE_TEXT: texts,
+        }
+    )
+
+
+def _count_ngram(
+    df_message_ngrams: pl.DataFrame, df_ngram_defs: pl.DataFrame, words: str
+) -> int:
+    match = df_ngram_defs.filter(pl.col("words") == words)
+    if match.height == 0:
+        return 0
+    ngram_id = match["ngram_id"][0]
+    return df_message_ngrams.filter(pl.col("ngram_id") == ngram_id).height
+
+
+def test_shorter_ngram_kept_for_posts_without_the_longer_phrase(
+    tokenizer_config_fixture,
+):
+    """A short n-gram inside a repeated longer one is counted only in other posts."""
+    df_message_ngrams, df_ngram_defs = _extract_ngrams_from_messages(
+        _messages(
+            [
+                "shoots down China's peace plan",
+                "shoots down China's peace plan",
+                "China's peace plan today",
+                "China's peace plan tomorrow",
+                "support China's peace plan",
+            ]
+        ),
+        min_n=3,
+        max_n=5,
+        tokenizer_config=tokenizer_config_fixture,
+    )
+
+    assert (
+        _count_ngram(df_message_ngrams, df_ngram_defs, "shoots down china's peace plan")
+        == 2
+    )
+    # The two posts above also contain this trigram, and those occurrences are removed.
+    assert _count_ngram(df_message_ngrams, df_ngram_defs, "china's peace plan") == 3
+    assert df_ngram_defs.filter(pl.col("words") == "shoots down china's").height == 0
+    assert df_ngram_defs.filter(pl.col("words") == "down china's peace").height == 0
+
+
+def test_unique_longer_ngram_does_not_suppress_shorter(tokenizer_config_fixture):
+    """A longer n-gram that appears once is not a reason to drop its subspans."""
+    df_message_ngrams, df_ngram_defs = _extract_ngrams_from_messages(
+        _messages(
+            [
+                "alpha beta gamma delta",
+                "alpha beta gamma",
+                "alpha beta gamma",
+            ]
+        ),
+        min_n=3,
+        max_n=4,
+        tokenizer_config=tokenizer_config_fixture,
+    )
+
+    assert _count_ngram(df_message_ngrams, df_ngram_defs, "alpha beta gamma") == 3
+    assert df_ngram_defs.filter(pl.col("words") == "alpha beta gamma delta").height == 0
 
 
 def test_extract_ngrams_drops_single_message_ngrams(
@@ -240,8 +310,10 @@ def test_ngram_definitions_structure(df_raw_input, tokenizer_config_fixture):
     assert result["ngram_id"].n_unique() == result.height
     assert sorted(result["ngram_id"].to_list()) == list(range(result.height))
 
-    # Check n-gram lengths calculated correctly
-    assert result.filter(pl.col("words") == "go go go")["n"][0] == 3
+    # Lengths are the token counts. "go go go" is a subspan of the repeated
+    # 4-gram "go go go it's" in two of the three posts, and the remaining post
+    # is not enough to keep it.
+    assert result.filter(pl.col("words") == "go go go").height == 0
     assert result.filter(pl.col("words") == "go go go it's")["n"][0] == 4
 
 

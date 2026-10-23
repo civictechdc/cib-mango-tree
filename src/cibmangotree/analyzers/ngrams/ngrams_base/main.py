@@ -181,6 +181,103 @@ def _spill_chunks(
                     progress_callback(done / total)
 
 
+def _subspans_of_longer_ngrams(
+    surviving_defs: pl.DataFrame, min_n: int
+) -> pl.DataFrame | None:
+    """
+    Proper contiguous subspans of each surviving n-gram longer than min_n.
+
+    Only subspans that are themselves repeated are returned. A child that
+    appears in just one message is already excluded from the output.
+
+    Returns columns [parent_hash, child_hash], or None when there is nothing
+    to remove.
+    """
+    longer = surviving_defs.filter(pl.col(COL_NGRAM_LENGTH) > min_n)
+    if longer.is_empty():
+        return None
+
+    parent_hashes: list[int] = []
+    child_words: list[str] = []
+    for words, parent_hash, n in longer.select(
+        COL_NGRAM_WORDS, COL_NGRAM_HASH, COL_NGRAM_LENGTH
+    ).iter_rows():
+        tokens = words.split(" ")
+        for length in range(min_n, n):
+            for start in range(n - length + 1):
+                parent_hashes.append(parent_hash)
+                child_words.append(" ".join(tokens[start : start + length]))
+
+    hash_dtype = longer.schema[COL_NGRAM_HASH]
+    subspans = (
+        pl.DataFrame(
+            {
+                "parent_hash": pl.Series(parent_hashes, dtype=hash_dtype),
+                "child_words": pl.Series(child_words, dtype=pl.String),
+            }
+        )
+        .with_columns(
+            pl.col("child_words").hash(seed=NGRAM_HASH_SEED).alias("child_hash")
+        )
+        .join(
+            surviving_defs.select(pl.col(COL_NGRAM_HASH).alias("child_hash")),
+            on="child_hash",
+            how="inner",
+        )
+    )
+    if subspans.is_empty():
+        return None
+    return subspans.select("parent_hash", "child_hash").unique()
+
+
+def _drop_subsumed_occurrences(
+    pairs: pl.LazyFrame,
+    chunk_defs: pl.LazyFrame,
+    surviving_hashes: pl.LazyFrame,
+    min_n: int,
+) -> tuple[pl.LazyFrame, pl.LazyFrame]:
+    """
+    Drop a shorter n-gram from a message when that message also contains a
+    longer n-gram that repeats across messages, and the shorter one is a
+    contiguous subspan of it.
+
+    Occurrences in other messages are kept. Hashes that then occur in only one
+    message are dropped, matching the filter applied before this step.
+    """
+    surviving_defs = (
+        chunk_defs.unique(subset=COL_NGRAM_HASH)
+        .join(surviving_hashes.select(COL_NGRAM_HASH), on=COL_NGRAM_HASH, how="inner")
+        .with_columns(
+            pl.col(COL_NGRAM_WORDS).str.split(" ").list.len().alias(COL_NGRAM_LENGTH)
+        )
+        .collect(engine="streaming")
+    )
+    subspans = _subspans_of_longer_ngrams(surviving_defs, min_n)
+    if subspans is None:
+        return pairs, surviving_hashes
+
+    covered = (
+        pairs.join(
+            subspans.lazy(),
+            left_on=COL_NGRAM_HASH,
+            right_on="parent_hash",
+            how="inner",
+        )
+        .select(
+            COL_MESSAGE_SURROGATE_ID,
+            pl.col("child_hash").alias(COL_NGRAM_HASH),
+        )
+        .unique()
+    )
+    pairs = pairs.join(
+        covered,
+        on=[COL_MESSAGE_SURROGATE_ID, COL_NGRAM_HASH],
+        how="anti",
+    )
+    surviving_hashes = pairs.group_by(COL_NGRAM_HASH).len().filter(pl.col("len") > 1)
+    return pairs, surviving_hashes
+
+
 def _extract_ngrams_from_messages(
     df_input: pl.DataFrame,
     min_n: int,
@@ -195,6 +292,11 @@ def _extract_ngrams_from_messages(
 
     N-grams occurring in only one message are dropped immediately. These make up
     the great majority of distinct n-grams on a typical corpus.
+
+    A shorter n-gram is then removed from a message when that message contains
+    a longer repeated n-gram of which it is a contiguous subspan. Counts are
+    recomputed, so the shorter n-gram is kept when other messages contain it
+    without the longer phrase.
 
     Intermediate results are written to disk and read back lazily rather than being
     held in memory: the occurrence table is much larger than either output derived
@@ -254,6 +356,9 @@ def _extract_ngrams_from_messages(
         # Grouping and filtering happen on the hash, so neither touches string data.
         surviving_hashes = (
             pairs.group_by(COL_NGRAM_HASH).len().filter(pl.col("len") > 1)
+        )
+        pairs, surviving_hashes = _drop_subsumed_occurrences(
+            pairs, chunk_defs, surviving_hashes, min_n
         )
 
         # One row per n-gram that survives, rather than one per occurrence: this is

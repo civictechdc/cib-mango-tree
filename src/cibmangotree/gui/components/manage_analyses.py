@@ -85,7 +85,11 @@ class ManageAnalysisDialog(ui.dialog):
         selected_rows = await self.grid.get_selected_rows()
 
         if not selected_rows:
-            ui.notify("Please select one or more analyses to delete", type="warning")
+            ui.notify(
+                "Please select one or more analyses to delete",
+                type="warning",
+                color="mango-orange",
+            )
             return
 
         count = len(selected_rows)
@@ -128,11 +132,17 @@ class ManageAnalysisDialog(ui.dialog):
             self.grid.update()
 
         if errors:
-            ui.notify(f"Some deletions failed: {'; '.join(errors)}", type="negative")
+            ui.notify(
+                f"Some deletions failed: {'; '.join(errors)}",
+                type="negative",
+                color="mango-orange",
+            )
         elif newly_deleted:
             label = "analysis" if len(newly_deleted) == 1 else "analyses"
             ui.notify(
-                f"Deleted {len(newly_deleted)} {label} successfully.", type="positive"
+                f"Deleted {len(newly_deleted)} {label} successfully.",
+                type="positive",
+                color="mango-orange",
             )
 
     async def _show_delete_confirmation(self, count: int, rows: list[dict]) -> bool:

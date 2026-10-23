@@ -1,5 +1,5 @@
 """
-Application-wide logging system for Mango Tango CLI.
+Application-wide logging system for CIB Mango Tree.
 
 Provides structured JSON logging with:
 - Console output (ERROR and CRITICAL levels only) to stderr
@@ -100,7 +100,7 @@ def setup_logging(
             "uvicorn": {"level": "WARNING", "propagate": True},
             "starlette": {"level": "WARNING", "propagate": True},
             # Application loggers - inherit from root level
-            "mangotango": {"level": level, "propagate": True},
+            "cibmangotree": {"level": level, "propagate": True},
             "app": {"level": level, "propagate": True},
             "analyzers": {"level": level, "propagate": True},
             "components": {"level": level, "propagate": True},

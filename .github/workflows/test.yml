@@ -9,7 +9,9 @@ jobs:
       matrix:
         include:
           - platform_name: Ubuntu
-            os: ubuntu-latest
+            # Pin 24.04: ubuntu-latest is 26.04, and actions/setup-python has no
+            # build of .python-version (3.12.10) for Ubuntu 26.04 yet.
+            os: ubuntu-24.04
           - platform_name: MacOS Arm64
             os: macos-15
           - platform_name: Windows

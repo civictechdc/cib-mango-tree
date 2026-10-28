@@ -56,7 +56,13 @@ cibmangotree = "cibmangotree.__main__:main"
 cibmt = "cibmangotree.__main__:main"
 
 [tool.uv]
+# Cooldown: ignore packages published in the last 7 days when resolving.
+# Reduces risk from brand-new PyPI uploads (breakage, yanks, malicious releases).
+# Tradeoff: same-week security patches need an exclude-newer-package opt-out until they age in.
 exclude-newer = "7 days"
+# GHSA-cx6f-vjhg-g3cc: allow virtualenv>=21.14.13 while still inside the cooldown window.
+# Safe to remove once that release is older than exclude-newer.
+exclude-newer-package = { virtualenv = false }
 
 [tool.black]
 target-version = ["py312"]

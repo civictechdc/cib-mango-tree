@@ -318,9 +318,30 @@ jobs:
           APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
         run: xcrun notarytool submit dist/${{matrix.artifact_name}}_signed.pkg --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS --wait
 
+      # stapler uses HTTP/3 (UDP/443) to fetch Apple's ticket; on GitHub-hosted
+      # macOS runners that path often drops (Error 68 / NSURLError -1005).
+      # See actions/runner-images#14924 — block UDP/443 so stapler falls back to TCP.
+      - name: Work around stapling HTTP/3 drops
+        if: runner.os == 'macOS' && inputs.is_release
+        run: |
+          echo "block return out quick proto udp from any to any port 443" | sudo pfctl -f -
+          sudo pfctl -E
+
       - name: Staple notarization ticket
         if: runner.os == 'macOS' && inputs.is_release
-        run: xcrun stapler staple dist/${{matrix.artifact_name}}_signed.pkg
+        run: |
+          PKG="dist/${{matrix.artifact_name}}_signed.pkg"
+          for attempt in 1 2 3 4 5; do
+            echo "Staple attempt ${attempt}/5..."
+            if xcrun stapler staple "$PKG"; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 5 ]; then
+              sleep $((attempt * 30))
+            fi
+          done
+          echo "::error::stapler staple failed after 5 attempts"
+          exit 1
 
       - name: Package artifact
         shell: bash

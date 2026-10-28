@@ -57,6 +57,9 @@ cibmt = "cibmangotree.__main__:main"
 
 [tool.uv]
 exclude-newer = "7 days"
+# Allow GHSA-cx6f-vjhg-g3cc patch (virtualenv>=21.14.13) while global exclude-newer is active.
+# Safe to remove once that release is older than the exclude-newer window.
+exclude-newer-package = { virtualenv = false }
 
 [tool.black]
 target-version = ["py312"]

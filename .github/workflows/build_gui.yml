@@ -59,10 +59,12 @@ jobs:
             check_command: dist/CIBMangoTree.app/Contents/MacOS/CIBMangoTree --noop
           # One matrix row per Linux distro family. Distro-specific setup lives in
           # setup_command; shared steps (uv / pyinstaller / zip) stay below.
-          # Host runner is ubuntu-latest; container is the actual build OS (Debian).
+          # Host runner is ubuntu-24.04 (not ubuntu-latest/26.04): setup-python has
+          # no build of .python-version (3.12.10) for Ubuntu 26.04 yet. The container
+          # is the actual build OS (Debian); host only needs a compatible runner.
           - platform_name: Debian
             artifact_name: CIBMangoTree_debian
-            os: ubuntu-latest
+            os: ubuntu-24.04
             container: debian:bookworm
             # Shared libs so PyInstaller can resolve/collect Qt plugins + WebEngine.
             setup_command: |

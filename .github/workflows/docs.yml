@@ -20,7 +20,9 @@ permissions:
 jobs:
   check:
     name: Check docs build
-    runs-on: ubuntu-latest
+    # Pin 24.04: ubuntu-latest is 26.04; keep aligned with other workflows that
+    # resolve .python-version (3.12.10), which has no setup-python build on 26.04 yet.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
 
@@ -39,7 +41,7 @@ jobs:
     name: Deploy docs
     needs: check
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

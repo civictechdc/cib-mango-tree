@@ -67,52 +67,31 @@ def parse_datetime_with_tz(s: pl.Series) -> pl.Series:
     # Handle ISO 8601 "Z" suffix (UTC)
     z_suffix_regex = r"Z$"
 
-    # Check for multiple different timezones
-    abbrev_matches = s.str.extract_all(tz_abbrev_regex)
-    offset_matches = s.str.extract_all(tz_offset_regex)
-    z_matches = s.str.extract_all(z_suffix_regex)
+    stripped = (
+        s.str.replace(tz_abbrev_regex, "")
+        .str.replace(tz_offset_regex, "")
+        .str.replace(z_suffix_regex, "")
+    )
+    parsed = stripped.str.strptime(pl.Datetime(), strict=False)
 
-    # Get unique timezone abbreviations
-    unique_abbrevs = set()
-    if not abbrev_matches.is_empty():
-        for match_list in abbrev_matches.to_list():
-            if match_list:
-                unique_abbrevs.update(match_list)
+    # Only warn about mixed timezones among values that actually parsed as datetimes
+    ok = parsed.is_not_null()
+    if ok.any():
+        candidates = s.filter(ok)
+        unique_tz = set()
+        for regex in (tz_abbrev_regex, tz_offset_regex, z_suffix_regex):
+            for match_list in candidates.str.extract_all(regex).to_list():
+                if match_list:
+                    unique_tz.update(match_list)
+        if len(unique_tz) > 1:
+            col = f" '{s.name}'" if s.name else ""
+            warnings.warn(
+                f"Multiple timezones found in datetime column{col}: {list(unique_tz)}. "
+                f"Assuming all timestamps represent the same timezone for analysis purposes.",
+                UserWarning,
+            )
 
-    # Get unique timezone offsets
-    unique_offsets = set()
-    if not offset_matches.is_empty():
-        for match_list in offset_matches.to_list():
-            if match_list:
-                unique_offsets.update(match_list)
-
-    # Get unique Z suffixes
-    unique_z = set()
-    if not z_matches.is_empty():
-        for match_list in z_matches.to_list():
-            if match_list:
-                unique_z.update(match_list)
-
-    # Warn if multiple different timezones found
-    total_unique_tz = len(unique_abbrevs) + len(unique_offsets) + len(unique_z)
-    if total_unique_tz > 1:
-        all_tz = list(unique_abbrevs) + list(unique_offsets) + list(unique_z)
-        warnings.warn(
-            f"Multiple timezones found in datetime column: {all_tz}. "
-            f"Assuming all timestamps represent the same timezone for analysis purposes.",
-            UserWarning,
-        )
-
-    # Try to remove timezone abbreviations first
-    result = s.str.replace(tz_abbrev_regex, "")
-
-    # Then remove timezone offsets
-    result = result.str.replace(tz_offset_regex, "")
-
-    # Then remove Z suffix
-    result = result.str.replace(z_suffix_regex, "")
-
-    return result.str.strptime(pl.Datetime(), strict=False)
+    return parsed
 
 
 native_date = SeriesSemantic(

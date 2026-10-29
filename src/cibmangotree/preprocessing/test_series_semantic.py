@@ -202,6 +202,21 @@ def test_parse_datetime_mixed_timezones_warning():
     assert result.is_not_null().all()
 
 
+def test_no_timezone_warning_on_free_text():
+    """Text ending in uppercase abbreviations must not trigger timezone warnings."""
+    import warnings
+
+    series = pl.Series(
+        "display_name",
+        ["The Wandering INFJ", "LIEddie Ultra MAGA", "JLM MAGA"],
+    )
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        semantic = infer_series_semantic(series)
+        assert semantic.semantic_name == "free_text"
+        assert not any("Multiple timezones" in str(warning.message) for warning in w)
+
+
 def test_time_military_semantic_inference():
     """Test that time_military semantic gets properly detected"""
     # Test 24-hour format detection

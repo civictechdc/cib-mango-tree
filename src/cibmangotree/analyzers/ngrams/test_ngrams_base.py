@@ -15,7 +15,6 @@ from cibmangotree.testing import CsvTestData, ParquetTestData, test_primary_anal
 
 from .ngrams_base.interface import (
     COL_AUTHOR_ID,
-    COL_MESSAGE_ID,
     COL_MESSAGE_SURROGATE_ID,
     COL_MESSAGE_TEXT,
     COL_MESSAGE_TIMESTAMP,
@@ -326,7 +325,6 @@ def test_ngram_analyzer():
             filepath=str(Path(test_data_dir, TEST_CSV_FILENAME)),
             semantics={
                 COL_AUTHOR_ID: identifier,
-                COL_MESSAGE_ID: identifier,
                 COL_MESSAGE_TEXT: text_catch_all,
                 COL_MESSAGE_TIMESTAMP: datetime_string,
             },

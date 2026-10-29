@@ -9,7 +9,6 @@ from cibmangotree.analyzer_interface import (
 from cibmangotree.analyzer_interface.params import IntegerParam
 
 COL_AUTHOR_ID = "user_id"
-COL_MESSAGE_ID = "message_id"
 COL_MESSAGE_SURROGATE_ID = "message_surrogate_id"
 COL_MESSAGE_TEXT = "message_text"
 COL_NGRAM_ID = "ngram_id"
@@ -58,20 +57,6 @@ the collection of social media posts, and whether certain authors use these sequ
                     "user name",
                     "name",
                     "email",
-                ],
-            ),
-            InputColumn(
-                name=COL_MESSAGE_ID,
-                human_readable_name="Unique Post Number",
-                data_type="identifier",
-                description="The unique identifier of the message",
-                name_hints=[
-                    "post",
-                    "message",
-                    "comment",
-                    "text",
-                    "retweet id",
-                    "tweet",
                 ],
             ),
             InputColumn(
@@ -128,7 +113,6 @@ the collection of social media posts, and whether certain authors use these sequ
             columns=[
                 OutputColumn(name=COL_MESSAGE_SURROGATE_ID, data_type="identifier"),
                 OutputColumn(name=COL_AUTHOR_ID, data_type="identifier"),
-                OutputColumn(name=COL_MESSAGE_ID, data_type="identifier"),
                 OutputColumn(name=COL_MESSAGE_TEXT, data_type="text"),
                 OutputColumn(name=COL_MESSAGE_TIMESTAMP, data_type="datetime"),
             ],

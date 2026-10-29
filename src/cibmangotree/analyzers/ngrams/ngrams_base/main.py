@@ -15,7 +15,6 @@ from cibmangotree.services.tokenizer.core.types import CaseHandling
 
 from .interface import (
     COL_AUTHOR_ID,
-    COL_MESSAGE_ID,
     COL_MESSAGE_SURROGATE_ID,
     COL_MESSAGE_TEXT,
     COL_MESSAGE_TIMESTAMP,
@@ -497,7 +496,6 @@ def main(context: PrimaryAnalyzerContext):
             df_input.select(
                 [
                     COL_MESSAGE_SURROGATE_ID,
-                    COL_MESSAGE_ID,
                     COL_MESSAGE_TEXT,
                     COL_AUTHOR_ID,
                     COL_MESSAGE_TIMESTAMP,

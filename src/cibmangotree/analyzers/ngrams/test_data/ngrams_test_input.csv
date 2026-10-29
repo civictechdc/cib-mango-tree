@@ -1,4 +1,4 @@
-user_id,message_id,message_text,timestamp
-alice,msg_001,go go go now,2024-01-01T10:00:00Z
-bob,msg_002,go go go it's very bad,2024-01-01T10:05:00Z
-alice,msg_003,go go go it's very bad it's very bad,2024-01-01T10:10:00Z
+user_id,message_text,timestamp
+alice,go go go now,2024-01-01T10:00:00Z
+bob,go go go it's very bad,2024-01-01T10:05:00Z
+alice,go go go it's very bad it's very bad,2024-01-01T10:10:00Z

@@ -7,16 +7,16 @@ This is the module for base n-gram analysis (copy pasta test).
 
 Assuming the input dataframe:
 
-|user_id|message_id|message_text|timestamp
-|------|------|------|------|
-|alice|msg_001|go go go now|2024-01-01T10:00:00Z|
-|bob|msg_002|go go go it's very bad|2024-01-01T10:05:00Z|
-|alice|msg_003|go go go it's very bad it's very bad|2024-01-01T10:10:00Z|
+|user_id|message_text|timestamp
+|------|------|------|
+|alice|go go go now|2024-01-01T10:00:00Z|
+|bob|go go go it's very bad|2024-01-01T10:05:00Z|
+|alice|go go go it's very bad it's very bad|2024-01-01T10:10:00Z|
 
 
 `main_.py` will write the tables with the following schemas to disk.
 
-With minimum length 3 and maximum length 4, a shorter phrase is left out of a post when that post contains a longer repeated phrase and the shorter one is a piece of it. `msg_001` has no phrase that repeats in another post, so it does not appear below.
+With minimum length 3 and maximum length 4, a shorter phrase is left out of a post when that post contains a longer repeated phrase and the shorter one is a piece of it. The first post has no phrase that repeats in another post, so it does not appear below.
 
 ### `OUTPUT_MESSAGE_NGRAMS`
 
@@ -45,10 +45,10 @@ Provides mapping between `ngram_id`, the actual string and ngram-length.
 
 ### `OUTPUT_MESSAGE_AUTHORS`
 
-Provides mapping between message id, message text, user id and timestamp.
+Provides mapping between message surrogate id, message text, user id and timestamp.
 
-| message_surrogate_id | message_id | message_text | user_id | timestamp |
-|-------|-------|-------|--------|-------|
-|1|msg_001|go go go now|alice|2024-01-01 10:00:00 UTC|
-|2|msg_002|go go go it's very bad |bob|2024-01-01 10:05:00 UTC|
-|3|msg_003|go go go it's very bad it's very bad |alice|2024-01-01 10:10:00 UTC|
+| message_surrogate_id | message_text | user_id | timestamp |
+|-------|-------|--------|-------|
+|1|go go go now|alice|2024-01-01 10:00:00 UTC|
+|2|go go go it's very bad |bob|2024-01-01 10:05:00 UTC|
+|3|go go go it's very bad it's very bad |alice|2024-01-01 10:10:00 UTC|

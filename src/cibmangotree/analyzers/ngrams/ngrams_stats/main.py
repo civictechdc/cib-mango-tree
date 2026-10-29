@@ -9,7 +9,6 @@ from cibmangotree.analyzer_interface.context import (
 
 from ..ngrams_base.interface import (
     COL_AUTHOR_ID,
-    COL_MESSAGE_ID,
     COL_MESSAGE_SURROGATE_ID,
     COL_MESSAGE_TEXT,
     COL_MESSAGE_TIMESTAMP,
@@ -135,7 +134,6 @@ def _create_full_report_slice(
                 COL_AUTHOR_ID,
                 COL_NGRAM_REPS_PER_USER,
                 COL_MESSAGE_SURROGATE_ID,
-                COL_MESSAGE_ID,
                 COL_MESSAGE_TIMESTAMP,
             ]
         )
@@ -226,7 +224,6 @@ def main(context: SecondaryAnalyzerContext):
                     df_messages_schema.field(COL_AUTHOR_ID),
                     pa.field(COL_NGRAM_REPS_PER_USER, pa.int32()),
                     df_messages_schema.field(COL_MESSAGE_SURROGATE_ID),
-                    df_messages_schema.field(COL_MESSAGE_ID),
                     # message_text omitted on purpose and re-joined on export
                     df_messages_schema.field(COL_MESSAGE_TIMESTAMP),
                 ]

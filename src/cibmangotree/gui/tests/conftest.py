@@ -97,7 +97,7 @@ def ui_app(ui_data_dir: Path) -> App:
     directory is deleted. Windows cannot remove a TinyDB file that is still open.
     """
     storage = Storage(
-        app_name="MangoTango",
+        app_name="CIB Mango Tree",
         app_author="Civic Tech DC",
         data_dir=str(ui_data_dir / "data"),
         cache_dir=str(ui_data_dir / "cache"),

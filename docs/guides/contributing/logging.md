@@ -8,7 +8,7 @@ The application uses a structured JSON logging system that provides consistent l
 - **File Output**: All messages from `INFO` level and above are written to log files
 - **Log Format**: All logs are structured JSON for easy parsing and analysis
 - **Log Rotation**: Log files automatically rotate at 10MB with 5 backup files retained
-- **Log Location**: `~/.local/share/MangoTango/logs/mangotango.log` (varies by platform)
+- **Log Location**: `~/.local/share/CIB Mango Tree/logs/cib-mango-tree.log` (varies by platform)
 
 ### Using the Logger in Your Code
 
@@ -126,7 +126,7 @@ python -m cibmangotree --log-level WARNING
 ### Log File Management
 
 - Log files are automatically rotated when they reach 10MB
-- Up to 5 backup files are kept (`mangotango.log.1`, `mangotango.log.2`, etc.)
+- Up to 5 backup files are kept (`cib-mango-tree.log.1`, `cib-mango-tree.log.2`, etc.)
 - Older backup files are automatically deleted
 - Log directory is created automatically if it doesn't exist
 

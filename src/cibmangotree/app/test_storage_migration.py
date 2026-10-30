@@ -34,6 +34,19 @@ def test_moves_old_to_new(tmp_path):
     assert (new / "projects" / "my_project").is_dir()
 
 
+def test_moves_old_when_new_exists_but_empty(tmp_path):
+    old = make_app_dir(tmp_path / "old")
+    new = tmp_path / "new"
+    new.mkdir()
+
+    result = storage_directory_migration(old, new)
+
+    assert result is StorageMigrationStatus.MOVED
+    assert not old.exists()
+    assert (new / "db.json").read_text() == '{"marker": "old"}'
+    assert (new / "projects" / "my_project").is_dir()
+
+
 def test_conflict_leaves_both_untouched(tmp_path):
     old = make_app_dir(tmp_path / "old")
     new = tmp_path / "new"

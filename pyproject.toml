@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cibmangotree"
-version = "0.13.0"
+version = "0.14.0"
 description = "Interactive social media data analysis tool"
 requires-python = ">=3.12"
 dependencies = [
@@ -13,15 +13,15 @@ dependencies = [
     "platformdirs>=4.3.6",
     "tinydb>=4.8.0",
     "XlsxWriter>=3.2.0",
-    "filelock>=3.16.1",
+    "filelock>=4.2.1",
     "pyarrow>=17.0.0",
     "fastexcel>=0.13.0",
     "python-json-logger>=2.0.7",
     "regex>=2025.9.1",
-    "urllib3>=2.7.0",
+    "urllib3>=2.8.0",
     "nicegui[native]>=3.12.0",
     # TODO: Remove once nicegui updates aiohttp transitive dep (CVE-2026-34993, CVE-2026-47265)
-    "aiohttp>=3.14.2",
+    "aiohttp>=3.14.4",
     # TODO: add alternative GTK dependencies
     "pyqt6>=6.11.0 ; sys_platform == 'linux'",
     "qtpy>=2.4.3 ; sys_platform == 'linux'",
@@ -31,7 +31,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pyarrow-stubs>=17.13",
-    "black>=24.10.0",
+    "black>=26.10.1",
     "isort>=5.13.2",
     "pre-commit>=4.0.1",
     "pytest>=9.0.3",
@@ -56,7 +56,13 @@ cibmangotree = "cibmangotree.__main__:main"
 cibmt = "cibmangotree.__main__:main"
 
 [tool.uv]
+# Cooldown: ignore packages published in the last 7 days when resolving.
+# Reduces risk from brand-new PyPI uploads (breakage, yanks, malicious releases).
+# Tradeoff: same-week security patches need an exclude-newer-package opt-out until they age in.
 exclude-newer = "7 days"
+# GHSA-cx6f-vjhg-g3cc: allow virtualenv>=21.14.13 while still inside the cooldown window.
+# Safe to remove once that release is older than exclude-newer.
+exclude-newer-package = { virtualenv = false }
 
 [tool.black]
 target-version = ["py312"]

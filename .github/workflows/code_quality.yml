@@ -5,7 +5,9 @@ on: pull_request
 jobs:
   code_format:
     name: Code Formatting
-    runs-on: ubuntu-latest
+    # Pin 24.04: ubuntu-latest is 26.04, and actions/setup-python has no
+    # build of .python-version (3.12.10) for Ubuntu 26.04 yet.
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6

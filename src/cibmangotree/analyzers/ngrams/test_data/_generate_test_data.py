@@ -20,7 +20,6 @@ import polars as pl
 
 # Column names from the interface
 TEST_COL_AUTHOR_ID = "user_id"
-TEST_COL_MESSAGE_ID = "message_id"
 TEST_COL_MESSAGE_TEXT = "message_text"
 TEST_COL_MESSAGE_TIMESTAMP = "timestamp"
 
@@ -33,10 +32,10 @@ def _generate_test_input_data():
 
     # Input dataset: 3 messages, 2 users
     # Designed to test:
-    # - "go go go it's", "go go it's very", and "go it's very bad" repeat in msg_002 and msg_003
+    # - "go go go it's", "go go it's very", and "go it's very bad" repeat in rows 2 and 3
     # - shorter subspans of those phrases ("go go go", "it's very bad") are removed from
-    #   those posts; "go go go" then occurs only in msg_001 and is dropped
-    # - "it's very bad" also repeats inside msg_003, which within-message dedup collapses
+    #   those posts; "go go go" then occurs only in row 1 and is dropped
+    # - "it's very bad" also repeats inside row 3, which within-message dedup collapses
     #   when max_n is 3 and no longer phrase subsumes it
 
     df_input = pl.DataFrame(
@@ -45,11 +44,6 @@ def _generate_test_input_data():
                 "alice",
                 "bob",
                 "alice",
-            ],
-            TEST_COL_MESSAGE_ID: [
-                "msg_001",
-                "msg_002",
-                "msg_003",
             ],
             TEST_COL_MESSAGE_TEXT: [
                 "go go go now",  # alice: "go go go" (appears 3x total)
@@ -97,7 +91,6 @@ def _generate_expected_outputs() -> None:
 
     semantics = {
         TEST_COL_AUTHOR_ID: identifier,
-        TEST_COL_MESSAGE_ID: identifier,
         TEST_COL_MESSAGE_TEXT: text_catch_all,
         TEST_COL_MESSAGE_TIMESTAMP: datetime_string,
     }

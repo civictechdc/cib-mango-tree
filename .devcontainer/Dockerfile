@@ -6,7 +6,10 @@ FROM mcr.microsoft.com/devcontainers/python:1-3.12-bookworm
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 # Shared libs for PyQt6 + QtWebEngine (aligned with .github/workflows/build_gui.yml).
-RUN apt-get update \
+# Drop the base image's Yarn apt source — its InRelease is often unsigned and
+# breaks apt-get update in Codespaces builds.
+RUN rm -f /etc/apt/sources.list.d/yarn.list /etc/apt/sources.list.d/*yarn* \
+    && apt-get update \
     && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
         libgl1 \

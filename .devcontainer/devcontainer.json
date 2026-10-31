@@ -1,0 +1,44 @@
+{
+  "name": "CIB Mango Tree",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {
+      "password": "noPassword"
+    }
+  },
+  "forwardPorts": [6080, 8000],
+  "portsAttributes": {
+    "6080": {
+      "label": "desktop",
+      "onAutoForward": "openBrowser"
+    },
+    "8000": {
+      "label": "nicegui",
+      "onAutoForward": "silent"
+    }
+  },
+  "runArgs": ["--shm-size=1g"],
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb"
+  },
+  "containerEnv": {
+    "DISPLAY": ":1",
+    "UV_LINK_MODE": "copy",
+    "QT_QPA_PLATFORM": "xcb",
+    "QT_QUICK_BACKEND": "software",
+    "QT_XCB_GL_INTEGRATION": "none",
+    "QTWEBENGINE_CHROMIUM_FLAGS": "--disable-gpu"
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "bash .devcontainer/post-start.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python"]
+    }
+  },
+  "remoteUser": "vscode"
+}

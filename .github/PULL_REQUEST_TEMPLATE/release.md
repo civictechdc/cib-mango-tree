@@ -11,7 +11,7 @@ You will make changes to some config-related files, which are then committed and
 
 Once that PR is merged, you will create and push the version tag to finish the release.
 
-**Remotes:** `origin` is typically your fork; `upstream` is `civictechdc/cib-mango-tree`. Pull the default branch from the remote you use to track upstream merges. Push the release tag to `upstream`.
+**Remotes:** `origin` is typically your fork; `upstream` is `civictechdc/cib-mango-tree`. Update local `main` with `git pull upstream main`. Push the release tag to `upstream`.
 
 **Version strings (pick one version, e.g. `0.14.0`, and keep these forms consistent):**
 
@@ -24,15 +24,16 @@ Once that PR is merged, you will create and push the version tag to finish the r
 
 ### Start
 
-Done when: local default branch matches the remote tip that should ship, and you are on a dedicated release branch.
+Done when: local `main` matches the remote tip that should ship, and you are on a dedicated release branch.
 
-- [ ] Ensure default branch includes **all merged PRs** that should ship in this release
+- [ ] Check out `main` and ensure it includes **all merged PRs** that should ship in this release
 
 ```bash
-git pull
+git checkout main
+git pull upstream main
 ```
 
-- [ ] Create and check out a **dedicated release branch** from that tip. Do all remaining checklist work on this branch — not on the default branch
+- [ ] Create and check out a **dedicated release branch** from that tip. Do all remaining checklist work on this branch — not on `main`
 
 ```bash
 git checkout -b release-v<version>
@@ -124,7 +125,7 @@ cd ../../../
 ```
 
 - [ ] Check Dependabot alerts: https://github.com/civictechdc/cib-mango-tree/security/dependabot
-  - Dependabot alerts refer to **code already merged** into the repo (default branch). They do **not** describe the new dependency fixes you are making in this release checklist until those changes are merged. A large open count is normal before the release PR merges.
+  - Dependabot alerts refer to **code already merged** into the repo (`main`). They do **not** describe the new dependency fixes you are making in this release checklist until those changes are merged. A large open count is normal before the release PR merges.
   - If local `pip-audit --skip-editable` and `pnpm audit` are clean, you do **not** need to resolve every alert one-by-one before continuing.
   - Optional: skim **Critical/High** only for packages you did not already upgrade; otherwise treat remaining opens as expected to clear after merge.
 
@@ -144,11 +145,11 @@ Done when: the test suite passes locally.
 uv run pytest
 ```
 
-### Merge release prep into the default branch, then publish
+### Merge release prep into `main`, then publish
 
 Done when: the release prep PR is merged, the tag is on `upstream`, and the GitHub Release / build workflow has started.
 
-- [ ] Commit the release-prep changes on the dedicated release branch, push the branch, then open a pull request into the default branch with the **Release** template (paste the matching `CHANGELOG.md` section below)
+- [ ] Commit the release-prep changes on the dedicated release branch, push the branch, then open a pull request into `main` with the **Release** template (paste the matching `CHANGELOG.md` section below)
 
 ```bash
 git add .

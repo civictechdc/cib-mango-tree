@@ -2,6 +2,8 @@
 Main GUI workflow including all pages.
 """
 
+import os
+
 from nicegui import app as nicegui_app
 from nicegui import ui
 
@@ -103,6 +105,19 @@ def gui_main(app: App):
         app: The initialized App instance with storage and suite
     """
     register_pages(app)
+
+    # GitHub Codespaces: serve in the browser (no native/pywebview desktop).
+    if os.environ.get("CODESPACES") == "true":
+        ui.run(
+            native=False,
+            host="0.0.0.0",
+            port=8000,
+            title="CIB Mango Tree",
+            favicon="🥭",
+            reload=False,
+            show=False,
+        )
+        return
 
     nicegui_app.native.window_args["min_size"] = (1024, 710)
     ui.run(

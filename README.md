@@ -38,6 +38,19 @@ The latest release is available under Assets in the Releases tab:
 > 
 > The last version to use the terminal user interface was v0.10.2
 
+## Try in GitHub Codespaces
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/civictechdc/cib-mango-tree)
+
+No local install needed (GitHub account required):
+
+1. Click the badge above and create a Codespace.
+2. Wait for setup. The **first** open often takes several minutes (dependency install). That is normal — it is not frozen.
+3. A browser tab may open with a “starting…” page first; it refreshes until the app is ready.
+4. When ready, CIB Mango Tree appears in the browser (port 8000). You do not need to run terminal commands.
+
+Later opens of the same Codespace are usually much faster.
+
 ## Contributing
 
 New contributions are welcome! Before contributing, please check out our [Technical Documentation guides](https://civictechdc.github.io/cib-mango-tree). If you are not yet familiar with the project, our [New Contributor Guide](https://civictechdc.github.io/cib-mango-tree/guides/contributing/new_contributor_guide) is the best place to start.

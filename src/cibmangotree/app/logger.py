@@ -3,8 +3,7 @@ Application-wide logging system for CIB Mango Tree.
 
 Provides structured JSON logging with:
 - Console output (ERROR and CRITICAL levels only) to stderr
-- File output (INFO and above) with automatic rotation
-- Configurable log levels via CLI flag
+- File output (configurable level, default INFO) with automatic rotation
 """
 
 import logging
@@ -94,11 +93,10 @@ def setup_logging(
             # Third-party library loggers - keep them quieter by default
             "urllib3": {"level": "WARNING", "propagate": True},
             "requests": {"level": "WARNING", "propagate": True},
-            "dash": {"level": "WARNING", "propagate": True},
             "plotly": {"level": "WARNING", "propagate": True},
-            "shiny": {"level": "WARNING", "propagate": True},
             "uvicorn": {"level": "WARNING", "propagate": True},
             "starlette": {"level": "WARNING", "propagate": True},
+            "nicegui": {"level": "WARNING", "propagate": True},
             # Application loggers - inherit from root level
             "cibmangotree": {"level": level, "propagate": True},
             "app": {"level": level, "propagate": True},

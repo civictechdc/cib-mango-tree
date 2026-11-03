@@ -510,15 +510,6 @@ class Storage:
             self._get_project_path(analysis.project_id), analysis.path, "exports"
         )
 
-    def _get_web_presenter_state_path(self, analysis: AnalysisModel, presenter_id: str):
-        return os.path.join(
-            self._get_project_path(analysis.project_id),
-            analysis.path,
-            "web_presenters",
-            presenter_id,
-            "state",
-        )
-
     def _lock_database(self):
         """
         Locks the database to prevent concurrent access, in case multiple instances
@@ -625,8 +616,6 @@ class AppFileSelectorStateManager(FileSelectorStateManager):
 
 ## Next Steps
 
-Once you finish reading this section it would be a good idea to review the other domain sections. Might also be a good idea to review the section that discusses implementing [Shiny](https://shiny.posit.co/py/) dashboards.
-
 - [Edge Domain](./edge-domain.md)
 - [Content Domain](./content-domain.md)
-- [Shiny Dashboards](../contributing/dashboards/shiny.md)
+- [Implementing Analyzers](../contributing/analyzers.md)

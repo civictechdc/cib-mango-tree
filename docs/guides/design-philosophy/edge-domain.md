@@ -172,8 +172,6 @@ def constant_series(series: pl.Series, constant) -> pl.Series:
 
 ## Next Steps
 
-Once you finish reading this section it would be a good idea to review the other domain sections. Might also be a good idea to review the section that discusses implementing [Shiny](https://shiny.posit.co/py/) dashboards.
-
 - [Core Domain](./core-domain.md)
 - [Content Domain](./content-domain.md)
-- [Shiny Dashboards](../contributing/dashboards/shiny.md)
+- [Implementing Analyzers](../contributing/analyzers.md)

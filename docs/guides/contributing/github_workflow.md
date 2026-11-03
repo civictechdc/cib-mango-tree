@@ -1,85 +1,57 @@
 # GitHub Contribution Workflow
 
-Before following this workflow please refer to our [**New Contributor Guide**](./new_contributor_guide.md) page for instructions on installing dependencies and setting up your development environment.
+Complete [Installation](../get-started/installation.md) first. For the big picture of contributing a new analyzer (“test”), see the [New Contributor Guide](./new_contributor_guide.md).
 
-All changes should be made in a forked repository, submitted via pull request to the upstream `main` branch which will be used for a new release by maintainers.
+All code changes go through a **fork** and a **pull request (PR)** into the upstream [`main`](https://github.com/civictechdc/cib-mango-tree) branch. Maintainers cut releases from `main`.
 
+If you use AI tools while contributing, follow the project [AI Use Policy](https://github.com/civictechdc/cib-mango-tree/blob/main/AI_POLICY.md).
 
-## Opening a pull request (PR)
+## Opening a pull request
 
-1. **Fork the repository**   
+1. **Fork the repository** on GitHub: open [civictechdc/cib-mango-tree](https://github.com/civictechdc/cib-mango-tree) and click **Fork**.
 
-    - Navigate to the [main repository](https://www.github.com/civictechdc/cib-mango-tree) on GitHub.
-    - Click the *Fork* button in the upper right corner.
-    - This creates a copy of the repository under your GitHub account.
+2. **Point Git at your fork and upstream**
 
-2. **Clone your fork**  
+    If you followed Installation, you likely cloned the org repo as `origin`. Either re-clone your fork, or keep that clone and set remotes like this (replace `YOUR-USERNAME`):
 
-      Clone your forked repository to your local machine:
+    ```bash
+    git remote rename origin upstream
+    git remote add origin https://github.com/YOUR-USERNAME/cib-mango-tree.git
+    git remote -v
+    ```
 
-      ```shell
-      git clone https://github.com/YOUR-USERNAME/REPOSITORY-NAME.git
-      cd REPOSITORY-NAME
-      ```
+    `origin` should be your fork; `upstream` should be `civictechdc/cib-mango-tree`.
 
-3. **Add upstream remote**
+3. **Create a branch** from an up-to-date `main`. Name it after the work (examples: `issue_433`, `fix/…`, `docs/…`, `feature/…`):
 
-      Add the original repository and name it as `upstream` remote:
+    ```bash
+    git checkout main
+    git pull upstream main
+    git checkout -b issue_123
+    ```
 
-      ```shell
-      git remote add upstream https://github.com/ORIGINAL-OWNER/REPOSITORY-NAME.git
-      git remote -v
-      ```
+4. **Commit and push** to your fork:
 
-4. **Create a feature branch**
+    ```bash
+    git add .
+    git commit -m "Describe the change and why."
+    git push -u origin issue_123
+    ```
 
-      Branch from `main` using `feature/<name>` or `bugfix/<name>`:
+5. **Open the pull request** on [civictechdc/cib-mango-tree](https://github.com/civictechdc/cib-mango-tree): **Pull requests** → **New pull request** → **Compare across forks**. Base = org `main`; compare = your fork’s branch. Fill in the PR template, link the issue when there is one (`Fixes #123` / `Closes #123`), wait for CI, and address review feedback.
 
-      ```shell
-      git checkout main
-      git pull upstream main
-      git checkout -b feature/new-feature
-      ```
+6. **Keep `main` synced** with upstream, and after merge delete the feature branch on your fork:
 
-5. **Make changes & push to your fork**
+    ```bash
+    git checkout main
+    git pull upstream main
+    git push origin main
+    git branch -d issue_123
+    git push origin --delete issue_123
+    ```
 
-    - Commit changes with clear messages.
-    - Push the branch to your forked repository.
+## Tips
 
-      ```shell
-      git add .  # adds changes in all non-ignored files in current folder
-      git commit -m "Description of changes"
-      git push origin feature/new-feature
-      ```
-
-6. **Create a pull request**
-
-    - Navigate to the original repository on GitHub.
-    - Click *Pull requests* --> *New pull request*.
-    - Click *Compare across forks*.
-    - Set the base repository to `ORIGINAL-OWNER/REPOSITORY-NAME` and base branch to `main`.
-    - Set the head repository to `YOUR-USERNAME/REPOSITORY-NAME` and compare branch to `feature/new-feature`.
-    - Click *Create pull request* and fill in the details.
-    - Address any review feedback.
-
-7. **Keep your fork updated**   
-
-      Regularly sync your fork with the upstream repository:
-
-      ```shell
-      git checkout main.       # switch to local main branch
-      git pull upstream main   # sync the original branch with your local branch
-      git push origin main     # update branch on your remote fork with synced local branch
-      ```
-
-8. **After merge & clean up**
-
-    - After your PR is approved and merged into upstream `main`, delete your feature branch:
-
-      ```shell
-      git checkout main
-      git branch -d feature/new-feature
-      git push origin --delete feature/new-feature
-      ```
-
-
+- Prefer **one concern per PR** (the PR template asks you to limit type and scope).
+- Docs-only and UX-handoff changes still use this same fork/PR flow; CI may skip some jobs for paths that do not affect the app.
+- For release cutovers, maintainers follow `.github/PULL_REQUEST_TEMPLATE/release.md` — contributors normally do not need that template.

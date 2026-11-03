@@ -8,7 +8,7 @@ The application uses a structured JSON logging system that provides consistent l
 - **File Output**: All messages from `INFO` level and above are written to log files
 - **Log Format**: All logs are structured JSON for easy parsing and analysis
 - **Log Rotation**: Log files automatically rotate at 10MB with 5 backup files retained
-- **Log Location**: `~/.local/share/CIB Mango Tree/logs/cib-mango-tree.log` (varies by platform)
+- **Log Location**: under the platform user-data directory (see the [Installation](../get-started/installation.md#project-storage) guide), in `logs/cib-mango-tree.log`
 
 ### Using the Logger in Your Code
 
@@ -33,14 +33,14 @@ logger.critical("A very serious error occurred, program may not be able to conti
 **Console (stderr) - Only errors:**
 
 ```json
-{"asctime": "2025-07-30 16:42:33,914", "name": "analyzers.hashtags", "levelname": "ERROR", "message": "Failed to process hashtags", "taskName": null}
+{"timestamp": "2025-07-30 16:42:33,914", "name": "cibmangotree.analyzers.hashtags", "level": "ERROR", "message": "Failed to process hashtags", "process_id": 12345, "thread_id": 67890, "app_version": "0.14.0"}
 ```
 
-**Log File - All info and above:**
+**Log File - INFO and above (default):**
 
 ```json
-{"asctime": "2025-07-30 16:42:33,910", "name": "analyzers.hashtags", "levelname": "INFO", "message": "Starting hashtag analysis", "taskName": null}
-{"asctime": "2025-07-30 16:42:33,914", "name": "analyzers.hashtags", "levelname": "ERROR", "message": "Failed to process hashtags", "taskName": null}
+{"timestamp": "2025-07-30 16:42:33,910", "name": "cibmangotree.analyzers.hashtags", "level": "INFO", "message": "Starting hashtag analysis", "process_id": 12345, "thread_id": 67890, "app_version": "0.14.0"}
+{"timestamp": "2025-07-30 16:42:33,914", "name": "cibmangotree.analyzers.hashtags", "level": "ERROR", "message": "Failed to process hashtags", "process_id": 12345, "thread_id": 67890, "app_version": "0.14.0"}
 ```
 
 ### Logging in Analyzers
@@ -52,26 +52,19 @@ from cibmangotree.app.logger import get_logger
 
 def main(context):
     logger = get_logger(__name__)
-    
-    logger.info("Starting analysis", extra={
-        "input_path": str(context.input_path),
-        "output_path": str(context.output_path)
-    })
-    
+
+    input_reader = context.input()
+    logger.info(
+        "Starting analysis",
+        extra={"input_parquet": str(input_reader.parquet_path)},
+    )
+
     try:
         # Your analysis code here
-        result = perform_analysis(context)
-        
-        logger.info("Analysis completed successfully", extra={
-            "records_processed": len(result),
-            "execution_time": time.time() - start_time
-        })
-        
-    except Exception as e:
-        logger.error("Analysis failed", extra={
-            "error": str(e),
-            "error_type": type(e).__name__
-        }, exc_info=True)
+        ...
+        logger.info("Analysis completed successfully")
+    except Exception:
+        logger.error("Analysis failed", exc_info=True)
         raise
 ```
 
@@ -110,18 +103,7 @@ def main(context):
 
 ### Debugging with Logs
 
-Users can control log verbosity when running the application:
-
-```shell
-# Default INFO level
-python -m cibmangotree
-
-# Verbose DEBUG level for troubleshooting
-python -m cibmangotree --log-level DEBUG
-
-# Only show warnings and errors in log file
-python -m cibmangotree --log-level WARNING
-```
+Launch with `uv run cibmt` (or `cibmangotree`). `__main__.py` calls `setup_logging` in `cibmangotree.app.logger` with file logging at **INFO** and above by default. There is no `--log-level` CLI flag today; use the log file under the platform user-data directory for diagnostics, or temporarily pass a lower level into `setup_logging` while developing.
 
 ### Log File Management
 
@@ -136,7 +118,7 @@ When writing tests that involve logging:
 
 ```python
 import logging
-from app.logger import get_logger
+from cibmangotree.app.logger import get_logger
 
 def test_my_function_logs_correctly(caplog):
     with caplog.at_level(logging.INFO):

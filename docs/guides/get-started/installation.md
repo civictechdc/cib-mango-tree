@@ -1,135 +1,81 @@
 # Installation
 
+This guide sets up a **development** environment so you can run and change CIB Mango Tree from source. For a packaged build, use the [latest release](https://github.com/civictechdc/cib-mango-tree/releases/latest) instead.
+
+To try the app **without** a local install, open a [GitHub Codespace](https://codespaces.new/civictechdc/cib-mango-tree) (GitHub account required). The first start can take several minutes while dependencies install; a “starting…” page may appear and refresh until the app is ready in the browser on port 8000. You do not need to run terminal commands. Later opens of the same Codespace are usually much faster.
+
 ## Required software
 
-You will need the following software installed in order to get started with setting up development environment:  
-
-| Software  |  Needed for  |
+| Software | Needed for |
 | --- | --- |
-| Python >= 3.12 | Required for all features to work correctly |
-| Git | Required for version control and contributing |
-| command line/terminal | Used to launch the application (opens in browser) |   
+| Python ≥ 3.12 | Runtime and tooling |
+| [uv](https://docs.astral.sh/uv/) | Virtual environment and dependencies (recommended) |
+| Git | Clone and contribute |
+| Terminal | Run install and launch commands |
 
 !!! example
-    If you haven't installed git and/or python yet refer to the following links for instructions:  
-    - [Git installation](https://git-scm.com/install/)    
-    - [Python installation](https://www.python.org/downloads/)
+    If you need installers: [Git](https://git-scm.com/install/), [Python](https://www.python.org/downloads/), [uv](https://docs.astral.sh/uv/getting-started/installation/).
 
 ## System requirements
 
-- Operating System: Windows (PowerShell), macOS, Linux
-- Memory: 4GB+ RAM (for processing large datasets)
-- Storage: 1GB+ free space (for project data and virtual environment)
+- OS: Windows, macOS, or Linux
+- Memory: 4GB+ RAM (more helps with large datasets)
+- Storage: 1GB+ free (virtual environment, project data)
 
-## Checking dependencies
+## Setting up the development environment
 
-If you're not sure which packages you already have installed on your system, the
-following commands can be used to figure what packages you already installed:
-
-=== "Linux & Mac OS"
-
-    ``` bash
-    which <program_name_here (python|git)>
-    ```
-
-=== "Windows"
-
-    ``` PowerShell
-    where.exe <program_name_here (python|git)> 
-    ```
-
-
-## Setting up development environment
-
-### 1. Clone repository
-
-First clone the remote repository:  
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/civictechdc/cib-mango-tree.git  # creates cib-mango-tree folder in the current directory
-cd cib-mango-tree  # navigate to the folder with cloned repository
+git clone https://github.com/civictechdc/cib-mango-tree.git
+cd cib-mango-tree
 ```
 
-### 2. Create virtual environment & install dependencies
+### 2. Install dependencies with uv
 
-Choose your preferred method for setting up your development environment:
+From the repository root:
 
-??? info "Installing uv"
-    `uv` is an extremely fast Python package manager (10-100x faster than pip) that simplifies virtual environment and dependency management.
+```bash
+uv sync --group dev
+```
 
-    === "macOS/Linux"
-        ```bash
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-        ```
+This creates `.venv` if needed and installs the project plus the `dev` dependency group from `pyproject.toml`.
 
-    === "Windows (PowerShell)"
-        ```powershell
-        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-        ```
+??? tip "Working on documentation?"
 
-    === "Alternative (via pip)"
-        ```bash
-        pip install uv
-        ```
-
-=== "uv (recommended - faster)"
+    Install the docs tools as well (zensical and related packages):
 
     ```bash
-    # Create virtual environment
-    # this creates a hidden `.venv` folder
-    uv venv
-
-    # Activate virtual environment (macOS/Linux)
-    source .venv/bin/activate
-
-    # OR: if using Windows and PowerShell
-    # .venv\Scripts\activate
-
-    # Install development dependencies
-    uv sync --group dev
+    uv sync --all-groups
     ```
 
-    ??? tip "Working on documentation?"
-
-        If you're also editing the docs, run `uv sync --all-groups` instead. This installs the MkDocs toolchain (defined in the `docs` dependency group in `pyproject.toml`) needed to build and preview the documentation locally.
-
-=== "pip (traditional)"
+    Preview the site locally with:
 
     ```bash
-    # Create virtual environment
-    python -m venv venv
-
-    # Activate virtual environment (macOS/Linux)
-    source venv/bin/activate
-    # OR: if using Windows and PowerShell
-    # venv\Scripts\activate
-
-    # Install dependencies
-    pip install -r requirements-dev.txt
+    uv run zensical serve --open
     ```
-
-    !!! note
-
-        The `requirements*.txt` files are auto-generated convenience artifacts from `pyproject.toml`. For the most reliable setup, use `uv sync` instead.
 
 !!! note "Verify Python version"
-    Ensure you're using Python 3.12.x:
+
     ```bash
-    python --version  # Should show Python 3.12.x
+    uv run python --version   # should be Python 3.12.x
     ```
 
 ### 3. Set up pre-commit hooks
 
-[Pre-commit](https://pre-commit.com/) hooks (in `pre-commit-config.yaml`) automatically format your code with [Black](https://pypi.org/project/black/) and [isort](https://pycqa.github.io/isort/index.html) before each commit.
+Hooks are defined in `.pre-commit-config.yaml`: **Black**, **isort**, and the
+local **gui-styles** check (GUI class/style conventions; see
+[Styling](../contributing/styling.md)). Install them once:
 
-In the root of the cloned repository install pre-commit:  
 ```bash
-# Install pre-commit hooks
-pre-commit install
+uv run pre-commit install
 ```
 
-!!! tip "Verify formatting before pushing"
-    Pre-commit hooks automatically format your code on commit. To verify all files pass CI checks before pushing, run:
+Hooks run on `git commit` for matching staged files (not on `git push`).
+Formatting hooks may modify files; `gui-styles` only reports violations.
+
+!!! tip "Check everything before pushing"
+
     ```bash
     uv run pre-commit run --all-files
     ```
@@ -137,84 +83,83 @@ pre-commit install
 ### 4. Verify installation
 
 ```bash
-cibmt --noop
+uv run cibmt --noop
 ```
 
-If all went well, you should see:
-```bash
+You should see:
+
+```text
 No-op flag detected. All runtime imports loaded successfully.
 ```
 
-## Starting the Application
+You can also activate `.venv` and call `cibmt` / `cibmangotree` directly:
 
-### Basic Usage
+=== "macOS / Linux"
 
-Once you have activated the environment and installed dependencies, run the application using `cibmt` command:
+    ```bash
+    source .venv/bin/activate
+    cibmt --noop
+    ```
+
+=== "Windows (PowerShell)"
+
+    ```powershell
+    .venv\Scripts\Activate.ps1
+    cibmt --noop
+    ```
+
+## Starting the application
+
 ```bash
-# Start the application
-cibmt
+uv run cibmt
 ```
 
-Alternatively, use the long-version command:
-```bash
-cibmangotree
-```
+Or the long name: `uv run cibmangotree`.
 
-The application opens in a standalone window on macOS, or in your default browser on Windows.
+On a normal desktop install the app opens in a **native window** (NiceGUI). In **GitHub Codespaces** it serves in the browser on port 8000 instead.
 
 ## Project storage
 
-### Application Data Directory
+Data directories are created automatically on first run via `platformdirs` (no manual database setup).
 
-The application automatically creates data directories:
+=== "macOS"
 
-=== "MacOS"
     `~/Library/Application Support/CIB Mango Tree/`
 
 === "Windows"
-    `%APPDATA%/Civic Tech DC/CIB Mango Tree/`
+
+    `%LOCALAPPDATA%\Civic Tech DC\CIB Mango Tree\`
 
 === "Linux"
+
     `~/.local/share/CIB Mango Tree/`
 
-### Database Initialization
-
-| Storage component | Function |
+| Storage | Role |
 | --- | --- |
-| TinyDB | Automatically initialized on first run |
-| Project Files |  Created in user data directory |
-| Parquet Files | Used for all analysis data storage |
+| TinyDB (`db.json`) | Project and analysis metadata |
+| Project folders | Per-project files under the data directory |
+| Parquet | Analysis inputs and outputs |
 
-No manual database setup required.
+## Building an executable
 
-
-## Executable Building
+For release-style packaging (not required for day-to-day development):
 
 ```bash
-# Build standalone executable
-pyinstaller pyinstaller.spec
+uv run pyinstaller pyinstaller.spec
 ```
 
-Output (`cibmangotree.app` or `cibmangotree.exe`) will be in `dist` directory.
-
-### Build Requirements
-
-- Included in `requirements-dev.txt`
-- Used primarily for release distribution
-- Not required for development
+Output is under `dist/` (`cibmangotree.app`, `cibmangotree.exe`, or a Linux binary depending on platform). `pyinstaller` comes from the `dev` dependency group.
 
 ## Troubleshooting
 
-### Common Dependency Issues
+### Dependency install fails (often PyArrow)
 
-One common issue when installing the dependencies for python is the installation
-failing due to compatibility issues with the python package `pyarrow`. The compatibility
-issues are due to a version mismatch between pyarrow and python itself.
-To resolve this issue, you must be on version 3.12 for python.
-Refer to [commands above](#2-create-virtual-environment-install-dependencies) to switch to the correct version.
+Use **Python 3.12.x**. Other Python versions commonly break wheels such as PyArrow. Recreate the environment with 3.12 and run `uv sync --group dev` again.
 
+### `cibmt: command not found`
 
-## Next Steps
+Use `uv run cibmt`, or activate `.venv` first so scripts on that environment’s `bin`/`Scripts` path are available.
 
-Once you have everything installed and running without any problems,
-the next step is to check out the [GitHub Contributor Workflow](../contributing/github_workflow.md) for contributing changes.
+## Next steps
+
+When the app starts cleanly, continue with the [GitHub Contributor Workflow](../contributing/github_workflow.md).

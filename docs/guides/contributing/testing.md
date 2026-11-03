@@ -10,12 +10,12 @@ uv run pytest
 
 To run a specific test file. This is useful when you're developing a specific feature and don't want to run the whole test suite:
 ```
-uv run pytest src/cibmangotree/analyzers/hashtags/test_hashtags_analyzer.py
+uv run pytest src/cibmangotree/analyzers/hashtags/test_hashtags_base.py
 ```
 
 Run specific test function:
 ```
-uv run pytest src/cibmangotree/analyzers/hashtags/test_hashtags_analyzer.py::test_gini
+uv run pytest src/cibmangotree/analyzers/hashtags/test_hashtags_base.py::test_gini
 ```
 
 To get more information, run with verbose output:

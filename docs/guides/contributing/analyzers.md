@@ -1,69 +1,81 @@
 # Analyzers
 
-Analyzers are the core data processing components of the platform. They follow a three-tier architecture that separates data processing, analysis, and presentation concerns.
+Analyzers are the core data-processing components of CIB Mango Tree. Users pick a **primary** analyzer, map columns, set parameters, and run an analysis. The app then runs any **secondary** analyzers bound to that primary: primaries usually write normalized tables meant for further processing, while secondaries turn those into export-friendly or dashboard-ready outputs—so the suite runs them automatically whenever that primary finishes (the user does not pick secondaries separately). Afterward, users can open a **NiceGUI results dashboard** for that primary (a registered dashboard if one exists; otherwise a placeholder).
 
-## Architecture Overview
+## Recipe overview
 
-The analyzer system consists of three types of components:
+| Piece | Role |
+| --- | --- |
+| Primary analyzer | Reads user input (parquet), writes declared output tables |
+| Secondary analyzer (optional) | Reads primary outputs, writes exportable or derived tables |
+| Suite registration | Lists declarations in `analyzers/__init__.py` |
+| NiceGUI dashboard (optional) | Results UI keyed by primary analyzer id |
 
-1. **Primary Analyzer**: Performs the core data analysis and outputs structured results
-2. **Secondary Analyzer**: Processes primary analyzer outputs for specific use cases or exports
-3. **Web Presenter**: Creates interactive dashboards and visualizations
+**Templates**
 
-This separation allows for:
+- **Teaching sample:** `src/cibmangotree/analyzers/example/` (`__example__` + `example_report`)
+- **Production shape to copy:** `src/cibmangotree/analyzers/ngrams/` (primary + secondary + denormalize + dashboard)
 
-- Reusable analysis logic
-- Multiple presentation formats for the same analysis
-- Collaborative development where different contributors can focus on different layers
+**Registered secondaries are the normal pattern** (see `example_report` and `ngram_stats`). What to avoid is the hashtags **exception**: it has no suite secondary. Instead, `hashtags_base/analysis.py` exposes a helper the dashboard calls live at click-time. That is not a `SecondaryAnalyzerDeclaration`, does not persist secondary outputs, and must not be copied when adding a new analyzer. Resolving hashtags belongs to stabilize work (#434), not this recipe.
 
-## Primary Analyzers
+### Extension checklist
 
-Primary analyzers perform the core data analysis. They read user input data, process it according to their algorithm, and output structured results in parquet format.
+1. Create `analyzers/<family>/<name>_base/` with `interface.py`, `main.py`, and `__init__.py` declaration.
+2. Optionally add a secondary package with `SecondaryAnalyzerInterface(base_analyzer=…)` and declaration.
+3. Register declaration(s) in `analyzers/__init__.py`.
+4. Optionally add `gui/dashboards/<name>/` subclassing `BaseDashboardPage` and register it in `_DASHBOARD_REGISTRY`.
+5. Add family-level tests and `test_data/`.
+6. Set `is_distributed=True` when the primary is ready to ship. Think of it as a **visibility / ship flag**: `False` = listed only in development runs; `True` = listed in development **and** the packaged app. It is not a user-facing toggle inside a running build. Secondaries are not filtered by this flag.
 
-### Interface Definition
+## Primary analyzers
 
-Every primary analyzer must define an interface that specifies:
+### Layout
 
-- Input columns required from the user
-- Parameters the analyzer accepts
-- Output tables the analyzer produces
+Typical package:
+
+```text
+analyzers/<family>/<name>_base/
+  __init__.py      # AnalyzerDeclaration
+  interface.py     # AnalyzerInterface
+  main.py          # entry point
+  default_params.py  # optional
+```
+
+### Interface
 
 ```python
 from cibmangotree.analyzer_interface import (
     AnalyzerInput,
-    AnalyzerInterface, 
+    AnalyzerInterface,
     AnalyzerOutput,
     AnalyzerParam,
     InputColumn,
+    IntegerParam,
     OutputColumn,
-    IntegerParam
 )
 
 interface = AnalyzerInterface(
-    id="example_analyzer",  # Must be globally unique
+    id="__example__",  # globally unique; stored with analysis data
     version="0.1.0",
     name="Example Analyzer",
-    short_description="Counts characters in messages",
-    long_description="""
-This analyzer demonstrates the basic structure by counting 
-characters in each message and marking long messages.
-    """,
+    short_description="Example Analyzer (Character Count)",
+    long_description="Counts characters in each message.",
     input=AnalyzerInput(
         columns=[
             InputColumn(
                 name="message_id",
-                human_readable_name="Unique Message ID", 
+                human_readable_name="Unique Message ID",
                 data_type="identifier",
                 description="The unique identifier of the message",
-                name_hints=["post", "message", "tweet", "id"]
+                name_hints=["post", "message", "tweet", "id"],
             ),
             InputColumn(
                 name="message_text",
                 human_readable_name="Message Text",
-                data_type="text", 
+                data_type="text",
                 description="The text content of the message",
-                name_hints=["message", "text", "content", "body"]
-            )
+                name_hints=["message", "text", "content", "body"],
+            ),
         ]
     ),
     params=[
@@ -72,439 +84,261 @@ characters in each message and marking long messages.
             human_readable_name="Character Count Adjustment",
             description="Adds to the character count for testing purposes",
             type=IntegerParam(min=-1000, max=1000),
-            default=0
+            default=0,
+            backfill_value=0,  # used when loading older analyses that lack this param
         )
     ],
     outputs=[
         AnalyzerOutput(
             id="character_count",
-            name="Character Count Per Message", 
-            internal=True,  # Not shown in export list
+            name="Character Count Per Message",
+            internal=True,  # omitted from the export list
             columns=[
                 OutputColumn(name="message_id", data_type="integer"),
-                OutputColumn(name="character_count", data_type="integer")
-            ]
+                OutputColumn(name="character_count", data_type="integer"),
+            ],
         )
-    ]
+    ],
 )
 ```
 
-### Implementation
+Supported `data_type` values include `text`, `integer`, `float`, `boolean`, `datetime`, `identifier`, `url`, and `time`. The GUI uses these (plus `name_hints`) for column mapping.
 
-The main function receives a context object with access to input data and output paths:
+### Parameters the GUI can edit
+
+Today the params UI renders:
+
+- `IntegerParam` → integer controls
+- `TimeBinningParam` → time-window control (import from `cibmangotree.analyzer_interface.params`; used by hashtags)
+
+Other param types need both a model in `params.py` and a GUI branch. Prefer static `default=` on `AnalyzerParam` when the default does not depend on the dataset.
+
+### `default_params` (optional)
+
+`AnalyzerDeclaration(..., default_params=fn)` can override static defaults. Returning `None` for a key **unsets** a static default.
+
+!!! warning
+    The default-params context is limited. Do not assume you can call `context.input()` the same way as in `main` unless you have verified the runtime context supports it. The example’s `default_params` returns `{}`.
+
+### Implementation (`main`)
 
 ```python
 import polars as pl
-from cibmangotree.analyzer_interface.context import PrimaryAnalyzerContext, NullProgressReporter
+from cibmangotree.analyzer_interface.context import (
+    NullProgressReporter,
+    PrimaryAnalyzerContext,
+)
 
 def main(context: PrimaryAnalyzerContext):
-    # Read and preprocess input data
-    input_reader = context.input()
-    df_input = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
-    
-    # Access parameters
-    fudge_factor = context.params.get("fudge_factor")
-    assert isinstance(fudge_factor, int), "Fudge factor must be an integer"
-    
-    # Get progress reporter (provided by context, or fall back to no-op)
     progress = context.progress_reporter or (lambda name: NullProgressReporter(name))
-    
-    # Perform analysis with progress reporting
+
+    input_reader = context.input()
+    # Required: rename/map columns and apply semantics.
+    df_input = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
+
+    fudge_factor = context.params.get("fudge_factor")
+    assert isinstance(fudge_factor, int)
+
     with progress("Counting characters") as reporter:
         df_count = df_input.select(
             pl.col("message_id"),
             pl.col("message_text")
             .str.len_chars()
             .add(fudge_factor)
-            .alias("character_count")
+            .alias("character_count"),
         )
         reporter.update(1.0)
-    
-    # Write output to specified path
+
     df_count.write_parquet(context.output("character_count").parquet_path)
 ```
 
-### Declaration
+Notes:
 
-Finally, create the analyzer declaration:
+- Write one parquet per declared output id (`context.output(id).parquet_path`).
+- `context.temp_dir` is available for scratch / spill files (ngrams uses this).
+- Analysis runs in a **worker subprocess**. Keep imports and entry points picklable and side-effect light at import time.
+- `progress_reporter` is provided by the app/test contexts; fall back to `NullProgressReporter` as above.
+
+### Declaration
 
 ```python
 from cibmangotree.analyzer_interface import AnalyzerDeclaration
+from .default_params import default_params
 from .interface import interface
 from .main import main
 
-example_analyzer = AnalyzerDeclaration(
+example_base = AnalyzerDeclaration(
     interface=interface,
     main=main,
-    is_distributed=False  # Set to True for production analyzers
+    default_params=default_params,
+    # Visibility / ship flag for this primary:
+    # False = development only; True = also shown in the packaged executable.
+    is_distributed=False,
 )
 ```
 
-## Secondary Analyzers
+## Secondary analyzers
 
-Secondary analyzers process the output of primary analyzers to create user-friendly exports or perform additional analysis.
+Secondaries have no user input mapping and no params UI. They bind to a primary via `base_analyzer` and run automatically after that primary (registration order for that primary).
 
-### Interface Definition
-
-Secondary analyzers specify their base primary analyzer and their own outputs:
+### Interface
 
 ```python
-from cibmangotree.analyzer_interface import AnalyzerOutput, OutputColumn, SecondaryAnalyzerInterface
+from cibmangotree.analyzer_interface import (
+    AnalyzerOutput,
+    OutputColumn,
+    SecondaryAnalyzerInterface,
+)
 from ..example_base.interface import interface as example_base
 
 interface = SecondaryAnalyzerInterface(
     id="example_report",
-    version="0.1.0", 
+    version="0.1.0",
     name="Example Report",
-    short_description="Adds 'is_long' flag to character count analysis",
-    base_analyzer=example_base,  # Reference to primary analyzer
+    short_description="Adds an is_long flag to character counts",
+    base_analyzer=example_base,
     outputs=[
         AnalyzerOutput(
             id="example_report",
-            name="Example Report", 
+            name="Example Report",
             columns=[
                 OutputColumn(name="message_id", data_type="integer"),
                 OutputColumn(name="character_count", data_type="integer"),
-                OutputColumn(name="is_long", data_type="boolean")  # New column
-            ]
+                OutputColumn(name="is_long", data_type="boolean"),
+            ],
         )
-    ]
+    ],
 )
 ```
 
 ### Implementation
-
-Secondary analyzers read primary outputs and create enhanced results:
 
 ```python
 import polars as pl
 from cibmangotree.analyzer_interface.context import SecondaryAnalyzerContext
 
 def main(context: SecondaryAnalyzerContext):
-    # Read primary analyzer output
-    df_character_count = pl.read_parquet(
-        context.base.table("character_count").parquet_path
-    )
-    
-    # Add derived columns
-    df_export = df_character_count.with_columns(
-        pl.col("character_count").gt(100).alias("is_long")
-    )
-    
-    # Access primary analyzer parameters if needed
-    fudge_factor = context.base_params.get("fudge_factor")
-    
-    # Write enhanced output
+    df = pl.read_parquet(context.base.table("character_count").parquet_path)
+    df_export = df.with_columns(pl.col("character_count").gt(100).alias("is_long"))
+    # Primary params are available if needed:
+    _ = context.base_params.get("fudge_factor")
     df_export.write_parquet(context.output("example_report").parquet_path)
 ```
 
-## Web Presenters
-
-Web presenters create interactive dashboards using either Dash or Shiny frameworks.
-
-### Interface Definition
+### Declaration
 
 ```python
-from cibmangotree.analyzer_interface import WebPresenterInterface
-from ..example_base import interface as example_base
-from ..example_report import interface as example_report
-
-interface = WebPresenterInterface(
-    id="example_web", 
-    version="0.1.0",
-    name="Message Length Histogram",
-    short_description="Shows distribution of message lengths",
-    base_analyzer=example_base,
-    depends_on=[example_report]  # Secondary analyzers used
-)
-```
-
-### Shiny Implementation
-
-For more interactive dashboards:
-
-```python
-from shiny import reactive, render, ui
-from shinywidgets import output_widget, render_widget
-from cibmangotree.analyzer_interface.context import WebPresenterContext, FactoryOutputContext, ShinyContext
-
-def factory(context: WebPresenterContext) -> FactoryOutputContext:
-    # Load data
-    df = pl.read_parquet(context.base.table("character_count").parquet_path)
-    
-    # Define UI components
-    analysis_panel = ui.card(
-        ui.card_header("Character Count Analysis"),
-        ui.input_checkbox("show_details", "Show detailed view", value=False),
-        output_widget("histogram", height="400px")
-    )
-    
-    def server(input, output, session):
-        @render_widget
-        def histogram():
-            # Create interactive plot based on inputs
-            show_details = input.show_details()
-            # ... create plotly figure ...
-            return fig
-            
-        @render.text
-        def summary():
-            return f"Total messages: {len(df)}"
-    
-    return FactoryOutputContext(
-        shiny=ShinyContext(
-            server_handler=server,
-            panel=nav_panel("Dashboard", analysis_panel)
-        )
-    )
-```
-
-### API Factory for React Dashboards
-
-Web presenters can also implement an `api_factory` function to provide structured data for React-based frontends through REST API endpoints:
-
-```python
-from ..utils.pop import pop_unnecessary_fields
-
-def api_factory(context: WebPresenterContext, options: Optional[dict[str, Any]] = None):
-    """
-    Provides structured data for React dashboards via API endpoints.
-    
-    Args:
-        context: WebPresenterContext with access to analyzer outputs
-        options: Optional parameters from API requests (filters, etc.)
-    
-    Returns:
-        Dict with presenter metadata and processed data arrays
-    """
-    # Extract API options/filters
-    filter_value = options.get("matcher", "") if options else ""
-    
-    # Load data
-    data_frame = pl.read_parquet(context.base.table("character_count").parquet_path)
-    
-    # Apply filters if provided
-    if filter_value:
-        # Apply filtering logic based on the filter_value
-        data_frame = data_frame.filter(pl.col("message_text").str.contains(filter_value))
-    
-    # Build presenter model with metadata
-    presenter_model = context.web_presenter.model_dump()
-    
-    # Add visualization configuration
-    presenter_model["figure_type"] = "histogram"
-    presenter_model["axis"] = {
-        "x": {"label": "Message Character Count", "value": "message_character_count"},
-        "y": {"label": "Number of Messages", "value": "number_of_messages"}
-    }
-    
-    # Add data arrays for the frontend
-    presenter_model["x"] = data_frame["character_count"].to_list()
-    
-    # Remove internal fields not needed by frontend
-    return FactoryOutputContext(
-	    api=pop_unnecessary_fields(presenter_model)
-    )
-```
-
-#### Multi-Output API Factory
-
-For analyzers with multiple outputs, return a dictionary with different data views:
-
-```python
-def api_factory(context: WebPresenterContext, options: Optional[dict[str, Any]] = None):
-    filter_value = options.get("matcher", "") if options else ""
-    
-    # Load different data sources
-    df_stats = pl.read_parquet(
-        context.dependency(ngram_stats).table(OUTPUT_NGRAM_STATS).parquet_path
-    )
-    df_full = pl.read_parquet(
-        context.dependency(ngram_stats).table(OUTPUT_NGRAM_FULL).parquet_path
-    )
-    
-    # Apply filtering to both datasets
-    if filter_value:
-        matcher = create_word_matcher(filter_value, pl.col(COL_NGRAM_WORDS))
-        if matcher is not None:
-            df_stats = df_stats.filter(matcher)
-            df_full = df_full.filter(matcher)
-    
-    # Create separate presenter models for each output
-    stats_model = context.web_presenter.model_dump()
-    full_model = context.web_presenter.model_dump()
-    
-    # Configure stats view
-    stats_model.update({
-        "figure_type": "scatter",
-        "explanation": {
-            "total_repetition": "N-grams to the right are repeated by more users...",
-            "amplification_factor": "N-grams higher up are repeated more times..."
-        },
-        "axis": {
-            "x": {"label": "User Count", "value": "user_count"},
-            "y": {"label": "Total Repetition", "value": "total_repetition"}
-        },
-        "x": df_stats[COL_NGRAM_DISTINCT_POSTER_COUNT].to_list(),
-        "y": {
-            "total_repetition": df_stats[COL_NGRAM_TOTAL_REPS].to_list(),
-            "amplification_factor": (
-                df_stats[COL_NGRAM_TOTAL_REPS] / 
-                df_stats[COL_NGRAM_DISTINCT_POSTER_COUNT]
-            ).to_list()
-        },
-        "ngrams": df_stats[COL_NGRAM_WORDS].to_list()
-    })
-    
-    # Configure full data view  
-    full_model.update({
-        "figure_type": "scatter",
-        "ids": df_full[COL_NGRAM_ID].to_list(),
-        "timestamps": df_full[COL_MESSAGE_TIMESTAMP].to_list(),
-        "messages": df_full[COL_MESSAGE_TEXT].to_list(),
-        "users": df_full[COL_AUTHOR_ID].to_list(),
-        # ... additional fields for detailed view
-    })
-    
-    return FactoryOutputContext(
-	    api={
-	        "default_output": OUTPUT_NGRAM_STATS,
-	        OUTPUT_NGRAM_STATS: pop_unnecessary_fields(stats_model),
-	        OUTPUT_NGRAM_FULL: pop_unnecessary_fields(full_model)
-	    }
-    )
-```
-
-#### API Endpoints
-
-The API factory data is automatically exposed through REST endpoints:
-
-- `GET /api/presenters` - List all presenter data
-- `GET /api/presenters/{id}` - Get specific presenter data
-- `GET /api/presenters/{id}/download/{format}` - Download data as CSV/JSON/Excel
-
-Query parameters:
-
-- `output` - Specify which output to return (for multi-output presenters)
-- `filter_field` & `filter_value` - Apply filtering
-- `matcher` - Text matching filter (passed to api_factory options)
-
-Example API usage:
-
-```bash
-# Get basic presenter data
-curl "/api/presenters/ngram_repetition_by_poster"
-
-# Get filtered data
-curl "/api/presenters/ngram_repetition_by_poster?filter_value=climate&matcher=climate"
-
-# Get specific output
-curl "/api/presenters/ngram_repetition_by_poster?output=ngram_full"
-
-# Download as CSV
-curl "/api/presenters/ngram_repetition_by_poster/download/csv"
-```
-
-## Testing Analyzers
-
-### Testing Primary Analyzers
-
-```python
-from cibmangotree.testing import CsvTestData, test_primary_analyzer
+from cibmangotree.analyzer_interface import SecondaryAnalyzerDeclaration
 from .interface import interface
 from .main import main
 
-def test_example_analyzer():
-    test_primary_analyzer(
-        interface=interface,
-        main=main,
-        input=CsvTestData(
-            "test_input.csv",
-            semantics={"message_id": identifier}
-        ),
-        params={"fudge_factor": 10},
-        outputs={
-            "character_count": CsvTestData("expected_output.csv")
-        }
-    )
+example_report = SecondaryAnalyzerDeclaration(interface=interface, main=main)
 ```
 
-### Testing Secondary Analyzers
+### Export denormalization (optional)
+
+`AnalyzerOutput` may set `denormalize=OutputDeNormalization(...)` so exports re-join columns from another output (see `ngrams` / `ngram_stats` / `ngram_full`). Use this when the export should include human-readable columns that stay normalized in the primary tables.
+
+## NiceGUI dashboards
+
+Results visualization is **not** part of `AnalyzerSuite`. Dashboards live under `src/cibmangotree/gui/dashboards/` and subclass `BaseDashboardPage`.
+
+Register by **primary analyzer id** in `gui/dashboards/__init__.py`:
 
 ```python
-from cibmangotree.testing import test_secondary_analyzer, ParquetTestData
-
-def test_example_report():
-    test_secondary_analyzer(
-        interface=interface,
-        main=main,
-        primary_params={"fudge_factor": 10},
-        primary_outputs={
-            "character_count": ParquetTestData("primary_output.parquet")
-        },
-        expected_outputs={
-            "example_report": ParquetTestData("expected_report.parquet")
-        }
-    )
+_DASHBOARD_REGISTRY: dict[str, type[BaseDashboardPage]] = {
+    "hashtags": HashtagsDashboardPage,
+    "ngrams": NgramsDashboardPage,
+}
 ```
 
-## Best Practices
+If no dashboard is registered, the app shows a placeholder. See existing `ngrams` and `hashtags` dashboard packages for layout patterns. Set `_secondary_analyzer_id` on the page when reading secondary outputs via the base helpers.
 
-### Data Processing
-
-- Always call `input_reader.preprocess()` on input data in primary analyzers
-- Use `ProgressReporter` for long-running operations
-- Handle missing or null data gracefully
-- Use appropriate data types (avoid defaulting to small integer types)
-
-### Interface Design
-
-- Choose descriptive, globally unique IDs
-- Provide comprehensive `name_hints` for better column matching
-- Mark internal outputs that users shouldn't see directly
-- Include helpful parameter descriptions and validation
-
-### Performance
-
-- Use lazy evaluation with Polars when possible
-- Process data in chunks for large datasets
-- Consider memory usage when designing algorithms
-- Use appropriate file formats (parquet for structured data)
-
-### Error Handling
-
-- Validate parameters and input data
-- Provide meaningful error messages
-- Handle edge cases (empty datasets, missing columns)
-- Use assertions for internal consistency checks
-
-## Adding to the Suite
-
-Register all analyzers in `analyzers/__init__.py`:
+## Registering in the suite
 
 ```python
 from cibmangotree.analyzer_interface import AnalyzerSuite
 from .example.example_base import example_base
-from .example.example_report import example_report  
-from .example.example_web import example_web
+from .example.example_report import example_report
+from .hashtags.hashtags_base import hashtags
+from .ngrams.ngrams_base import ngrams
+from .ngrams.ngrams_stats import ngrams_stats
 
 suite = AnalyzerSuite(
     all_analyzers=[
         example_base,
-        example_report, 
-        example_web,
-        # ... other analyzers
+        example_report,
+        ngrams,
+        ngrams_stats,
+        hashtags,
     ]
 )
 ```
 
-This creates a complete analysis pipeline that users can run through the application interface, from data input through interactive visualization.
+There is no plugin auto-discovery: if it is not in this list, it does not run.
 
-# Next Steps
+## Testing
 
-Once you finish reading this it would be a good idea to review the sections for each domain. Might also be a good idea to review the section that discusses implementing [Shiny](https://shiny.posit.co/py/) dashboards.
+Helpers live in `cibmangotree.testing`. Tests usually sit at family level next to a shared `test_data/` directory (see `analyzers/example/`).
 
-- [Core Domain](../design-philosophy/core-domain.md)
-- [Edge Domain](../design-philosophy/edge-domain.md)
-- [Content Domain](../design-philosophy/content-domain.md)
-- [Shiny Dashboards](./dashboards/shiny.md)
+### Primary
+
+```python
+import os
+from cibmangotree.preprocessing.series_semantic import identifier
+from cibmangotree.testing import CsvTestData, test_primary_analyzer
+from .example_base.interface import interface
+from .example_base.main import main
+from .test_data import test_data_dir
+
+def test_example_base():
+    test_primary_analyzer(
+        interface,
+        main,
+        input=CsvTestData(
+            os.path.join(test_data_dir, "input.csv"),
+            semantics={"message_id": identifier},
+        ),
+        params={"fudge_factor": 10},
+        outputs={
+            "character_count": CsvTestData(
+                os.path.join(test_data_dir, "output.csv")
+            )
+        },
+    )
+```
+
+### Secondary
+
+```python
+from cibmangotree.testing import ParquetTestData, test_secondary_analyzer
+
+def test_example_report():
+    test_secondary_analyzer(
+        interface,
+        main,
+        primary_params={"fudge_factor": 10},
+        primary_outputs={
+            "character_count": ParquetTestData(...),
+        },
+        expected_outputs={
+            "example_report": ParquetTestData(...),
+        },
+    )
+```
+
+`CsvTestData`, `JsonTestData`, and `ParquetTestData` are supported. Comparisons check shape, column set, and dtypes; **row order matters**.
+
+## Best practices
+
+- Always `preprocess()` primary input after reading parquet.
+- Declare every output column you write; mark internal outputs with `internal=True` when they should not appear in exports.
+- Prefer interface `default=` over duplicating fallbacks inside `main`.
+- Use `name_hints` to improve column automap.
+- Keep long work in progress steps when useful; use `temp_dir` for large intermediates.
+
+## Next steps
+
+- Study `analyzers/example/` then `analyzers/ngrams/`.
+- Design philosophy (domains): [architecture](../design-philosophy/architecture.md), [content](../design-philosophy/content-domain.md), [core](../design-philosophy/core-domain.md), [edge](../design-philosophy/edge-domain.md)
+- GUI dashboard code: `src/cibmangotree/gui/dashboards/` and `src/cibmangotree/gui/README.md`.

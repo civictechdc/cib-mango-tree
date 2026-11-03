@@ -1,6 +1,6 @@
 # GUI Module
 
-The `/gui` module provides a desktop application interface for CIB Mango Tree, built on NiceGUI and launched as a native window via pywebview. It reuses the core `App` and analysis API components but remains decoupled from the terminal interface — no terminal dependencies are imported here.
+The `/gui` module provides the application interface for CIB Mango Tree, built on NiceGUI. On a normal desktop install it launches as a native window via pywebview; in GitHub Codespaces it serves in the browser instead. It reuses the core `App` and analysis components.
 
 ## Tech Stack
 
@@ -13,14 +13,14 @@ The `/gui` module provides a desktop application interface for CIB Mango Tree, b
 If you've setup the [development environment](https://civictechdc.github.io/cib-mango-tree/guides/get-started/installation/#setting-up-development-environment), launch the gui entry point with the `cibmt` (or `cibmangotree`) command:
 
 ```
-cibmt
+uv run cibmt
 ```
 
-Both initialize the `App` instance and call `gui_main(app=app)`. NiceGUI starts a local uvicorn server and opens a native desktop window. Set `reload=True` in `ui.run()` inside `main_workflow.py` to enable hot-reloading during development.
+This initializes the `App` instance and calls `gui_main(app=app)`. NiceGUI starts a local server and opens a native desktop window (or serves in the browser under Codespaces).
 
 ## Building with PyInstaller
 
-The PyInstaller spec file at the repository root (`pyinstaller.spec`) defines the bundle configuration. It uses `cibmangotree_gui.py` as the entry point and includes:
+The PyInstaller spec file at the repository root (`pyinstaller.spec`) defines the bundle configuration. It uses `src/cibmangotree/__main__.py` as the entry point and includes:
 
 - NiceGUI static files from site-packages
 - Vue component build artifacts from `gui/components/dist/`
@@ -38,7 +38,8 @@ On macOS this produces `CIBMangoTree.app` (onedir + BUNDLE). On other platforms 
 ## Code Structure
 
 - `gui/__init__.py` — package entry; exports `gui_main`
-- `gui/main_workflow.py` — `gui_main(app)` registers all page routes with NiceGUI and calls `ui.run()`. Contains `_DASHBOARD_REGISTRY` mapping analyzer IDs to dashboard classes
+- `gui/main_workflow.py` — `gui_main(app)` registers all page routes with NiceGUI and calls `ui.run()`
+- `gui/dashboards/__init__.py` — `_DASHBOARD_REGISTRY` mapping primary analyzer IDs to dashboard page classes
 - `gui/base.py` — `GuiPage` abstract base class using the Template Method pattern. Subclasses implement `render_content()`; `render()` handles header, content, and footer
 - `gui/session.py` — `GuiSession` holds all session state (current project, selected file, analyzer, column mapping, analysis params) as a Pydantic model
 - `gui/context.py` — `GUIContext` wraps the `App` instance for GUI use
@@ -61,16 +62,16 @@ Each page subclasses `GuiPage` and implements `render_content()`:
 
 Each analyzer gets its own dashboard page inheriting `BaseDashboardPage` (which extends `GuiPage`). New dashboards must:
 
-1. Create `<analyzer_name>.py` with a class extending `BaseDashboardPage`
+1. Create a package under `gui/dashboards/<analyzer_id>/` with a class extending `BaseDashboardPage`
 2. Implement `render_content()` with charts, tables, and controls
-3. Register the class in `_DASHBOARD_REGISTRY` in `main_workflow.py`
+3. Register the class in `_DASHBOARD_REGISTRY` in `gui/dashboards/__init__.py` keyed by primary analyzer id
 
-Currently implemented:
+Currently registered:
 
-- `ngrams.py` — `NgramsDashboardPage` for the n-grams analyzer
-- `hashtags.py` — `NgramsDashboardPage` for the n-grams analyzer
+- `ngrams/` — `NgramsDashboardPage`
+- `hashtags/` — `HashtagsDashboardPage`
 
-Planned but not yet implemented: hashtags, temporal.
+`placeholder.py` is used when no dashboard is registered for the selected analyzer.
 
 ### Vue Components (`gui/components/`)
 

@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class GuiRoutes(BaseModel):
-    """Container for"""
+    """NiceGUI page path constants."""
 
     root: str = "/"
     import_dataset: str = "/import_dataset"

@@ -310,12 +310,14 @@ class TestContextEnrichment:
             # Test third-party loggers
             urllib3_logger = logging.getLogger("urllib3")
             requests_logger = logging.getLogger("requests")
-            dash_logger = logging.getLogger("dash")
+            uvicorn_logger = logging.getLogger("uvicorn")
+            nicegui_logger = logging.getLogger("nicegui")
 
             # They should be set to WARNING level
             assert urllib3_logger.level == logging.WARNING
             assert requests_logger.level == logging.WARNING
-            assert dash_logger.level == logging.WARNING
+            assert uvicorn_logger.level == logging.WARNING
+            assert nicegui_logger.level == logging.WARNING
 
             # Application loggers should inherit root level (DEBUG)
             app_logger = logging.getLogger("app")
@@ -323,13 +325,13 @@ class TestContextEnrichment:
 
             _close_logging_handlers()
 
-    def test_cli_level_controls_file_handler(self):
-        """Test that CLI log level properly controls file handler level."""
+    def test_level_controls_file_handler(self):
+        """Test that the setup level properly controls the file handler level."""
         with tempfile.TemporaryDirectory() as temp_dir:
             log_file_path = Path(temp_dir) / "test.log"
 
             # Set up with DEBUG level
-            setup_logging(log_file_path, logging.DEBUG, "cli_test")
+            setup_logging(log_file_path, logging.DEBUG, "level_test")
 
             root_logger = logging.getLogger()
             file_handler = None

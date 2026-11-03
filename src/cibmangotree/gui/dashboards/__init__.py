@@ -9,7 +9,6 @@ Modules:
     hashtags: HashtagsDashboardPage for the hashtags analyzer
     ngrams: NgramsDashboardPage for the n-grams analyzer
     placeholder: PlaceholderDashboard shown when no dashboard exists yet
-    temporal: TemporalDashboardPage for the temporal analyzer  (planned)
 """
 
 from .base_dashboard import BaseDashboardPage

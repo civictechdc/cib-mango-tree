@@ -1,7 +1,10 @@
 # Styling
 
-Shared styles live in `src/cibmangotree/gui/theme.py`. Reuse an existing semantic
-constant before adding another class string or CSS preset.
+GUI styling is standardized: Quasar for widget behavior, typography, and brand
+colors; Tailwind for layout, spacing, sizing, and weight. For any repeated
+pattern, **use the named semantic constants in
+`src/cibmangotree/gui/theme.py`** — do not invent a parallel class string or
+CSS preset when one already exists there.
 
 ## Quasar and Tailwind
 
@@ -20,6 +23,9 @@ Use Tailwind utilities instead of Quasar layout/spacing utilities such as
 `q-mb-md` or `q-pa-md`. Keep Quasar's semantic typography and colors.
 
 ## Shared constants
+
+Shared styles live in `src/cibmangotree/gui/theme.py`. Prefer an existing
+constant from that module before introducing a new class string or CSS preset.
 
 Use names that describe the role: `CARD_*`, `ROW_*`, `COL_*`, `TEXT_*`,
 `ICON_*`, and `STYLE_*`. Class constants go to `.classes()`; `STYLE_*`

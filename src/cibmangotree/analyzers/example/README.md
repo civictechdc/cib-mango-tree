@@ -1,13 +1,10 @@
 # Example Analyzer Implementation
 
-This is an example of how to implement an analyzer for the `analyzer` module. This analyzer is a simple example that counts the number of words in a given text, an export format that includes a "long"
-flag that indicates whether a message is long or not.
+Teaching sample for the analyzer recipe. It counts **characters** (not words) in a text column, then a secondary analyzer adds an `is_long` flag for export.
 
-A web presenter module is included that plots a histogram of
-message lengths.
+There is **no** web presenter module. Results UIs are NiceGUI dashboards registered separately (see the [Analyzers](../../../../docs/guides/contributing/analyzers.md) guide and `gui/dashboards/`).
 
 - [Primary Analyzer](./example_base/__init__.py)
 - [Secondary Analyzer](./example_report/__init__.py)
-- [Web Presenter](./example_web/__init__.py)
-- [Test for Primary Analyzer](./example_base/test_example_base.py)
-- [Test for Secondary Analyzer](./example_report/test_example_report.py)
+- [Test for Primary Analyzer](./test_example_base.py)
+- [Test for Secondary Analyzer](./test_example_report.py)

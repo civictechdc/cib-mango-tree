@@ -1,7 +1,7 @@
 [project]
 site_name = "CIB Mango Tree"
 site_author = "CIB Mango Tree"
-site_description = "An interactive python terminal UI wrapper for Mango Tree analyzers."
+site_description = "An interactive GUI toolkit for detecting coordinated inauthentic behavior in social media datasets."
 site_url = "https://cibmangotree.org"
 repo_url = "https://github.com/civictechdc/cib-mango-tree"
 copyright = "Copyright &copy; 2026 CIB Mango Tree"

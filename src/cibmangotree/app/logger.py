@@ -3,8 +3,7 @@ Application-wide logging system for CIB Mango Tree.
 
 Provides structured JSON logging with:
 - Console output (ERROR and CRITICAL levels only) to stderr
-- File output (INFO and above) with automatic rotation
-- Configurable log levels via CLI flag
+- File output (configurable level, default INFO) with automatic rotation
 """
 
 import logging

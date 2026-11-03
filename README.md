@@ -63,6 +63,10 @@ If you are already familiar with the bigger picture, head over to the [Installat
 
 The [Styling Guide](https://civictechdc.github.io/cib-mango-tree/guides/contributing/styling) is for contributors working on the application's frontend. Its goal is to keep frontend contributions consistent and easier to understand and maintain as the project evolves.
 
+### UX
+
+Design and research handoff (personas, journeys, screen exports) lives in the [`ux/`](ux/) folder. Start with the [UX README](ux/README.md) for layout, conventions, and how assets move into the product or docs.
+
 ## AI policy
 
 Contributors using AI tools should follow the project [AI Use Policy](AI_POLICY.md).

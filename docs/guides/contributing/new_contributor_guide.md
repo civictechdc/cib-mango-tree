@@ -2,11 +2,11 @@
 
 The mission of CIB Mango Tree community is to bring peer-reviewed research methods on the detection of coordinated inauthentic behavior (CIB) in social media to the fingertips of journalists, fact-checkers, watchdogs, and researchers. We do this by developing an interactive analysis and dashboard app. You can read our project overview on [cibmangotree.org](https://cibmangotree.org).
 
-The purpose of this guide is to provide big-picture instructions on how to contribute a new test to CIB Mango Tree and a more detailed guide for each individual step. You are welcome to take part in any and all of the steps for contributig a new test that are described below. Before reading any of the specific subsections you are recommended to read the Overview section.
+The purpose of this guide is to provide big-picture instructions on how to contribute a new test to CIB Mango Tree and a more detailed guide for each individual step. In the codebase, a shipped “test” is implemented as an **analyzer** (see [Implementing Analyzers](./analyzers.md)). You are welcome to take part in any and all of the steps for contributing a new test that are described below. Before reading any of the specific subsections you are recommended to read the Overview section.
 
 
 !!! info
-    This guide is intended for contributing a new test to the library. If this is not your primary area of interest, there are other ways to contribute to the CIB Mango Project, for example in engagement and outreach activities and project management. See our Engagement Guide for more information on contributing in these ways (or ask us on Slack).
+    This guide is intended for contributing a new test/analyzer to the library. If this is not your primary area of interest, there are other ways to contribute (engagement, outreach, project management). Ask in the Civic Tech DC Slack `#cib-mango-tree-*` channels for those paths.
 
 ## Overview
 
@@ -31,7 +31,7 @@ Contributing a new test consists of several steps.
 
 ## I am interested in...
 
-Depending on you interests and availability, you might want to jump to the section relevant to your goals.
+Depending on your interests and availability, you might want to jump to the section relevant to your goals.
 
 <div class="grid cards" markdown>
 
@@ -68,7 +68,7 @@ Depending on you interests and availability, you might want to jump to the secti
 
     ---
 
-    [:octicons-arrow-right-24: Protoyping a test](#prototyping-a-test)
+    [:octicons-arrow-right-24: Prototyping a test](#prototyping-a-test)
     { .card }
 
 -   __5. Implement__
@@ -93,7 +93,7 @@ Depending on you interests and availability, you might want to jump to the secti
 
 ### Not sure yet, I want to learn more.
 
-That is absolutely fine, we've all been there. If you can, the best way to find your way around the project is to join an Civic Tech DC project night in Washington, DC. You can see upcoming events and [register on Luma](https://lu.ma/civic-tech-dc). If in-person attendence is not an option, you can join us virtually too. You'll need to first [join our Slack space](https://www.civictechdc.org/slack) (look for the `#cib-mango-tree-*` channels), where you can learn more.
+That is absolutely fine, we've all been there. If you can, the best way to find your way around the project is to join a Civic Tech DC project night in Washington, DC. You can see upcoming events and [register on Luma](https://lu.ma/civic-tech-dc). If in-person attendance is not an option, you can join us virtually too. You'll need to first [join our Slack space](https://www.civictechdc.org/slack) (look for the `#cib-mango-tree-*` channels), where you can learn more.
 
 !!! info "Community resources"
 
@@ -106,7 +106,7 @@ That is absolutely fine, we've all been there. If you can, the best way to find 
 
 ### Doing research
 
-It all starts here. CIB Mango Tree wants to make pre-existing social media analysis methods, descripted in peer-reviewed research broadly available. There are no set-in-stone processes here, the Internet, literature, and the community are your friends! However, if computational social science and social media data analysis are new domains to you, we provide some of the recent review articles that we think are a good starting point and the relevant communities to keep an eye on below.
+It all starts here. CIB Mango Tree wants to make pre-existing social media analysis methods, described in peer-reviewed research, broadly available. There are no set-in-stone processes here, the Internet, literature, and the community are your friends! However, if computational social science and social media data analysis are new domains to you, we provide some of the recent review articles that we think are a good starting point and the relevant communities to keep an eye on below.
 
 !!! info
     Some of the references that can get you started:
@@ -148,7 +148,8 @@ There are no specific requirements here, other than that the exploration should 
 **Hand-off**: Ideally, the final hand-off for this part is a GitHub issue on our [main repository](https://github.com/civictechdc/cib-mango-tree) describing the prototyped test as a feature request. The goal here is to have a log of what was done (what worked well, what did not) such that in the future you or someone else can read the issue and proceed with implementing the test (see next step)
 
 !!! tip
-    When opening the issue, follow the template (you we'll be able to select it after you click the "New Issue" button). We recommend including the following information if possible. This would make it much easier to proceed:  
+    When opening the issue, follow the template (you will be able to select it after you click the "New Issue" button). We recommend including the following information if possible. This would make it much easier to proceed:
+
 
     - The dataset used to prototype the test (and providing any public link to the dataset if we don't have it in our Drive yet)
     - The required inputs for the prototype  
@@ -165,9 +166,10 @@ This is possibly the most technically involved part of the entire process as it 
 !!! tip
     You can start by following these more specific guides:
 
-    1. [Setting up development environment](../get-started/installation.md)
-    1. [Contributing new changes](./github_workflow.md) (opening a pull request)
-    1. [Implementing Analyzers](../contributing/analyzers.md)
+    1. [Setting up the development environment](../get-started/installation.md)
+    2. [GitHub contribution workflow](./github_workflow.md) (opening a pull request)
+    3. [Implementing analyzers](./analyzers.md) (primary / secondary / suite / NiceGUI dashboard recipe)
+    4. Project [AI Use Policy](https://github.com/civictechdc/cib-mango-tree/blob/main/AI_POLICY.md) if you use AI tools
 
 
 **Hand-off**: The hand-off here is a pull request (PR) to our [main repository](https://github.com/civictechdc/cib-mango-tree) which introduces the code for the new analyzer.
@@ -180,5 +182,5 @@ You might not be interested in any specific parts of new test development, but a
 - Reviewing pull requests
 - Improving our existing [test suite](./testing.md)
 - Testing the general performance of analyzers (speed, memory, data science code)
-- Helping with the interactive side (terminal, GUI, other frontend)
+- Helping with the NiceGUI app and dashboards (`src/cibmangotree/gui/`)
 - Improving the application's storage system (backend, databases)

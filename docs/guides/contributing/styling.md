@@ -48,58 +48,6 @@ Keep class ordering consistent: layout, sizing, spacing, typography, then color.
 `TEXT_MUTED` uses `text-grey-8`; info icons use `ICON_INFO`, whose class string
 includes `text-grey-7`. Select the constant by the element's role.
 
-## Initial rollout
-
-The convention currently applies to these migrated modules:
-
-- `gui/pages/analysis_workflow/run_step.py`
-- `gui/components/analysis.py`
-- `gui/components/exit_confirmation.py`
-- `gui/components/export_outputs.py`
-- `gui/components/import_options.py`
-- `gui/components/new_project_dialog.py`
-
-Other GUI modules still use their existing styles and will migrate in separate
-PRs. Reusable layout helpers and loading/empty-state components are follow-up
-work under issue [#399](https://github.com/civictechdc/cib-mango-tree/issues/399).
-
-The local `gui-styles` hook checks direct string and f-string arguments to
-`.classes()` for known retired tokens and `.style()` for existing CSS presets.
-It prints the file, line, and suggested replacement. It never modifies files.
-Variable values and arbitrary Python expressions are not evaluated.
-
-The guarded modules are listed in `GUARDED_PATHS` in `gui/_style_rules.py`.
-When a module is migrated, add it there and widen the hook's `files` pattern
-in `.pre-commit-config.yaml`. A test checks that the two scopes match.
-
-## Installing and running hooks
-
-Install the Git hooks once per clone:
-
-```bash
-uv run pre-commit install
-```
-
-This includes the local `gui-styles` hook. If the Git hooks are already installed,
-they pick up changes to `.pre-commit-config.yaml` automatically.
-
-Hooks run during `git commit`, before the commit is created, and check matching
-staged files. They do not run on `git push`. If the hooks pass during commits,
-you do not need to rerun them manually before opening a PR.
-
-You can also run the hooks manually to check all files they cover, including unchanged files. This is optional:
-
-```bash
-uv run pre-commit run --all-files
-```
-
-Formatting hooks may modify files; review their changes and rerun the checks.
-The styling hook reports violations for a contributor to fix by hand.
-
-## Testing before opening a PR
-
-The hooks do not run the test suite. Run it separately before opening a PR:
-
-```bash
-uv run pytest
-```
+The `gui-styles` pre-commit hook enforces retired tokens on modules listed in
+`GUARDED_PATHS` (`gui/_style_rules.py`). Install and run hooks via
+[Installation](../get-started/installation.md).

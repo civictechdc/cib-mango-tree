@@ -9,18 +9,12 @@ Through an interactive graphical interface (GUI), users can import datasets, che
 The welcome screen of the application
 ///
 
-## Roadmap
-
-### CLI and Shiny removal
-
-The terminal-based workflow and Shiny dashboards were removed in version v0.11.0. The graphical user interface (GUI) built with [NiceGUI](https://nicegui.io/) is now the primary interface for data exploration and visualization.
-
 ## Tech Stack
 
 CIB Mango Tree relies on the following packages and data science tooling from the Python ecosystem:  
 
 | Domain | Technologies |
 |----------|--------------|
-| Core | Python 3.12, Polars, NiceGUI (GUI), ECharts|
+| Core | Python 3.12, Polars, Pydantic, NiceGUI (GUI), ECharts |
 | Data | PyArrow, Parquet files, TinyDB |
 | Dev Tools | Black, isort, pytest, PyInstaller |

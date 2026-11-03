@@ -21,7 +21,7 @@ The application has three "domains":
 
   > Note that the Storage IO is currently responsible for data export, but we should consider moving this to the Edge domain to allow for more extensibility and looser coupling.
 
-- The [**Content**](./content-domain.md) domain is responsible for the actual data analysis and visualization and is agnostic about data import/export or workspace specifics. This consists of the **Analyzers** (both **Primary** and **Secondary**) as well as the **Web Presenters**.
+- The [**Content**](./content-domain.md) domain is responsible for the actual data analysis and visualization and is agnostic about data import/export or workspace specifics. This consists of the **Analyzers** (both **Primary** and **Secondary**) and **NiceGUI dashboards** that present results.
 
 ```mermaid
 flowchart TD
@@ -32,7 +32,7 @@ flowchart TD
   importers["Importers (edge)"]
   semantic["Semantic Preprocessor (edge)"]
 
-  content["Analyzers/Web Presenters (content)"]
+  content["Analyzers / NiceGUI dashboards (content)"]
 
   gui --> application
   application --> storage
@@ -49,12 +49,9 @@ Talk to us on the [Civic Tech DC Slack workspace](https://civictechdc.slack.com)
 
 ## Next Steps
 
-It would be recommended to review the sections for each domain, and the section for implementing analyzers. Might also be a good idea to review the section that discusses implementing [Shiny](https://shiny.posit.co/py/) dashboards.
+Review the domain sections and the analyzer recipe:
 
 - [Core Domain](./core-domain.md)
 - [Edge Domain](./edge-domain.md)
 - [Content Domain](./content-domain.md)
 - [Implementing Analyzers](../contributing/analyzers.md)
-- [Shiny Dashboards](../contributing/dashboards/shiny.md)
-
-

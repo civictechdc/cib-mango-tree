@@ -95,15 +95,14 @@ Depending on your interests and availability, you might want to jump to the sect
 
 That is absolutely fine, we've all been there. If you can, the best way to find your way around the project is to join a Civic Tech DC project night in Washington, DC. You can see upcoming events and [register on Luma](https://lu.ma/civic-tech-dc). If in-person attendance is not an option, you can join us virtually too. You'll need to first [join our Slack space](https://www.civictechdc.org/slack) (look for the `#cib-mango-tree-*` channels), where you can learn more.
 
-!!! info "Community resources"
+### Community resources
 
-    | Platform link | Come here for |
-    | --- | --- |
-    | [Joining Slack](https://www.civictechdc.org/slack) | Joining the community chat and learn about our weekly virtual calls |
-    | [Civic Tech DC website](https://www.civictechdc.org) | Upcoming in-person events |
-    | [Civic Tech DC Luma](https://lu.ma/civic-tech-dc) | Following upcoming in-person events |
-    | [Known datasets (Google Drive)](https://drive.google.com/drive/folders/1OL7toRas_JbCw5nSMbbWb7j6yZciO5r5) | Shared collection of datasets used for research, prototyping, and QA |
-        
+| Platform link | Come here for |
+| --- | --- |
+| [Joining Slack](https://www.civictechdc.org/slack) | Joining the community chat and learn about our weekly virtual calls |
+| [Civic Tech DC website](https://www.civictechdc.org) | Upcoming in-person events |
+| [Civic Tech DC Luma](https://lu.ma/civic-tech-dc) | Following upcoming in-person events |
+| [Known datasets (Google Drive)](https://drive.google.com/drive/folders/1OL7toRas_JbCw5nSMbbWb7j6yZciO5r5) | Shared collection of datasets used for research, prototyping, and QA |
 
 ### Doing research
 

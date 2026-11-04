@@ -10,7 +10,10 @@ If the content weight of this folder gets excessive, we will need to consider sp
 
 Links to UX material that lives outside this repo (Google Docs, Figma, Drive folders, Slack canvases, and other remote sources). Prefer a short label plus URL. Persona-specific links can also live in that persona’s README.
 
-_None listed yet — add entries below as they come in._
+_Add entries below as they come in._
+
+[Mika: Figma CIB Desktop App Wireframes](https://www.figma.com/design/as3nSyr2Uu8MZxfKuqNQBk/CIB_DesktopApp?node-id=0-1&p=f&t=wBBf9o4pqvDnF0fY-0)
+[Ben S: Google Drive Time Analysis Module Comments](https://docs.google.com/document/d/15OWdyCYKZ84hLtYedJFgTX1-6chpa1vgmrc2EO4Shyk/edit?tab=t.0#heading=h.z3gtdpzc7szw)
 
 ## What belongs here
 

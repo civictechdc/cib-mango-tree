@@ -3,6 +3,10 @@
 Manual and exploratory fixtures. **Not** used by CI analyzer goldens
 (`src/cibmangotree/analyzers/*/test_data/`).
 
+For the fuller collection of known CIB Mango Tree datasets (beyond what is
+tracked here), see the shared
+[Google Drive datasets folder](https://drive.google.com/drive/folders/1OL7toRas_JbCw5nSMbbWb7j6yZciO5r5).
+
 ## `time_analysis/`
 
 Ported from [cib-time-analysis](https://github.com/mattburnett-repo/cib-time-analysis)

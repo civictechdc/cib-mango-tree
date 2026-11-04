@@ -7,6 +7,7 @@ def test_gui_routes_default_paths() -> None:
     routes = GuiRoutes()
     assert routes.root == "/"
     assert routes.dashboard == "/dashboard"
+    assert routes.dashboard_time_analysis_compare == "/dashboard/time_analysis/compare"
     assert routes.configure_analysis == "/configure_analysis"
 
 

@@ -1,0 +1,7 @@
+user_id,timestamp,message_text
+alice,2024-01-01 00:00:00,hello
+bob,2024-01-01 00:00:10,hi
+alice,2024-01-01 00:00:20,again
+bob,2024-01-01 00:00:25,there
+carol,2024-01-01 00:05:00,later
+dave,2024-01-01 00:05:05,also later

@@ -1,6 +1,6 @@
 from typing import Literal, Union
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 TimeBinningUnit = Literal[
     "year",
@@ -23,6 +23,25 @@ class IntegerParam(BaseModel):
     type: Literal["integer"] = "integer"
     min: int
     max: int
+
+
+class ChoiceOption(BaseModel):
+    """One selectable option for a ``ChoiceParam``."""
+
+    value: str
+    label: str
+
+
+class ChoiceParam(BaseModel):
+    """
+    Represents a single choice from a fixed list of labeled options.
+
+    The corresponding value will be of type ``str`` (the selected option's
+    ``value``).
+    """
+
+    type: Literal["choice"] = "choice"
+    options: list[ChoiceOption] = Field(min_length=1)
 
 
 class TimeBinningParam(BaseModel):
@@ -66,6 +85,6 @@ class TimeBinningValue(BaseModel):
         raise ValueError("Invalid time binning value")
 
 
-ParamType = Union[TimeBinningParam, IntegerParam]
+ParamType = Union[TimeBinningParam, IntegerParam, ChoiceParam]
 
-ParamValue = Union[TimeBinningValue, int]
+ParamValue = Union[TimeBinningValue, int, str]

@@ -17,6 +17,8 @@ from .interface import (
     backfill_param_values,
 )
 from .params import (
+    ChoiceOption,
+    ChoiceParam,
     IntegerParam,
     ParamValue,
     TimeBinningValue,

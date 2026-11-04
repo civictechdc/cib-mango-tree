@@ -4,6 +4,7 @@ from nicegui import ui
 
 from cibmangotree.analyzer_interface import (
     AnalyzerParam,
+    ChoiceParam,
     IntegerParam,
     ParamValue,
     TimeBinningValue,
@@ -77,6 +78,8 @@ class AnalysisParamsCard:
 
             if param_type.type == "integer":
                 self._build_integer_control(param, param_type, default_value)
+            elif param_type.type == "choice":
+                self._build_choice_control(param, param_type, default_value)
             elif param_type.type == "time_binning":
                 self._build_time_binning_control(param, default_value)
 
@@ -101,6 +104,28 @@ class AnalysisParamsCard:
         ).classes("w-full mt-2")
 
         self.param_widgets[param.id] = ("integer", number_input)
+
+    def _build_choice_control(
+        self,
+        param: AnalyzerParam,
+        param_type: ChoiceParam,
+        default_value: ParamValue | None,
+    ):
+        """Build labeled single-choice control."""
+        options = {opt.value: opt.label for opt in param_type.options}
+        allowed = set(options)
+        if isinstance(default_value, str) and default_value in allowed:
+            selected = default_value
+        else:
+            selected = param_type.options[0].value
+
+        select = ui.select(
+            options,
+            value=selected,
+            on_change=self._notify_change,
+        ).classes("w-full mt-2")
+
+        self.param_widgets[param.id] = ("choice", select)
 
     def _build_time_binning_control(
         self, param: AnalyzerParam, default_value: ParamValue | None
@@ -158,6 +183,10 @@ class AnalysisParamsCard:
             if param_type == "integer":
                 number_input = widgets[1]
                 param_values[param_id] = int(number_input.value)
+
+            elif param_type == "choice":
+                select = widgets[1]
+                param_values[param_id] = str(select.value)
 
             elif param_type == "time_binning":
                 unit_toggle = widgets[1]

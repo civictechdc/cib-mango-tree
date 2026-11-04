@@ -1,7 +1,5 @@
 import os
 from functools import cached_property
-from tempfile import TemporaryDirectory
-from typing import Callable
 
 import polars as pl
 from pydantic import BaseModel, ConfigDict
@@ -13,9 +11,6 @@ from cibmangotree.analyzer_interface.context import (
 )
 from cibmangotree.analyzer_interface.context import (
     PrimaryAnalyzerContext as BasePrimaryAnalyzerContext,
-)
-from cibmangotree.analyzer_interface.context import (
-    ProgressReporterProtocol,
 )
 from cibmangotree.analyzer_interface.context import (
     SecondaryAnalyzerContext as BaseSecondaryAnalyzerContext,
@@ -30,7 +25,6 @@ class TestPrimaryAnalyzerContext(BasePrimaryAnalyzerContext):
     input_parquet_path: str
     output_parquet_root_path: str
     param_values: dict[str, ParamValue]
-    progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
 
     def input(self) -> InputTableReader:
         return TestTableReader(parquet_path=self.input_parquet_path)
@@ -46,10 +40,7 @@ class TestPrimaryAnalyzerContext(BasePrimaryAnalyzerContext):
         return os.path.join(self.output_parquet_root_path, output_id + ".parquet")
 
     def prepare(self):
-        os.makedirs(
-            os.path.dirname(self.output_parquet_paths),
-            exist_ok=True,
-        )
+        os.makedirs(self.output_parquet_root_path, exist_ok=True)
 
 
 class TestTableReader(InputTableReader):
@@ -77,7 +68,6 @@ class TestSecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
     primary_output_parquet_paths: dict[str, str]
     output_parquet_root_path: str
     primary_param_values: dict[str, ParamValue]
-    progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -91,9 +81,6 @@ class TestSecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
     def base_params(self) -> dict[str, ParamValue]:
         return self.primary_param_values
 
-    def temp_dir(self) -> str:
-        return TemporaryDirectory(delete=True).name
-
     def output(self, output_id: str) -> TableWriter:
         return TestOutputWriter(
             parquet_path=os.path.join(
@@ -105,10 +92,7 @@ class TestSecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
         return os.path.join(self.output_parquet_root_path, output_id + ".parquet")
 
     def prepare(self):
-        os.makedirs(
-            os.path.dirname(self.output_parquet_paths),
-            exist_ok=True,
-        )
+        os.makedirs(self.output_parquet_root_path, exist_ok=True)
 
 
 class TestOutputReaderGroupContext(AssetsReader, BaseModel):

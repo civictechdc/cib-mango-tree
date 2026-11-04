@@ -1,6 +1,5 @@
 import os
 from functools import cached_property
-from typing import Callable
 
 import polars as pl
 from pydantic import BaseModel, ConfigDict
@@ -19,9 +18,6 @@ from cibmangotree.analyzer_interface.context import (
     PrimaryAnalyzerContext as BasePrimaryAnalyzerContext,
 )
 from cibmangotree.analyzer_interface.context import (
-    ProgressReporterProtocol,
-)
-from cibmangotree.analyzer_interface.context import (
     SecondaryAnalyzerContext as BaseSecondaryAnalyzerContext,
 )
 from cibmangotree.analyzer_interface.context import (
@@ -37,11 +33,12 @@ class PrimaryAnalyzerDefaultParametersContext(BasePrimaryAnalyzerContext):
 
     analyzer: AnalyzerInterface
     store: Storage
+    project_id: str
     input_columns: dict[str, "InputColumnProvider"]
 
     def input(self) -> InputTableReader:
         return PrimaryAnalyzerInputTableReader(
-            project_id=self.analysis.project_id,
+            project_id=self.project_id,
             analyzer=self.analyzer,
             store=self.store,
             input_columns=self.input_columns,
@@ -62,7 +59,6 @@ class PrimaryAnalyzerContext(BasePrimaryAnalyzerContext):
     analyzer: AnalyzerInterface
     store: Storage
     input_columns: dict[str, "InputColumnProvider"]
-    progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -139,8 +135,6 @@ class SecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
     analysis: AnalysisModel
     secondary_analyzer: SecondaryAnalyzerInterface
     store: Storage
-    temp_dir: str
-    progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -155,9 +149,6 @@ class SecondaryAnalyzerContext(BaseSecondaryAnalyzerContext):
         return backfill_param_values(
             self.analysis.param_values, self.secondary_analyzer.base_analyzer
         )
-
-    def temp_dir(self) -> str:
-        return self.temp_dir
 
     def output(self, output_id: str) -> TableWriter:
         return SecondaryAnalyzerOutputWriter(

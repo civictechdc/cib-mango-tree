@@ -6,10 +6,7 @@ from tempfile import TemporaryDirectory
 
 import polars as pl
 
-from cibmangotree.analyzer_interface.context import (
-    NullProgressReporter,
-    PrimaryAnalyzerContext,
-)
+from cibmangotree.analyzer_interface.context import PrimaryAnalyzerContext
 from cibmangotree.services.tokenizer.basic import TokenizerConfig, tokenize_text
 from cibmangotree.services.tokenizer.core.types import CaseHandling
 
@@ -449,12 +446,12 @@ def _empty_ngram_defs_frame() -> pl.DataFrame:
 
 
 def main(context: PrimaryAnalyzerContext):
-    progress = context.progress_reporter or (lambda name: NullProgressReporter(name))
-
-    # Get parameters with defaults
+    # Prefer declared interface defaults over hard-coded fallbacks in main.
     parameters = context.params
-    min_n = parameters.get(PARAM_MIN_N, 3)
-    max_n = parameters.get(PARAM_MAX_N, 5)
+    min_n = parameters[PARAM_MIN_N]
+    max_n = parameters[PARAM_MAX_N]
+    assert isinstance(min_n, int)
+    assert isinstance(max_n, int)
 
     # Configure tokenizer for social media text processing
     tokenizer_config = TokenizerConfig(
@@ -468,10 +465,10 @@ def main(context: PrimaryAnalyzerContext):
 
     input_reader = context.input()
     df_input = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
-    with progress("Preprocessing messages"):
+    with context.progress("Preprocessing messages"):
         df_input = _preprocess_messages(df_input)
 
-    with progress("Detecting n-grams") as reporter:
+    with context.progress("Detecting n-grams") as reporter:
         df_ngram_instances, df_ngram_defs = _extract_ngrams_from_messages(
             df_input,
             min_n,
@@ -481,17 +478,17 @@ def main(context: PrimaryAnalyzerContext):
             spill_dir=context.temp_dir,
         )
 
-    with progress("Fetching n-gram statistics"):
+    with context.progress("Fetching n-gram statistics"):
         (
             df_ngram_instances.sort(
                 by=[COL_MESSAGE_SURROGATE_ID, COL_NGRAM_ID]
             ).write_parquet(context.output(OUTPUT_MESSAGE_NGRAMS).parquet_path)
         )
 
-    with progress("Outputting n-gram definitions"):
+    with context.progress("Outputting n-gram definitions"):
         df_ngram_defs.write_parquet(context.output(OUTPUT_NGRAM_DEFS).parquet_path)
 
-    with progress("Outputting messages"):
+    with context.progress("Outputting messages"):
         (
             df_input.select(
                 [

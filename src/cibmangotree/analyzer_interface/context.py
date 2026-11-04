@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Protocol, TypeVar
+from typing import Callable, Protocol, TypeVar
 
 import polars as pl
 from pydantic import BaseModel
@@ -49,6 +49,18 @@ class PrimaryAnalyzerContext(ABC, BaseModel):
   during its lifetime. This directory will not persist between runs.
   """
 
+    progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
+    """
+    Optional factory that returns a progress reporter for a named step.
+    Prefer ``context.progress(title)`` in analyzer mains.
+    """
+
+    def progress(self, title: str) -> ProgressReporterProtocol:
+        """Return a progress reporter for ``title``, or a no-op if unset."""
+        if self.progress_reporter is None:
+            return NullProgressReporter(title)
+        return self.progress_reporter(title)
+
     @abstractmethod
     def input(self) -> "InputTableReader":
         """
@@ -85,6 +97,18 @@ class BaseDerivedModuleContext(ABC, BaseModel):
   Gets the temporary directory that the module can freely write content to
   during its lifetime. This directory will not persist between runs.
   """
+
+    progress_reporter: Callable[[str], ProgressReporterProtocol] | None = None
+    """
+    Optional factory that returns a progress reporter for a named step.
+    Prefer ``context.progress(title)`` in analyzer mains.
+    """
+
+    def progress(self, title: str) -> ProgressReporterProtocol:
+        """Return a progress reporter for ``title``, or a no-op if unset."""
+        if self.progress_reporter is None:
+            return NullProgressReporter(title)
+        return self.progress_reporter(title)
 
     @property
     @abstractmethod

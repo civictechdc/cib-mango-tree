@@ -70,6 +70,7 @@ class ParamsConfigStep:
             default_parameters_context = PrimaryAnalyzerDefaultParametersContext(
                 analyzer=analyzer,
                 store=self.session.app.context.storage,
+                project_id=project.id,
                 temp_dir=temp_dir,
                 input_columns={
                     analyzer_column_name: InputColumnProvider(

@@ -132,6 +132,7 @@ def _generate_expected_outputs() -> None:
 
     secondary_main(
         TestSecondaryAnalyzerContext(
+            temp_dir=str(TEST_DATA_DIR),
             primary_output_parquet_paths={
                 output: str(TEST_DATA_DIR / f"{output}.parquet")
                 for output in (OUTPUT_MESSAGE_NGRAMS, OUTPUT_NGRAM_DEFS, OUTPUT_MESSAGE)

@@ -16,7 +16,7 @@ Analyzers are the core data-processing components of CIB Mango Tree. Users pick 
 - **Teaching sample:** `src/cibmangotree/analyzers/example/` (`__example__` + `example_report`)
 - **Production shape to copy:** `src/cibmangotree/analyzers/ngrams/` (primary + secondary + denormalize + dashboard)
 
-**Registered secondaries are the normal pattern** (see `example_report` and `ngram_stats`). What to avoid is the hashtags **exception**: it has no suite secondary. Instead, `hashtags_base/analysis.py` exposes a helper the dashboard calls live at click-time. That is not a `SecondaryAnalyzerDeclaration`, does not persist secondary outputs, and must not be copied when adding a new analyzer. Resolving hashtags belongs to stabilize work (#434), not this recipe.
+**Registered secondaries are the normal pattern** (see `example_report` and `ngram_stats`). What to avoid is the hashtags **exception**: it has no suite secondary. Instead, `hashtags_base/analysis.py` exposes a helper the dashboard calls live at click-time. That is not a `SecondaryAnalyzerDeclaration`, does not persist secondary outputs, and **must not be copied** when adding a new analyzer. Hashtags stays an intentional do-not-copy exception; use **example** (teaching) or **ngrams** (production shape) instead.
 
 ### Extension checklist
 
@@ -85,7 +85,7 @@ interface = AnalyzerInterface(
             description="Adds to the character count for testing purposes",
             type=IntegerParam(min=-1000, max=1000),
             default=0,
-            backfill_value=0,  # used when loading older analyses that lack this param
+            backfill_value=0,  # fills missing/None only; preserves 0 / False
         )
     ],
     outputs=[
@@ -118,28 +118,24 @@ Other param types need both a model in `params.py` and a GUI branch. Prefer stat
 `AnalyzerDeclaration(..., default_params=fn)` can override static defaults. Returning `None` for a key **unsets** a static default.
 
 !!! warning
-    The default-params context is limited. Do not assume you can call `context.input()` the same way as in `main` unless you have verified the runtime context supports it. The example’s `default_params` returns `{}`.
+    The default-params context supports `context.input()` (mapped project input). It does **not** support `params` or `output`. Prefer static `default=` on `AnalyzerParam` when the value does not depend on the dataset. The example’s `default_params` returns `{}`.
 
 ### Implementation (`main`)
 
 ```python
 import polars as pl
-from cibmangotree.analyzer_interface.context import (
-    NullProgressReporter,
-    PrimaryAnalyzerContext,
-)
+from cibmangotree.analyzer_interface.context import PrimaryAnalyzerContext
 
 def main(context: PrimaryAnalyzerContext):
-    progress = context.progress_reporter or (lambda name: NullProgressReporter(name))
-
     input_reader = context.input()
     # Required: rename/map columns and apply semantics.
     df_input = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
 
-    fudge_factor = context.params.get("fudge_factor")
+    # Prefer declared interface defaults over hard-coded fallbacks in main.
+    fudge_factor = context.params["fudge_factor"]
     assert isinstance(fudge_factor, int)
 
-    with progress("Counting characters") as reporter:
+    with context.progress("Counting characters") as reporter:
         df_count = df_input.select(
             pl.col("message_id"),
             pl.col("message_text")
@@ -157,7 +153,7 @@ Notes:
 - Write one parquet per declared output id (`context.output(id).parquet_path`).
 - `context.temp_dir` is available for scratch / spill files (ngrams uses this).
 - Analysis runs in a **worker subprocess**. Keep imports and entry points picklable and side-effect light at import time.
-- `progress_reporter` is provided by the app/test contexts; fall back to `NullProgressReporter` as above.
+- Use `with context.progress("step") as reporter:` for optional progress UI (no-op when unset).
 
 ### Declaration
 

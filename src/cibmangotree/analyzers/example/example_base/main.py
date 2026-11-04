@@ -1,14 +1,9 @@
 import polars as pl
 
-from cibmangotree.analyzer_interface.context import (
-    NullProgressReporter,
-    PrimaryAnalyzerContext,
-)
+from cibmangotree.analyzer_interface.context import PrimaryAnalyzerContext
 
 
 def main(context: PrimaryAnalyzerContext):
-    progress = context.progress_reporter or (lambda name: NullProgressReporter(name))
-
     # To read the user's input data the way the user intended, you have to do
     # two things:
     # - Read the input file, which is a parquet file. The InputReader interface
@@ -26,7 +21,8 @@ def main(context: PrimaryAnalyzerContext):
 
     # The analysis parameters are provided in a dictionary. This is how you
     # access them. The dictionary key must match the parameter ID in the interface.
-    fudge_factor_param = context.params.get("fudge_factor")
+    # Prefer declared interface defaults over hard-coded fallbacks in main.
+    fudge_factor_param = context.params["fudge_factor"]
 
     # You don't actually need to do this as the app will make sure all
     # parameters are of the right type. But it's a good idea anyway.
@@ -37,7 +33,7 @@ def main(context: PrimaryAnalyzerContext):
     #
     # The use of the progress reporter is optional. It helps breaking a
     # longer analysis down into sections.
-    with progress("Counting characters") as reporter:
+    with context.progress("Counting characters") as reporter:
         df_count = df_input.select(
             pl.col("message_id"),
             # The input and output columns are as you define in the interface.

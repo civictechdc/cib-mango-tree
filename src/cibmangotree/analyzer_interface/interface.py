@@ -234,7 +234,15 @@ class OutputColumn(Column):
 def backfill_param_values(
     param_values: dict[str, ParamValue], analyzer_spec: AnalyzerInterface
 ) -> dict[str, ParamValue]:
-    return {
-        param_spec.id: param_values.get(param_spec.id) or param_spec.backfill_value
-        for param_spec in analyzer_spec.params
-    }
+    """Fill missing params from each spec's ``backfill_value``.
+
+    Only ``None`` / absent keys are backfilled. Falsy values such as ``0`` and
+    ``False`` are preserved.
+    """
+    filled: dict[str, ParamValue] = {}
+    for param_spec in analyzer_spec.params:
+        if param_spec.id in param_values and param_values[param_spec.id] is not None:
+            filled[param_spec.id] = param_values[param_spec.id]
+        else:
+            filled[param_spec.id] = param_spec.backfill_value
+    return filled

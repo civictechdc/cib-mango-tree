@@ -2,10 +2,7 @@ import polars as pl
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from cibmangotree.analyzer_interface.context import (
-    NullProgressReporter,
-    SecondaryAnalyzerContext,
-)
+from cibmangotree.analyzer_interface.context import SecondaryAnalyzerContext
 
 from ..ngrams_base.interface import (
     COL_AUTHOR_ID,
@@ -190,18 +187,16 @@ def _report_slice_row_counts(df_ngram_summary: pl.DataFrame) -> list[int]:
 
 
 def main(context: SecondaryAnalyzerContext):
-    progress = context.progress_reporter or (lambda name: NullProgressReporter(name))
-
     df_message_ngrams = pl.read_parquet(
         context.base.table(OUTPUT_MESSAGE_NGRAMS).parquet_path
     )
     df_ngrams = pl.read_parquet(context.base.table(OUTPUT_NGRAM_DEFS).parquet_path)
     df_messages = pl.read_parquet(context.base.table(OUTPUT_MESSAGE).parquet_path)
 
-    with progress("Computing ngram statistics"):
+    with context.progress("Computing ngram statistics"):
         df_ngram_stats = _compute_ngram_statistics(df_message_ngrams, df_messages)
 
-    with progress("Creating the summary table"):
+    with context.progress("Creating the summary table"):
         df_ngram_summary = _create_summary_table(df_ngrams, df_ngram_stats)
         df_ngram_summary.write_parquet(context.output(OUTPUT_NGRAM_STATS).parquet_path)
 
@@ -211,7 +206,7 @@ def main(context: SecondaryAnalyzerContext):
 
     report_slice_row_counts = _report_slice_row_counts(df_ngram_summary)
 
-    with progress("Writing full report") as reporter:
+    with context.progress("Writing full report") as reporter:
         with pq.ParquetWriter(
             context.output(OUTPUT_NGRAM_FULL).parquet_path,
             schema=pa.schema(

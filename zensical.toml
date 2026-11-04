@@ -6,6 +6,10 @@ site_url = "https://cibmangotree.org"
 repo_url = "https://github.com/civictechdc/cib-mango-tree"
 copyright = "Copyright &copy; 2026 CIB Mango Tree"
 extra_css = ["stylesheets/extra.css"]
+extra_javascript = [
+    "plugins/mathjax.js",
+    "https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js",
+]
 
 nav = [
     {"Home" = [
@@ -27,6 +31,9 @@ nav = [
                 "guides/contributing/styling.md",
                 "guides/contributing/profiling.md",
             ]},
+        ]},
+        {"Analyzers" = [
+            "guides/analyzers/time-analysis-methods.md",
         ]},
         {"Design Philosophy" = [
             "guides/design-philosophy/architecture.md",
@@ -75,6 +82,9 @@ scheme = "cibmt"
 paths = ["src"]
 
 [project.markdown_extensions.admonition]
+
+[project.markdown_extensions.pymdownx.arithmatex]
+generic = true
 
 [project.markdown_extensions.pymdownx.details]
 

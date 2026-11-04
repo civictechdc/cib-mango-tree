@@ -102,6 +102,7 @@ That is absolutely fine, we've all been there. If you can, the best way to find 
     | [Joining Slack](https://www.civictechdc.org/slack) | Joining the community chat and learn about our weekly virtual calls |
     | [Civic Tech DC website](https://www.civictechdc.org) | Upcoming in-person events |
     | [Civic Tech DC Luma](https://lu.ma/civic-tech-dc) | Following upcoming in-person events |
+    | [Known datasets (Google Drive)](https://drive.google.com/drive/folders/1OL7toRas_JbCw5nSMbbWb7j6yZciO5r5) | Shared collection of datasets used for research, prototyping, and QA |
         
 
 ### Doing research
@@ -151,7 +152,7 @@ There are no specific requirements here, other than that the exploration should 
     When opening the issue, follow the template (you will be able to select it after you click the "New Issue" button). We recommend including the following information if possible. This would make it much easier to proceed:
 
 
-    - The dataset used to prototype the test (and providing any public link to the dataset if we don't have it in our Drive yet)
+    - The dataset used to prototype the test (check the [known datasets Drive folder](https://drive.google.com/drive/folders/1OL7toRas_JbCw5nSMbbWb7j6yZciO5r5) first; provide any public link if we don't have it there yet)
     - The required inputs for the prototype  
     - If possible, a publicly-accessible link to a notebook (e.g. Google Colab) or analysis scripts, 
     - Describe the dependencies used in the analysis (if applicable)

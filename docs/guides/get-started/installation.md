@@ -163,3 +163,5 @@ Use `uv run cibmt`, or activate `.venv` first so scripts on that environment’s
 ## Next steps
 
 When the app starts cleanly, continue with the [GitHub Contributor Workflow](../contributing/github_workflow.md).
+
+To try the app with real data, grab a file from the [known datasets Drive folder](https://drive.google.com/drive/folders/1OL7toRas_JbCw5nSMbbWb7j6yZciO5r5), or use the smaller fixtures under [`assets/test_data/`](https://github.com/civictechdc/cib-mango-tree/tree/main/assets/test_data).

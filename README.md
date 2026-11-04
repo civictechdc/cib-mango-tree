@@ -67,6 +67,10 @@ The [Styling Guide](https://civictechdc.github.io/cib-mango-tree/guides/contribu
 
 Design and research handoff (personas, journeys, screen exports) lives in the [`ux/`](ux/) folder. Start with the [UX README](ux/README.md) for layout, conventions, and how assets move into the product or docs.
 
+### Datasets (Testing)
+
+Known datasets for research, prototyping, and QA live in a shared [Google Drive folder](https://drive.google.com/drive/folders/1OL7toRas_JbCw5nSMbbWb7j6yZciO5r5). Smaller fixtures tracked in the repo are documented under [`assets/test_data/`](assets/test_data/README.md).
+
 ## AI policy
 
 Contributors using AI tools should follow the project [AI Use Policy](AI_POLICY.md).

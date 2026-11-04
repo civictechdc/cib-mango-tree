@@ -5,6 +5,7 @@ from .example.example_report import example_report
 from .hashtags.hashtags_base import hashtags
 from .ngrams.ngrams_base import ngrams
 from .ngrams.ngrams_stats import ngrams_stats
+from .time_analysis import time_analysis
 
 suite = AnalyzerSuite(
     all_analyzers=[
@@ -13,5 +14,6 @@ suite = AnalyzerSuite(
         ngrams,
         ngrams_stats,
         hashtags,
+        time_analysis,
     ]
 )

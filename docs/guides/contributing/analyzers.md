@@ -109,6 +109,7 @@ Supported `data_type` values include `text`, `integer`, `float`, `boolean`, `dat
 Today the params UI renders:
 
 - `IntegerParam` → integer controls
+- `ChoiceParam` → labeled single-select (`ChoiceOption` value/label pairs; value is a `str`)
 - `TimeBinningParam` → time-window control (import from `cibmangotree.analyzer_interface.params`; used by hashtags)
 
 Other param types need both a model in `params.py` and a GUI branch. Prefer static `default=` on `AnalyzerParam` when the default does not depend on the dataset.

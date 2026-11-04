@@ -10,6 +10,9 @@ from nicegui import ui
 from cibmangotree.app import App
 from cibmangotree.gui.context import GUIContext
 from cibmangotree.gui.dashboards import PlaceholderDashboard, get_dashboard
+from cibmangotree.gui.dashboards.time_analysis.compare_page import (
+    TimeAnalysisComparePage,
+)
 from cibmangotree.gui.pages import (
     AnalysisConfigAndRunPage,
     ImportDatasetPage,
@@ -93,6 +96,11 @@ def register_pages(app: App) -> GuiSession:
             page.render()
         else:
             PlaceholderDashboard(session=gui_session).render()
+
+    @ui.page(gui_routes.dashboard_time_analysis_compare)
+    def dashboard_time_analysis_compare():
+        """Time-analysis Compare users drill-down (pair set on Explore)."""
+        TimeAnalysisComparePage(session=gui_session).render()
 
     return gui_session
 

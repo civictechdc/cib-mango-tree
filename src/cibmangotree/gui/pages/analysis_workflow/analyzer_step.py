@@ -1,3 +1,5 @@
+import textwrap
+
 from nicegui import ui
 
 from cibmangotree.gui.components.toggle import ToggleButtonGroup
@@ -40,14 +42,19 @@ class AnalyzerSelectionStep:
                         "No analyzer selected. Click button above to select it."
                     )
 
+                    def _description_markdown(selected: str | None) -> str:
+                        raw = analyzer_long_descriptions.get(
+                            selected or "", DEFAULT_TEXT
+                        )
+                        return textwrap.dedent(raw or DEFAULT_TEXT).strip()
+
                     with ui.card().classes("w-[40rem] shadow-none"):
-                        with ui.scroll_area().classes("max-h-48"):
-                            ui.label().bind_text_from(
+                        # Taller than before so method lists are readable.
+                        with ui.scroll_area().classes("max-h-72"):
+                            ui.markdown().bind_content_from(
                                 target_object=self.button_group,
                                 target_name="selected_text",
-                                backward=lambda text: analyzer_long_descriptions.get(
-                                    text, DEFAULT_TEXT
-                                ),
+                                backward=_description_markdown,
                             ).classes("text-grey")
 
     def is_valid(self) -> bool:

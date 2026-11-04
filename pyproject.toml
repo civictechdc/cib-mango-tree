@@ -20,6 +20,10 @@ dependencies = [
     "regex>=2025.9.1",
     "urllib3>=2.8.0",
     "nicegui[native]>=3.12.0",
+    "networkx>=3.2",
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "python-dateutil>=2.9",
     # TODO: Remove once nicegui updates aiohttp transitive dep (CVE-2026-34993, CVE-2026-47265)
     "aiohttp>=3.14.4",
     # TODO: add alternative GTK dependencies

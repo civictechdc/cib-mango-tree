@@ -22,3 +22,4 @@ node_modules
 # Local personal notes (not tracked)
 /mjb_notes/
 .cursor/
+/.cache/

@@ -15,10 +15,12 @@ from .base_dashboard import BaseDashboardPage
 from .hashtags import HashtagsDashboardPage
 from .ngrams import NgramsDashboardPage
 from .placeholder import PlaceholderDashboard
+from .time_analysis import TimeAnalysisDashboardPage
 
 _DASHBOARD_REGISTRY: dict[str, type[BaseDashboardPage]] = {
     "hashtags": HashtagsDashboardPage,
     "ngrams": NgramsDashboardPage,
+    "time_analysis": TimeAnalysisDashboardPage,
 }
 
 
@@ -32,5 +34,6 @@ __all__ = [
     "HashtagsDashboardPage",
     "NgramsDashboardPage",
     "PlaceholderDashboard",
+    "TimeAnalysisDashboardPage",
     "get_dashboard",
 ]

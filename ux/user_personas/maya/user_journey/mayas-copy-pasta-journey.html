@@ -1,0 +1,535 @@
+<title>Maya's Copy-Pasta Journey</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
+<style>
+/* Layout: a research deliverable. Narrow reading column for prose; journey maps sit in their own sideways-scrolling frames. */
+:root {
+  --bg: #FBFAF7; --surface: #FFFFFF; --ink: #1C1B19; --muted: #5E5950; --line: #E4DFD5;
+  --step-bg: #F3F0EA; --phase-bg: #1C1B19; --phase-fg: #FFFFFF; --phase-sub: #D6D1C7; --phase-num: #F2B866;
+  --accent: #C8731F; --accent-soft: #FCEBCF; --link: #2B5F8A;
+  --quote-bg: #FFF4E3; --quote-line: #F1D9B4;
+  --help-bg: #E9F2E4; --help-line: #CBE0C1; --help-fg: #1F4A1C;
+  --stuck-bg: #FBECE8; --stuck-line: #F0CFC6; --stuck-fg: #5A1F14;
+  --viz: #2B5F8A; --viz-fg: #FFFFFF; --viz-sub: #CFE3F5;
+  --low: #B3261E; --alt: #3F7D3A; --scatter: #2B5F8A;
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #161513; --surface: #1F1E1B; --ink: #EDEAE3; --muted: #ADA79C; --line: #3A3732;
+  --step-bg: #26241F; --phase-bg: #36322C; --phase-fg: #FFFFFF; --phase-sub: #D6D1C7; --phase-num: #F2B866;
+  --accent: #E89A4A; --accent-soft: #3A2C17; --link: #8CB8E0;
+  --quote-bg: #2B2418; --quote-line: #4D3E22;
+  --help-bg: #1B2819; --help-line: #2F4A2A; --help-fg: #B9DDB0;
+  --stuck-bg: #2D1C19; --stuck-line: #4D2C26; --stuck-fg: #F2C2B8;
+  --viz: #2B5F8A; --viz-fg: #FFFFFF; --viz-sub: #CFE3F5;
+  --low: #F08A7E; --alt: #7BC26D; --scatter: #8CB8E0;
+  color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #161513; --surface: #1F1E1B; --ink: #EDEAE3; --muted: #ADA79C; --line: #3A3732;
+  --step-bg: #26241F; --phase-bg: #36322C; --phase-fg: #FFFFFF; --phase-sub: #D6D1C7; --phase-num: #F2B866;
+  --accent: #E89A4A; --accent-soft: #3A2C17; --link: #8CB8E0;
+  --quote-bg: #2B2418; --quote-line: #4D3E22;
+  --help-bg: #1B2819; --help-line: #2F4A2A; --help-fg: #B9DDB0;
+  --stuck-bg: #2D1C19; --stuck-line: #4D2C26; --stuck-fg: #F2C2B8;
+  --viz: #2B5F8A; --viz-fg: #FFFFFF; --viz-sub: #CFE3F5;
+  --low: #F08A7E; --alt: #7BC26D; --scatter: #8CB8E0;
+  color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+a { color: var(--link); }
+a:focus-visible, summary:focus-visible, .scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wrap { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(30px, 4.6vw, 46px); line-height: 1.08; font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: clamp(22px, 3vw, 30px); line-height: 1.15; }
+h3 { font-size: 17px; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+section { display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 24px; }
+
+header { display: flex; flex-direction: column; gap: 14px; }
+nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+nav a { display: inline-block; padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); text-decoration: none; color: var(--ink); font-size: 14px; }
+nav a:hover { border-color: var(--accent); }
+
+.persona { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.pcard { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pcard .big { font-size: 19px; font-weight: 600; }
+
+.scroll-note { font-size: 13px; color: var(--muted); }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); padding: 16px; }
+.map { display: grid; grid-template-columns: 168px repeat(16, 240px); column-gap: 12px; row-gap: 12px; width: max-content; }
+.map.today { grid-template-columns: 168px repeat(6, 264px); }
+.lbl { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-top: 14px; }
+.lbl.help-l { color: var(--help-fg); } .lbl.stuck-l { color: var(--stuck-fg); } .lbl.ui-l { color: var(--link); }
+.phase { padding: 12px 16px; border-radius: 10px; background: var(--phase-bg); color: var(--phase-fg); display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.phase .t { font-size: 18px; font-weight: 600; }
+.phase .time { font-size: 13px; color: var(--phase-sub); white-space: nowrap; }
+.step { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 10px; background: var(--step-bg); border: 1px solid var(--line); }
+.step .n { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+.step .t { font-size: 16px; font-weight: 600; line-height: 1.25; }
+.where { align-self: flex-start; font-size: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; color: var(--muted); }
+.cell { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.45; }
+.cell.quote { background: var(--quote-bg); border-color: var(--quote-line); font-style: italic; font-size: 15px; }
+.cell.help { background: var(--help-bg); border-color: var(--help-line); color: var(--help-fg); }
+.cell.stuck { background: var(--stuck-bg); border-color: var(--stuck-line); color: var(--stuck-fg); }
+.cell ul { margin: 0; padding-left: 18px; } .cell li { margin-bottom: 4px; }
+.say { display: block; margin-top: 8px; padding: 8px 10px; border-radius: 8px; background: var(--surface); border: 1px solid var(--help-line); font-size: 13px; color: var(--ink); font-style: normal; }
+.short { display: block; margin-top: 8px; font-size: 12px; color: var(--help-fg); background: var(--help-bg); border-radius: 6px; padding: 6px 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; }
+.chip { font-size: 13px; background: var(--step-bg); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+.curvebox { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 0 4px; }
+.curvebox svg { display: block; }
+svg .grid { stroke: var(--line); stroke-dasharray: 4 6; }
+svg .axis { fill: var(--muted); font-family: var(--font-body); font-size: 12px; }
+svg .main { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; }
+svg .alt { fill: none; stroke: var(--alt); stroke-width: 3; stroke-dasharray: 8 6; stroke-linecap: round; }
+svg .dot { fill: var(--accent); }
+svg .altdot { fill: var(--surface); stroke: var(--alt); stroke-width: 2; }
+svg .ring { fill: none; stroke: var(--low); stroke-width: 2; }
+svg .lab { fill: var(--ink); font-family: var(--font-body); font-size: 14px; font-weight: 600; }
+svg .lab.lowl { fill: var(--low); } svg .lab.altl { fill: var(--alt); }
+.band { border-radius: 10px; background: var(--phase-bg); color: var(--phase-fg); padding: 14px 16px; font-size: 15px; line-height: 1.4; display: flex; flex-direction: column; gap: 4px; }
+.band strong { color: var(--phase-num); font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+.band.viz { background: var(--viz); color: var(--viz-fg); } .band.viz strong { color: var(--viz-sub); }
+
+.ui { display: flex; flex-direction: column; gap: 6px; }
+.wf { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px; height: 176px; box-sizing: border-box; display: flex; flex-direction: column; gap: 5px; font-size: 11px; line-height: 1.3; overflow: hidden; }
+.wf.outside { align-items: center; justify-content: center; background: var(--step-bg); color: var(--muted); }
+.wf .h { font-weight: 600; font-size: 12px; }
+.wf .b { background: var(--ink); color: var(--bg); border-radius: 999px; padding: 4px 9px; align-self: flex-start; font-size: 11px; font-weight: 600; }
+.wf .b2 { border: 1px solid var(--ink); border-radius: 999px; padding: 3px 9px; align-self: flex-start; font-size: 11px; font-weight: 600; }
+.wf .c { border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }
+.wf .sel { border: 2px solid var(--accent); }
+.wf .row { display: flex; gap: 4px; align-items: center; }
+.wf .between { justify-content: space-between; }
+.wf .g3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+.wf .g2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+.wf .ln { height: 6px; border-radius: 3px; background: var(--line); }
+.wf .ln.dark { background: var(--ink); }
+.wf .tag { font-size: 10px; border-radius: 999px; padding: 1px 6px; background: var(--step-bg); border: 1px solid var(--line); }
+.wf .m { color: var(--muted); }
+.wf .pic { background: var(--step-bg); border-radius: 6px; flex: 1; display: flex; align-items: center; justify-content: center; color: var(--muted); }
+.wf .drop { flex: 1; border: 1px dashed var(--muted); border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; padding: 6px; }
+.wf .bar { height: 10px; border-radius: 5px; background: var(--line); overflow: hidden; }
+.wf .bar span { display: block; width: 60%; height: 100%; background: var(--accent); }
+.wf svg .tl { stroke: var(--line); } .wf svg circle { fill: var(--accent); }
+.cap { font-size: 12px; color: var(--muted); line-height: 1.35; }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 860px; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+th { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+td.site { font-weight: 600; white-space: nowrap; }
+.eff { display: inline-block; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 3px 10px; white-space: nowrap; background: var(--step-bg); border: 1px solid var(--line); }
+.eff.none { background: var(--help-bg); color: var(--help-fg); border-color: var(--help-line); }
+.eff.lowe { background: var(--quote-bg); border-color: var(--quote-line); }
+.eff.med { background: var(--accent-soft); border-color: var(--quote-line); }
+.eff.no { background: var(--stuck-bg); color: var(--stuck-fg); border-color: var(--stuck-line); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.card.good { background: var(--help-bg); border-color: var(--help-line); color: var(--help-fg); }
+.card.bad { background: var(--stuck-bg); border-color: var(--stuck-line); color: var(--stuck-fg); }
+.card .k { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.maya { font-size: 16px; font-style: italic; background: var(--quote-bg); border: 1px solid var(--quote-line); border-radius: 8px; padding: 10px 12px; }
+.state { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 3px 10px; align-self: flex-start; }
+.state.have { background: var(--help-bg); color: var(--help-fg); }
+.state.new { background: var(--accent-soft); color: var(--ink); }
+.split { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 14px; }
+@media (max-width: 860px) { .split { grid-template-columns: minmax(0, 1fr); } }
+.figscroll { overflow-x: auto; }
+.figscroll svg .row-line { stroke: var(--line); }
+.figscroll svg .band-hi { fill: var(--accent-soft); }
+.figscroll svg .p1 { fill: var(--accent); } .figscroll svg .p2 { fill: var(--scatter); }
+.figscroll svg .base { stroke: var(--muted); }
+.figscroll svg .t { fill: var(--muted); font-family: var(--font-body); font-size: 12px; }
+.figscroll svg .tt { fill: var(--ink); font-family: var(--font-body); font-size: 14px; font-weight: 600; }
+.lvls { display: flex; flex-direction: column; gap: 10px; }
+.lvl { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 14px; }
+.lvl.rec { border: 2px solid var(--accent); }
+
+details { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+summary { cursor: pointer; padding: 16px 18px; font-weight: 600; font-size: 16px; }
+details[open] summary { border-bottom: 1px solid var(--line); }
+details .inner { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 18px; display: flex; flex-direction: column; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Mango Tree · Copy-Pasta Finder · User journey</div>
+  <h1>Maya's first time finding copy-pasta, with Mango Tree as her guide</h1>
+  <p class="muted">How the Copy-Pasta Finder should work for a first-time, non-technical user. Proto-persona from the CIB Mango Tree literature review, not yet validated with interviews. Times, numbers, names and quotes are illustrative.</p>
+  <nav aria-label="Sections">
+    <ul>
+      <li><a href="#journey">Journey map</a></li>
+      <li><a href="#getting-posts">Where to get posts</a></li>
+      <li><a href="#method">How Mango Tree spots copy-pasta</a></li>
+      <li><a href="#today">How it works today</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section aria-labelledby="who-h">
+  <h2 id="who-h">Who Maya is</h2>
+  <div class="persona">
+    <div class="pcard"><span class="eyebrow">Who</span><span class="big">Maya, reporter</span><span>Comfortable with spreadsheets. Doesn't code. Has never downloaded posts from a social site.</span></div>
+    <div class="pcard"><span class="eyebrow">What she already knows</span><span>Mango Tree is a free tool people use to check whether posts were copied. She has never used it.</span></div>
+    <div class="pcard"><span class="eyebrow">Scenario (illustrative)</span><span>At 1:00 pm her editor forwards dozens of posts on X about a school-board vote that all say nearly the same thing. "Is this coordinated? I need to know by 5."</span></div>
+    <div class="pcard"><span class="eyebrow">What she wants</span><span>Proof she can show her editor.</span><span class="muted">"Tell me what to do, step by step. Don't make me learn anything technical."</span></div>
+  </div>
+</section>
+
+<section id="journey" aria-labelledby="journey-h">
+  <h2 id="journey-h">Journey map: 16 steps in 5 phases</h2>
+  <p>Read left to right. Each column is one step. The two dark boxes at the bottom mark the moments that matter most.</p>
+  <p class="scroll-note">Scroll sideways inside the frame to see all 16 steps.</p>
+  <div class="scroll" tabindex="0" role="region" aria-label="Journey map, scrolls sideways">
+  <div class="map">
+
+    <div></div>
+    <div class="phase" style="grid-column: span 4"><span class="t">1. Getting started</span><span class="time">1:00 to 1:10 pm</span></div>
+    <div class="phase" style="grid-column: span 4"><span class="t">2. Getting the posts</span><span class="time">1:10 to 1:45 pm</span></div>
+    <div class="phase" style="grid-column: span 3"><span class="t">3. Making sure they're the right posts</span><span class="time">1:45 to 2:00 pm</span></div>
+    <div class="phase" style="grid-column: span 3"><span class="t">4. Understanding what was found</span><span class="time">2:00 to 2:40 pm</span></div>
+    <div class="phase" style="grid-column: span 2"><span class="t">5. Taking it to her editor</span><span class="time">2:40 to 3:00 pm</span></div>
+
+    <div class="lbl">Step</div>
+    <div class="step"><span class="n">1</span><span class="t">Notices something</span><span class="where">Social feed</span></div>
+    <div class="step"><span class="n">2</span><span class="t">Opens Mango Tree</span><span class="where">Home page</span></div>
+    <div class="step"><span class="n">3</span><span class="t">Gets a quick welcome</span><span class="where">Welcome</span></div>
+    <div class="step"><span class="n">4</span><span class="t">Picks the Copy-Pasta Finder</span><span class="where">Tools</span></div>
+    <div class="step"><span class="n">5</span><span class="t">Chooses where the posts are</span><span class="where">Pick a site</span></div>
+    <div class="step"><span class="n">6</span><span class="t">Chooses how to get them</span><span class="where">Ways to get posts</span></div>
+    <div class="step"><span class="n">7</span><span class="t">Gets the posts from the site</span><span class="where">Step-by-step guide</span></div>
+    <div class="step"><span class="n">8</span><span class="t">Adds her posts</span><span class="where">Add your posts</span></div>
+    <div class="step"><span class="n">9</span><span class="t">Pastes a post she noticed</span><span class="where">What did you notice?</span></div>
+    <div class="step"><span class="n">10</span><span class="t">Confirms these are the right posts</span><span class="where">Is this it?</span></div>
+    <div class="step"><span class="n">11</span><span class="t">Mango Tree looks for copies</span><span class="where">Progress</span></div>
+    <div class="step"><span class="n">12</span><span class="t">Sees the main finding</span><span class="where">Findings</span></div>
+    <div class="step"><span class="n">13</span><span class="t">Looks inside a group</span><span class="where">Group detail</span></div>
+    <div class="step"><span class="n">14</span><span class="t">Reads what it can't prove</span><span class="where">Group detail</span></div>
+    <div class="step"><span class="n">15</span><span class="t">Downloads a summary</span><span class="where">Summary</span></div>
+    <div class="step"><span class="n">16</span><span class="t">Decides what to do next</span><span class="where">Her story</span></div>
+
+    <div class="lbl">What she does</div>
+    <div class="cell">Sees dozens of posts saying nearly the same thing. Her editor asks if it's coordinated.</div>
+    <div class="cell">Goes to Mango Tree and reads the first line.</div>
+    <div class="cell">Sees the three parts ahead and what she'll need.</div>
+    <div class="cell">Sees the tools as cards and picks the Copy-Pasta Finder.</div>
+    <div class="cell">Picks X, where she saw the posts. Each site shows how much effort it takes.</div>
+    <div class="cell">Sees the recommended way to get posts from X, plus other ways if she wants them. Picks the recommended way.<span class="short">Bluesky shortcut: Mango Tree gets the posts itself. She skips to step 9.</span></div>
+    <div class="cell">Follows picture-by-picture steps for X and saves the posts as a file.</div>
+    <div class="cell">Comes back and drops the file in, exactly as she downloaded it.</div>
+    <div class="cell">Copies one of the posts she noticed, straight from X, and pastes it in word for word.</div>
+    <div class="cell">Reads a few of her posts that match, and says yes or not quite.</div>
+    <div class="cell">Clicks "Find copied posts" and waits about a minute.</div>
+    <div class="cell">Reads the top line, then a short list of copy-pasta groups, strongest first.</div>
+    <div class="cell">Sees each post on a timeline, who posted it, when, and what the accounts have in common.</div>
+    <div class="cell">Reads the note beside the group.</div>
+    <div class="cell">Previews a one-page summary and downloads it for her editor.</div>
+    <div class="cell">Decides to report it, dig further, or drop it.</div>
+
+    <div class="lbl">What she's thinking</div>
+    <div class="cell quote">"This sounds copied. Mango Tree checks this kind of thing."</div>
+    <div class="cell quote">"Okay, I'm in the right place."</div>
+    <div class="cell quote">"I can see what's coming. It doesn't look hard."</div>
+    <div class="cell quote">"That's my question exactly."</div>
+    <div class="cell quote">"Good, it tells me what I'm in for."</div>
+    <div class="cell quote">"Good to know there are other options. I'll go with the recommended one."</div>
+    <div class="cell quote">"Am I doing this right? Am I even allowed to?"</div>
+    <div class="cell quote">"Do I have to fix this file first? No? Good."</div>
+    <div class="cell quote">"I'll copy the exact post, not describe it."</div>
+    <div class="cell quote">"Yes, that's it."</div>
+    <div class="cell quote">"Is it working?"</div>
+    <div class="cell quote">"There it is."</div>
+    <div class="cell quote">"They all landed within minutes. That isn't chance."</div>
+    <div class="cell quote">"Right. This doesn't prove who's behind it."</div>
+    <div class="cell quote">"My editor can see exactly what I saw."</div>
+    <div class="cell quote">"I know what I can say, and what I can't."</div>
+
+    <div class="lbl">How she feels</div>
+    <div class="curvebox" style="grid-column: span 16">
+      <svg width="4020" height="190" viewBox="0 0 4020 190" role="img" aria-label="Feeling curve across 16 steps. Positive through getting started and choosing how to get the posts. Drops to its lowest at step 7, getting the posts from the site; on the Bluesky shortcut it stays high. Recovers when she confirms the right posts at step 10, peaks at step 12 when she sees the main finding, then settles at careful and decided.">
+        <line class="grid" x1="0" y1="90" x2="4020" y2="90"></line>
+        <text class="axis" x="10" y="22">Good</text>
+        <text class="axis" x="10" y="182">Bad</text>
+        <text class="axis" x="4010" y="22" text-anchor="end">Solid line: X, Instagram, TikTok or Telegram (step-by-step guide). Dashed line: Bluesky, where Mango Tree gets the posts.</text>
+        <path class="alt" d="M1128,72 C1254,72 1254,54 1380,54 C1506,54 1506,54 1632,54 C1758,54 1758,54 1884,54 C2010,54 2010,66 2136,66"></path>
+        <path class="main" d="M120,60 C246,60 246,60 372,60 C498,60 498,51 624,51 C750,51 750,45 876,45 C1002,45 1002,72 1128,72 C1254,72 1254,66 1380,66 C1506,66 1506,120 1632,120 C1758,120 1758,75 1884,75 C2010,75 2010,66 2136,66 C2262,66 2262,54 2388,54 C2514,54 2514,75 2640,75 C2766,75 2766,39 2892,39 C3018,39 3018,45 3144,45 C3270,45 3270,66 3396,66 C3522,66 3522,54 3648,54 C3774,54 3774,60 3900,60"></path>
+        <circle class="ring" cx="1632" cy="120" r="16"></circle>
+        <circle class="altdot" cx="1380" cy="54" r="6"></circle><circle class="altdot" cx="1632" cy="54" r="6"></circle><circle class="altdot" cx="1884" cy="54" r="6"></circle>
+        <g class="dot">
+          <circle cx="120" cy="60" r="6"></circle><circle cx="372" cy="60" r="6"></circle><circle cx="624" cy="51" r="6"></circle><circle cx="876" cy="45" r="6"></circle><circle cx="1128" cy="72" r="6"></circle><circle cx="1380" cy="66" r="6"></circle><circle cx="1632" cy="120" r="6"></circle><circle cx="1884" cy="75" r="6"></circle><circle cx="2136" cy="66" r="6"></circle><circle cx="2388" cy="54" r="6"></circle><circle cx="2640" cy="75" r="6"></circle><circle cx="2892" cy="39" r="6"></circle><circle cx="3144" cy="45" r="6"></circle><circle cx="3396" cy="66" r="6"></circle><circle cx="3648" cy="54" r="6"></circle><circle cx="3900" cy="60" r="6"></circle>
+        </g>
+        <g text-anchor="middle">
+          <text class="lab" x="120" y="90">Curious</text>
+          <text class="lab" x="372" y="90">Hopeful</text>
+          <text class="lab" x="624" y="81">Reassured</text>
+          <text class="lab" x="876" y="75">"That's it!"</text>
+          <text class="lab" x="1128" y="102">Informed</text>
+          <text class="lab" x="1380" y="96">In control</text>
+          <text class="lab lowl" x="1632" y="156">Frustrated (lowest)</text>
+          <text class="lab altl" x="1632" y="38">Bluesky: no effort</text>
+          <text class="lab" x="1884" y="105">Relieved</text>
+          <text class="lab" x="2136" y="96">Focused</text>
+          <text class="lab" x="2388" y="84">"Yes, that's it"</text>
+          <text class="lab" x="2640" y="105">Impatient</text>
+          <text class="lab" x="2892" y="69">Surprised</text>
+          <text class="lab" x="3144" y="75">Convinced</text>
+          <text class="lab" x="3396" y="96">Careful</text>
+          <text class="lab" x="3648" y="84">Ready</text>
+          <text class="lab" x="3900" y="90">Decided</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="lbl ui-l">Screen idea</div>
+    <div class="ui"><div class="wf outside">Outside Mango Tree</div><span class="cap">No screen. She already knows the name.</span></div>
+    <div class="ui"><div class="wf"><span class="h">Find out whether lots of accounts posted the same words.</span><span class="b">Find copied posts</span><span class="m">See an example</span><div class="ln" style="width: 80%"></div><div class="ln" style="width: 60%"></div></div><span class="cap">One line, one big button, an example.</span></div>
+    <div class="ui"><div class="wf"><span class="h">Here's how it works</span><div class="c">1 · Get your posts</div><div class="c">2 · Find copy-pasta</div><div class="c">3 · See what we found</div><span class="m" style="align-self: flex-end">Skip</span></div><span class="cap">One screen, three parts, skippable.</span></div>
+    <div class="ui"><div class="wf"><span class="h">What do you want to find?</span><div class="c sel"><strong>Copy-Pasta Finder</strong><br>Finds posts where many accounts used the same words.</div><div class="g2"><div class="c">Hashtags<br><span class="m">Ready</span></div><div class="c">More<br><span class="m">Coming soon</span></div></div></div><span class="cap">Tool cards, one-line description each.</span></div>
+    <div class="ui"><div class="wf"><span class="h">Where did you see the posts?</span><div class="g3"><div class="c">Bluesky<br><span class="m">Effort: none</span></div><div class="c sel">X<br><span class="m">Effort: medium</span></div><div class="c">Instagram<br><span class="m">Effort: medium</span></div><div class="c">TikTok<br><span class="m">Effort: medium</span></div><div class="c">Telegram<br><span class="m">Effort: low</span></div><div class="c">Facebook<br><span class="m">Not possible for most</span></div></div><span class="m">Effort means how much you do yourself.</span></div><span class="cap">Site cards with the effort level on each. Real logos in the build.</span></div>
+    <div class="ui"><div class="wf"><span class="h">Ways to get posts from X</span><div class="c sel"><strong>Recommended: free browser add-on</strong><br><span class="m">Effort: medium · about 4 steps · free</span></div><span class="m">Other ways (2)</span><div class="c"><span class="m">Paid data service · Effort: low · costs money</span></div><div class="c"><span class="m">Ask a research partner · Effort: none · takes days</span></div><span class="b">Use recommended</span></div><span class="cap">One clear recommendation. Other ways stay folded until she opens them.</span></div>
+    <div class="ui"><div class="wf"><div class="row between"><span class="h">Getting posts from X</span><span class="m">Step 2 of 4</span></div><div class="pic">Picture of this step</div><div class="ln" style="width: 90%"></div><div class="row between"><span class="m">Email me these steps</span><span class="b">Next</span></div></div><span class="cap">One step at a time, with a picture and a way back.</span></div>
+    <div class="ui"><div class="wf"><div class="drop"><strong>Drop your file here</strong><span class="m">Exactly as you downloaded it. No cleanup needed.</span></div><span class="m">Got stuck? Go back to the steps</span></div><span class="cap">One drop zone. No fixing the file.</span></div>
+    <div class="ui"><div class="wf"><span class="h">Copy and paste one post you noticed, word for word</span><div class="c" style="height: 40px"><span class="m">Paste the exact post here</span></div><span class="m">Don't retype or describe it. We look for the exact words, so a copy works best.</span><span class="m">Or pick one of your posts</span><span class="m">Not sure? Look for anything copied</span></div><span class="cap">Asks for an exact copy and says why, in one line.</span></div>
+    <div class="ui"><div class="wf"><span class="h">Are these the posts you're asking about?</span><div class="c"><div class="ln" style="width: 92%"></div><span class="m">@citizen_jo · Oct 22</span></div><div class="c"><div class="ln" style="width: 85%"></div><span class="m">@localvoice · Oct 22</span></div><div class="row"><span class="b">Yes, that's it</span><span class="b2">Not quite</span></div></div><span class="cap">A few real posts, then yes or not quite.</span></div>
+    <div class="ui"><div class="wf"><span class="h">Finding copied posts</span><div class="bar"><span></span></div><span>Now checking when these were posted...</span><span class="m">About 1 minute left</span></div><span class="cap">A progress bar and one plain line. Nothing to choose.</span></div>
+    <div class="ui"><div class="wf"><span class="h">214 accounts posted the same 9-word sentence, most within 4 minutes.</span><div class="c"><div class="ln" style="width: 85%"></div><div class="row" style="margin-top: 4px"><span class="tag">Same words</span><span class="tag">Same time</span></div></div><div class="c"><div class="ln" style="width: 70%"></div><div class="row" style="margin-top: 4px"><span class="tag">Same words</span></div></div></div><span class="cap">Headline first, then groups, strongest first.</span></div>
+    <div class="ui"><div class="wf"><span class="h">Group 1 · 214 accounts</span><svg width="204" height="54" viewBox="0 0 204 54" aria-hidden="true"><line class="tl" x1="2" y1="48" x2="202" y2="48"></line><circle cx="20" cy="40" r="3"></circle><circle cx="96" cy="40" r="3"></circle><circle cx="100" cy="34" r="3"></circle><circle cx="104" cy="40" r="3"></circle><circle cx="98" cy="28" r="3"></circle><circle cx="102" cy="22" r="3"></circle><circle cx="106" cy="34" r="3"></circle><circle cx="100" cy="16" r="3"></circle><circle cx="108" cy="28" r="3"></circle><circle cx="170" cy="40" r="3"></circle></svg><div class="ln"></div><div class="ln" style="width: 75%"></div></div><span class="cap">Timeline, one dot per post, then the real posts.</span></div>
+    <div class="ui"><div class="wf"><span class="h">What this means</span><div class="ln"></div><div class="ln" style="width: 80%"></div><span class="h">Other explanations</span><div class="ln" style="width: 90%"></div><div class="ln" style="width: 60%"></div></div><span class="cap">A note beside every group, not hidden in help.</span></div>
+    <div class="ui"><div class="wf"><div class="c" style="flex: 1; display: flex; flex-direction: column; gap: 4px"><div class="ln dark" style="width: 90%"></div><div class="ln"></div><div class="ln" style="width: 70%"></div><div class="ln" style="width: 80%"></div></div><span class="b">Download summary (PDF)</span></div><span class="cap">One-page preview, then download.</span></div>
+    <div class="ui"><div class="wf"><span class="h">What next?</span><div class="c">See which hashtags these accounts used</div><div class="c">Save this search</div><div class="c">Start a new search</div></div><span class="cap">Next-step cards.</span></div>
+
+    <div class="lbl help-l">How Mango Tree guides her</div>
+    <div class="cell help">Nothing yet. She already knows Mango Tree checks for copied posts.</div>
+    <div class="cell help">Leads with what it does, in her words.<span class="say">"Find out whether lots of accounts posted the same words."</span></div>
+    <div class="cell help">Shows the whole path up front.<span class="say">"1. Get your posts 2. Find copy-pasta 3. See what we found"</span></div>
+    <div class="cell help">Names each tool for what it finds.<span class="say">"Copy-Pasta Finder: Finds posts where many accounts used the same words."</span></div>
+    <div class="cell help">Shows the effort for each site before she starts, on one scale: none, low, medium, not possible.<span class="say">"Effort means how much you do yourself."</span></div>
+    <div class="cell help">Recommends one way, and tells her other ways exist, with the effort and cost of each. They stay folded so she isn't overwhelmed.<span class="say">"Recommended for X: a free browser add-on. Medium effort, about 4 steps."</span></div>
+    <div class="cell help">One page of steps per site, with pictures, what's allowed, and a way back.<span class="say">"Step 2 of 4: Open X in Firefox and search for the posts. The add-on saves them as you scroll."</span></div>
+    <div class="cell help">Reads the file the way the add-on made it.<span class="say">"Drop the file exactly as you downloaded it. No cleanup needed."</span></div>
+    <div class="cell help">Asks for an exact copy, and says why. If the words aren't found, it says so.<span class="say">"We couldn't find these exact words. Try copying the post again, straight from X."</span></div>
+    <div class="cell help">"Right" means these are the posts she's asking about. "Not quite" lets her try another.<span class="say">"Are these the posts you're asking about?"</span></div>
+    <div class="cell help">Checks all three signals for her: same words, same time, look-alike accounts. She doesn't choose.<span class="say">"Now checking when these were posted..."</span></div>
+    <div class="cell help">One sentence before any chart. Groups ranked by how many signals they show.<span class="say">"214 accounts posted the same 9-word sentence, most within 4 minutes."</span></div>
+    <div class="cell help">Every group opens to the real posts.<span class="say">"Most of these accounts were created the same week."</span></div>
+    <div class="cell help">States the limits right beside the finding.<span class="say">"Matching words don't prove someone organized this. Campaign slogans and shared quotes repeat too."</span></div>
+    <div class="cell help">The posts, the counts, the timeline, how Mango Tree looked, and its limits, in plain words.<span class="say">"Download summary (PDF)"</span></div>
+    <div class="cell help">Suggests a next look.<span class="say">"Next: see which hashtags these accounts used."</span></div>
+
+    <div class="lbl stuck-l">Where she could get stuck</div>
+    <div class="cell stuck">Not sure Mango Tree fits her question.</div>
+    <div class="cell stuck">The first screen asks her to "create a project".</div>
+    <div class="cell stuck">A long tour.</div>
+    <div class="cell stuck">Tool names that sound technical.</div>
+    <div class="cell stuck">The posts are on Facebook, which doesn't let most people download them.</div>
+    <div class="cell stuck">Too many options shown at once.</div>
+    <div class="cell stuck">The site changes and the steps go out of date. She doesn't come back.</div>
+    <div class="cell stuck">A file from a tool Mango Tree doesn't recognize.</div>
+    <div class="cell stuck">She retypes or sums up the post, so the words don't match.</div>
+    <div class="cell stuck">The matches are about something else.</div>
+    <div class="cell stuck">A long wait with no sign of progress.</div>
+    <div class="cell stuck">A chart she has to decode first.</div>
+    <div class="cell stuck">Too many accounts to look through.</div>
+    <div class="cell stuck">Skipping the note.</div>
+    <div class="cell stuck">Terms her editor won't know.</div>
+    <div class="cell stuck">Pressure to say more than the evidence shows.</div>
+
+    <div class="lbl" style="padding-top: 18px">Key moments</div>
+    <div style="grid-column: span 6"></div>
+    <div class="band" style="grid-column: span 4"><strong>Moment that matters most · Steps 7 to 10</strong>Getting the right posts. She leaves Mango Tree, may not come back, and could come back with the wrong posts. It ends when she says "Yes, that's it."</div>
+    <div></div>
+    <div class="band viz" style="grid-column: span 2"><strong>The main picture · Steps 12 and 13</strong>A timeline where each dot is one post. Copied posts bunch together. She learns to read it once.</div>
+    <div style="grid-column: span 3"></div>
+  </div>
+  </div>
+</section>
+
+<section id="getting-posts" aria-labelledby="gp-h">
+  <div class="eyebrow">Supports steps 5 to 8</div>
+  <h2 id="gp-h">Where to get posts, easiest first</h2>
+  <p>Start with Bluesky. Mango Tree can get those posts itself, so Maya never leaves. Every other site sends her away, so Mango Tree tells her the effort up front. Effort means how much she does herself: none, low, medium, or not possible. Most sites have more than one way to get the posts. Mango Tree recommends one and keeps the others one click away.</p>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Sites ranked by effort">
+    <table>
+      <thead><tr><th scope="col">Site</th><th scope="col">Effort</th><th scope="col">What Maya does</th><th scope="col">What Mango Tree does</th><th scope="col">Watch out</th></tr></thead>
+      <tbody>
+        <tr><td class="site">Bluesky</td><td><span class="eff none">Effort: none</span></td><td>Types the words or hashtag and picks the dates.</td><td>Gets the posts through Bluesky's open search. A 2026 <a href="https://thedatacollector.substack.com/p/how-to-scrape-bluesky-posts-in-2026">how-to guide</a> says no login is needed. Developers to confirm.</td><td>Public posts only. Usage limits apply.</td></tr>
+        <tr><td class="site">Telegram (public channels)</td><td><span class="eff lowe">Effort: low</span></td><td>In Telegram's desktop app: menu, Export chat history, choose JSON and the dates.</td><td>Reads Telegram's export file as it is.</td><td>Per <a href="https://gijn.org/resource/tips-for-archiving-telegram-messages-on-russia-ukraine-war/">GIJN</a> (2022), not in the Mac app. Comments are not included. Big channels take hours.</td></tr>
+        <tr><td class="site">X, TikTok, Instagram, LinkedIn</td><td><span class="eff med">Effort: medium</span></td><td>Adds the free <a href="https://cc.au.dk/cdmm/tools-and-tutorials/data-collection/zeeschuimer">Zeeschuimer</a> add-on to Firefox, scrolls the posts, downloads the file.</td><td>Reads Zeeschuimer's file directly, so she skips the conversion step.</td><td>Only collects what she scrolls past. Firefox only. Some workplaces restrict TikTok.</td></tr>
+        <tr><td class="site">Facebook</td><td><span class="eff no">Not possible for most</span></td><td>Usually can't download the posts herself.</td><td>Says so plainly and points to another way.</td><td><a href="https://techcrunch.com/2024/08/15/meta-shut-down-crowdtangle-a-tool-for-tracking-disinformation-heres-how-its-replacement-compares">Meta Content Library</a> is limited to qualified academic and nonprofit researchers. Most journalists can't get in.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>Other ways to explore, shown in step 6</h3>
+  <div class="cards">
+    <div class="card"><h3>A research partner collects for her</h3><div>A university or lab that already runs <a href="https://bellingcat.gitbook.io/toolkit/more/all-tools/4cat">4CAT</a> collects posts for Mango Tree users. 4CAT needs a server and technical setup, which a partner would handle.</div></div>
+    <div class="card"><h3>A one-click preset with a data service</h3><div>A Mango Tree preset on a point-and-click service such as Apify, which has a free tier and exports a spreadsheet. Maya fills in the words, and Mango Tree does the rest.</div></div>
+    <div class="card"><h3>A built-in connection to Bluesky</h3><div>Mango Tree gets Bluesky posts directly, so there's no download and no drop-off. This is the cheapest place to start.</div></div>
+  </div>
+  <div class="card bad"><strong>Risks</strong><div>Every route needs a legal and terms-of-service review before Mango Tree recommends it. Partners add cost and a dependency. Sites change access often (CrowdTangle shut down in 2024), so this table needs an owner and a review date. Don't list a tool the team hasn't tested.</div></div>
+</section>
+
+<section id="method" aria-labelledby="m-h">
+  <div class="eyebrow">Supports steps 11 to 14</div>
+  <h2 id="m-h">How Mango Tree spots copy-pasta</h2>
+  <p>Three signals, each explained in Maya's words. One signal is worth a look. Two or three together is a strong sign. None of them proves who is behind it. Mango Tree checks all three for her; she doesn't choose.</p>
+  <div class="cards">
+    <div class="card">
+      <h3>1. Same words</h3>
+      <div class="maya">"Lots of different accounts posted the same sentence, word for word."</div>
+      <div><span class="k">What she sees</span><br>The sentence, and how many accounts used it.</div>
+      <div><span class="k">Research</span><br><a href="https://dfrlab.org/2023/08/02/suspicious-networks-copypasta-replies-to-sudanese-paramilitary-groups-tweets/">DFRLab</a> found one slogan reply posted 14 times by different accounts in a single network.</div>
+      <span class="state have">Mango Tree does this today (exact repeats)</span>
+      <span class="state new">New: also catch near-copies with a word changed</span>
+    </div>
+    <div class="card">
+      <h3>2. Same time</h3>
+      <div class="maya">"They posted it within minutes of each other."</div>
+      <div><span class="k">What she sees</span><br>Dots bunched together on a timeline.</div>
+      <div><span class="k">Research</span><br><a href="https://boris.unibe.ch/167650/1/s41598-022-08404-9.pdf">Schoch and colleagues (2022)</a> count two accounts posting the same message within one minute. Together with shared reposts, this caught over 80% of a known troll campaign's accounts, with about 1% false alarms. <a href="https://btrantruong.github.io/assets/pdf/uncover.pdf">Pacheco and colleagues</a> used 30-minute windows. Shorter windows give fewer false matches.</div>
+      <span class="state new">New work. The times are already in her file.</span>
+    </div>
+    <div class="card">
+      <h3>3. Look-alike accounts</h3>
+      <div class="maya">"The accounts look alike: made the same week, posting more than a person would, with almost no profile."</div>
+      <div><span class="k">What she sees</span><br>Account details for each group.</div>
+      <div><span class="k">Research</span><br>In one network, <a href="https://dfrlab.org/2023/08/02/suspicious-networks-copypasta-replies-to-sudanese-paramilitary-groups-tweets/">DFRLab</a> found every account was created on one of three days. DFRLab's <a href="https://dfrlab.org/2017/08/28/botspot-twelve-ways-to-spot-a-bot">bot guide</a> treats 72 posts a day as suspicious and over 144 as highly suspicious.</div>
+      <span class="state new">New work. Needs account details her file may not have.</span>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="card">
+      <h3>The main picture: a timeline</h3>
+      <div>Each dot is one post of the copied sentence, with one row per account. Dots stacked in a narrow band were posted at the same time. This is easier for Maya to read than a network map, which stays in an advanced view for researchers.</div>
+      <div class="figscroll" tabindex="0" role="region" aria-label="Example timelines">
+        <svg width="880" height="236" viewBox="0 0 880 236" role="img" aria-label="Example comparison. Left: eight accounts post the same sentence within a few minutes, so the dots line up in one narrow column. Right: eight accounts post the same slogan spread across several days, so the dots are scattered.">
+          <text class="tt" x="0" y="16">Looks coordinated</text>
+          <text class="tt" x="460" y="16">Looks like ordinary sharing</text>
+          <g class="row-line">
+            <line x1="0" y1="40" x2="420" y2="40"></line><line x1="0" y1="62" x2="420" y2="62"></line><line x1="0" y1="84" x2="420" y2="84"></line><line x1="0" y1="106" x2="420" y2="106"></line><line x1="0" y1="128" x2="420" y2="128"></line><line x1="0" y1="150" x2="420" y2="150"></line><line x1="0" y1="172" x2="420" y2="172"></line><line x1="0" y1="194" x2="420" y2="194"></line>
+            <line x1="460" y1="40" x2="880" y2="40"></line><line x1="460" y1="62" x2="880" y2="62"></line><line x1="460" y1="84" x2="880" y2="84"></line><line x1="460" y1="106" x2="880" y2="106"></line><line x1="460" y1="128" x2="880" y2="128"></line><line x1="460" y1="150" x2="880" y2="150"></line><line x1="460" y1="172" x2="880" y2="172"></line><line x1="460" y1="194" x2="880" y2="194"></line>
+          </g>
+          <rect class="band-hi" x="196" y="30" width="34" height="176" rx="6"></rect>
+          <g class="p1"><circle cx="204" cy="40" r="6"></circle><circle cx="210" cy="62" r="6"></circle><circle cx="206" cy="84" r="6"></circle><circle cx="214" cy="106" r="6"></circle><circle cx="208" cy="128" r="6"></circle><circle cx="218" cy="150" r="6"></circle><circle cx="212" cy="172" r="6"></circle><circle cx="222" cy="194" r="6"></circle></g>
+          <g class="p2"><circle cx="500" cy="40" r="6"></circle><circle cx="790" cy="62" r="6"></circle><circle cx="610" cy="84" r="6"></circle><circle cx="850" cy="106" r="6"></circle><circle cx="560" cy="128" r="6"></circle><circle cx="700" cy="150" r="6"></circle><circle cx="480" cy="172" r="6"></circle><circle cx="760" cy="194" r="6"></circle></g>
+          <line class="base" x1="0" y1="212" x2="420" y2="212"></line><line class="base" x1="460" y1="212" x2="880" y2="212"></line>
+          <text class="t" x="0" y="230">Oct 22, 7:00 pm</text><text class="t" x="420" y="230" text-anchor="end">7:10 pm</text>
+          <text class="t" x="460" y="230">Oct 20</text><text class="t" x="880" y="230" text-anchor="end">Oct 26</text>
+        </svg>
+      </div>
+      <div class="muted" style="font-size: 12px">Illustrative example, not real data.</div>
+    </div>
+    <div class="lvls">
+      <h3>Advanced setting, for researchers only</h3>
+      <div class="muted">Maya never sees this. Mango Tree uses Balanced for her. A researcher can change it under Advanced.</div>
+      <div class="lvl"><strong>Strict</strong><br>The same words, posted within 1 minute of each other. Fewest matches, strongest sign. Based on Schoch and colleagues.</div>
+      <div class="lvl rec"><strong>Balanced (recommended)</strong><br>The same or nearly the same words, posted within 30 minutes. Based on Pacheco and colleagues.</div>
+      <div class="lvl"><strong>Broad</strong><br>The same words at any time in the dates chosen. Most matches, weakest sign.</div>
+      <div class="muted" style="font-size: 13px">These are starting points to test, not settled defaults.</div>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card good"><strong>How a group is labeled</strong><div>One signal: "Worth a look." Two signals: "Strong sign." All three: "Very strong sign." Never "bot" or "fake," because the tool can't know that.</div></div>
+    <div class="card bad"><strong>What it can't prove</strong><div>Activists, fans and campaigns also post the same words at the same time. Matching words alone are not proof of coordination (<a href="https://btrantruong.github.io/assets/pdf/uncover.pdf">Pacheco and colleagues</a>). Mango Tree shows the signals, and Maya decides.</div></div>
+  </div>
+</section>
+
+<section id="today" aria-labelledby="t-h">
+  <h2 id="t-h">For comparison: how it works today</h2>
+  <p>The same scenario run through today's Mango Tree (v0.12.0). The labels quote today's screens, including the technical terms the new journey removes.</p>
+  <details>
+    <summary>Show today's journey map</summary>
+    <div class="inner">
+      <p class="scroll-note">Scroll sideways inside the frame to see all 6 phases.</p>
+      <div class="scroll" tabindex="0" role="region" aria-label="Today's journey map, scrolls sideways">
+      <div class="map today">
+        <div></div>
+        <div class="phase"><span class="t">1. Notices something</span><span class="time">1:00 pm</span></div>
+        <div class="phase"><span class="t">2. Gets the posts</span><span class="time">1:15 pm</span></div>
+        <div class="phase"><span class="t">3. Opens Mango Tree</span><span class="time">2:30 pm</span></div>
+        <div class="phase"><span class="t">4. Sets up the analysis</span><span class="time">2:45 pm</span></div>
+        <div class="phase"><span class="t">5. Reads the results</span><span class="time">3:30 pm</span></div>
+        <div class="phase"><span class="t">6. Decides what to report</span><span class="time">4:30 pm</span></div>
+
+        <div class="lbl">Doing</div>
+        <div class="cell"><ul><li>Sees dozens of posts that sound the same</li><li>Screenshots a few for her editor</li><li>Gets the ask: "Is this coordinated?"</li></ul></div>
+        <div class="cell"><ul><li>Searches how to download posts</li><li>Hits research programs she can't join and paid data access</li><li>Tries a browser extension and gets a file she doesn't recognize</li></ul></div>
+        <div class="cell"><ul><li>A colleague suggests Mango Tree</li><li>Lands on a list of projects</li><li>Clicks Create New and names a project</li></ul></div>
+        <div class="cell"><ul><li>Uploads her file, checks a 5-row preview</li><li>Picks "N-gram analysis" over "Hashtag analysis"</li><li>Matches 4 columns</li><li>Leaves phrase length at 3 to 5</li></ul></div>
+        <div class="cell"><ul><li>Watches "Detecting n-grams" run</li><li>Sees a log-scale scatter of 50,000 of 161,535 phrases</li><li>Hovers the top dot: a retweet shared by 531 accounts</li></ul></div>
+        <div class="cell"><ul><li>Screenshots the chart for her editor</li><li>Tries to explain what it shows</li><li>Holds the story, or reports it vaguely</li></ul></div>
+
+        <div class="lbl">Thinking</div>
+        <div class="cell quote">"These all sound the same. Is someone behind this, and how would I prove it?"</div>
+        <div class="cell quote">"How do I even get these posts out? Am I allowed to?"</div>
+        <div class="cell quote">"Is this for me? What counts as a project or a dataset?"</div>
+        <div class="cell quote">"What's an n-gram? Which column is the 'Unique Post Number'? Did I just break it?"</div>
+        <div class="cell quote">"What am I looking at? Is the top dot the answer? That's just a retweet."</div>
+        <div class="cell quote">"Can I say this in print? What if these are real people?"</div>
+
+        <div class="lbl">Feeling</div>
+        <div class="curvebox" style="grid-column: span 6">
+          <svg width="1644" height="190" viewBox="0 0 1644 190" role="img" aria-label="Emotion curve today: curious in phase 1, lowest point overwhelmed in phase 2, hopeful in phase 3, confused in phase 4, lost in phase 5, doubtful in phase 6.">
+            <line class="grid" x1="0" y1="80" x2="1644" y2="80"></line>
+            <text class="axis" x="10" y="24">Positive</text>
+            <text class="axis" x="10" y="176">Negative</text>
+            <path class="main" d="M132,50 C270,50 270,140 408,140 C546,140 546,80 684,80 C822,80 822,110 960,110 C1098,110 1098,110 1236,110 C1374,110 1374,125 1512,125"></path>
+            <circle class="ring" cx="408" cy="140" r="16"></circle>
+            <g class="dot"><circle cx="132" cy="50" r="7"></circle><circle cx="408" cy="140" r="7"></circle><circle cx="684" cy="80" r="7"></circle><circle cx="960" cy="110" r="7"></circle><circle cx="1236" cy="110" r="7"></circle><circle cx="1512" cy="125" r="7"></circle></g>
+            <g text-anchor="middle">
+              <text class="lab" x="132" y="30">Curious</text>
+              <text class="lab lowl" x="408" y="176">Overwhelmed (lowest)</text>
+              <text class="lab" x="684" y="60">Hopeful</text>
+              <text class="lab" x="960" y="140">Confused</text>
+              <text class="lab" x="1236" y="140">Lost</text>
+              <text class="lab" x="1512" y="155">Doubtful</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="lbl">Touchpoints</div>
+        <div class="cell chips"><span class="chip">Social feed</span><span class="chip">Editor's message</span><span class="chip">Search engine</span></div>
+        <div class="cell chips"><span class="chip">Platform help pages</span><span class="chip">Browser extensions</span><span class="chip">Spreadsheet app</span></div>
+        <div class="cell chips"><span class="chip">Mango Tree home</span><span class="chip">Create New Project</span></div>
+        <div class="cell chips"><span class="chip">Import Dataset</span><span class="chip">Data Preview</span><span class="chip">Fix Import Settings</span><span class="chip">Map Columns</span><span class="chip">Parameters</span></div>
+        <div class="cell chips"><span class="chip">Progress window</span><span class="chip">Results dashboard</span><span class="chip">Data viewer</span></div>
+        <div class="cell chips"><span class="chip">Editor</span><span class="chip">Screenshots</span><span class="chip">Her notes</span></div>
+
+        <div class="lbl stuck-l">Pain points</div>
+        <div class="cell stuck"><ul><li>Doesn't know what to search for. "Coordinated inauthentic behavior" isn't her vocabulary</li><li>No obvious tool answers her question</li></ul></div>
+        <div class="cell stuck"><ul><li>Meta's research library excludes most journalists</li><li>X data access is pay-per-use</li><li>Free tools need installing or file conversion</li><li>Unsure about platform rules</li></ul></div>
+        <div class="cell stuck"><ul><li>Home doesn't say what the tool does</li><li>Project rows look identical; dates say "Unknown"</li><li>Placeholder "Twitter-2018-dataset" assumes she knows the format</li></ul></div>
+        <div class="cell stuck"><ul><li>Jargon: column separator, quote character, n-gram</li><li>Post ID can be set to the username with no warning</li><li>No help choosing settings</li></ul></div>
+        <div class="cell stuck"><ul><li>No guide for reading the chart</li><li>Retweets look like the strongest copying</li><li>No visible way to see the posts behind a dot</li><li>Renamed "Copy-Pasta Detector" mid-flow</li></ul></div>
+        <div class="cell stuck"><ul><li>Nothing records how the result was made</li><li>Nothing says what the result can't prove</li><li>Fear of accusing real people</li></ul></div>
+      </div>
+      </div>
+    </div>
+  </details>
+</section>
+
+<footer>
+  <span>Built on Mango Tree v0.12.0 screenshots, the CIB Mango Tree literature review (persona UXP09, paper P11), and the research linked above. Proto-persona, not yet validated with interviews.</span>
+  <span>Sources: <a href="https://boris.unibe.ch/167650/1/s41598-022-08404-9.pdf">Schoch et al. 2022</a> · <a href="https://btrantruong.github.io/assets/pdf/uncover.pdf">Pacheco et al.</a> · <a href="https://dfrlab.org/2023/08/02/suspicious-networks-copypasta-replies-to-sudanese-paramilitary-groups-tweets/">DFRLab copypasta case</a> · <a href="https://dfrlab.org/2017/08/28/botspot-twelve-ways-to-spot-a-bot">DFRLab bot guide</a> · <a href="https://thedatacollector.substack.com/p/how-to-scrape-bluesky-posts-in-2026">Bluesky how-to</a> · <a href="https://gijn.org/resource/tips-for-archiving-telegram-messages-on-russia-ukraine-war/">GIJN Telegram</a> · <a href="https://cc.au.dk/cdmm/tools-and-tutorials/data-collection/zeeschuimer">Zeeschuimer</a> · <a href="https://bellingcat.gitbook.io/toolkit/more/all-tools/4cat">Bellingcat on 4CAT</a> · <a href="https://techcrunch.com/2024/08/15/meta-shut-down-crowdtangle-a-tool-for-tracking-disinformation-heres-how-its-replacement-compares">TechCrunch on Meta Content Library</a></span>
+</footer>
+
+</div>

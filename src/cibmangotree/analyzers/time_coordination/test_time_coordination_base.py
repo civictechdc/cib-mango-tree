@@ -1,4 +1,4 @@
-"""Primary analyzer contract test for time_analysis."""
+"""Primary analyzer contract test for time_coordination."""
 
 import os
 
@@ -9,7 +9,7 @@ from cibmangotree.testing import CsvTestData
 from cibmangotree.testing import context as testing_context
 
 from .test_data import test_data_dir
-from .time_analysis_base.interface import (
+from .time_coordination_base.interface import (
     COL_NORM_WEIGHT,
     COL_USER_A,
     COL_USER_B,
@@ -21,10 +21,10 @@ from .time_analysis_base.interface import (
     PARAM_T_STEP,
     PARAM_WIN_SIZE,
 )
-from .time_analysis_base.main import main
+from .time_coordination_base.main import main
 
 
-def test_time_analysis_primary_writes_posts_and_edges(tmp_path):
+def test_time_coordination_primary_writes_posts_and_edges(tmp_path):
     """Run primary and assert declared schemas + basic graph results."""
     input_csv = os.path.join(test_data_dir, "input.csv")
     input_parquet = tmp_path / "input.parquet"

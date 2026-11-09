@@ -1,4 +1,4 @@
-"""Time analysis results dashboard — Explore network.
+"""Time coordination results dashboard — Explore network.
 
 Ported from cib-time-analysis Explore step. Configure dataset buttons and
 in-dashboard Build are intentionally omitted: the host workflow already ran
@@ -11,16 +11,16 @@ import polars as pl
 from nicegui import ui
 from nicegui.events import GenericEventArguments
 
-from cibmangotree.analyzers.time_analysis.graph_utils import (
+from cibmangotree.analyzers.time_coordination.graph_utils import (
     EXPLORE_MAX_PAIRS,
     cut_graph_by_weight,
     graph_from_edges_df,
     remember_top_edges,
 )
-from cibmangotree.analyzers.time_analysis.time_analysis_base.analysis import (
+from cibmangotree.analyzers.time_coordination.time_coordination_base.analysis import (
     METHOD_LABELS,
 )
-from cibmangotree.analyzers.time_analysis.time_analysis_base.interface import (
+from cibmangotree.analyzers.time_coordination.time_coordination_base.interface import (
     COL_USER_ID,
     OUTPUT_EDGES,
     OUTPUT_POSTS,
@@ -42,7 +42,7 @@ from .chart_utils import (
 )
 
 
-class TimeAnalysisDashboardPage(BaseDashboardPage):
+class TimeCoordinationDashboardPage(BaseDashboardPage):
     """Explore the user network; Compare users opens a separate screen."""
 
     # Primary-only outputs; no secondary analyzer for v1.
@@ -62,7 +62,7 @@ class TimeAnalysisDashboardPage(BaseDashboardPage):
         edges_path = self.get_primary_output_parquet_path(OUTPUT_EDGES)
         posts_path = self.get_primary_output_parquet_path(OUTPUT_POSTS)
         if not edges_path or not posts_path:
-            ui.label("No time-analysis outputs found for this run.").classes(
+            ui.label("No time-coordination outputs found for this run.").classes(
                 "text-negative"
             )
             return
@@ -87,7 +87,7 @@ class TimeAnalysisDashboardPage(BaseDashboardPage):
 
         self._graph = remember_top_edges(graph_from_edges_df(edges))
 
-        method_name = METHOD_LABELS.get(self._method_id, "Time Analysis")
+        method_name = METHOD_LABELS.get(self._method_id, "Time Coordination")
         ui.label(f"{method_name} — Explore network").classes("text-h5")
         ui.label(
             "Select a linked pair from the list or by clicking a line between two nodes, "
@@ -272,6 +272,6 @@ class TimeAnalysisDashboardPage(BaseDashboardPage):
         if not user0 or not user1:
             ui.notify("Select a user link first.")
             return
-        self.session.time_analysis_compare_user0 = str(user0)
-        self.session.time_analysis_compare_user1 = str(user1)
-        self.navigate_to(gui_routes.dashboard_time_analysis_compare)
+        self.session.time_coordination_compare_user0 = str(user0)
+        self.session.time_coordination_compare_user1 = str(user1)
+        self.navigate_to(gui_routes.dashboard_time_coordination_compare)

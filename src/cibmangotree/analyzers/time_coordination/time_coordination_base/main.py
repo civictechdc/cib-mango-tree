@@ -1,4 +1,4 @@
-"""Primary entry: mapped posts → time-analysis graph → posts + edges parquet."""
+"""Primary entry: mapped posts → time-coordination graph → posts + edges parquet."""
 
 from __future__ import annotations
 
@@ -72,7 +72,7 @@ def main(context: PrimaryAnalyzerContext) -> None:
     t_step = int(context.params[PARAM_T_STEP])
     min_posts = int(context.params[PARAM_MIN_POSTS])
     if method_id not in METHODS:
-        raise ValueError(f"Unknown time-analysis method: {method_id!r}")
+        raise ValueError(f"Unknown time-coordination method: {method_id!r}")
 
     input_reader = context.input()
     with context.progress("Reading input") as read_progress:

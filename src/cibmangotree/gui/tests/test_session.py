@@ -31,8 +31,8 @@ def test_reset_analysis_workflow_clears_analysis_fields(mock_app: MagicMock) -> 
     session.selected_analyzer_name = "ngrams"
     session.column_mapping = {"a": "b"}
     session.current_analysis = MagicMock()
-    session.time_analysis_compare_user0 = "alice"
-    session.time_analysis_compare_user1 = "bob"
+    session.time_coordination_compare_user0 = "alice"
+    session.time_coordination_compare_user1 = "bob"
     session.analysis_loaded_from_storage = True
 
     session.reset_analysis_workflow()
@@ -41,8 +41,8 @@ def test_reset_analysis_workflow_clears_analysis_fields(mock_app: MagicMock) -> 
     assert session.selected_analyzer_name is None
     assert session.column_mapping is None
     assert session.current_analysis is None
-    assert session.time_analysis_compare_user0 is None
-    assert session.time_analysis_compare_user1 is None
+    assert session.time_coordination_compare_user0 is None
+    assert session.time_coordination_compare_user1 is None
     assert session.analysis_loaded_from_storage is False
 
 

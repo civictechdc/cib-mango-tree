@@ -113,7 +113,7 @@ It all starts here. CIB Mango Tree wants to make pre-existing social media analy
 
     - Mancocci et al. 2024. Detection and Characterization of Coordinated Online Behavior: A Survey. [https://doi.org/10.48550/arXiv.2408.01257](https://doi.org/10.48550/arXiv.2408.01257)
     - EU DisinfoLab. 2024. [CIB Detection Tree](https://www.disinfo.eu/publications/coordinated-inauthentic-behaviour-detection-tree/)
-    - Method background for the Time Analysis analyzer: [Time Analysis methods](../analyzers/time-analysis-methods.md)
+    - Method background for the Time Coordination analyzer: [Time Coordination methods](../analyzers/time-coordination-methods.md)
 
 **Hand-off**: You should fill out the test outline [template document](https://docs.google.com/document/d/1eO2pbMfBZNznnCo4s3E9eINaR-2qxCLedo7EbaRmHsA/edit?tab=t.0#heading=h.35g3nbbzlngs) on our Google Drive to propose a new test for our library. This will help us have a record of what was done, the key references, and it will provide a good starting point for a new volunteer.
 

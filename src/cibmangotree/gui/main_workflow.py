@@ -10,8 +10,8 @@ from nicegui import ui
 from cibmangotree.app import App
 from cibmangotree.gui.context import GUIContext
 from cibmangotree.gui.dashboards import PlaceholderDashboard, get_dashboard
-from cibmangotree.gui.dashboards.time_analysis.compare_page import (
-    TimeAnalysisComparePage,
+from cibmangotree.gui.dashboards.time_coordination.compare_page import (
+    TimeCoordinationComparePage,
 )
 from cibmangotree.gui.pages import (
     AnalysisConfigAndRunPage,
@@ -97,10 +97,10 @@ def register_pages(app: App) -> GuiSession:
         else:
             PlaceholderDashboard(session=gui_session).render()
 
-    @ui.page(gui_routes.dashboard_time_analysis_compare)
-    def dashboard_time_analysis_compare():
-        """Time-analysis Compare users drill-down (pair set on Explore)."""
-        TimeAnalysisComparePage(session=gui_session).render()
+    @ui.page(gui_routes.dashboard_time_coordination_compare)
+    def dashboard_time_coordination_compare():
+        """Time-coordination Compare users drill-down (pair set on Explore)."""
+        TimeCoordinationComparePage(session=gui_session).render()
 
     return gui_session
 
@@ -133,5 +133,5 @@ def gui_main(app: App):
         title="CIB Mango Tree",
         favicon="🥭",
         reload=False,
-        window_size=(1060, 720),
+        window_size=(1440, 900),
     )

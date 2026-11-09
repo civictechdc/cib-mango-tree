@@ -39,12 +39,12 @@ METHOD_OPTIONS = [
 ]
 
 interface = AnalyzerInterface(
-    id="time_analysis",
+    id="time_coordination",
     version="0.1.0",
-    name="Time Analysis",
+    name="Time Coordination",
     short_description="User networks from posting-time overlap",
     long_description="""
-Time analysis builds a network of users whose posting times overlap. That can
+Time coordination builds a network of users whose posting times overlap. That can
 suggest coordinated activity without looking at message text.
 
 **Methods** (choose one on the parameters step):

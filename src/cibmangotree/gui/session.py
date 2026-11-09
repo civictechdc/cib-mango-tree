@@ -63,9 +63,9 @@ class GuiSession(BaseModel):
     current_analysis: AnalysisModel | None = None
     analysis_params: dict[str, ParamValue] | None = None
 
-    # Time-analysis Compare users drill-down (Explore → separate screen)
-    time_analysis_compare_user0: str | None = None
-    time_analysis_compare_user1: str | None = None
+    # Time-coordination Compare users drill-down (Explore → separate screen)
+    time_coordination_compare_user0: str | None = None
+    time_coordination_compare_user1: str | None = None
 
     # Source tracking flags
     project_loaded_from_storage: bool = False
@@ -99,8 +99,8 @@ class GuiSession(BaseModel):
         self.column_mapping = None
         self.current_analysis = None
         self.analysis_params = None
-        self.time_analysis_compare_user0 = None
-        self.time_analysis_compare_user1 = None
+        self.time_coordination_compare_user0 = None
+        self.time_coordination_compare_user1 = None
         self.analysis_loaded_from_storage = False
 
     def validate_project_selected(self) -> bool:

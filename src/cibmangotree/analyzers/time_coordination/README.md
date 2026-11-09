@@ -1,4 +1,4 @@
-# Time Analysis
+# Time Coordination
 
 Port of [cib-time-analysis](https://github.com/mattburnett-repo/cib-time-analysis)
 into the in-repo analyzer recipe (issue #435).
@@ -7,10 +7,10 @@ into the in-repo analyzer recipe (issue #435).
 
 | Piece | Location |
 | --- | --- |
-| Primary | `time_analysis_base/` — methods → `posts` + `edges` parquet |
+| Primary | `time_coordination_base/` — methods → `posts` + `edges` parquet |
 | Secondary | none (v1) |
-| Dashboard | `gui/dashboards/time_analysis/` — Explore + Compare |
-| Manual CSVs | `assets/test_data/time_analysis/` (incl. Truth reduced) |
+| Dashboard | `gui/dashboards/time_coordination/` — Explore + Compare |
+| Manual CSVs | `assets/test_data/time_coordination/` (incl. Truth reduced) |
 
 **Left out:** dataset picker buttons, standalone NiceGUI app shell.
 

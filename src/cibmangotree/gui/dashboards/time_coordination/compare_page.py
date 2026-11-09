@@ -1,4 +1,4 @@
-"""Time analysis Compare users screen (separate from Explore network)."""
+"""Time coordination Compare users screen (separate from Explore network)."""
 
 from __future__ import annotations
 
@@ -7,10 +7,10 @@ import asyncio
 import polars as pl
 from nicegui import ui
 
-from cibmangotree.analyzers.time_analysis.time_analysis_base.analysis import (
+from cibmangotree.analyzers.time_coordination.time_coordination_base.analysis import (
     overlapping_content_for_users,
 )
-from cibmangotree.analyzers.time_analysis.time_analysis_base.interface import (
+from cibmangotree.analyzers.time_coordination.time_coordination_base.interface import (
     COL_MESSAGE_TEXT,
     COL_TIMESTAMP,
     COL_USER_ID,
@@ -25,21 +25,21 @@ from ..base_dashboard import BaseDashboardPage
 from .compare import format_post_body
 
 
-class TimeAnalysisComparePage(BaseDashboardPage):
+class TimeCoordinationComparePage(BaseDashboardPage):
     """Interleaved overlapping posts for a pair selected on Explore."""
 
     _secondary_analyzer_id = None
 
     def __init__(self, session: GuiSession):
         super().__init__(session=session)
-        self.route = gui_routes.dashboard_time_analysis_compare
+        self.route = gui_routes.dashboard_time_coordination_compare
         self.back_route = gui_routes.dashboard
         self.back_text = "Back to network"
-        self.title = "Time Analysis: Compare users"
+        self.title = "Time Coordination: Compare users"
 
     def render_content(self) -> None:
-        user0 = self.session.time_analysis_compare_user0
-        user1 = self.session.time_analysis_compare_user1
+        user0 = self.session.time_coordination_compare_user0
+        user1 = self.session.time_coordination_compare_user1
         if not user0 or not user1:
             ui.label("No user pair selected.").classes("text-negative")
             ui.button(
@@ -50,7 +50,7 @@ class TimeAnalysisComparePage(BaseDashboardPage):
 
         posts_path = self.get_primary_output_parquet_path(OUTPUT_POSTS)
         if not posts_path:
-            ui.label("No time-analysis posts found for this run.").classes(
+            ui.label("No time-coordination posts found for this run.").classes(
                 "text-negative"
             )
             return

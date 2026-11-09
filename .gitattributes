@@ -1,1 +1,1 @@
-assets/test_data/time_analysis/*.csv filter=lfs diff=lfs merge=lfs -text
+assets/test_data/time_coordination/*.csv filter=lfs diff=lfs merge=lfs -text

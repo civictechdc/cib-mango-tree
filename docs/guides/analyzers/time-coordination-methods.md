@@ -1,6 +1,6 @@
-# Time Analysis methods
+# Time Coordination methods
 
-Academic background for the **Time Analysis** analyzer: four approaches to scoring posting-time overlap between accounts. Notes and commentary were provided by [John Biddle](https://github.com/johnbiddle). This page is method background, not a usage guide for the GUI.
+Academic background for the **Time Coordination** analyzer: four approaches to scoring posting-time overlap between accounts. Notes and commentary were provided by [John Biddle](https://github.com/johnbiddle). This page is method background, not a usage guide for the GUI.
 
 ## At a glance
 
@@ -80,7 +80,7 @@ Similar in spirit to Method 3, but uses dynamic time warping (DTW) so similarity
 In practice this approach tends to find pairs with very similar posting patterns and appears to produce fewer false alarms. Awareness so far is mainly from [[3]](#ref-3); more recent work usually uses a variant of Method 1 or 2.
 
 !!! warning
-    DTW is **slow**, and is likely not worth shipping unless further optimizations are found. It is not offered in the current Time Analysis UI.
+    DTW is **slow**, and is likely not worth shipping unless further optimizations are found. It is not offered in the current Time Coordination UI.
 
 ## References
 
@@ -96,4 +96,4 @@ This list illustrates the methods above; it is not exhaustive for a publication.
 ## See also
 
 - Implementing analyzers (recipe, registration, dashboards): [Analyzers](../contributing/analyzers.md)
-- In-repo Time Analysis fold and params: [`src/cibmangotree/analyzers/time_analysis/README.md`](https://github.com/civictechdc/cib-mango-tree/blob/main/src/cibmangotree/analyzers/time_analysis/README.md)
+- In-repo Time Coordination fold and params: [`src/cibmangotree/analyzers/time_coordination/README.md`](https://github.com/civictechdc/cib-mango-tree/blob/main/src/cibmangotree/analyzers/time_coordination/README.md)

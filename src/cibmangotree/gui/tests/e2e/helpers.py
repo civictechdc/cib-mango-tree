@@ -14,8 +14,8 @@ from nicegui import ui
 from nicegui.testing import User
 from nicegui.testing.user_interaction import UserInteraction
 
-from cibmangotree.analyzers.time_analysis import time_analysis
-from cibmangotree.analyzers.time_analysis.time_analysis_base.interface import (
+from cibmangotree.analyzers.time_coordination import time_coordination
+from cibmangotree.analyzers.time_coordination.time_coordination_base.interface import (
     COL_MESSAGE_TEXT,
     COL_NORM_WEIGHT,
     COL_REL_TIMESTAMP,
@@ -44,10 +44,10 @@ HASHTAG_CSV = (
     / "hashtag_test_input.csv"
 )
 
-TIME_ANALYSIS_CSV = (
+TIME_COORDINATION_CSV = (
     Path(__file__).resolve().parents[3]
     / "analyzers"
-    / "time_analysis"
+    / "time_coordination"
     / "test_data"
     / "input.csv"
 )
@@ -62,17 +62,17 @@ def seed_project(app: App, name: str):
     return app.create_project(name, importer, dataset_name=HASHTAG_CSV.name)
 
 
-def seed_time_analysis_project(app: App, name: str):
-    importer = CSVImporter().init_session(str(TIME_ANALYSIS_CSV))
-    return app.create_project(name, importer, dataset_name=TIME_ANALYSIS_CSV.name)
+def seed_time_coordination_project(app: App, name: str):
+    importer = CSVImporter().init_session(str(TIME_COORDINATION_CSV))
+    return app.create_project(name, importer, dataset_name=TIME_COORDINATION_CSV.name)
 
 
-def seed_time_analysis_outputs(app: App, project) -> object:
-    """Create a draft time_analysis run and write minimal posts/edges parquets."""
+def seed_time_coordination_outputs(app: App, project) -> object:
+    """Create a draft time_coordination run and write minimal posts/edges parquets."""
     analysis = app.context.storage.init_analysis(
         project_id=project.id,
-        display_name="Time analysis e2e",
-        primary_analyzer_id=time_analysis.id,
+        display_name="Time coordination e2e",
+        primary_analyzer_id=time_coordination.id,
         column_mapping={
             COL_USER_ID: COL_USER_ID,
             COL_TIMESTAMP: COL_TIMESTAMP,

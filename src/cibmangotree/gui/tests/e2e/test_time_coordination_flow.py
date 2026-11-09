@@ -1,4 +1,4 @@
-"""E2E coverage for the time_analysis analyzer path.
+"""E2E coverage for the time_coordination analyzer path.
 
 Covers select → params labels → dashboard empty/populated Explore UI.
 Full run-worker timing is left to analyzer unit/contract tests.
@@ -7,8 +7,8 @@ Full run-worker timing is left to analyzer unit/contract tests.
 from nicegui import ui
 from nicegui.testing import User
 
-from cibmangotree.analyzers.time_analysis import time_analysis
-from cibmangotree.analyzers.time_analysis.time_analysis_base.interface import (
+from cibmangotree.analyzers.time_coordination import time_coordination
+from cibmangotree.analyzers.time_coordination.time_coordination_base.interface import (
     COL_MESSAGE_TEXT,
     COL_TIMESTAMP,
     COL_USER_ID,
@@ -20,30 +20,32 @@ from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.tests.e2e.helpers import (
     click_button,
     open_app,
-    seed_time_analysis_outputs,
-    seed_time_analysis_project,
+    seed_time_coordination_outputs,
+    seed_time_coordination_project,
 )
 
 
-async def test_time_analysis_appears_in_analyzer_list(user: User, ui_app: App) -> None:
-    project = seed_time_analysis_project(ui_app, "TA list")
+async def test_time_coordination_appears_in_analyzer_list(
+    user: User, ui_app: App
+) -> None:
+    project = seed_time_coordination_project(ui_app, "TA list")
     session = open_app(ui_app)
     session.current_project = project
     await user.open("/configure_analysis")
 
-    await user.should_see("Time Analysis", retries=20)
+    await user.should_see("Time Coordination", retries=20)
     await user.should_see("Hashtag analysis", retries=20)
 
 
-async def test_selecting_time_analysis_stores_the_choice(
+async def test_selecting_time_coordination_stores_the_choice(
     user: User, ui_app: App
 ) -> None:
-    project = seed_time_analysis_project(ui_app, "TA select")
+    project = seed_time_coordination_project(ui_app, "TA select")
     session = open_app(ui_app)
     session.current_project = project
     await user.open("/configure_analysis")
 
-    click_button(user, "Time Analysis")
+    click_button(user, "Time Coordination")
     await user.should_see("Methods", retries=20)
     await user.should_see("Sliding Window", retries=20)
     await user.should_see("Action Driven Overlapping Window (ADO)", retries=20)
@@ -51,16 +53,16 @@ async def test_selecting_time_analysis_stores_the_choice(
     click_button(user, "Next")
 
     assert session.selected_analyzer is not None
-    assert session.selected_analyzer.id == "time_analysis"
+    assert session.selected_analyzer.id == "time_coordination"
 
 
-async def test_time_analysis_params_step_shows_method_controls(
+async def test_time_coordination_params_step_shows_method_controls(
     user: User, ui_app: App
 ) -> None:
-    project = seed_time_analysis_project(ui_app, "TA params")
+    project = seed_time_coordination_project(ui_app, "TA params")
     session = GuiSession(context=GUIContext(app=ui_app))
     session.current_project = project
-    session.selected_analyzer = time_analysis
+    session.selected_analyzer = time_coordination
     session.column_mapping = {
         COL_USER_ID: COL_USER_ID,
         COL_TIMESTAMP: COL_TIMESTAMP,
@@ -68,12 +70,12 @@ async def test_time_analysis_params_step_shows_method_controls(
     }
     step = ParamsConfigStep(session)
 
-    @ui.page("/params-step-time-analysis")
+    @ui.page("/params-step-time-coordination")
     def page() -> None:
         step.render()
 
-    await user.open("/params-step-time-analysis")
-    await user.should_see("Configure Time Analysis Parameters", retries=20)
+    await user.open("/params-step-time-coordination")
+    await user.should_see("Configure Time Coordination Parameters", retries=20)
     await user.should_see("Method")
     await user.should_see("Time Overlap")
     await user.should_see("Window size (steps)")
@@ -84,29 +86,31 @@ async def test_time_analysis_params_step_shows_method_controls(
     assert len(user.find(kind=ui.number).elements) >= 3
 
 
-async def test_time_analysis_dashboard_without_outputs_shows_message(
+async def test_time_coordination_dashboard_without_outputs_shows_message(
     user: User, ui_app: App
 ) -> None:
-    project = seed_time_analysis_project(ui_app, "TA empty dash")
+    project = seed_time_coordination_project(ui_app, "TA empty dash")
     session = open_app(ui_app)
     session.current_project = project
-    session.selected_analyzer = time_analysis
-    session.selected_analyzer_name = time_analysis.name
+    session.selected_analyzer = time_coordination
+    session.selected_analyzer_name = time_coordination.name
     await user.open("/dashboard")
 
-    await user.should_see("No time-analysis outputs found for this run.", retries=20)
+    await user.should_see(
+        "No time-coordination outputs found for this run.", retries=20
+    )
 
 
-async def test_time_analysis_dashboard_explore_ui_with_outputs(
+async def test_time_coordination_dashboard_explore_ui_with_outputs(
     user: User, ui_app: App
 ) -> None:
-    project = seed_time_analysis_project(ui_app, "TA explore")
-    analysis = seed_time_analysis_outputs(ui_app, project)
+    project = seed_time_coordination_project(ui_app, "TA explore")
+    analysis = seed_time_coordination_outputs(ui_app, project)
     session = open_app(ui_app)
     session.current_project = project
     session.current_analysis = analysis
-    session.selected_analyzer = time_analysis
-    session.selected_analyzer_name = time_analysis.name
+    session.selected_analyzer = time_coordination
+    session.selected_analyzer_name = time_coordination.name
     await user.open("/dashboard")
 
     await user.should_see("Explore network", retries=20)
@@ -120,16 +124,16 @@ async def test_time_analysis_dashboard_explore_ui_with_outputs(
     assert user.find(kind=ui.checkbox).elements
 
 
-async def test_time_analysis_dashboard_list_selection_enables_compare(
+async def test_time_coordination_dashboard_list_selection_enables_compare(
     user: User, ui_app: App
 ) -> None:
-    project = seed_time_analysis_project(ui_app, "TA select pair")
-    analysis = seed_time_analysis_outputs(ui_app, project)
+    project = seed_time_coordination_project(ui_app, "TA select pair")
+    analysis = seed_time_coordination_outputs(ui_app, project)
     session = open_app(ui_app)
     session.current_project = project
     session.current_analysis = analysis
-    session.selected_analyzer = time_analysis
-    session.selected_analyzer_name = time_analysis.name
+    session.selected_analyzer = time_coordination
+    session.selected_analyzer_name = time_coordination.name
     await user.open("/dashboard")
 
     await user.should_see("Select a pair of users", retries=20)
@@ -139,26 +143,26 @@ async def test_time_analysis_dashboard_list_selection_enables_compare(
 
     await user.should_see("Users Selected: alice and bob", retries=20)
     user.find("Compare users").click()
-    await user.should_see("Time Analysis: Compare users", retries=20)
+    await user.should_see("Time Coordination: Compare users", retries=20)
     await user.should_see("alice  ↔  bob", retries=20)
     await user.should_see("hello", retries=20)
     await user.should_see("alice: 2 overlapping", retries=20)
     assert user.find(kind=ui.chat_message).elements
-    assert session.time_analysis_compare_user0 == "alice"
-    assert session.time_analysis_compare_user1 == "bob"
+    assert session.time_coordination_compare_user0 == "alice"
+    assert session.time_coordination_compare_user1 == "bob"
 
 
-async def test_post_analysis_opens_time_analysis_dashboard(
+async def test_post_analysis_opens_time_coordination_dashboard(
     user: User, ui_app: App
 ) -> None:
     """Registered dashboard is used instead of the placeholder."""
-    project = seed_time_analysis_project(ui_app, "TA post")
-    analysis = seed_time_analysis_outputs(ui_app, project)
+    project = seed_time_coordination_project(ui_app, "TA post")
+    analysis = seed_time_coordination_outputs(ui_app, project)
     session = open_app(ui_app)
     session.current_project = project
     session.current_analysis = analysis
-    session.selected_analyzer = time_analysis
-    session.selected_analyzer_name = time_analysis.name
+    session.selected_analyzer = time_coordination
+    session.selected_analyzer_name = time_coordination.name
     await user.open("/post_analysis")
 
     await user.should_see("Open results dashboard", retries=20)

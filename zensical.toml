@@ -33,7 +33,7 @@ nav = [
             ]},
         ]},
         {"Analyzers" = [
-            "guides/analyzers/time-analysis-methods.md",
+            "guides/analyzers/time-coordination-methods.md",
         ]},
         {"Design Philosophy" = [
             "guides/design-philosophy/architecture.md",

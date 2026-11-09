@@ -1,33 +1,33 @@
-"""Smoke tests for the time_analysis dashboard registration and click payload."""
+"""Smoke tests for the time_coordination dashboard registration and click payload."""
 
 from types import SimpleNamespace
 
 from cibmangotree.gui.dashboards import get_dashboard
 from cibmangotree.gui.dashboards.base_dashboard import BaseDashboardPage
-from cibmangotree.gui.dashboards.time_analysis import (
-    TimeAnalysisComparePage,
-    TimeAnalysisDashboardPage,
+from cibmangotree.gui.dashboards.time_coordination import (
+    TimeCoordinationComparePage,
+    TimeCoordinationDashboardPage,
 )
-from cibmangotree.gui.dashboards.time_analysis.chart_utils import (
+from cibmangotree.gui.dashboards.time_coordination.chart_utils import (
     EDGE_COLOR_LEGEND,
     users_from_edge_payload,
 )
-from cibmangotree.gui.dashboards.time_analysis.compare import format_post_body
+from cibmangotree.gui.dashboards.time_coordination.compare import format_post_body
 from cibmangotree.gui.routes import gui_routes
 
 
-def test_time_analysis_dashboard_extends_base_dashboard() -> None:
-    assert issubclass(TimeAnalysisDashboardPage, BaseDashboardPage)
-    assert issubclass(TimeAnalysisComparePage, BaseDashboardPage)
+def test_time_coordination_dashboard_extends_base_dashboard() -> None:
+    assert issubclass(TimeCoordinationDashboardPage, BaseDashboardPage)
+    assert issubclass(TimeCoordinationComparePage, BaseDashboardPage)
 
 
-def test_time_analysis_dashboard_is_registered() -> None:
-    assert get_dashboard("time_analysis") is TimeAnalysisDashboardPage
+def test_time_coordination_dashboard_is_registered() -> None:
+    assert get_dashboard("time_coordination") is TimeCoordinationDashboardPage
 
 
-def test_time_analysis_compare_route() -> None:
-    assert gui_routes.dashboard_time_analysis_compare == (
-        "/dashboard/time_analysis/compare"
+def test_time_coordination_compare_route() -> None:
+    assert gui_routes.dashboard_time_coordination_compare == (
+        "/dashboard/time_coordination/compare"
     )
 
 
@@ -50,7 +50,7 @@ def test_users_from_edge_click_payload() -> None:
 
 
 def test_chart_click_handler_selects_pair(gui_session_with_project) -> None:
-    page = TimeAnalysisDashboardPage(session=gui_session_with_project)
+    page = TimeCoordinationDashboardPage(session=gui_session_with_project)
     page._cut_graph = SimpleNamespace(nodes=lambda: ["alice", "bob"])
     page._selected = {"user0": None, "user1": None}
     page._selection_label = SimpleNamespace(set_text=lambda _t: None)

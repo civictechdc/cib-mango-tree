@@ -339,4 +339,4 @@ def test_example_report():
 - Study `analyzers/example/` then `analyzers/ngrams/`.
 - Design philosophy (domains): [architecture](../design-philosophy/architecture.md), [content](../design-philosophy/content-domain.md), [core](../design-philosophy/core-domain.md), [edge](../design-philosophy/edge-domain.md)
 - GUI dashboard code: `src/cibmangotree/gui/dashboards/` and `src/cibmangotree/gui/README.md`.
-- Time Analysis method background (sliding window, ADO, time overlap, DTW): [Time Analysis methods](../analyzers/time-analysis-methods.md)
+- Time Coordination method background (sliding window, ADO, time overlap, DTW): [Time Coordination methods](../analyzers/time-coordination-methods.md)

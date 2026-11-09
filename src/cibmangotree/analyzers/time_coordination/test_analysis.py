@@ -1,4 +1,4 @@
-"""Unit tests for time-analysis core (ported from cib-time-analysis)."""
+"""Unit tests for time-coordination core (ported from cib-time-analysis)."""
 
 from datetime import datetime, timedelta
 
@@ -6,12 +6,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from cibmangotree.analyzers.time_analysis.graph_utils import (
+from cibmangotree.analyzers.time_coordination.graph_utils import (
     cut_graph_by_weight,
     ranked_edges,
     remember_top_edges,
 )
-from cibmangotree.analyzers.time_analysis.time_analysis_base import analysis
+from cibmangotree.analyzers.time_coordination.time_coordination_base import analysis
 
 
 class _Progress:

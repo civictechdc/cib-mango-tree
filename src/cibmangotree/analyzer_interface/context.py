@@ -55,11 +55,22 @@ class PrimaryAnalyzerContext(ABC, BaseModel):
     Prefer ``context.progress(title)`` in analyzer mains.
     """
 
+    check_cancelled: Callable[[], bool] = lambda: False
+    """
+    Callable that returns True when the current run has been cancelled.
+    """
+
     def progress(self, title: str) -> ProgressReporterProtocol:
         """Return a progress reporter for ``title``, or a no-op if unset."""
         if self.progress_reporter is None:
             return NullProgressReporter(title)
         return self.progress_reporter(title)
+
+    def is_cancelled(self) -> bool:
+        """Return True if the run has been cancelled."""
+        if self.check_cancelled is None:
+            return False
+        return self.check_cancelled()
 
     @abstractmethod
     def input(self) -> "InputTableReader":
@@ -104,11 +115,20 @@ class BaseDerivedModuleContext(ABC, BaseModel):
     Prefer ``context.progress(title)`` in analyzer mains.
     """
 
+    check_cancelled: Callable[[], bool] | None = None
+    """
+    Optional callable that returns True when the current run has been cancelled.
+    """
+
     def progress(self, title: str) -> ProgressReporterProtocol:
         """Return a progress reporter for ``title``, or a no-op if unset."""
         if self.progress_reporter is None:
             return NullProgressReporter(title)
         return self.progress_reporter(title)
+
+    def is_cancelled(self) -> bool:
+        """Return True if the run has been cancelled."""
+        return self.check_cancelled()
 
     @property
     @abstractmethod

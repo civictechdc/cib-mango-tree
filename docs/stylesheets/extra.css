@@ -2,10 +2,9 @@
   --md-primary-fg-color:        #609949;
   --md-primary-fg-color--light: #F9BC30;
   --md-primary-fg-color--dark:  #609949;
-  --md-accent-fg-color: #F9BC30;
+  --md-accent-fg-color: var(--md-primary-fg-color);
 }
 
-[data-md-color-scheme="cibmt"] .md-sidebar .md-nav__link--active,
-[data-md-color-scheme="cibmt"] .md-sidebar .md-nav__link:hover {
+[data-md-color-scheme="cibmt"] .md-sidebar .md-nav__link--active {
   color: var(--md-primary-fg-color);
 }

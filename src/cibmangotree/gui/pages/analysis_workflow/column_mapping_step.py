@@ -6,6 +6,23 @@ from cibmangotree.analyzer_interface import (
     get_data_type_compatibility_score,
 )
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    CARD_MAPPING,
+    COL_FULL,
+    COL_STEP_BODY,
+    ICON_INFO,
+    ROW_CENTERED_GAP,
+    ROW_WRAP_CENTER,
+    STYLE_CARD_FLEX_MIN,
+    STYLE_CENTERED,
+    TEXT_BOLD,
+    TEXT_MUTED,
+    TEXT_MUTED_SM,
+    TEXT_SM_NEGATIVE,
+    TEXT_STEP_TITLE,
+    WIDTH_FULL_H_64,
+    WIDTH_FULL_MT_2,
+)
 
 
 class ColumnMappingStep:
@@ -23,11 +40,11 @@ class ColumnMappingStep:
         project = self.session.current_project
 
         if not analyzer:
-            ui.label("Please select an analyzer first").classes("text-grey")
+            ui.label("Please select an analyzer first").classes(TEXT_MUTED)
             return
 
         if not project:
-            ui.label("No project selected").classes("text-grey")
+            ui.label("No project selected").classes(TEXT_MUTED)
             return
 
         input_columns = analyzer.input.columns
@@ -35,35 +52,25 @@ class ColumnMappingStep:
 
         draft_column_mapping = column_automap(user_columns, input_columns)
 
-        with (
-            ui.column()
-            .classes("w-full items-center gap-6")
-            .style("max-width: 960px; margin: 0 auto;")
-        ):
-            ui.label("Map Your Data Columns").classes("text-lg font-bold mb-4")
+        with ui.column().classes(COL_STEP_BODY).style(STYLE_CENTERED):
+            ui.label("Map Your Data Columns").classes(TEXT_STEP_TITLE)
 
-            with ui.row().classes("flex-wrap gap-6 justify-center w-full"):
+            with ui.row().classes(ROW_WRAP_CENTER):
                 for input_col in input_columns:
                     self._build_column_card(
                         input_col, user_columns, draft_column_mapping
                     )
 
-            self.preview_container = ui.column().classes("w-full")
+            self.preview_container = ui.column().classes(COL_FULL)
             self._update_preview()
 
     def _build_column_card(self, input_col, user_columns, draft_column_mapping) -> None:
         """Build a single column mapping card."""
-        with (
-            ui.card()
-            .classes("p-4 no-shadow border border-gray-200")
-            .style("flex: 1 1 0; min-width: 160px")
-        ):
-            with ui.row().classes("items-center gap-1"):
-                ui.label(input_col.human_readable_name_or_fallback()).classes(
-                    "text-bold"
-                )
+        with ui.card().classes(CARD_MAPPING).style(STYLE_CARD_FLEX_MIN):
+            with ui.row().classes(ROW_CENTERED_GAP):
+                ui.label(input_col.human_readable_name_or_fallback()).classes(TEXT_BOLD)
                 if input_col.description:
-                    with ui.icon("info").classes("text-grey-6 cursor-pointer"):
+                    with ui.icon("info").classes(ICON_INFO):
                         ui.tooltip(input_col.description)
 
             compatible_columns = [
@@ -95,7 +102,7 @@ class ColumnMappingStep:
             if not compatible_columns and user_columns:
                 warning = ui.label(
                     "No column matched this type. Choose one manually."
-                ).classes("text-sm text-negative")
+                ).classes(TEXT_SM_NEGATIVE)
                 warning.set_visibility(default_value is None)
 
             def on_mapping_change() -> None:
@@ -109,7 +116,7 @@ class ColumnMappingStep:
                     value=default_value,
                     on_change=on_mapping_change,
                 )
-                .classes("w-full mt-2")
+                .classes(WIDTH_FULL_MT_2)
                 .props("use-chips")
             )
 
@@ -159,13 +166,13 @@ class ColumnMappingStep:
                 if len(preview_df) > 5
                 else "Data Preview (all rows)"
             )
-            ui.label(preview_title).classes("text-sm text-grey-7")
+            ui.label(preview_title).classes(TEXT_MUTED_SM)
 
             grid = ui.aggrid.from_polars(
                 preview_df,
                 theme="quartz",
                 auto_size_columns=True,
-            ).classes("w-full h-64")
+            ).classes(WIDTH_FULL_H_64)
             grid.on(
                 "firstDataRendered",
                 lambda: grid.run_grid_method("sizeColumnsToFit"),

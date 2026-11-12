@@ -24,8 +24,12 @@ GUARDED_PATHS = (
     "components/exit_confirmation.py",
     "components/export_outputs.py",
     "components/import_options.py",
+    "components/manage_analyses.py",
     "components/new_project_dialog.py",
+    "pages/analysis_workflow/column_mapping_step.py",
+    "pages/analysis_workflow/params_step.py",
     "pages/analysis_workflow/run_step.py",
+    "pages/start.py",
 )
 
 THEME_CONSTANT_HINT = "a named constant from cibmangotree.gui.theme"

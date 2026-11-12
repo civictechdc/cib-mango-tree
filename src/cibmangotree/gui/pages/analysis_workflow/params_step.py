@@ -23,7 +23,20 @@ from cibmangotree.gui.dashboards.hashtags.window_preview import (
     window_edges,
 )
 from cibmangotree.gui.session import GuiSession
-from cibmangotree.gui.theme import ICON_INFO, ROW_CENTERED_GAP, TEXT_TOOLTIP_BODY
+from cibmangotree.gui.theme import (
+    COL_FULL,
+    COL_STEP_BODY,
+    ICON_INFO,
+    ROW_CENTERED_GAP,
+    STYLE_CENTERED,
+    STYLE_CHART_HEIGHT,
+    TEXT_FIELD_LABEL,
+    TEXT_MUTED,
+    TEXT_NEGATIVE,
+    TEXT_STEP_TITLE,
+    TEXT_TOOLTIP_BODY,
+    WIDTH_TOOLTIP,
+)
 
 
 class ParamsConfigStep:
@@ -52,18 +65,18 @@ class ParamsConfigStep:
         self._preview_note = None
 
         if not analyzer:
-            ui.label("Please select an analyzer first").classes("text-grey")
+            ui.label("Please select an analyzer first").classes(TEXT_MUTED)
             return
 
         if not analyzer.params:
             ui.label("This analyzer has no configurable parameters.").classes(
-                "text-grey-7"
+                TEXT_MUTED
             )
             self.session.analysis_params = {}
             return
 
         if not project or not column_mapping:
-            ui.label("Please map columns first").classes("text-grey")
+            ui.label("Please map columns first").classes(TEXT_MUTED)
             return
 
         with TemporaryDirectory() as temp_dir:
@@ -86,7 +99,7 @@ class ParamsConfigStep:
             )
 
             if not analyzer_decl:
-                ui.label(f"Analyzer `{analyzer.id}` not found").classes("text-negative")
+                ui.label(f"Analyzer `{analyzer.id}` not found").classes(TEXT_NEGATIVE)
                 return
 
             param_values = {
@@ -105,14 +118,8 @@ class ParamsConfigStep:
 
             self._param_values = param_values
 
-        with (
-            ui.column()
-            .classes("w-full items-center gap-6")
-            .style("max-width: 960px; margin: 0 auto;")
-        ):
-            ui.label(f"Configure {analyzer.name} Parameters").classes(
-                "text-lg font-bold mb-4"
-            )
+        with ui.column().classes(COL_STEP_BODY).style(STYLE_CENTERED):
+            ui.label(f"Configure {analyzer.name} Parameters").classes(TEXT_STEP_TITLE)
 
             self.params_card = AnalysisParamsCard(
                 params=analyzer.params,
@@ -128,27 +135,25 @@ class ParamsConfigStep:
             self._preview_timestamps = load_mapped_timestamps(self.session)
             self._preview_bins = activity_bins(self._preview_timestamps)
         except (OSError, ValueError, pl.exceptions.PolarsError):
-            ui.label("Could not load timestamps.").classes("text-grey")
+            ui.label("Could not load timestamps.").classes(TEXT_MUTED)
             return
 
         if self._preview_bins.height == 0:
-            ui.label("No timestamps to preview.").classes("text-grey")
+            ui.label("No timestamps to preview.").classes(TEXT_MUTED)
             return
 
         with ui.row().classes(ROW_CENTERED_GAP):
-            ui.label("Post activity").classes("text-base font-bold")
+            ui.label("Post activity").classes(TEXT_FIELD_LABEL)
             with ui.icon("info").classes(ICON_INFO):
-                with ui.tooltip().classes("w-64"):
+                with ui.tooltip().classes(WIDTH_TOOLTIP):
                     ui.label(
                         "Orange lines show how many posts occurred over time. "
                         "The space between gray dashed lines is how big each window is."
                     ).classes(TEXT_TOOLTIP_BODY)
-        self._preview_count = ui.label("").classes("text-grey-7")
-        self._preview_note = ui.label("Too many windows to draw.").classes(
-            "text-grey-7"
-        )
+        self._preview_count = ui.label("").classes(TEXT_MUTED)
+        self._preview_note = ui.label("Too many windows to draw.").classes(TEXT_MUTED)
         self._preview_note.set_visibility(False)
-        self._preview_chart = ui.echart({}).classes("w-full").style("height: 320px")
+        self._preview_chart = ui.echart({}).classes(COL_FULL).style(STYLE_CHART_HEIGHT)
         self._update_window_preview()
 
     def _update_window_preview(self) -> None:

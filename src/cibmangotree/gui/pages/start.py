@@ -6,6 +6,19 @@ from cibmangotree.gui.base import GuiPage
 from cibmangotree.gui.components import NewProjectDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    COL_FULL,
+    HEAD_HTML_STICKY_TABLE,
+    ROW_ACTIONS,
+    ROW_CENTERED,
+    ROW_TOOLBAR_END,
+    SIZE_LOGO,
+    SPACING_MB_4,
+    STYLE_CENTERED,
+    TABLE_PROJECTS,
+    TEXT_HEADING_MUTED,
+    TEXT_NEGATIVE_MB_6,
+)
 
 _COLUMNS = [
     {
@@ -63,39 +76,18 @@ class StartPage(GuiPage):
         self._delete_button: ui.button | None = None
 
     def render_content(self) -> None:
-        ui.add_head_html("""
-            <style>
-                .my-sticky-table {
-                /* Window height minus the page's fixed furniture (header, footer,
-                    padding, logo, button row = 488px). Re-measure if any of those
-                    change. Floor keeps the table usable at the minimum window size. */
-                    height: max(180px, calc(100vh - 496px));
-                }
-                .my-sticky-table thead tr th {
-                    position: sticky;
-                    z-index: 1;
-                    background-color: white;
-                }
-                .my-sticky-table thead tr:first-child th {
-                    top: 0;
-                }
-                .my-sticky-table thead tr th,
-                .my-sticky-table tbody tr td {
-                    font-size: 0.85rem;
-                }
-            </style>
-        """)
+        ui.add_head_html(HEAD_HTML_STICKY_TABLE)
 
         with self.centered_content(height="auto", padding="2rem"):
             ui.html(self._load_svg_icon("cibmt_logo"), sanitize=False).classes(
-                "size-24 q-mb-md"
+                SIZE_LOGO
             )
 
-            with ui.column().classes("w-full") as container:
-                container.style("max-width: 960px; margin: 0 auto;")
+            with ui.column().classes(COL_FULL) as container:
+                container.style(STYLE_CENTERED)
 
-                with ui.row().classes("w-full items-center"):
-                    ui.label("Projects").classes("text-h6 text-gray-600")
+                with ui.row().classes(ROW_CENTERED):
+                    ui.label("Projects").classes(TEXT_HEADING_MUTED)
                     ui.space()
                     ui.button(
                         "Create New",
@@ -106,7 +98,7 @@ class StartPage(GuiPage):
 
                 self._build_table()
 
-                with ui.row().classes("w-full gap-4 q-mt-md justify-end"):
+                with ui.row().classes(ROW_TOOLBAR_END):
                     self._delete_button = ui.button(
                         "Delete",
                         on_click=self._handle_delete_project,
@@ -132,7 +124,7 @@ class StartPage(GuiPage):
                 row_key="project_id",
                 selection="single",
             )
-            .classes("w-full my-sticky-table")
+            .classes(TABLE_PROJECTS)
             .props("flat bordered separator='horizontal' sticky-header")
         )
 
@@ -219,9 +211,9 @@ class StartPage(GuiPage):
         project_name = selected["project_name"]
 
         with ui.dialog() as dialog, ui.card():
-            ui.label(f"Delete project '{project_name}'?").classes("q-mb-md")
-            ui.label("This action cannot be undone.").classes("text-negative mb-6")
-            with ui.row().classes("w-full justify-end gap-2"):
+            ui.label(f"Delete project '{project_name}'?").classes(SPACING_MB_4)
+            ui.label("This action cannot be undone.").classes(TEXT_NEGATIVE_MB_6)
+            with ui.row().classes(ROW_ACTIONS):
                 ui.button(
                     "Cancel",
                     on_click=lambda: dialog.submit(False),

@@ -5,6 +5,16 @@ from nicegui import ui
 from cibmangotree.app.analysis_context import AnalysisContext
 from cibmangotree.gui.components.analysis_utils import present_timestamp
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    CARD_DIALOG_FULL,
+    ROW_ACTIONS,
+    ROW_ACTIONS_MT_4,
+    SPACING_MB_4,
+    TEXT_MUTED_MB_4,
+    TEXT_NEGATIVE_MB_6,
+    TEXT_SECTION_HEADING,
+    WIDTH_FULL_H_96,
+)
 
 
 class ManageAnalysisDialog(ui.dialog):
@@ -35,13 +45,13 @@ class ManageAnalysisDialog(ui.dialog):
         self.deleted_ids: set = set()
 
         # Build dialog UI
-        with self, ui.card().classes("w-full"):
+        with self, ui.card().classes(CARD_DIALOG_FULL):
             # Dialog title
-            ui.label("Manage Analyses").classes("text-h6 q-mb-md")
+            ui.label("Manage Analyses").classes(TEXT_SECTION_HEADING)
 
             # Check if there are analyses to display
             if not self.analysis_contexts:
-                ui.label("No analyses found").classes("text-grey q-mb-md")
+                ui.label("No analyses found").classes(TEXT_MUTED_MB_4)
             else:
                 # Analyses grid — multiRow selection enabled
                 self.grid = ui.aggrid(
@@ -66,10 +76,10 @@ class ManageAnalysisDialog(ui.dialog):
                         "rowSelection": {"mode": "multiRow"},
                     },
                     theme="quartz",
-                ).classes("w-full h-96")
+                ).classes(WIDTH_FULL_H_96)
 
             # Action buttons
-            with ui.row().classes("w-full justify-end gap-2 mt-4"):
+            with ui.row().classes(ROW_ACTIONS_MT_4):
                 ui.button(
                     "Close",
                     on_click=self._handle_close,
@@ -163,11 +173,11 @@ class ManageAnalysisDialog(ui.dialog):
 
         with ui.dialog() as dialog, ui.card():
             ui.label(f"Are you sure you want to delete {description}?").classes(
-                "q-mb-md"
+                SPACING_MB_4
             )
-            ui.label("This action cannot be undone.").classes("text-negative mb-6")
+            ui.label("This action cannot be undone.").classes(TEXT_NEGATIVE_MB_6)
 
-            with ui.row().classes("w-full justify-end gap-2"):
+            with ui.row().classes(ROW_ACTIONS):
                 ui.button(
                     "Cancel",
                     on_click=lambda: dialog.submit(False),

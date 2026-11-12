@@ -61,6 +61,7 @@ gui_constants = GuiConstants(colors=gui_colors, urls=gui_urls)
 CARD_FLAT = "shadow-none border border-gray-200"
 CARD_CONTENT = f"w-full p-4 {CARD_FLAT}"
 CARD_PARAM = f"w-72 p-4 {CARD_FLAT}"
+CARD_MAPPING = f"p-4 {CARD_FLAT}"
 CARD_DIALOG_FULL = "w-full"
 CARD_DIALOG_PADDED = "w-full p-3"
 CARD_DIALOG_NARROW = "w-80 items-center"
@@ -79,6 +80,7 @@ ROW_GAP_MT = "gap-2 mt-2 w-full"
 ROW_GAP_MT_4 = "gap-4 mt-4"
 ROW_INLINE = "items-center gap-2"
 ROW_STATUS = "items-center gap-2 mb-4"
+ROW_TOOLBAR_END = "w-full gap-4 mt-4 justify-end"
 
 COL_STACK = "w-full gap-1"
 COL_STACK_MB_4 = f"{COL_STACK} mb-4"
@@ -91,19 +93,26 @@ COL_FULL = "w-full"
 WIDTH_FULL = "w-full"
 WIDTH_FULL_MT_2 = "w-full mt-2"
 WIDTH_FULL_MB_4 = "w-full mb-4"
+WIDTH_FULL_H_64 = "w-full h-64"
+WIDTH_FULL_H_96 = "w-full h-96"
 WIDTH_TOOLTIP = "w-64"
 WIDTH_UNIT_SELECT = "w-32"
 WIDTH_AMOUNT = "w-24"
 WIDTH_SKIP_ROWS = "w-48"
+SIZE_LOGO = "size-24 mb-4"
+TABLE_PROJECTS = "w-full my-sticky-table"
 
 TEXT_HEADING = "text-h6"
+TEXT_MUTED = "text-grey-8"
 TEXT_SECTION_HEADING = f"{TEXT_HEADING} mb-4"
+TEXT_HEADING_MUTED = f"{TEXT_HEADING} {TEXT_MUTED}"
 TEXT_DIALOG_TITLE = "text-h6 mb-2"
 TEXT_DIALOG_LEAD = "w-full break-words text-lg mb-2"
 TEXT_DIALOG_HEADER = "text-xl font-semibold"
 TEXT_TOOLTIP_BODY = "text-base leading-relaxed whitespace-normal"
 TEXT_FIELD_LABEL = "text-base font-bold"
-TEXT_MUTED = "text-grey-8"
+TEXT_MUTED_MB_4 = f"{TEXT_MUTED} mb-4"
+TEXT_MUTED_SM = f"text-sm {TEXT_MUTED}"
 TEXT_STEP_TITLE = "text-lg font-bold mb-4"
 TEXT_SUBTITLE_BOLD_MT = "text-subtitle2 font-bold mt-2"
 TEXT_CENTER_MB_4 = "text-center mb-4"
@@ -116,6 +125,9 @@ TEXT_MUTED_SM_MB_2 = f"text-sm {TEXT_MUTED} mb-2"
 TEXT_MUTED_SM_MT_2 = f"text-sm {TEXT_MUTED} mt-2"
 TEXT_BOLD = "font-bold"
 TEXT_WEIGHT_MEDIUM = "font-medium"
+TEXT_NEGATIVE = "text-negative"
+TEXT_NEGATIVE_MB_6 = "text-negative mb-6"
+TEXT_SM_NEGATIVE = "text-sm text-negative"
 TEXT_ERROR_SM = "text-negative font-bold text-sm"
 SPACING_MB_4 = "mb-4"
 
@@ -126,8 +138,34 @@ ICON_INFO = "text-grey-7 cursor-pointer"
 
 STYLE_CENTERED = "max-width: 960px; margin: 0 auto;"
 STYLE_LABEL_MIN_WIDTH = "min-width: 160px"
+STYLE_CARD_FLEX_MIN = "flex: 1 1 0; min-width: 160px"
 STYLE_IMPORT_DIALOG = "min-width: 600px; max-width: 800px"
 STYLE_EXPORT_DIALOG = "min-width: 500px; max-width: 700px"
 STYLE_PROGRESS_DIALOG = "width: 600px; max-width: 90vw; padding: 2rem;"
+STYLE_CHART_HEIGHT = "height: 320px"
 STYLE_STATUS_ACCENT = f"color: {MANGO_ORANGE}"
 STYLE_CLEAR = ""
+
+# Head HTML / page-level CSS snippets (ui.add_head_html)
+HEAD_HTML_STICKY_TABLE = """
+            <style>
+                .my-sticky-table {
+                /* Window height minus the page's fixed furniture (header, footer,
+                    padding, logo, button row = 488px). Re-measure if any of those
+                    change. Floor keeps the table usable at the minimum window size. */
+                    height: max(180px, calc(100vh - 496px));
+                }
+                .my-sticky-table thead tr th {
+                    position: sticky;
+                    z-index: 1;
+                    background-color: white;
+                }
+                .my-sticky-table thead tr:first-child th {
+                    top: 0;
+                }
+                .my-sticky-table thead tr th,
+                .my-sticky-table tbody tr td {
+                    font-size: 0.85rem;
+                }
+            </style>
+        """

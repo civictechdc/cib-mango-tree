@@ -11,6 +11,9 @@ from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
     COL_CONTENT_START,
     COL_FULL_GAP_2,
+    COLOR_NEGATIVE,
+    COLOR_PRIMARY,
+    PROPS_NO_CAPS,
     ROW_FULL_CENTER_GAP_2,
     STYLE_CONTENT_WIDE_PAD_1,
     TEXT_LG,
@@ -178,16 +181,16 @@ class PreviewDatasetPage(GuiPage):
                     ui.button(
                         "There's something wrong",
                         icon="close",
-                        color="negative",
+                        color=COLOR_NEGATIVE,
                         on_click=open_import_options,
-                    ).props("no-caps")
+                    ).props(PROPS_NO_CAPS)
 
                     ui.button(
                         "Looks good, let's proceed",
                         icon="upload",
-                        color="primary",
+                        color=COLOR_PRIMARY,
                         on_click=import_data_create_project,
-                    ).props("no-caps")
+                    ).props(PROPS_NO_CAPS)
 
         except Exception as e:
             self.notify_error(f"Error loading preview: {str(e)}")

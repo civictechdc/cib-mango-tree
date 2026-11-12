@@ -9,6 +9,8 @@ from cibmangotree.gui.components.manage_analyses import ManageAnalysisDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
+    COLOR_PRIMARY,
+    COLOR_SECONDARY,
     ROW_GAP_4,
     STYLE_CONTENT_NARROW,
     TEXT_LG,
@@ -151,13 +153,13 @@ class SelectPreviousAnalyzerPage(GuiPage):
                 ui.button(
                     "Manage Analyses",
                     icon="settings",
-                    color="secondary",
+                    color=COLOR_SECONDARY,
                     on_click=_on_manage_analyses,
                 )
                 ui.button(
                     "Proceed",
                     icon="arrow_forward",
-                    color="primary",
+                    color=COLOR_PRIMARY,
                     on_click=_on_proceed,
                 )
 

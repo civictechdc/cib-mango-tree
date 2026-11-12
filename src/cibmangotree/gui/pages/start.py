@@ -8,7 +8,13 @@ from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
     COL_FULL,
+    COLOR_CANCEL,
+    COLOR_NEGATIVE,
+    COLOR_PRIMARY,
     HEAD_HTML_STICKY_TABLE,
+    PROPS_DISABLE,
+    PROPS_OUTLINE,
+    PROPS_TABLE_STICKY,
     ROW_ACTIONS,
     ROW_CENTERED,
     ROW_TOOLBAR_END,
@@ -94,7 +100,7 @@ class StartPage(GuiPage):
                         "Create New",
                         on_click=self._handle_create_new,
                         icon="add",
-                        color="primary",
+                        color=COLOR_PRIMARY,
                     )
 
                 self._build_table()
@@ -104,17 +110,17 @@ class StartPage(GuiPage):
                         "Delete",
                         on_click=self._handle_delete_project,
                         icon="delete",
-                        color="negative",
+                        color=COLOR_NEGATIVE,
                     )
-                    self._delete_button.props("disable")
+                    self._delete_button.props(PROPS_DISABLE)
 
                     self._open_button = ui.button(
                         "Open Project",
                         on_click=self._handle_open_project,
                         icon="folder_open",
-                        color="primary",
+                        color=COLOR_PRIMARY,
                     )
-                    self._open_button.props("disable")
+                    self._open_button.props(PROPS_DISABLE)
 
     def _build_table(self) -> None:
         rows = self._build_rows()
@@ -126,7 +132,7 @@ class StartPage(GuiPage):
                 selection="single",
             )
             .classes(TABLE_PROJECTS)
-            .props("flat bordered separator='horizontal' sticky-header")
+            .props(PROPS_TABLE_STICKY)
         )
 
         self._table.on("selection", self._on_selection_change)
@@ -171,11 +177,11 @@ class StartPage(GuiPage):
         assert self._delete_button is not None
         has_selection = bool(self._table.selected)
         if has_selection:
-            self._open_button.props(remove="disable")
-            self._delete_button.props(remove="disable")
+            self._open_button.props(remove=PROPS_DISABLE)
+            self._delete_button.props(remove=PROPS_DISABLE)
         else:
-            self._open_button.props("disable")
-            self._delete_button.props("disable")
+            self._open_button.props(PROPS_DISABLE)
+            self._delete_button.props(PROPS_DISABLE)
 
     async def _handle_create_new(self) -> None:
         dialog = NewProjectDialog(self.session)
@@ -218,10 +224,10 @@ class StartPage(GuiPage):
                 ui.button(
                     "Cancel",
                     on_click=lambda: dialog.submit(False),
-                    color="cancel",
-                ).props("outline")
+                    color=COLOR_CANCEL,
+                ).props(PROPS_OUTLINE)
                 ui.button(
-                    "Delete", on_click=lambda: dialog.submit(True), color="negative"
+                    "Delete", on_click=lambda: dialog.submit(True), color=COLOR_NEGATIVE
                 )
 
         confirmed = await dialog

@@ -20,12 +20,15 @@ from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
     COL_CONTENT_CENTER,
+    COLOR_ACCENT,
+    COLOR_MANGO_ORANGE,
     FLEX_CENTER,
     FLEX_CENTER_GAP_2,
     FLEX_CENTER_GAP_3,
     LINK_BRAND,
     LINK_ICON,
     LOGO_BADGE,
+    PROPS_FLAT,
     ROW_CENTERED,
     ROW_HEADER,
     SIZE_ICON_SM,
@@ -182,7 +185,7 @@ class GuiPage(BaseModel, abc.ABC):
                         }
                         if self.back_text:
                             btn_kwargs["text"] = self.back_text
-                        ui.button(**btn_kwargs).props("flat")
+                        ui.button(**btn_kwargs).props(PROPS_FLAT)
 
                 # Center: Title
                 ui.label(self.title).classes(TEXT_HEADING)
@@ -192,9 +195,9 @@ class GuiPage(BaseModel, abc.ABC):
                     if self.show_back_button:  # Not on home if back button shown
                         ui.button(
                             icon="home",
-                            color="accent",
+                            color=COLOR_ACCENT,
                             on_click=self._handle_home_click,
-                        ).props("flat")
+                        ).props(PROPS_FLAT)
 
     async def _handle_back_click(self) -> None:
         """Handle back button click with optional exit confirmation."""
@@ -322,15 +325,15 @@ class GuiPage(BaseModel, abc.ABC):
 
     def notify_success(self, message: str) -> None:
         """Show success notification."""
-        ui.notify(message, type="positive", color="mango-orange")
+        ui.notify(message, type="positive", color=COLOR_MANGO_ORANGE)
 
     def notify_warning(self, message: str) -> None:
         """Show warning notification."""
-        ui.notify(message, type="warning", color="mango-orange")
+        ui.notify(message, type="warning", color=COLOR_MANGO_ORANGE)
 
     def notify_error(self, message: str) -> None:
         """Show error notification."""
-        ui.notify(message, type="negative", color="mango-orange")
+        ui.notify(message, type="negative", color=COLOR_MANGO_ORANGE)
 
     @contextmanager
     def centered_content(

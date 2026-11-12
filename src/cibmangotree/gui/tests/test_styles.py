@@ -70,6 +70,8 @@ def test_hook_covers_exactly_the_guarded_files() -> None:
         ),
         ('ui.label("x").style("max-width: 960px;")', ["max-width: 960px;"]),
         ('ui.label("x").style("")', [""]),
+        ('ui.button("x").props("outline")', ["outline"]),
+        ('ui.button("x", color="primary")', ["primary"]),
     ],
 )
 def test_scan_rejects_style_string_literals(source: str, expected: list[str]) -> None:
@@ -85,14 +87,15 @@ def test_scan_retired_tokens_get_specific_hints() -> None:
     assert findings[0].replacement == "TEXT_MUTED; mb-4"
 
 
-def test_scan_ignores_prose_props_and_named_constants() -> None:
+def test_scan_ignores_prose_and_named_constants() -> None:
     source = (
         '# ui.label("x").classes("text-grey")\n'
         'message = "text-grey q-mb-md"\n'
-        'ui.label("text-grey").props("text-grey")\n'
-        'ui.label("x").classes(ICON_INFO)\n'
+        "ui.label(message)\n"
+        "ui.label(step).classes(ICON_INFO)\n"
         "ui.column().style(STYLE_CENTERED)\n"
         "ui.label(step).classes(add=TEXT_MUTED, remove=TEXT_WEIGHT_MEDIUM)\n"
+        "ui.button(label, color=COLOR_PRIMARY).props(PROPS_OUTLINE)\n"
     )
     assert rules.scan_source(source, Path("example.py")) == []
 

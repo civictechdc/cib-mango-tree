@@ -12,7 +12,12 @@ from nicegui import ui
 
 from cibmangotree.gui.theme import (
     CARD_DIALOG_PADDED,
+    COLOR_CANCEL,
+    COLOR_MANGO_ORANGE,
+    COLOR_PRIMARY,
     ICON_INFO,
+    PROPS_OUTLINE,
+    PROPS_TOOLTIP_OFFSET,
     ROW_ACTIONS_MT_3,
     ROW_CENTERED_GAP,
     ROW_LAYOUT,
@@ -80,14 +85,14 @@ class ImportOptionsDialog(ui.dialog):
 
             # Action buttons
             with ui.row().classes(ROW_ACTIONS_MT_3):
-                ui.button("Cancel", on_click=self.close, color="cancel").props(
-                    "outline"
+                ui.button("Cancel", on_click=self.close, color=COLOR_CANCEL).props(
+                    PROPS_OUTLINE
                 )
                 ui.button(
                     "Retry Import",
                     icon="refresh",
                     on_click=self._handle_retry,
-                    color="primary",
+                    color=COLOR_PRIMARY,
                 )
 
     def _build_csv_controls(self):
@@ -100,11 +105,7 @@ class ImportOptionsDialog(ui.dialog):
                 ui.label("Column separator:").classes(TEXT_FIELD_LABEL)
                 with ui.icon("info").classes(ICON_INFO):
                     with (
-                        ui.tooltip()
-                        .classes(WIDTH_TOOLTIP)
-                        .props(
-                            'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
-                        )
+                        ui.tooltip().classes(WIDTH_TOOLTIP).props(PROPS_TOOLTIP_OFFSET)
                     ):
                         ui.label(
                             "Data files separate columns by commas, semicolons, pipes, or "
@@ -127,11 +128,7 @@ class ImportOptionsDialog(ui.dialog):
                 ui.label("Quote character:").classes(TEXT_FIELD_LABEL)
                 with ui.icon("info").classes(ICON_INFO):
                     with (
-                        ui.tooltip()
-                        .classes(WIDTH_TOOLTIP)
-                        .props(
-                            'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
-                        )
+                        ui.tooltip().classes(WIDTH_TOOLTIP).props(PROPS_TOOLTIP_OFFSET)
                     ):
                         ui.label(
                             "A quote character is used to enclose text so that our software "
@@ -154,11 +151,7 @@ class ImportOptionsDialog(ui.dialog):
                 ui.label("Has header:").classes(TEXT_FIELD_LABEL)
                 with ui.icon("info").classes(ICON_INFO):
                     with (
-                        ui.tooltip()
-                        .classes(WIDTH_TOOLTIP)
-                        .props(
-                            'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
-                        )
+                        ui.tooltip().classes(WIDTH_TOOLTIP).props(PROPS_TOOLTIP_OFFSET)
                     ):
                         ui.label(
                             "Some datasets feature a header row with the title of the "
@@ -176,11 +169,7 @@ class ImportOptionsDialog(ui.dialog):
                 ui.label("Skip rows:").classes(TEXT_FIELD_LABEL)
                 with ui.icon("info").classes(ICON_INFO):
                     with (
-                        ui.tooltip()
-                        .classes(WIDTH_TOOLTIP)
-                        .props(
-                            'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
-                        )
+                        ui.tooltip().classes(WIDTH_TOOLTIP).props(PROPS_TOOLTIP_OFFSET)
                     ):
                         ui.label(
                             "Some datasets begin with multiple rows that contain titles, "
@@ -225,7 +214,7 @@ class ImportOptionsDialog(ui.dialog):
                     ui.notify(
                         "Invalid skip rows value",
                         type="negative",
-                        color="mango-orange",
+                        color=COLOR_MANGO_ORANGE,
                     )
                     return
 
@@ -253,6 +242,6 @@ class ImportOptionsDialog(ui.dialog):
             ui.notify(
                 f"Error updating configuration: {str(e)}",
                 type="negative",
-                color="mango-orange",
+                color=COLOR_MANGO_ORANGE,
             )
             print(f"Config update error:\n{format_exc()}")

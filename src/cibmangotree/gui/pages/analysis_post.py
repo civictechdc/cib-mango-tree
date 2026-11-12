@@ -8,6 +8,7 @@ from cibmangotree.gui.components import ExportDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
+    COLOR_PRIMARY,
     ROW_GAP_4,
     SPACING_MB_6,
     STYLE_PROMPT,
@@ -69,17 +70,17 @@ class PostAnalysisPage(GuiPage):
                 ui.button(
                     "Open results dashboard",
                     on_click=lambda: self.navigate_to(gui_routes.dashboard),
-                    color="primary",
+                    color=COLOR_PRIMARY,
                 )
 
                 ui.button(
                     "Export raw output files",
                     on_click=_open_export,
-                    color="primary",
+                    color=COLOR_PRIMARY,
                 ).set_enabled(has_outputs)
 
                 ui.button(
                     "Open results folder",
                     on_click=_open_results_folder,
-                    color="primary",
+                    color=COLOR_PRIMARY,
                 )

@@ -1,5 +1,7 @@
 from nicegui import ui
 
+from cibmangotree.gui.theme import CARD_DIALOG_NARROW, ROW_GAP_2, TEXT_CENTER_MB_4
+
 
 class ExitConfirmationDialog(ui.dialog):
     """Reusable confirmation dialog for page exit navigation.
@@ -25,9 +27,9 @@ class ExitConfirmationDialog(ui.dialog):
         cancel_text: str = "Stay",
     ):
         super().__init__()
-        with self, ui.card().classes("w-80 items-center"):
-            ui.label(message).classes("text-center mb-4")
-            with ui.row().classes("gap-2"):
+        with self, ui.card().classes(CARD_DIALOG_NARROW):
+            ui.label(message).classes(TEXT_CENTER_MB_4)
+            with ui.row().classes(ROW_GAP_2):
                 ui.button(
                     cancel_text,
                     on_click=lambda: self.submit(False),

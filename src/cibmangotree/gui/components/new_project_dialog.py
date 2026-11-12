@@ -2,8 +2,10 @@ from nicegui import ui
 
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
-    ROW_ACTIONS,
+    CARD_DIALOG_MD,
+    ROW_ACTIONS_MT_4,
     TEXT_SECTION_HEADING,
+    WIDTH_FULL,
 )
 
 
@@ -21,7 +23,7 @@ class NewProjectDialog(ui.dialog):
 
         self.session = session
 
-        with self, ui.card().classes("w-96"):
+        with self, ui.card().classes(CARD_DIALOG_MD):
             ui.label("Create New Project").classes(TEXT_SECTION_HEADING)
 
             self.name_input = ui.input(
@@ -30,9 +32,9 @@ class NewProjectDialog(ui.dialog):
                 validation={
                     "Name is required": lambda value: bool(value and value.strip()),
                 },
-            ).classes("w-full")
+            ).classes(WIDTH_FULL)
 
-            with ui.row().classes(f"{ROW_ACTIONS} mt-4"):
+            with ui.row().classes(ROW_ACTIONS_MT_4):
                 ui.button(
                     "Cancel",
                     on_click=self._handle_cancel,

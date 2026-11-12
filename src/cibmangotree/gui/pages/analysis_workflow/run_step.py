@@ -11,12 +11,26 @@ from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
     CARD_CONTENT,
-    COL_STACK,
+    CARD_PROGRESS,
+    COL_GAP_2,
+    COL_STACK_MT_2,
+    COL_STACK_MT_4,
+    COL_STEP_BODY,
     MANGO_DARK_GREEN,
-    MANGO_ORANGE,
+    ROW_GAP_MT_4,
+    ROW_INLINE,
     STYLE_CENTERED,
+    STYLE_CLEAR,
+    STYLE_PROGRESS_DIALOG,
+    STYLE_STATUS_ACCENT,
+    TEXT_BASE,
+    TEXT_DIALOG_HEADER,
+    TEXT_ERROR_SM,
     TEXT_MUTED,
+    TEXT_SM,
+    TEXT_STATUS,
     TEXT_STEP_TITLE,
+    TEXT_WEIGHT_MEDIUM,
 )
 
 QUEUE_POLL_INTERVAL = 0.05
@@ -47,27 +61,27 @@ class RunAnalysisStep:
             ui.label("Please map columns first").classes(TEXT_MUTED)
             return
 
-        with ui.column().classes("w-full items-center gap-6").style(STYLE_CENTERED):
+        with ui.column().classes(COL_STEP_BODY).style(STYLE_CENTERED):
             ui.label("Configuration Summary").classes(TEXT_STEP_TITLE)
 
             with ui.card().classes(CARD_CONTENT):
-                with ui.column().classes("gap-2"):
+                with ui.column().classes(COL_GAP_2):
                     ui.label(
                         f"Analyzer: {analyzer.name if analyzer else 'Not selected'}"
-                    ).classes("text-sm")
+                    ).classes(TEXT_SM)
                     ui.label(
                         f"Columns: {len(column_mapping) if column_mapping else 0} mapped"
-                    ).classes("text-sm")
+                    ).classes(TEXT_SM)
                     ui.label(
                         f"Parameters: {len(params) if params else 0} configured"
-                    ).classes("text-sm")
+                    ).classes(TEXT_SM)
 
             ui.button(
                 "Run Analysis",
                 icon="play_arrow",
                 color="primary",
                 on_click=self._start_analysis,
-            ).classes("text-base")
+            ).classes(TEXT_BASE)
 
     def is_valid(self) -> bool:
         """Check if all prerequisites are configured."""
@@ -116,22 +130,20 @@ class RunAnalysisStep:
 
         with (
             ui.dialog().props("persistent") as dialog,
-            ui.card()
-            .classes("items-center justify-center gap-6")
-            .style("width: 600px; max-width: 90vw; padding: 2rem;"),
+            ui.card().classes(CARD_PROGRESS).style(STYLE_PROGRESS_DIALOG),
         ):
-            analyzer_header = ui.label(analyzer.name).classes("text-xl font-semibold")
+            analyzer_header = ui.label(analyzer.name).classes(TEXT_DIALOG_HEADER)
             status_label = (
                 ui.label("Initializing...")
-                .classes("text-base font-medium")
-                .style(f"color: {MANGO_ORANGE}")
+                .classes(TEXT_STATUS)
+                .style(STYLE_STATUS_ACCENT)
             )
 
-            step_list_container = ui.column().classes(f"{COL_STACK} mt-4")
+            step_list_container = ui.column().classes(COL_STACK_MT_4)
 
-            log_container = ui.column().classes(f"{COL_STACK} mt-2")
+            log_container = ui.column().classes(COL_STACK_MT_2)
 
-            with ui.row().classes("gap-4 mt-4"):
+            with ui.row().classes(ROW_GAP_MT_4):
                 cancel_btn = ui.button(
                     "Cancel Analysis",
                     icon="stop",
@@ -172,20 +184,20 @@ class RunAnalysisStep:
 
                 if current_step_name and current_step_name in step_rows:
                     _, _, prev_label = step_rows[current_step_name]
-                    prev_label.classes(add=TEXT_MUTED, remove="font-medium")
-                    prev_label.style("")
+                    prev_label.classes(add=TEXT_MUTED, remove=TEXT_WEIGHT_MEDIUM)
+                    prev_label.style(STYLE_CLEAR)
 
                 current_step_name = step_name
                 status_label.text = "Running analysis..."
 
                 with step_list_container:
-                    with ui.row().classes("items-center gap-2"):
+                    with ui.row().classes(ROW_INLINE):
                         spinner = ui.spinner("gears", size="sm")
                         checkmark = ui.icon(
                             "check_circle", color=MANGO_DARK_GREEN, size="sm"
                         )
                         checkmark.set_visibility(False)
-                        label = ui.label(step_name).classes("font-medium")
+                        label = ui.label(step_name).classes(TEXT_WEIGHT_MEDIUM)
                 step_rows[step_name] = (spinner, checkmark, label)
 
             elif msg.type == "step_finish":
@@ -193,8 +205,8 @@ class RunAnalysisStep:
                     spinner, checkmark, label = step_rows[current_step_name]
                     spinner.set_visibility(False)
                     checkmark.set_visibility(True)
-                    label.classes(add=TEXT_MUTED, remove="font-medium")
-                    label.style("")
+                    label.classes(add=TEXT_MUTED, remove=TEXT_WEIGHT_MEDIUM)
+                    label.style(STYLE_CLEAR)
                     label.text = current_step_name
                 current_step_name = None
 
@@ -206,15 +218,13 @@ class RunAnalysisStep:
 
             elif msg.type == "log":
                 with log_container:
-                    label = ui.label(msg.message).classes("text-sm")
+                    label = ui.label(msg.message).classes(TEXT_SM)
                     if msg.progress is not None:
                         label.text = f"{msg.message} ({msg.progress * 100:.0f}%)"
 
             elif msg.type == "error":
                 with log_container:
-                    ui.label(f"Error: {msg.message}").classes(
-                        "text-negative font-bold text-sm"
-                    )
+                    ui.label(f"Error: {msg.message}").classes(TEXT_ERROR_SM)
                 cancel_btn.disable()
                 analysis_complete = True
 
@@ -254,9 +264,7 @@ class RunAnalysisStep:
                 self.page.notify_error(f"Analysis error: {str(e)}")
                 print(f"Analysis error:\n{format_exc()}")
                 with log_container:
-                    ui.label(f"Error: {str(e)}").classes(
-                        "text-negative font-bold text-sm"
-                    )
+                    ui.label(f"Error: {str(e)}").classes(TEXT_ERROR_SM)
                 cancel_btn.disable()
             finally:
                 if analysis.is_draft:

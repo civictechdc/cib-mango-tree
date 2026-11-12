@@ -11,13 +11,22 @@ from typing import Callable
 from nicegui import ui
 
 from cibmangotree.gui.theme import (
+    CARD_DIALOG_PADDED,
     ICON_INFO,
+    ROW_ACTIONS_MT_3,
     ROW_CENTERED_GAP,
     ROW_LAYOUT,
+    STYLE_IMPORT_DIALOG,
     STYLE_LABEL_MIN_WIDTH,
+    TEXT_BASE,
+    TEXT_DIALOG_LEAD,
+    TEXT_DIALOG_TITLE,
     TEXT_FIELD_LABEL,
-    TEXT_MUTED,
+    TEXT_MUTED_SM_MB_2,
+    TEXT_MUTED_SM_MT_2,
     TEXT_TOOLTIP_BODY,
+    WIDTH_SKIP_ROWS,
+    WIDTH_TOOLTIP,
 )
 from cibmangotree.importing.csv import CsvImportSession
 from cibmangotree.importing.excel import ExcelImportSession
@@ -55,14 +64,14 @@ class ImportOptionsDialog(ui.dialog):
         # Build dialog UI
         with (
             self,
-            ui.card().classes("w-full p-3").style("min-width: 600px; max-width: 800px"),
+            ui.card().classes(CARD_DIALOG_PADDED).style(STYLE_IMPORT_DIALOG),
         ):
-            ui.label("Fix Import Settings").classes("text-h6 mb-2")
+            ui.label("Fix Import Settings").classes(TEXT_DIALOG_TITLE)
 
             ui.label(
                 "Sometimes the default settings don't suit your dataset. "
                 "Adjust the settings below to import your data correctly."
-            ).classes("w-full break-words text-lg mb-2")
+            ).classes(TEXT_DIALOG_LEAD)
 
             if isinstance(import_session, CsvImportSession):
                 self._build_csv_controls()
@@ -70,7 +79,7 @@ class ImportOptionsDialog(ui.dialog):
                 self._build_excel_controls()
 
             # Action buttons
-            with ui.row().classes("w-full justify-end gap-2 mt-3"):
+            with ui.row().classes(ROW_ACTIONS_MT_3):
                 ui.button("Cancel", on_click=self.close, color="cancel").props(
                     "outline"
                 )
@@ -92,7 +101,7 @@ class ImportOptionsDialog(ui.dialog):
                 with ui.icon("info").classes(ICON_INFO):
                     with (
                         ui.tooltip()
-                        .classes("w-64")
+                        .classes(WIDTH_TOOLTIP)
                         .props(
                             'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
                         )
@@ -119,7 +128,7 @@ class ImportOptionsDialog(ui.dialog):
                 with ui.icon("info").classes(ICON_INFO):
                     with (
                         ui.tooltip()
-                        .classes("w-64")
+                        .classes(WIDTH_TOOLTIP)
                         .props(
                             'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
                         )
@@ -146,7 +155,7 @@ class ImportOptionsDialog(ui.dialog):
                 with ui.icon("info").classes(ICON_INFO):
                     with (
                         ui.tooltip()
-                        .classes("w-64")
+                        .classes(WIDTH_TOOLTIP)
                         .props(
                             'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
                         )
@@ -168,7 +177,7 @@ class ImportOptionsDialog(ui.dialog):
                 with ui.icon("info").classes(ICON_INFO):
                     with (
                         ui.tooltip()
-                        .classes("w-64")
+                        .classes(WIDTH_TOOLTIP)
                         .props(
                             'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
                         )
@@ -189,17 +198,17 @@ class ImportOptionsDialog(ui.dialog):
                     "Must be non-negative": lambda v: v >= 0,
                     "Cannot exceed 100": lambda v: v <= 100,
                 },
-            ).classes("w-48")
+            ).classes(WIDTH_SKIP_ROWS)
 
     def _build_excel_controls(self):
         """Build Excel-specific configuration controls."""
         session = self.import_session
 
-        ui.label("Excel Import Options").classes(f"text-sm {TEXT_MUTED} mb-2")
-        ui.label(f"Sheet: {session.selected_sheet}").classes("text-base")
+        ui.label("Excel Import Options").classes(TEXT_MUTED_SM_MB_2)
+        ui.label(f"Sheet: {session.selected_sheet}").classes(TEXT_BASE)
 
         # Future enhancement: Add sheet selector dropdown
-        ui.label("(Sheet selection coming soon)").classes(f"text-sm {TEXT_MUTED} mt-2")
+        ui.label("(Sheet selection coming soon)").classes(TEXT_MUTED_SM_MT_2)
 
     async def _handle_retry(self):
         """Handle retry import button click."""

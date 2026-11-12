@@ -1,9 +1,12 @@
-"""Check the migrated GUI modules without importing NiceGUI or changing files.
+"""Check migrated GUI modules without importing NiceGUI or changing files.
 
 The hook and pytest use the same scanner. Widen GUARDED_PATHS and the hook's
-files pattern together as more modules are migrated. Only direct string and
-f-string arguments to .classes() and .style() are checked; variable values and
-arbitrary Python expressions are not evaluated.
+files pattern together as more modules are migrated.
+
+Guarded modules must not pass string or f-string literals to .classes() or
+.style() — import named constants from theme.py instead. Retired Quasar/layout
+tokens still get specific replacement hints when they appear in a banned
+literal.
 """
 
 from __future__ import annotations
@@ -12,7 +15,7 @@ import argparse
 import ast
 import re
 from pathlib import Path
-from typing import Iterator, NamedTuple
+from typing import NamedTuple
 
 GUI_ROOT = Path(__file__).resolve().parent
 REPO_ROOT = GUI_ROOT.parents[2]
@@ -24,6 +27,8 @@ GUARDED_PATHS = (
     "components/new_project_dialog.py",
     "pages/analysis_workflow/run_step.py",
 )
+
+THEME_CONSTANT_HINT = "a named constant from cibmangotree.gui.theme"
 
 RETIRED_CLASS_TOKENS = {
     "q-mb-xs": "mb-1",
@@ -41,7 +46,7 @@ RETIRED_CLASS_TOKENS = {
     "text-medium": "font-medium",
     "text-grey": "TEXT_MUTED",
     "text-grey-5": "TEXT_MUTED for text; a semantic constant for icons",
-    "text-grey-6": "TEXT_MUTED for text; ICON_INFO for info icons",
+    "text-grey-6": "TEXT_MUTED for text; a semantic constant for icons",
     "text-grey-7": "TEXT_MUTED for text; ICON_INFO for info icons",
     "text-gray-500": "TEXT_MUTED",
     "text-gray-600": "TEXT_MUTED",
@@ -64,39 +69,25 @@ def guarded_files() -> tuple[Path, ...]:
     return tuple(GUI_ROOT / path for path in GUARDED_PATHS)
 
 
-def style_constants() -> dict[str, str]:
-    """Read STYLE_* literals from theme.py without its pydantic dependency."""
-    constants = {}
-    tree = ast.parse((GUI_ROOT / "theme.py").read_text(encoding="utf-8"))
-    for node in tree.body:
-        if not isinstance(node, ast.Assign) or not isinstance(node.value, ast.Constant):
-            continue
-        if not isinstance(node.value.value, str):
-            continue
-        for target in node.targets:
-            if isinstance(target, ast.Name) and target.id.startswith("STYLE_"):
-                constants[node.value.value.strip().rstrip(";")] = target.id
-    return constants
+def _replacement_for_class_literal(value: str) -> str:
+    tokens = re.findall(r"\S+", value)
+    retired = [
+        RETIRED_CLASS_TOKENS[token] for token in tokens if token in RETIRED_CLASS_TOKENS
+    ]
+    if retired:
+        return "; ".join(retired)
+    return THEME_CONSTANT_HINT
 
 
-def literal_parts(argument: ast.expr) -> Iterator[tuple[str, int, bool, bool]]:
-    """Yield static text with flags for boundaries next to an interpolation."""
-    if isinstance(argument, ast.Constant) and isinstance(argument.value, str):
-        yield argument.value, argument.lineno, True, True
-    elif isinstance(argument, ast.JoinedStr):
-        for index, part in enumerate(argument.values):
-            if isinstance(part, ast.Constant) and isinstance(part.value, str):
-                yield (
-                    part.value,
-                    part.lineno,
-                    index == 0,
-                    index == len(argument.values) - 1,
-                )
+def _replacement_for_style_literal(value: str) -> str:
+    stripped = value.strip().rstrip(";")
+    if not stripped:
+        return "STYLE_CLEAR"
+    return THEME_CONSTANT_HINT
 
 
 def scan_source(source: str, path: Path) -> list[Finding]:
     findings = []
-    styles = style_constants()
     for node in ast.walk(ast.parse(source)):
         if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute):
             continue
@@ -104,32 +95,23 @@ def scan_source(source: str, path: Path) -> list[Finding]:
         if method not in {"classes", "style"}:
             continue
         for argument in [*node.args, *(keyword.value for keyword in node.keywords)]:
-            if method == "style":
-                if isinstance(argument, ast.Constant) and isinstance(
-                    argument.value, str
-                ):
-                    value = argument.value.strip().rstrip(";")
-                    if value in styles:
-                        findings.append(
-                            Finding(path, argument.lineno, value, styles[value])
-                        )
-                continue
-            for text, line, left_edge, right_edge in literal_parts(argument):
-                for match in re.finditer(r"\S+", text):
-                    if match.start() == 0 and not left_edge:
-                        continue
-                    if match.end() == len(text) and not right_edge:
-                        continue
-                    token = match.group()
-                    if token in RETIRED_CLASS_TOKENS:
-                        findings.append(
-                            Finding(
-                                path,
-                                line + text[: match.start()].count("\n"),
-                                token,
-                                RETIRED_CLASS_TOKENS[token],
-                            )
-                        )
+            if isinstance(argument, ast.Constant) and isinstance(argument.value, str):
+                if method == "style":
+                    replacement = _replacement_for_style_literal(argument.value)
+                else:
+                    replacement = _replacement_for_class_literal(argument.value)
+                findings.append(
+                    Finding(path, argument.lineno, argument.value, replacement)
+                )
+            elif isinstance(argument, ast.JoinedStr):
+                findings.append(
+                    Finding(
+                        path,
+                        argument.lineno,
+                        "<f-string>",
+                        THEME_CONSTANT_HINT,
+                    )
+                )
     return findings
 
 

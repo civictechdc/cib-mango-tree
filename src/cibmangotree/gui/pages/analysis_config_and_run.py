@@ -15,6 +15,10 @@ from cibmangotree.gui.theme import (
     BLOCK_PT_6,
     BLOCK_PT_12,
     COL_CONTENT_START,
+    COLOR_CANCEL,
+    COLOR_PRIMARY,
+    PROPS_FLAT,
+    PROPS_STEPPER,
     STYLE_CONTENT_WIDE_PAD_2,
     WIDTH_FULL,
 )
@@ -75,7 +79,7 @@ class AnalysisConfigAndRunPage(GuiPage):
         ):
             with (
                 ui.stepper()
-                .props("horizontal animated")
+                .props(PROPS_STEPPER)
                 .classes(WIDTH_FULL)
                 .on_value_change(self._on_step_change) as stepper
             ):
@@ -106,7 +110,7 @@ class AnalysisConfigAndRunPage(GuiPage):
                 ui.button(
                     "Next",
                     icon="arrow_forward",
-                    color="primary",
+                    color=COLOR_PRIMARY,
                     on_click=self._on_next_analyzer,
                 )
 
@@ -121,12 +125,12 @@ class AnalysisConfigAndRunPage(GuiPage):
                 ui.button(
                     "Next",
                     icon="arrow_forward",
-                    color="primary",
+                    color=COLOR_PRIMARY,
                     on_click=self._on_next_columns,
                 )
-                ui.button("Back", on_click=self.stepper.previous, color="cancel").props(
-                    "flat"
-                )
+                ui.button(
+                    "Back", on_click=self.stepper.previous, color=COLOR_CANCEL
+                ).props(PROPS_FLAT)
 
     def _render_params_step(self) -> None:
         """Render Step 3: Parameter Configuration."""
@@ -139,12 +143,12 @@ class AnalysisConfigAndRunPage(GuiPage):
                 ui.button(
                     "Next",
                     icon="arrow_forward",
-                    color="primary",
+                    color=COLOR_PRIMARY,
                     on_click=self._on_next_params,
                 )
-                ui.button("Back", on_click=self.stepper.previous, color="cancel").props(
-                    "flat"
-                )
+                ui.button(
+                    "Back", on_click=self.stepper.previous, color=COLOR_CANCEL
+                ).props(PROPS_FLAT)
 
     def _render_run_step(self) -> None:
         """Render Step 4: Run Analysis."""
@@ -157,9 +161,9 @@ class AnalysisConfigAndRunPage(GuiPage):
                 self.steps["run"].render()
 
             with ui.stepper_navigation():
-                ui.button("Back", on_click=self.stepper.previous, color="cancel").props(
-                    "flat"
-                )
+                ui.button(
+                    "Back", on_click=self.stepper.previous, color=COLOR_CANCEL
+                ).props(PROPS_FLAT)
 
     def _on_next_analyzer(self) -> None:
         """Handle Next from analyzer selection step."""

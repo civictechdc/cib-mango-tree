@@ -21,6 +21,7 @@ from cibmangotree.analyzers.time_coordination.time_coordination_base.interface i
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
+    PROPS_UNELEVATED,
     ROW_LOADING,
     SCROLL_PAIR,
     TEXT_BODY_MUTED,
@@ -54,7 +55,7 @@ class TimeCoordinationComparePage(BaseDashboardPage):
             ui.button(
                 "Back to network",
                 on_click=lambda: self.navigate_to(gui_routes.dashboard),
-            ).props("unelevated")
+            ).props(PROPS_UNELEVATED)
             return
 
         posts_path = self.get_primary_output_parquet_path(OUTPUT_POSTS)

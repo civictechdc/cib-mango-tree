@@ -3,10 +3,11 @@
 The hook and pytest use the same scanner. Widen GUARDED_PATHS and the hook's
 files pattern together as more modules are migrated.
 
-Guarded modules must not pass string or f-string literals to .classes() or
-.style() — import named constants from theme.py instead. Retired Quasar/layout
-tokens still get specific replacement hints when they appear in a banned
-literal.
+Guarded modules must not pass string or f-string literals to .classes(),
+.style(), or .props(), and must not pass string literals to color= — import
+named constants from theme.py instead (COLOR_*, PROPS_*, CARD_*, …). Retired
+Quasar/layout tokens still get specific replacement hints when they appear in
+a banned class literal.
 """
 
 from __future__ import annotations
@@ -104,24 +105,84 @@ def _replacement_for_style_literal(value: str) -> str:
     return THEME_CONSTANT_HINT
 
 
+def _flag_string_arg(argument: ast.expr, path: Path, findings: list[Finding]) -> None:
+    if isinstance(argument, ast.Constant) and isinstance(argument.value, str):
+        findings.append(
+            Finding(path, argument.lineno, argument.value, THEME_CONSTANT_HINT)
+        )
+    elif isinstance(argument, ast.JoinedStr):
+        findings.append(
+            Finding(path, argument.lineno, "<f-string>", THEME_CONSTANT_HINT)
+        )
+
+
 def scan_source(source: str, path: Path) -> list[Finding]:
-    findings = []
+    findings: list[Finding] = []
     for node in ast.walk(ast.parse(source)):
-        if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute):
+        if not isinstance(node, ast.Call):
+            continue
+
+        for keyword in node.keywords:
+            if keyword.arg == "color":
+                if isinstance(keyword.value, ast.Constant) and isinstance(
+                    keyword.value.value, str
+                ):
+                    findings.append(
+                        Finding(
+                            path,
+                            keyword.value.lineno,
+                            keyword.value.value,
+                            THEME_CONSTANT_HINT,
+                        )
+                    )
+                elif isinstance(keyword.value, ast.JoinedStr):
+                    findings.append(
+                        Finding(
+                            path,
+                            keyword.value.lineno,
+                            "<f-string>",
+                            THEME_CONSTANT_HINT,
+                        )
+                    )
+
+        if not isinstance(node.func, ast.Attribute):
             continue
         method = node.func.attr
-        if method not in {"classes", "style"}:
+        if method not in {"classes", "style", "props"}:
             continue
         for argument in [*node.args, *(keyword.value for keyword in node.keywords)]:
-            if isinstance(argument, ast.Constant) and isinstance(argument.value, str):
-                if method == "style":
-                    replacement = _replacement_for_style_literal(argument.value)
-                else:
-                    replacement = _replacement_for_class_literal(argument.value)
+            if (
+                method == "classes"
+                and isinstance(argument, ast.Constant)
+                and isinstance(argument.value, str)
+            ):
                 findings.append(
-                    Finding(path, argument.lineno, argument.value, replacement)
+                    Finding(
+                        path,
+                        argument.lineno,
+                        argument.value,
+                        _replacement_for_class_literal(argument.value),
+                    )
                 )
-            elif isinstance(argument, ast.JoinedStr):
+            elif (
+                method == "style"
+                and isinstance(argument, ast.Constant)
+                and isinstance(argument.value, str)
+            ):
+                findings.append(
+                    Finding(
+                        path,
+                        argument.lineno,
+                        argument.value,
+                        _replacement_for_style_literal(argument.value),
+                    )
+                )
+            elif method == "props":
+                _flag_string_arg(argument, path, findings)
+            elif isinstance(argument, ast.JoinedStr) and method in {
+                "classes",
+                "style",
+            }:
                 findings.append(
                     Finding(
                         path,

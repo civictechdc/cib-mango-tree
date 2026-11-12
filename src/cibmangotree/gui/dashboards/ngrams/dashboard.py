@@ -27,7 +27,14 @@ from cibmangotree.analyzers.ngrams.ngrams_stats.interface import (
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
     COL_DASHBOARD,
+    COLOR_CANCEL,
+    COLOR_PRIMARY,
+    COLOR_SECONDARY,
     CSS_NGRAMS_GRID,
+    PROPS_CLEARABLE_OFF,
+    PROPS_FLAT,
+    PROPS_FLAT_ROUND_DENSE,
+    PROPS_OUTLINE_DENSE,
     ROW_FULL_CENTER,
     ROW_FULL_ITEMS_GAP_4,
     ROW_GAP_4_END,
@@ -266,7 +273,9 @@ class NgramsDashboardPage(BaseDashboardPage):
         ):
             with ui.row().classes(ROW_SPACED):
                 ui.label(f"User Viewer - {user}").classes(TEXT_HEADING)
-                ui.button(icon="close", on_click=dialog.close).props("flat round dense")
+                ui.button(icon="close", on_click=dialog.close).props(
+                    PROPS_FLAT_ROUND_DENSE
+                )
             with ui.row().classes(ROW_META_MUTED):
                 ui.label(f"Total Posts: {total_num_posts}")
                 ui.label(f"First Post: {oldest_post.strftime('%H:%M:%S %d/%m/%Y')}")
@@ -483,15 +492,15 @@ class NgramsDashboardPage(BaseDashboardPage):
                     "This may cause the browser to slow down or become unresponsive."
                 ).classes(TEXT_BODY_MUTED)
                 with ui.row().classes(ROW_GAP_4_END):
-                    ui.button("Cancel", on_click=dialog.close, color="cancel").props(
-                        "flat"
-                    )
+                    ui.button(
+                        "Cancel", on_click=dialog.close, color=COLOR_CANCEL
+                    ).props(PROPS_FLAT)
 
                     async def _confirm():
                         dialog.close()
                         await self._load_full_dataset()
 
-                    ui.button("Load all", on_click=_confirm, color="primary")
+                    ui.button("Load all", on_click=_confirm, color=COLOR_PRIMARY)
             dialog.open()
         else:
             await self._load_full_dataset()
@@ -558,7 +567,7 @@ class NgramsDashboardPage(BaseDashboardPage):
                             label="Search N-gram",
                             on_change=self._handle_filter_change,
                         )
-                        .props('clearable autocomplete="off"')
+                        .props(PROPS_CLEARABLE_OFF)
                         .classes(WIDTH_QUARTER)
                         .on("keydown.enter", self._handle_enter_press)
                         .on("clear", self._handle_clear)
@@ -578,8 +587,8 @@ class NgramsDashboardPage(BaseDashboardPage):
                     self._show_all_btn = ui.button(
                         "Show all data",
                         on_click=self._handle_show_all_click,
-                        color="secondary",
-                    ).props("outline dense")
+                        color=COLOR_SECONDARY,
+                    ).props(PROPS_OUTLINE_DENSE)
                     self._show_all_btn.set_visibility(False)
 
                 with ui.card().classes(WIDTH_FULL):

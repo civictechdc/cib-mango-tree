@@ -7,6 +7,10 @@ from cibmangotree.gui.components.analysis_utils import present_timestamp
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
     CARD_DIALOG_FULL,
+    COLOR_CANCEL,
+    COLOR_MANGO_ORANGE,
+    COLOR_NEGATIVE,
+    PROPS_OUTLINE,
     ROW_ACTIONS,
     ROW_ACTIONS_MT_4,
     SPACING_MB_4,
@@ -83,11 +87,13 @@ class ManageAnalysisDialog(ui.dialog):
                 ui.button(
                     "Close",
                     on_click=self._handle_close,
-                    color="cancel",
-                ).props("outline")
+                    color=COLOR_CANCEL,
+                ).props(PROPS_OUTLINE)
 
                 ui.button(
-                    "Delete Selected", on_click=self._handle_delete, color="negative"
+                    "Delete Selected",
+                    on_click=self._handle_delete,
+                    color=COLOR_NEGATIVE,
                 )
 
     async def _handle_delete(self) -> None:
@@ -98,7 +104,7 @@ class ManageAnalysisDialog(ui.dialog):
             ui.notify(
                 "Please select one or more analyses to delete",
                 type="warning",
-                color="mango-orange",
+                color=COLOR_MANGO_ORANGE,
             )
             return
 
@@ -145,14 +151,14 @@ class ManageAnalysisDialog(ui.dialog):
             ui.notify(
                 f"Some deletions failed: {'; '.join(errors)}",
                 type="negative",
-                color="mango-orange",
+                color=COLOR_MANGO_ORANGE,
             )
         elif newly_deleted:
             label = "analysis" if len(newly_deleted) == 1 else "analyses"
             ui.notify(
                 f"Deleted {len(newly_deleted)} {label} successfully.",
                 type="positive",
-                color="mango-orange",
+                color=COLOR_MANGO_ORANGE,
             )
 
     async def _show_delete_confirmation(self, count: int, rows: list[dict]) -> bool:
@@ -181,11 +187,11 @@ class ManageAnalysisDialog(ui.dialog):
                 ui.button(
                     "Cancel",
                     on_click=lambda: dialog.submit(False),
-                    color="cancel",
-                ).props("outline")
+                    color=COLOR_CANCEL,
+                ).props(PROPS_OUTLINE)
 
                 ui.button(
-                    "Delete", on_click=lambda: dialog.submit(True), color="negative"
+                    "Delete", on_click=lambda: dialog.submit(True), color=COLOR_NEGATIVE
                 )
 
         return await dialog

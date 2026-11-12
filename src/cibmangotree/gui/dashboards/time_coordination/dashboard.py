@@ -31,6 +31,8 @@ from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
     COL_GAP_2,
     COL_GAP_3,
+    PROPS_DENSE,
+    PROPS_UNELEVATED,
     ROW_CENTERED_GAP,
     ROW_EXPLORE,
     ROW_LEGEND,
@@ -131,7 +133,7 @@ class TimeCoordinationDashboardPage(BaseDashboardPage):
                 )
                 self._inspect_button = ui.button(
                     "Compare users", on_click=self._show_compare
-                ).props("unelevated")
+                ).props(PROPS_UNELEVATED)
                 self._inspect_button.disable()
 
             with ui.column().classes(COL_GAP_2).style(STYLE_EXPLORE_MAIN):
@@ -153,7 +155,7 @@ class TimeCoordinationDashboardPage(BaseDashboardPage):
                             cb = ui.checkbox(
                                 value=True,
                                 on_change=lambda _e: self._apply_visibility(),
-                            ).props("dense")
+                            ).props(PROPS_DENSE)
                             ui.element("div").style(style_legend_swatch(color))
                             ui.label(label).classes(TEXT_CAPTION_MUTED)
                             self._group_checks[key] = cb

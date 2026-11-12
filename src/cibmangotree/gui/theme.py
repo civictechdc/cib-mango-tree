@@ -75,6 +75,36 @@ gui_colors = GuiColors()
 gui_urls = GuiURLS()
 gui_constants = GuiConstants(colors=gui_colors, urls=gui_urls)
 
+# --- Quasar color roles (NiceGUI color=...) ------------------------------
+# Values are Quasar/NiceGUI palette names registered in GuiPage._setup_colors
+# (except built-ins like negative).
+
+COLOR_PRIMARY = "primary"
+COLOR_SECONDARY = "secondary"
+COLOR_ACCENT = "accent"
+COLOR_CANCEL = "cancel"
+COLOR_MANGO_ORANGE = "mango-orange"
+COLOR_NEGATIVE = "negative"
+
+# --- Quasar props (NiceGUI .props(...)) ----------------------------------
+# Presentation chrome and shared widget flags. Prefer these over literals.
+
+PROPS_FLAT = "flat"
+PROPS_OUTLINE = "outline"
+PROPS_UNELEVATED = "unelevated"
+PROPS_NO_CAPS = "no-caps"
+PROPS_DENSE = "dense"
+PROPS_FLAT_ROUND_DENSE = "flat round dense"
+PROPS_OUTLINE_DENSE = "outline dense"
+PROPS_DISABLE = "disable"
+PROPS_PERSISTENT = "persistent"
+PROPS_USE_CHIPS = "use-chips"
+PROPS_INSTANT_FEEDBACK = "instant-feedback"
+PROPS_STEPPER = "horizontal animated"
+PROPS_CLEARABLE_OFF = 'clearable autocomplete="off"'
+PROPS_TOOLTIP_OFFSET = 'anchor="bottom middle" self="top middle" :offset="[210, 8]"'
+PROPS_TABLE_STICKY = "flat bordered separator='horizontal' sticky-header"
+
 # --- Class-string constants (NiceGUI .classes()) -------------------------
 
 CARD_FLAT = "shadow-none border border-gray-200"

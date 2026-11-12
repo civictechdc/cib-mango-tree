@@ -8,6 +8,13 @@ from cibmangotree.gui.components.analysis_utils import present_timestamp
 from cibmangotree.gui.components.manage_analyses import ManageAnalysisDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    ROW_GAP_4,
+    STYLE_CONTENT_NARROW,
+    TEXT_LG,
+    TEXT_MUTED,
+    WIDTH_FULL_H_64,
+)
 
 
 class SelectPreviousAnalyzerPage(GuiPage):
@@ -52,13 +59,13 @@ class SelectPreviousAnalyzerPage(GuiPage):
         self.analysis_contexts = self.session.current_project.list_analyses()
 
         # Main content - centered
-        with self.centered_content(max_width="800px"):
-            ui.label("Review a Previous Analysis").classes("text-lg")
+        with self.centered_content(style=STYLE_CONTENT_NARROW):
+            ui.label("Review a Previous Analysis").classes(TEXT_LG)
 
             if self.analysis_contexts:
                 self._render_previous_analyses_grid()
             else:
-                ui.label("No previous tests have been found.").classes("text-grey")
+                ui.label("No previous tests have been found.").classes(TEXT_MUTED)
 
             async def _on_proceed():
                 """Handle proceed button click."""
@@ -140,7 +147,7 @@ class SelectPreviousAnalyzerPage(GuiPage):
                 label = "analysis" if count == 1 else "analyses"
                 self.notify_success(f"Deleted {count} {label}.")
 
-            with ui.row().classes("gap-4"):
+            with ui.row().classes(ROW_GAP_4):
                 ui.button(
                     "Manage Analyses",
                     icon="settings",
@@ -180,4 +187,4 @@ class SelectPreviousAnalyzerPage(GuiPage):
                 "rowSelection": {"mode": "singleRow"},
             },
             theme="quartz",
-        ).classes("w-full h-64")
+        ).classes(WIDTH_FULL_H_64)

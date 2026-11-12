@@ -20,6 +20,15 @@ from cibmangotree.analyzers.time_coordination.time_coordination_base.interface i
 )
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    ROW_LOADING,
+    SCROLL_PAIR,
+    TEXT_BODY_MUTED,
+    TEXT_BODY_NEGATIVE,
+    TEXT_CAPTION_MUTED,
+    TEXT_H5,
+    TEXT_NEGATIVE,
+)
 
 from ..base_dashboard import BaseDashboardPage
 from .compare import format_post_body
@@ -41,7 +50,7 @@ class TimeCoordinationComparePage(BaseDashboardPage):
         user0 = self.session.time_coordination_compare_user0
         user1 = self.session.time_coordination_compare_user1
         if not user0 or not user1:
-            ui.label("No user pair selected.").classes("text-negative")
+            ui.label("No user pair selected.").classes(TEXT_NEGATIVE)
             ui.button(
                 "Back to network",
                 on_click=lambda: self.navigate_to(gui_routes.dashboard),
@@ -51,7 +60,7 @@ class TimeCoordinationComparePage(BaseDashboardPage):
         posts_path = self.get_primary_output_parquet_path(OUTPUT_POSTS)
         if not posts_path:
             ui.label("No time-coordination posts found for this run.").classes(
-                "text-negative"
+                TEXT_NEGATIVE
             )
             return
 
@@ -70,18 +79,16 @@ class TimeCoordinationComparePage(BaseDashboardPage):
 
         posts = pl.read_parquet(posts_path).to_pandas()
         if "rel_timestamp" not in posts.columns:
-            ui.label("Posts table missing rel_timestamp.").classes("text-negative")
+            ui.label("Posts table missing rel_timestamp.").classes(TEXT_NEGATIVE)
             return
         posts[COL_USER_ID] = posts[COL_USER_ID].astype(str)
 
-        ui.label(f"{user0}  ↔  {user1}").classes("text-h5")
-        meta = ui.label("").classes("text-caption text-grey-7")
-        with ui.row().classes(
-            "w-full items-center justify-center gap-3 q-mt-md"
-        ) as loading:
+        ui.label(f"{user0}  ↔  {user1}").classes(TEXT_H5)
+        meta = ui.label("").classes(TEXT_CAPTION_MUTED)
+        with ui.row().classes(ROW_LOADING) as loading:
             ui.spinner(size="lg")
-            ui.label("Loading interleaved posts…").classes("text-body2 text-grey-8")
-        scroll = ui.scroll_area().classes("w-full h-96 q-mt-md")
+            ui.label("Loading interleaved posts…").classes(TEXT_BODY_MUTED)
+        scroll = ui.scroll_area().classes(SCROLL_PAIR)
 
         async def _load() -> None:
             await asyncio.sleep(0)
@@ -109,7 +116,7 @@ class TimeCoordinationComparePage(BaseDashboardPage):
                         ui.label(
                             "No posts fall within an overlapping time window "
                             "for this pair (window duration = time step × window size)."
-                        ).classes("text-body2 text-grey-7")
+                        ).classes(TEXT_BODY_MUTED)
                     else:
                         for user, content, stamp in items:
                             ui.chat_message(
@@ -122,7 +129,7 @@ class TimeCoordinationComparePage(BaseDashboardPage):
                 with scroll:
                     ui.label(
                         f"Could not load overlapping posts for this pair: {exc}"
-                    ).classes("text-body2 text-negative")
+                    ).classes(TEXT_BODY_NEGATIVE)
             finally:
                 loading.visible = False
 

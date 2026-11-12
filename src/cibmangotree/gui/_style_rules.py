@@ -20,15 +20,29 @@ from typing import NamedTuple
 GUI_ROOT = Path(__file__).resolve().parent
 REPO_ROOT = GUI_ROOT.parents[2]
 GUARDED_PATHS = (
+    "base.py",
     "components/analysis.py",
+    "components/choice_fork.py",
     "components/exit_confirmation.py",
     "components/export_outputs.py",
     "components/import_options.py",
     "components/manage_analyses.py",
     "components/new_project_dialog.py",
+    "dashboards/base_dashboard.py",
+    "dashboards/hashtags/dashboard.py",
+    "dashboards/ngrams/dashboard.py",
+    "dashboards/placeholder/dashboard.py",
+    "dashboards/time_coordination/compare_page.py",
+    "dashboards/time_coordination/dashboard.py",
+    "pages/analysis_config_and_run.py",
+    "pages/analysis_post.py",
+    "pages/analysis_workflow/analyzer_step.py",
     "pages/analysis_workflow/column_mapping_step.py",
     "pages/analysis_workflow/params_step.py",
     "pages/analysis_workflow/run_step.py",
+    "pages/analyzer_previous.py",
+    "pages/dataset_preview.py",
+    "pages/importer.py",
     "pages/start.py",
 )
 

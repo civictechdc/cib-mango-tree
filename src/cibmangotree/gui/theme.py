@@ -6,6 +6,25 @@ MANGO_ORANGE_LIGHT = "#f9bc30"
 ACCENT = "white"
 CANCEL = "#424242"
 
+# Chart colors (ECharts option dicts)
+CHART_HIGHLIGHT = "#d62728"
+TAB_10_PALETTE = [
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    CHART_HIGHLIGHT,
+    "#9467bd",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+    "#17becf",
+]
+EDGE_COLOR_PAIR = "#B0B7C3"  # N == 1 (light grey)
+EDGE_COLOR_GROUP_2_5 = "#1B9E77"  # 2 <= N <= 5 (teal/green)
+EDGE_COLOR_GROUP_6_10 = "#D7268A"  # 6 <= N <= 10 (magenta)
+EDGE_COLOR_GROUP_11_20 = "#8B2E8B"  # N >= 11 (incl. >20)
+
 
 class GuiColors(BaseModel):
     """Mango Tree brand colors"""
@@ -133,6 +152,61 @@ SPACING_MB_4 = "mb-4"
 
 ICON_INFO = "text-grey-7 cursor-pointer"
 
+# Layout / page-level
+FLEX_CENTER = "flex items-center"
+FLEX_CENTER_GAP_2 = "flex items-center gap-2"
+FLEX_CENTER_GAP_3 = "flex items-center gap-3"
+ROW_HEADER = "w-full items-center justify-between"
+ROW_GAP_4 = "gap-4"
+ROW_GAP_4_END = "gap-4 justify-end"
+ROW_FULL_CENTER = "w-full justify-center"
+ROW_FULL_CENTER_GAP_2 = "w-full justify-center gap-2"
+ROW_FULL_GAP_4 = "w-full gap-4"
+ROW_FULL_ITEMS_GAP_4 = "w-full items-center gap-4"
+ROW_SPACED = "w-full justify-between items-center"
+ROW_CENTER_GAP_4_FULL = "items-center justify-center gap-4 w-full"
+ROW_EXPLORE = "w-full items-stretch gap-4 flex-wrap"
+ROW_LEGEND = "items-center gap-4 mb-2 flex-wrap justify-center"
+ROW_LOADING = "w-full items-center justify-center gap-3 mt-4"
+ROW_META_MUTED = f"text-body2 {TEXT_MUTED} gap-7"
+COL_CENTERED_FULL = "items-center w-full"
+COL_CONTENT_CENTER = "items-center justify-center gap-8"
+COL_CONTENT_START = "items-center justify-start gap-8"
+COL_FULL_GAP_2 = "w-full gap-2"
+COL_GAP_3 = "gap-3"
+COL_LOADING = "w-full items-center justify-center"
+COL_PLACEHOLDER = "items-center justify-center"
+COL_DASHBOARD = "w-3/4 p-4 gap-4"
+BLOCK_PT_12 = "pt-12 w-full items-center"
+BLOCK_PT_6 = "pt-6 w-full items-center"
+BLOCK_PT_12_CENTER = "pt-12 flex justify-center w-full"
+BLOCK_ANALYZER_GRID = "w-[64rem] max-w-full"
+CARD_ANALYZER_DESC = "w-[40rem] shadow-none"
+CARD_FLEX_1 = "flex-1"
+SCROLL_MAX_H_72 = "max-h-72"
+SCROLL_PAIR = "w-full h-96 mt-4"
+WIDTH_QUARTER = "w-1/4"
+WIDTH_FULL_WRAP = "w-full break-words"
+LINK_BRAND = "inline-flex items-center no-underline"
+LINK_ICON = "inline-flex items-center justify-center text-white no-underline size-5"
+LOGO_BADGE = "bg-white rounded-full p-1.5"
+SIZE_ICON_SM = "size-5"
+SVG_FILL_FULL = "size-full fill-current"
+
+# Text
+TEXT_LG = "text-lg"
+TEXT_H5 = "text-h5"
+TEXT_FOOTER = "text-sm font-bold"
+TEXT_BODY_MUTED = f"text-body2 {TEXT_MUTED}"
+TEXT_BODY_MUTED_MB_2 = f"text-body2 {TEXT_MUTED} mb-2"
+TEXT_BODY_NEGATIVE = "text-body2 text-negative"
+TEXT_CAPTION_MUTED = f"text-caption {TEXT_MUTED}"
+TEXT_MUTED_MT_4 = f"{TEXT_MUTED} mt-4"
+TEXT_NEGATIVE_MT_4 = "text-negative mt-4"
+TEXT_PLACEHOLDER_TITLE = f"{TEXT_HEADING} {TEXT_MUTED} mt-4"
+SPACING_MB_6 = "mb-6"
+ICON_MUTED = "text-grey-5"
+
 
 # --- Inline style constants (NiceGUI .style()) ---------------------------
 
@@ -144,9 +218,36 @@ STYLE_EXPORT_DIALOG = "min-width: 500px; max-width: 700px"
 STYLE_PROGRESS_DIALOG = "width: 600px; max-width: 90vw; padding: 2rem;"
 STYLE_CHART_HEIGHT = "height: 320px"
 STYLE_STATUS_ACCENT = f"color: {MANGO_ORANGE}"
+STYLE_PROMPT = "font-size: 1.05rem"
+STYLE_SPACE_BETWEEN = "justify-content: space-between"
+STYLE_HIDDEN = "display: none;"
+STYLE_BLOCK = "display: block;"
+STYLE_MAX_WIDTH_800 = "max-width: 800px"
+STYLE_HEIGHT_300 = "height: 300px"
+STYLE_HEIGHT_350 = "height: 350px"
+STYLE_HEIGHT_400 = "height: 400px"
+STYLE_HEIGHT_500 = "height: 500px"
+STYLE_CONTENT_DEFAULT = "height: 80vh; width: 100%"
+STYLE_CONTENT_AUTO_PAD_2 = "height: auto; width: 100%; padding: 2rem"
+STYLE_CONTENT_NARROW = f"{STYLE_CONTENT_DEFAULT}; max-width: 800px; margin: 0 auto"
+STYLE_CONTENT_WIDE_PAD_1 = (
+    "height: auto; width: 100%; max-width: 1200px; margin: 0 auto; padding: 1rem"
+)
+STYLE_CONTENT_WIDE_PAD_2 = (
+    "height: auto; width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem"
+)
+STYLE_EXPLORE_SIDEBAR = "flex:1 1 220px; min-width:200px; max-width:320px;"
+STYLE_EXPLORE_MAIN = "flex:3 1 360px; min-width:280px;"
+STYLE_EXPLORE_CHART = "display:block; width:100%; min-width:100%; height:520px;"
 STYLE_CLEAR = ""
 
-# Head HTML / page-level CSS snippets (ui.add_head_html)
+
+def style_legend_swatch(color: str) -> str:
+    """Inline style for a legend line swatch of the given chart color."""
+    return f"width:18px;height:4px;border-radius:2px;background:{color};"
+
+
+# Head HTML / page-level CSS snippets (ui.add_head_html / ui.add_css)
 HEAD_HTML_STICKY_TABLE = """
             <style>
                 .my-sticky-table {
@@ -168,4 +269,24 @@ HEAD_HTML_STICKY_TABLE = """
                     font-size: 0.85rem;
                 }
             </style>
+        """
+
+CSS_HASHTAGS_GRID = """
+            .ag-row {
+                cursor: pointer !important;
+            }
+            .ag-row-hover {
+                background-color: #e3f2fd !important;
+            }
+            """
+
+CSS_NGRAMS_GRID = """
+            .ag-tooltip {
+                white-space: normal !important;
+                max-width: 450px !important;
+                word-wrap: break-word !important;
+            }
+            .clickable-user-cell:hover {
+                font-weight: 600 !important;
+            }
         """

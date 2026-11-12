@@ -15,6 +15,7 @@ from cibmangotree.gui.theme import (
     SIZE_LOGO,
     SPACING_MB_4,
     STYLE_CENTERED,
+    STYLE_CONTENT_AUTO_PAD_2,
     TABLE_PROJECTS,
     TEXT_HEADING_MUTED,
     TEXT_NEGATIVE_MB_6,
@@ -78,7 +79,7 @@ class StartPage(GuiPage):
     def render_content(self) -> None:
         ui.add_head_html(HEAD_HTML_STICKY_TABLE)
 
-        with self.centered_content(height="auto", padding="2rem"):
+        with self.centered_content(style=STYLE_CONTENT_AUTO_PAD_2):
             ui.html(self._load_svg_icon("cibmt_logo"), sanitize=False).classes(
                 SIZE_LOGO
             )

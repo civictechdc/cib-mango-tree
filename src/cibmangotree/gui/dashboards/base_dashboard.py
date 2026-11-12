@@ -17,6 +17,16 @@ from nicegui import ui
 from cibmangotree.gui.base import GuiPage
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    COL_LOADING,
+    STYLE_BLOCK,
+    STYLE_HEIGHT_500,
+    STYLE_HIDDEN,
+    TEXT_MUTED_MT_4,
+    TEXT_NEGATIVE,
+    TEXT_NEGATIVE_MT_4,
+    WIDTH_FULL,
+)
 
 
 class BaseDashboardPage(GuiPage, abc.ABC):
@@ -93,7 +103,7 @@ class BaseDashboardPage(GuiPage, abc.ABC):
             return None
 
     def _create_loading_container(
-        self, height: str = "500px"
+        self, height_style: str = STYLE_HEIGHT_500
     ) -> tuple[ui.column, ui.column]:
         """
         Create a loading spinner container and a (hidden) content container.
@@ -104,25 +114,21 @@ class BaseDashboardPage(GuiPage, abc.ABC):
         Returns:
             (loading_container, content_container)
         """
-        loading_container = (
-            ui.column()
-            .classes("w-full items-center justify-center")
-            .style(f"height: {height};")
-        )
+        loading_container = ui.column().classes(COL_LOADING).style(height_style)
         with loading_container:
             ui.spinner("pie", size="xl")
-            ui.label("Loading dashboard...").classes("text-grey-6 q-mt-md")
+            ui.label("Loading dashboard...").classes(TEXT_MUTED_MT_4)
 
         content_container = (
-            ui.column().classes("w-full").style(f"height: {height}; display: none;")
+            ui.column().classes(WIDTH_FULL).style(height_style).style(STYLE_HIDDEN)
         )
 
         return loading_container, content_container
 
     def _show_content(self, loading_container: ui.column, content_container: ui.column):
         """Switch from loading state to content display."""
-        loading_container.style("display: none;")
-        content_container.style("display: block;")
+        loading_container.style(STYLE_HIDDEN)
+        content_container.style(STYLE_BLOCK)
 
     def _show_error(
         self,
@@ -132,8 +138,8 @@ class BaseDashboardPage(GuiPage, abc.ABC):
         """Replace loading spinner with an error message in-place."""
         loading_container.clear()
         with loading_container:
-            ui.icon("error_outline", size="3rem").classes("text-negative")
-            ui.label(message).classes("text-negative q-mt-md")
+            ui.icon("error_outline", size="3rem").classes(TEXT_NEGATIVE)
+            ui.label(message).classes(TEXT_NEGATIVE_MT_4)
 
     @abc.abstractmethod
     def render_content(self) -> None:

@@ -25,6 +25,23 @@ from cibmangotree.analyzers.ngrams.ngrams_stats.interface import (
     interface as ngram_stats_interface,
 )
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    COL_DASHBOARD,
+    CSS_NGRAMS_GRID,
+    ROW_FULL_CENTER,
+    ROW_FULL_ITEMS_GAP_4,
+    ROW_GAP_4_END,
+    ROW_META_MUTED,
+    ROW_SPACED,
+    STYLE_HEIGHT_400,
+    STYLE_HEIGHT_500,
+    STYLE_MAX_WIDTH_800,
+    TEXT_BODY_MUTED,
+    TEXT_BODY_MUTED_MB_2,
+    TEXT_HEADING,
+    WIDTH_FULL,
+    WIDTH_QUARTER,
+)
 
 from ..base_dashboard import BaseDashboardPage
 from .data import filter_ngrams_by_text, make_detail_columns, make_summary_columns
@@ -245,12 +262,12 @@ class NgramsDashboardPage(BaseDashboardPage):
 
         with (
             ui.dialog() as dialog,
-            ui.card().classes("w-full").style("max-width: 800px"),
+            ui.card().classes(WIDTH_FULL).style(STYLE_MAX_WIDTH_800),
         ):
-            with ui.row().classes("w-full justify-between items-center"):
-                ui.label(f"User Viewer - {user}").classes("text-h6")
+            with ui.row().classes(ROW_SPACED):
+                ui.label(f"User Viewer - {user}").classes(TEXT_HEADING)
                 ui.button(icon="close", on_click=dialog.close).props("flat round dense")
-            with ui.row().classes("text-body2 text-grey-7 gap-7"):
+            with ui.row().classes(ROW_META_MUTED):
                 ui.label(f"Total Posts: {total_num_posts}")
                 ui.label(f"First Post: {oldest_post.strftime('%H:%M:%S %d/%m/%Y')}")
                 ui.label(f"Last Post: {newest_post.strftime('%H:%M:%S %d/%m/%Y')}")
@@ -274,7 +291,7 @@ class NgramsDashboardPage(BaseDashboardPage):
                     "tooltipSwitchShowDelay": 70,
                 },
                 theme="quartz",
-            ).classes("w-full").style("height: 400px")
+            ).classes(WIDTH_FULL).style(STYLE_HEIGHT_400)
 
         dialog.open()
 
@@ -461,11 +478,11 @@ class NgramsDashboardPage(BaseDashboardPage):
 
         if total > 100_000:
             with ui.dialog() as dialog, ui.card():
-                ui.label(f"Load all {total:,} data points?").classes("text-h6")
+                ui.label(f"Load all {total:,} data points?").classes(TEXT_HEADING)
                 ui.label(
                     "This may cause the browser to slow down or become unresponsive."
-                ).classes("text-body2 text-grey-7")
-                with ui.row().classes("gap-4 justify-end"):
+                ).classes(TEXT_BODY_MUTED)
+                with ui.row().classes(ROW_GAP_4_END):
                     ui.button("Cancel", on_click=dialog.close, color="cancel").props(
                         "flat"
                     )
@@ -531,19 +548,10 @@ class NgramsDashboardPage(BaseDashboardPage):
         self._chart.update()
 
     def render_content(self) -> None:
-        ui.add_css("""
-            .ag-tooltip {
-                white-space: normal !important;
-                max-width: 450px !important;
-                word-wrap: break-word !important;
-            }
-            .clickable-user-cell:hover {
-                font-weight: 600 !important;
-            }
-        """)
-        with ui.row().classes("w-full justify-center"):
-            with ui.column().classes("w-3/4 q-pa-md gap-4"):
-                with ui.card().classes("w-full"):
+        ui.add_css(CSS_NGRAMS_GRID)
+        with ui.row().classes(ROW_FULL_CENTER):
+            with ui.column().classes(COL_DASHBOARD):
+                with ui.card().classes(WIDTH_FULL):
                     self._ngram_select = (
                         ui.input(
                             autocomplete=[],
@@ -551,24 +559,22 @@ class NgramsDashboardPage(BaseDashboardPage):
                             on_change=self._handle_filter_change,
                         )
                         .props('clearable autocomplete="off"')
-                        .classes("w-1/4")
+                        .classes(WIDTH_QUARTER)
                         .on("keydown.enter", self._handle_enter_press)
                         .on("clear", self._handle_clear)
                     )
 
                     self._chart_loading, self._chart_content = (
-                        self._create_loading_container("500px")
+                        self._create_loading_container(STYLE_HEIGHT_500)
                     )
                     with self._chart_content:
                         self._chart = (
                             ui.echart({}, on_point_click=self._handle_point_click)
-                            .classes("w-full")
-                            .style("height: 500px")
+                            .classes(WIDTH_FULL)
+                            .style(STYLE_HEIGHT_500)
                         )
-                with ui.row().classes("w-full items-center gap-4"):
-                    self._sampling_label = ui.label("").classes(
-                        "text-body2 text-grey-7"
-                    )
+                with ui.row().classes(ROW_FULL_ITEMS_GAP_4):
+                    self._sampling_label = ui.label("").classes(TEXT_BODY_MUTED)
                     self._show_all_btn = ui.button(
                         "Show all data",
                         on_click=self._handle_show_all_click,
@@ -576,14 +582,14 @@ class NgramsDashboardPage(BaseDashboardPage):
                     ).props("outline dense")
                     self._show_all_btn.set_visibility(False)
 
-                with ui.card().classes("w-full"):
+                with ui.card().classes(WIDTH_FULL):
                     with ui.card_section():
-                        ui.label("Data viewer").classes("text-h6")
+                        ui.label("Data viewer").classes(TEXT_HEADING)
                     self._info_label = ui.label("Loading data...").classes(
-                        "text-body2 text-grey-7 q-mb-sm"
+                        TEXT_BODY_MUTED_MB_2
                     )
                     self._grid_loading, self._grid_content = (
-                        self._create_loading_container("400px")
+                        self._create_loading_container(STYLE_HEIGHT_400)
                     )
                     with self._grid_content:
                         self._grid = (
@@ -603,8 +609,8 @@ class NgramsDashboardPage(BaseDashboardPage):
                                 },
                                 theme="quartz",
                             )
-                            .classes("w-full")
-                            .style("height: 400px")
+                            .classes(WIDTH_FULL)
+                            .style(STYLE_HEIGHT_400)
                         )
                         # For popup
                         self._grid.on("cellClicked", self._handle_cell_click)

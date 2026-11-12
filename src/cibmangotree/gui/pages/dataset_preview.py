@@ -8,6 +8,16 @@ from cibmangotree.gui.base import GuiPage
 from cibmangotree.gui.components.import_options import ImportOptionsDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    COL_CONTENT_START,
+    COL_FULL_GAP_2,
+    ROW_FULL_CENTER_GAP_2,
+    STYLE_CONTENT_WIDE_PAD_1,
+    TEXT_LG,
+    TEXT_SM,
+    WIDTH_FULL_H_64,
+    WIDTH_FULL_WRAP,
+)
 from cibmangotree.importing.csv import CSVImporter
 from cibmangotree.importing.excel import ExcelImporter
 
@@ -156,18 +166,15 @@ class PreviewDatasetPage(GuiPage):
 
             # Main content area - centered
             with self.centered_content(
-                max_width="1200px",
-                padding="1rem",
-                justify="start",
-                height="auto",
+                style=STYLE_CONTENT_WIDE_PAD_1, classes=COL_CONTENT_START
             ):
                 # Data Preview (with container for dynamic updates)
-                data_preview_container = ui.column().classes("w-full gap-2")
+                data_preview_container = ui.column().classes(COL_FULL_GAP_2)
                 with data_preview_container:
                     self._make_preview_grid(import_preview)
 
                 # Bottom Actions
-                with ui.row().classes("w-full justify-center gap-2"):
+                with ui.row().classes(ROW_FULL_CENTER_GAP_2):
                     ui.button(
                         "There's something wrong",
                         icon="close",
@@ -200,13 +207,13 @@ class PreviewDatasetPage(GuiPage):
             "To enable proper analysis, please check the table below to ensure "
             "that it matches your original dataset. Your column headers should "
             "appear in the first row."
-        ).classes("w-full break-words")
+        ).classes(WIDTH_FULL_WRAP)
 
-        ui.label("Data Preview (first 5 rows)").classes("text-lg")
+        ui.label("Data Preview (first 5 rows)").classes(TEXT_LG)
 
-        ui.label(f"No. detected columns: {len(data_frame.columns)}").classes("text-sm")
+        ui.label(f"No. detected columns: {len(data_frame.columns)}").classes(TEXT_SM)
 
         # Display data grid
         ui.aggrid.from_polars(
             data_frame, theme="quartz", auto_size_columns=False
-        ).classes("w-full h-64")
+        ).classes(WIDTH_FULL_H_64)

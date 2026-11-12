@@ -18,7 +18,25 @@ from pydantic import BaseModel, ConfigDict
 from cibmangotree.gui.components.exit_confirmation import ExitConfirmationDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
-from cibmangotree.gui.theme import gui_colors, gui_urls
+from cibmangotree.gui.theme import (
+    COL_CONTENT_CENTER,
+    FLEX_CENTER,
+    FLEX_CENTER_GAP_2,
+    FLEX_CENTER_GAP_3,
+    LINK_BRAND,
+    LINK_ICON,
+    LOGO_BADGE,
+    ROW_CENTERED,
+    ROW_HEADER,
+    SIZE_ICON_SM,
+    STYLE_CONTENT_DEFAULT,
+    STYLE_SPACE_BETWEEN,
+    SVG_FILL_FULL,
+    TEXT_FOOTER,
+    TEXT_HEADING,
+    gui_colors,
+    gui_urls,
+)
 from cibmangotree.meta.get_version import get_version
 
 
@@ -152,9 +170,9 @@ class GuiPage(BaseModel, abc.ABC):
         - Right: Home button (if not on home page)
         """
         with ui.header(elevated=True):
-            with ui.row().classes("w-full items-center justify-between"):
+            with ui.row().classes(ROW_HEADER):
                 # Left: Back button or spacer
-                with ui.element("div").classes("flex items-center"):
+                with ui.element("div").classes(FLEX_CENTER):
                     if self.show_back_button and self.back_route:
                         # Build button parameters conditionally
                         btn_kwargs = {
@@ -167,10 +185,10 @@ class GuiPage(BaseModel, abc.ABC):
                         ui.button(**btn_kwargs).props("flat")
 
                 # Center: Title
-                ui.label(self.title).classes("text-h6")
+                ui.label(self.title).classes(TEXT_HEADING)
 
                 # Right: Home button (if not on home page)
-                with ui.element("div").classes("flex items-center"):
+                with ui.element("div").classes(FLEX_CENTER):
                     if self.show_back_button:  # Not on home if back button shown
                         ui.button(
                             icon="home",
@@ -238,51 +256,43 @@ class GuiPage(BaseModel, abc.ABC):
         - Right: External links (GitHub, Instagram)
         """
         with ui.footer(elevated=True):
-            with (
-                ui.row()
-                .classes("w-full items-center")
-                .style("justify-content: space-between")
-            ):
+            with ui.row().classes(ROW_CENTERED).style(STYLE_SPACE_BETWEEN):
                 # Left: License
-                with ui.element("div").classes("flex items-center"):
+                with ui.element("div").classes(FLEX_CENTER):
                     version = get_version()
                     version_str = f"{version}" if version else "dev"
-                    ui.label("MIT License · " + version_str).classes(
-                        "text-sm text-bold"
-                    )
+                    ui.label("MIT License · " + version_str).classes(TEXT_FOOTER)
 
                 # Center: Project attribution
-                with ui.element("div").classes("flex items-center gap-2"):
+                with ui.element("div").classes(FLEX_CENTER_GAP_2):
                     with ui.link(target=gui_urls.website_url, new_tab=True).classes(
-                        "inline-flex items-center no-underline"
+                        LINK_BRAND
                     ):
-                        with ui.element("div").classes("bg-white rounded-full p-1.5"):
+                        with ui.element("div").classes(LOGO_BADGE):
                             ui.html(
                                 self._load_svg_icon("cibmt_logo"), sanitize=False
-                            ).classes("size-5")
+                            ).classes(SIZE_ICON_SM)
                         ui.tooltip("Visit cibmangotree.org")
-                    ui.label("A Civic Tech DC Project").classes("text-sm text-bold")
+                    ui.label("A Civic Tech DC Project").classes(TEXT_FOOTER)
 
                 # Right: External links
                 self._render_footer_links()
 
     def _render_footer_links(self) -> None:
         """Render social media links in footer."""
-        with ui.element("div").classes("flex items-center gap-3"):
+        with ui.element("div").classes(FLEX_CENTER_GAP_3):
             # GitHub button
-            with ui.link(target=gui_urls.github_url, new_tab=True).classes(
-                "inline-flex items-center justify-center text-white no-underline size-5"
-            ):
+            with ui.link(target=gui_urls.github_url, new_tab=True).classes(LINK_ICON):
                 ui.html(self._load_svg_icon("github"), sanitize=False).classes(
-                    "size-full fill-current"
+                    SVG_FILL_FULL
                 )
                 ui.tooltip("Visit our GitHub")
 
             with ui.link(target=gui_urls.instagram_url, new_tab=True).classes(
-                "inline-flex items-center justify-center text-white no-underline size-5"
+                LINK_ICON
             ):
                 ui.html(self._load_svg_icon("instagram"), sanitize=False).classes(
-                    "size-full fill-current"
+                    SVG_FILL_FULL
                 )
                 ui.tooltip("Follow us on Instagram")
 
@@ -325,19 +335,10 @@ class GuiPage(BaseModel, abc.ABC):
     @contextmanager
     def centered_content(
         self,
-        max_width: str | None = None,
-        height: str = "80vh",
-        padding: str | None = None,
-        justify: str = "center",
+        style: str = STYLE_CONTENT_DEFAULT,
+        classes: str = COL_CONTENT_CENTER,
     ) -> Generator[ui.column, None, None]:
-        style = f"height: {height}; width: 100%"
-        if max_width:
-            style += f"; max-width: {max_width}; margin: 0 auto"
-        if padding:
-            style += f"; padding: {padding}"
-        container = (
-            ui.column().classes(f"items-center justify-{justify} gap-8").style(style)
-        )
+        container = ui.column().classes(classes).style(style)
         with container:
             yield container
 

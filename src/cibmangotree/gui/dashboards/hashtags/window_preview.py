@@ -11,7 +11,7 @@ import polars as pl
 
 from cibmangotree.analyzer_interface.params import TimeBinningValue
 from cibmangotree.analyzers.hashtags.hashtags_base.interface import COL_TIME
-from cibmangotree.gui.theme import MANGO_ORANGE
+from cibmangotree.gui.theme import CANCEL, MANGO_ORANGE
 
 ACTIVITY_BIN_COUNT = 150
 # The sample hashtag file has 91 occupied hours and 100 occupied minutes.
@@ -136,7 +136,7 @@ def plot_activity_echart(bins: pl.DataFrame, edges: WindowEdges) -> dict:
         "markLine": {
             "symbol": "none",
             "silent": True,
-            "lineStyle": {"color": "#424242", "type": "dashed"},
+            "lineStyle": {"color": CANCEL, "type": "dashed"},
             "data": line_data,
         },
     }

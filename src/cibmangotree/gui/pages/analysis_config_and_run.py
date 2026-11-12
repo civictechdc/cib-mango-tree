@@ -11,6 +11,13 @@ from cibmangotree.gui.pages.analysis_workflow import (
 )
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    BLOCK_PT_6,
+    BLOCK_PT_12,
+    COL_CONTENT_START,
+    STYLE_CONTENT_WIDE_PAD_2,
+    WIDTH_FULL,
+)
 
 STEP_NAMES = {
     "Select Analyzer": "analyzer",
@@ -64,12 +71,12 @@ class AnalysisConfigAndRunPage(GuiPage):
             )
 
         with self.centered_content(
-            max_width="1200px", justify="start", padding="2rem", height="auto"
+            style=STYLE_CONTENT_WIDE_PAD_2, classes=COL_CONTENT_START
         ):
             with (
                 ui.stepper()
                 .props("horizontal animated")
-                .classes("w-full")
+                .classes(WIDTH_FULL)
                 .on_value_change(self._on_step_change) as stepper
             ):
                 self.stepper = stepper
@@ -91,7 +98,7 @@ class AnalysisConfigAndRunPage(GuiPage):
     def _render_analyzer_step(self) -> None:
         """Render Step 1: Analyzer Selection."""
         with ui.step("Select Analyzer", icon="science"):
-            with ui.element().classes("pt-12 w-full items-center"):
+            with ui.element().classes(BLOCK_PT_12):
                 self.steps["analyzer"] = AnalyzerSelectionStep(self.session)
                 self.steps["analyzer"].render()
 
@@ -106,7 +113,7 @@ class AnalysisConfigAndRunPage(GuiPage):
     def _render_column_mapping_step(self) -> None:
         """Render Step 2: Column Mapping."""
         with ui.step("Map Columns", icon="pivot_table_chart"):
-            with ui.element().classes("pt-6 w-full items-center"):
+            with ui.element().classes(BLOCK_PT_6):
                 self.steps["columns"] = ColumnMappingStep(self.session)
                 self.steps["columns"].render()
 
@@ -124,7 +131,7 @@ class AnalysisConfigAndRunPage(GuiPage):
     def _render_params_step(self) -> None:
         """Render Step 3: Parameter Configuration."""
         with ui.step("Configure Parameters", icon="tune"):
-            with ui.element().classes("pt-6 w-full items-center"):
+            with ui.element().classes(BLOCK_PT_6):
                 self.steps["params"] = ParamsConfigStep(self.session)
                 self.steps["params"].render()
 
@@ -142,7 +149,7 @@ class AnalysisConfigAndRunPage(GuiPage):
     def _render_run_step(self) -> None:
         """Render Step 4: Run Analysis."""
         with ui.step("Run Analysis", icon="play_arrow"):
-            with ui.element().classes("pt-6 w-full items-center"):
+            with ui.element().classes(BLOCK_PT_6):
                 self.steps["run"] = RunAnalysisStep(
                     session=self.session,
                     page=self,

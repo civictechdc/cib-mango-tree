@@ -2,6 +2,13 @@
 
 import networkx as nx
 
+from cibmangotree.gui.theme import (
+    EDGE_COLOR_GROUP_2_5,
+    EDGE_COLOR_GROUP_6_10,
+    EDGE_COLOR_GROUP_11_20,
+    EDGE_COLOR_PAIR,
+)
+
 # Slightly above ECharts' default (12) so hovered account names stay readable.
 NODE_LABEL_FONT_SIZE = 14
 
@@ -11,11 +18,6 @@ EDGE_GROUP_PAIR = "pair"
 EDGE_GROUP_2_5 = "g2_5"
 EDGE_GROUP_6_10 = "g6_10"
 EDGE_GROUP_11_20 = "g11_20"
-
-EDGE_COLOR_PAIR = "#B0B7C3"  # N == 1 (light grey)
-EDGE_COLOR_GROUP_2_5 = "#1B9E77"  # 2 <= N <= 5 (teal/green)
-EDGE_COLOR_GROUP_6_10 = "#D7268A"  # 6 <= N <= 10 (magenta)
-EDGE_COLOR_GROUP_11_20 = "#8B2E8B"  # N >= 11 (incl. >20)
 
 # (group_key, color, label) — keys used for visibility toggles.
 EDGE_COLOR_LEGEND = (

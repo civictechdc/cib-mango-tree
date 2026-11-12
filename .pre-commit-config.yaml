@@ -16,4 +16,4 @@ repos:
         entry: python src/cibmangotree/gui/_style_rules.py
         language: system
         types: [python]
-        files: ^src/cibmangotree/gui/(pages/(start|analysis_workflow/(column_mapping_step|params_step|run_step))|components/(analysis|exit_confirmation|export_outputs|import_options|manage_analyses|new_project_dialog))\.py$
+        files: ^src/cibmangotree/gui/(base|components/(analysis|choice_fork|exit_confirmation|export_outputs|import_options|manage_analyses|new_project_dialog)|dashboards/base_dashboard|dashboards/hashtags/dashboard|dashboards/ngrams/dashboard|dashboards/placeholder/dashboard|dashboards/time_coordination/(compare_page|dashboard)|pages/(analysis_config_and_run|analysis_post|analyzer_previous|dataset_preview|importer|start)|pages/analysis_workflow/(analyzer_step|column_mapping_step|params_step|run_step))\.py$

@@ -7,6 +7,11 @@ from cibmangotree.gui.base import GuiPage
 from cibmangotree.gui.components import ExportDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    ROW_GAP_4,
+    SPACING_MB_6,
+    STYLE_PROMPT,
+)
 from cibmangotree.gui.utils import open_directory_explorer
 
 
@@ -56,11 +61,11 @@ class PostAnalysisPage(GuiPage):
                 self.notify_error(f"Could not open results folder: {e}")
 
         with self.centered_content():
-            ui.label("What would you like to do next?").classes("q-mb-lg").style(
-                "font-size: 1.05rem"
+            ui.label("What would you like to do next?").classes(SPACING_MB_6).style(
+                STYLE_PROMPT
             )
 
-            with ui.row().classes("gap-4"):
+            with ui.row().classes(ROW_GAP_4):
                 ui.button(
                     "Open results dashboard",
                     on_click=lambda: self.navigate_to(gui_routes.dashboard),

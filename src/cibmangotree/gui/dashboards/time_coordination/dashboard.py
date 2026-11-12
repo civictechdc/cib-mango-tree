@@ -28,6 +28,23 @@ from cibmangotree.analyzers.time_coordination.time_coordination_base.interface i
 )
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    COL_GAP_2,
+    COL_GAP_3,
+    ROW_CENTERED_GAP,
+    ROW_EXPLORE,
+    ROW_LEGEND,
+    STYLE_EXPLORE_CHART,
+    STYLE_EXPLORE_MAIN,
+    STYLE_EXPLORE_SIDEBAR,
+    TEXT_BODY_MUTED,
+    TEXT_CAPTION_MUTED,
+    TEXT_H5,
+    TEXT_MUTED,
+    TEXT_NEGATIVE,
+    WIDTH_FULL,
+    style_legend_swatch,
+)
 
 from ..base_dashboard import BaseDashboardPage
 from .chart_utils import (
@@ -63,7 +80,7 @@ class TimeCoordinationDashboardPage(BaseDashboardPage):
         posts_path = self.get_primary_output_parquet_path(OUTPUT_POSTS)
         if not edges_path or not posts_path:
             ui.label("No time-coordination outputs found for this run.").classes(
-                "text-negative"
+                TEXT_NEGATIVE
             )
             return
 
@@ -80,7 +97,7 @@ class TimeCoordinationDashboardPage(BaseDashboardPage):
         posts = pl.read_parquet(posts_path)
         posts_df = posts.to_pandas()
         if "rel_timestamp" not in posts_df.columns:
-            ui.label("Posts table missing rel_timestamp.").classes("text-negative")
+            ui.label("Posts table missing rel_timestamp.").classes(TEXT_NEGATIVE)
             return
         # Graph nodes and select values are strings; keep join keys aligned.
         posts_df[COL_USER_ID] = posts_df[COL_USER_ID].astype(str)
@@ -88,43 +105,39 @@ class TimeCoordinationDashboardPage(BaseDashboardPage):
         self._graph = remember_top_edges(graph_from_edges_df(edges))
 
         method_name = METHOD_LABELS.get(self._method_id, "Time Coordination")
-        ui.label(f"{method_name} — Explore network").classes("text-h5")
+        ui.label(f"{method_name} — Explore network").classes(TEXT_H5)
         ui.label(
             "Select a linked pair from the list or by clicking a line between two nodes, "
             "then compare their overlapping posts."
-        ).classes("text-grey-8")
+        ).classes(TEXT_MUTED)
 
         n_edges = max(self._graph.number_of_edges(), 1)
         slider_max = min(EXPLORE_MAX_PAIRS, n_edges)
         slider_value = min(20, n_edges)
 
-        with ui.row().classes("w-full items-stretch gap-4 flex-wrap"):
-            with (
-                ui.column()
-                .classes("gap-3")
-                .style("flex:1 1 220px; min-width:200px; max-width:320px;")
-            ):
+        with ui.row().classes(ROW_EXPLORE):
+            with ui.column().classes(COL_GAP_3).style(STYLE_EXPLORE_SIDEBAR):
                 self._edge_select = ui.select(
                     options={},
                     label="Select a pair of users",
                     with_input=True,
-                ).classes("w-full")
+                ).classes(WIDTH_FULL)
                 self._edge_select.on_value_change(
                     lambda e: self._on_edge_selected_from_list(e.value)
                 )
 
                 self._selection_label = ui.label("Users Selected: —").classes(
-                    "text-body2 text-grey-8"
+                    TEXT_BODY_MUTED
                 )
                 self._inspect_button = ui.button(
                     "Compare users", on_click=self._show_compare
                 ).props("unelevated")
                 self._inspect_button.disable()
 
-            with ui.column().classes("gap-2").style("flex:3 1 360px; min-width:280px;"):
+            with ui.column().classes(COL_GAP_2).style(STYLE_EXPLORE_MAIN):
                 self._slider = (
                     ui.slider(min=1, max=slider_max, value=slider_value)
-                    .classes("w-full")
+                    .classes(WIDTH_FULL)
                     .on(
                         "update:model-value",
                         lambda e: self._on_slider(int(e.args)),
@@ -132,25 +145,20 @@ class TimeCoordinationDashboardPage(BaseDashboardPage):
                         leading_events=False,
                     )
                 )
-                ui.label("Filter by group size.").classes("text-caption text-grey-7")
+                ui.label("Filter by group size.").classes(TEXT_CAPTION_MUTED)
                 self._group_checks = {}
-                with ui.row().classes(
-                    "items-center gap-4 q-mb-sm flex-wrap justify-center"
-                ):
+                with ui.row().classes(ROW_LEGEND):
                     for key, color, label in EDGE_COLOR_LEGEND:
-                        with ui.row().classes("items-center gap-1"):
+                        with ui.row().classes(ROW_CENTERED_GAP):
                             cb = ui.checkbox(
                                 value=True,
                                 on_change=lambda _e: self._apply_visibility(),
                             ).props("dense")
-                            ui.element("div").style(
-                                f"width:18px;height:4px;border-radius:2px;"
-                                f"background:{color};"
-                            )
-                            ui.label(label).classes("text-caption text-grey-7")
+                            ui.element("div").style(style_legend_swatch(color))
+                            ui.label(label).classes(TEXT_CAPTION_MUTED)
                             self._group_checks[key] = cb
 
-                self._chart_slot = ui.column().classes("w-full")
+                self._chart_slot = ui.column().classes(WIDTH_FULL)
 
         self._refresh_chart(int(self._slider.value))
 
@@ -202,8 +210,8 @@ class TimeCoordinationDashboardPage(BaseDashboardPage):
                         ),
                     }
                 )
-                .classes("w-full")
-                .style("display:block; width:100%; min-width:100%; height:520px;")
+                .classes(WIDTH_FULL)
+                .style(STYLE_EXPLORE_CHART)
             )
             # NiceGUI ECharts events are namespaced as chart:* (not bare "click").
             self._chart.on(

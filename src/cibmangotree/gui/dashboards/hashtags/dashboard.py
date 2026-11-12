@@ -25,6 +25,20 @@ from cibmangotree.analyzers.hashtags.hashtags_base.interface import (
     SECONDARY_COL_USERS_ALL,
 )
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    CARD_FLEX_1,
+    CHART_HIGHLIGHT,
+    COL_DASHBOARD,
+    CSS_HASHTAGS_GRID,
+    ROW_CENTERED,
+    ROW_FULL_CENTER,
+    ROW_FULL_GAP_4,
+    STYLE_HEIGHT_300,
+    STYLE_HEIGHT_350,
+    TEXT_BODY_MUTED_MB_2,
+    TEXT_HEADING,
+    WIDTH_FULL,
+)
 
 from ..base_dashboard import BaseDashboardPage
 from .data import (
@@ -154,7 +168,7 @@ class HashtagsDashboardPage(BaseDashboardPage):
                             "silent": True,
                             "symbol": "none",
                             "animation": False,
-                            "lineStyle": {"color": "#d62728", "width": 2},
+                            "lineStyle": {"color": CHART_HIGHLIGHT, "width": 2},
                             "label": {
                                 "position": "end",
                                 "distance": 10,
@@ -515,25 +529,18 @@ class HashtagsDashboardPage(BaseDashboardPage):
         )
 
     def render_content(self) -> None:
-        ui.add_css("""
-            .ag-row {
-                cursor: pointer !important;
-            }
-            .ag-row-hover {
-                background-color: #e3f2fd !important;
-            }
-            """)
-        with ui.row().classes("w-full justify-center"):
-            with ui.column().classes("w-3/4 q-pa-md gap-4"):
-                with ui.card().classes("w-full"):
-                    with ui.row().classes("w-full items-center"):
+        ui.add_css(CSS_HASHTAGS_GRID)
+        with ui.row().classes(ROW_FULL_CENTER):
+            with ui.column().classes(COL_DASHBOARD):
+                with ui.card().classes(WIDTH_FULL):
+                    with ui.row().classes(ROW_CENTERED):
                         self._smooth_checkbox = ui.checkbox(
                             "Show smoothed line",
                             value=False,
                             on_change=self._handle_smooth_change,
                         )
                     self._gini_loading, self._gini_content = (
-                        self._create_loading_container("350px")
+                        self._create_loading_container(STYLE_HEIGHT_350)
                     )
                     with self._gini_content:
                         self._gini_chart = (
@@ -541,19 +548,19 @@ class HashtagsDashboardPage(BaseDashboardPage):
                                 {},
                                 on_point_click=self._handle_gini_click,
                             )
-                            .classes("w-full")
-                            .style("height: 350px")
+                            .classes(WIDTH_FULL)
+                            .style(STYLE_HEIGHT_350)
                         )
 
-                with ui.row().classes("w-full gap-4"):
-                    with ui.card().classes("flex-1"):
+                with ui.row().classes(ROW_FULL_GAP_4):
+                    with ui.card().classes(CARD_FLEX_1):
                         with ui.card_section():
-                            ui.label("Hashtags").classes("text-h6")
+                            ui.label("Hashtags").classes(TEXT_HEADING)
                             self._hashtag_info = ui.label(
                                 "Click a point on the chart above to explore hashtags."
-                            ).classes("text-body2 text-grey-7 q-mb-sm")
+                            ).classes(TEXT_BODY_MUTED_MB_2)
                         self._hashtag_loading, self._hashtag_content = (
-                            self._create_loading_container("300px")
+                            self._create_loading_container(STYLE_HEIGHT_300)
                         )
                         self._show_error(
                             self._hashtag_loading,
@@ -573,21 +580,21 @@ class HashtagsDashboardPage(BaseDashboardPage):
                                     },
                                     theme="quartz",
                                 )
-                                .classes("w-full")
-                                .style("height: 300px")
+                                .classes(WIDTH_FULL)
+                                .style(STYLE_HEIGHT_300)
                             )
                             self._hashtag_grid.on(
                                 "cellClicked", self._handle_hashtag_click
                             )
 
-                    with ui.card().classes("flex-1"):
+                    with ui.card().classes(CARD_FLEX_1):
                         with ui.card_section():
-                            ui.label("Users").classes("text-h6")
+                            ui.label("Users").classes(TEXT_HEADING)
                             self._user_info = ui.label(
                                 "Click a hashtag above to see which users posted it."
-                            ).classes("text-body2 text-grey-7 q-mb-sm")
+                            ).classes(TEXT_BODY_MUTED_MB_2)
                         self._user_loading, self._user_content = (
-                            self._create_loading_container("300px")
+                            self._create_loading_container(STYLE_HEIGHT_300)
                         )
                         self._show_error(
                             self._user_loading,
@@ -607,19 +614,19 @@ class HashtagsDashboardPage(BaseDashboardPage):
                                     },
                                     theme="quartz",
                                 )
-                                .classes("w-full")
-                                .style("height: 300px")
+                                .classes(WIDTH_FULL)
+                                .style(STYLE_HEIGHT_300)
                             )
                             self._user_grid.on("cellClicked", self._handle_user_click)
 
-                with ui.card().classes("w-full"):
+                with ui.card().classes(WIDTH_FULL):
                     with ui.card_section():
-                        ui.label("Tweet Explorer").classes("text-h6")
+                        ui.label("Tweet Explorer").classes(TEXT_HEADING)
                         self._tweet_info = ui.label(
                             "Click a user above to see their posts."
-                        ).classes("text-body2 text-grey-7 q-mb-sm")
+                        ).classes(TEXT_BODY_MUTED_MB_2)
                     self._tweet_loading, self._tweet_content = (
-                        self._create_loading_container("300px")
+                        self._create_loading_container(STYLE_HEIGHT_300)
                     )
                     self._show_error(
                         self._tweet_loading,
@@ -641,8 +648,8 @@ class HashtagsDashboardPage(BaseDashboardPage):
                                 },
                                 theme="quartz",
                             )
-                            .classes("w-full")
-                            .style("height: 300px")
+                            .classes(WIDTH_FULL)
+                            .style(STYLE_HEIGHT_300)
                         )
 
         ui.timer(0, self._load_and_render_async, once=True)

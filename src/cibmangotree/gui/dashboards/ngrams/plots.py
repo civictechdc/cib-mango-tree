@@ -19,19 +19,7 @@ from cibmangotree.analyzers.ngrams.ngrams_stats.interface import (
     COL_NGRAM_TOTAL_REPS,
     COL_NGRAM_WORDS,
 )
-
-TAB_10_PALETTE = [
-    "#1f77b4",
-    "#ff7f0e",
-    "#2ca02c",
-    "#d62728",
-    "#9467bd",
-    "#8c564b",
-    "#e377c2",
-    "#7f7f7f",
-    "#bcbd22",
-    "#17becf",
-]
+from cibmangotree.gui.theme import CHART_HIGHLIGHT, TAB_10_PALETTE
 
 
 class SamplingMetadata(BaseModel):
@@ -124,7 +112,7 @@ def plot_scatter_echart(
             },
             "emphasis": {
                 "itemStyle": {
-                    "color": "#d62728",
+                    "color": CHART_HIGHLIGHT,
                     "opacity": 1.0,
                     "borderColor": "white",
                     "borderWidth": 1,

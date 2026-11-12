@@ -44,7 +44,7 @@ On macOS this produces `CIBMangoTree.app` (onedir + BUNDLE). On other platforms 
 - `gui/session.py` — `GuiSession` holds all session state (current project, selected file, analyzer, column mapping, analysis params) as a Pydantic model
 - `gui/context.py` — `GUIContext` wraps the `App` instance for GUI use
 - `gui/routes.py` — `GuiRoutes` defines URL paths for every page as a Pydantic model
-- `gui/theme.py` — brand colors and external URLs as frozen Pydantic singletons
+- `gui/theme.py` — brand colors, external URLs, and all GUI class/CSS style constants (single styling authority; see [Styling](../../../docs/guides/contributing/styling.md))
 
 ### Pages (`gui/pages/`)
 

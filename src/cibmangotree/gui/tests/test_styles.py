@@ -1,4 +1,4 @@
-"""Regression checks for the styling hook and its two pilot screens."""
+"""Regression checks for the styling hook and its pilot screens."""
 
 import re
 from pathlib import Path
@@ -14,10 +14,16 @@ from cibmangotree.gui import _style_rules as rules
 from cibmangotree.gui.components.analysis import AnalysisParamsCard
 from cibmangotree.gui.pages.analysis_workflow.run_step import RunAnalysisStep
 from cibmangotree.gui.session import GuiSession
-from cibmangotree.gui.theme import CARD_CONTENT, CARD_PARAM, ICON_INFO, STYLE_CENTERED
+from cibmangotree.gui.theme import (
+    CARD_CONTENT,
+    CARD_PARAM,
+    COL_STEP_BODY,
+    ICON_INFO,
+    STYLE_CENTERED,
+)
 
 
-def test_pilot_files_contain_no_retired_styles() -> None:
+def test_pilot_files_contain_no_hardcoded_styles() -> None:
     findings = [
         finding.render()
         for path in rules.guarded_files()
@@ -47,29 +53,36 @@ def test_hook_covers_exactly_the_guarded_files() -> None:
 @pytest.mark.parametrize(
     "source, expected",
     [
-        ('ui.label("x").classes("text-grey q-mb-md")', ["text-grey", "q-mb-md"]),
+        (
+            'ui.label("x").classes("text-grey q-mb-md")',
+            ["text-grey q-mb-md"],
+        ),
         (
             'ui.label("x").classes(add="text-medium", remove="text-gray-600")',
             ["text-medium", "text-gray-600"],
         ),
-        ('ui.label("x").classes("q-mb-" "md")', ["q-mb-md"]),
-        ('ui.label("x").classes(f"{extra} q-mb-md")', ["q-mb-md"]),
-        ('ui.label("x").classes(f"q-mb-md {extra}")', ["q-mb-md"]),
-        ('ui.label("x").classes(f"q-mb-md{suffix}")', []),
-        ('ui.label("x").classes(f"{prefix}q-mb-md")', []),
-        ('ui.label("x").classes("q-mb-md-extra")', []),
+        ('ui.label("x").classes("w-full gap-2")', ["w-full gap-2"]),
+        ('ui.label("x").classes(f"{extra} mb-4")', ["<f-string>"]),
         ('ui.label("café").classes("text-grey")', ["text-grey"]),
         (
             'ui.label("x").style("max-width: 960px; margin: 0 auto;")',
-            ["max-width: 960px; margin: 0 auto"],
+            ["max-width: 960px; margin: 0 auto;"],
         ),
-        ('ui.label("x").style("max-width: 960px;")', []),
+        ('ui.label("x").style("max-width: 960px;")', ["max-width: 960px;"]),
+        ('ui.label("x").style("")', [""]),
     ],
 )
-def test_scan_checks_style_arguments(source: str, expected: list[str]) -> None:
+def test_scan_rejects_style_string_literals(source: str, expected: list[str]) -> None:
     findings = rules.scan_source(source, Path("example.py"))
     assert [finding.literal for finding in findings] == expected
     assert all(finding.replacement for finding in findings)
+
+
+def test_scan_retired_tokens_get_specific_hints() -> None:
+    findings = rules.scan_source(
+        'ui.label("x").classes("text-grey q-mb-md")', Path("example.py")
+    )
+    assert findings[0].replacement == "TEXT_MUTED; mb-4"
 
 
 def test_scan_ignores_prose_props_and_named_constants() -> None:
@@ -79,6 +92,7 @@ def test_scan_ignores_prose_props_and_named_constants() -> None:
         'ui.label("text-grey").props("text-grey")\n'
         'ui.label("x").classes(ICON_INFO)\n'
         "ui.column().style(STYLE_CENTERED)\n"
+        "ui.label(step).classes(add=TEXT_MUTED, remove=TEXT_WEIGHT_MEDIUM)\n"
     )
     assert rules.scan_source(source, Path("example.py")) == []
 
@@ -163,6 +177,12 @@ async def test_valid_run_summary_uses_shared_constants(
     await user.open("/run-step-styles")
 
     _assert_styled(next(iter(user.find(kind=ui.card).elements)), CARD_CONTENT)
+
+    step_body_tokens = set(COL_STEP_BODY.split())
+    assert any(
+        step_body_tokens <= set(column.classes)
+        for column in user.find(kind=ui.column).elements
+    ), "no column carries COL_STEP_BODY"
 
     expected = {
         part.split(":", 1)[0].strip(): part.split(":", 1)[1].strip()

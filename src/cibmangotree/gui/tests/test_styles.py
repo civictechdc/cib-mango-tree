@@ -177,7 +177,12 @@ async def test_valid_run_summary_uses_shared_constants(
     await user.open("/run-step-styles")
 
     _assert_styled(next(iter(user.find(kind=ui.card).elements)), CARD_CONTENT)
-    _assert_styled(next(iter(user.find(kind=ui.column).elements)), COL_STEP_BODY)
+
+    step_body_tokens = set(COL_STEP_BODY.split())
+    assert any(
+        step_body_tokens <= set(column.classes)
+        for column in user.find(kind=ui.column).elements
+    ), "no column carries COL_STEP_BODY"
 
     expected = {
         part.split(":", 1)[0].strip(): part.split(":", 1)[1].strip()

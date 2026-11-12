@@ -79,6 +79,14 @@ class ParamsConfigStep:
             ui.label("Please map columns first").classes(TEXT_MUTED)
             return
 
+        if any(
+            user_column_name not in project.column_dict
+            for user_column_name in column_mapping.values()
+        ):
+            self.session.column_mapping = None
+            ui.label("Please map columns first").classes(TEXT_MUTED)
+            return
+
         with TemporaryDirectory() as temp_dir:
             default_parameters_context = PrimaryAnalyzerDefaultParametersContext(
                 analyzer=analyzer,

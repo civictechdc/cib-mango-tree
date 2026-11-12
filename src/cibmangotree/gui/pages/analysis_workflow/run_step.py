@@ -104,10 +104,20 @@ class RunAnalysisStep:
             self.page.notify_error("Missing analyzer or project")
             return
 
+        column_mapping = self.session.column_mapping
+        if not column_mapping or any(
+            user_col_name not in project.column_dict
+            for user_col_name in column_mapping.values()
+        ):
+            self.session.column_mapping = None
+            self.page.notify_error("Please map columns first")
+            self.render.refresh()
+            return
+
         try:
             analysis = project.create_analysis(
                 analyzer.id,
-                self.session.column_mapping,
+                column_mapping,
                 self.session.analysis_params,
             )
         except Exception as e:

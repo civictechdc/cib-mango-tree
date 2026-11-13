@@ -68,6 +68,8 @@ class GuiPage(BaseModel, abc.ABC):
 
     Usage:
         ```python
+        from cibmangotree.gui.theme import ITEMS_CENTER
+
         class MyPage(GuiPage):
             def __init__(self, session: GuiSession):
                 super().__init__(
@@ -79,7 +81,7 @@ class GuiPage(BaseModel, abc.ABC):
                 )
 
             def render_content(self) -> None:
-                with ui.column().classes("items-center"):
+                with ui.column().classes(ITEMS_CENTER):
                     ui.label("My page content")
 
             def requires_exit_confirmation(self) -> bool:
@@ -145,8 +147,10 @@ class GuiPage(BaseModel, abc.ABC):
 
         Example:
             ```python
+            from cibmangotree.gui.theme import ITEMS_CENTER
+
             def render_content(self) -> None:
-                with ui.column().classes("items-center"):
+                with ui.column().classes(ITEMS_CENTER):
                     ui.label("Welcome")
                     ui.button("Click me", on_click=self._handle_click)
             ```
@@ -180,7 +184,7 @@ class GuiPage(BaseModel, abc.ABC):
                         # Build button parameters conditionally
                         btn_kwargs = {
                             "icon": self.back_icon,
-                            "color": "accent",
+                            "color": COLOR_ACCENT,
                             "on_click": self._handle_back_click,
                         }
                         if self.back_text:

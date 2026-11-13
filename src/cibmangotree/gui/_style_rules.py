@@ -1,13 +1,13 @@
 """Check migrated GUI modules without importing NiceGUI or changing files.
 
-The hook and pytest use the same scanner. Widen GUARDED_PATHS and the hook's
+The hook and pytest use the same scanner. Widen FILES_TO_CHECK and the hook's
 files pattern together as more modules are migrated.
 
-Guarded modules must not pass string or f-string literals to .classes(),
-.style(), or .props(), and must not pass string literals to color= — import
-named constants from theme.py instead (COLOR_*, PROPS_*, CARD_*, …). Retired
-Quasar/layout tokens still get specific replacement hints when they appear in
-a banned class literal.
+Modules in FILES_TO_CHECK must not pass string or f-string literals to
+.classes(), .style(), or .props(), and must not pass string literals to
+color= — import named constants from theme.py instead (COLOR_*, PROPS_*,
+CARD_*, …). Retired Quasar/layout tokens still get specific replacement hints
+when they appear in a banned class literal.
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ from typing import NamedTuple
 
 GUI_ROOT = Path(__file__).resolve().parent
 REPO_ROOT = GUI_ROOT.parents[2]
-GUARDED_PATHS = (
+FILES_TO_CHECK = (
     "base.py",
     "components/analysis.py",
     "components/choice_fork.py",
@@ -29,6 +29,8 @@ GUARDED_PATHS = (
     "components/import_options.py",
     "components/manage_analyses.py",
     "components/new_project_dialog.py",
+    "components/toggle.py",
+    "components/upload/upload_button.py",
     "dashboards/base_dashboard.py",
     "dashboards/hashtags/dashboard.py",
     "dashboards/ngrams/dashboard.py",
@@ -84,8 +86,8 @@ class Finding(NamedTuple):
         return f"{where}:{self.line}: replace {self.literal!r} with {self.replacement}"
 
 
-def guarded_files() -> tuple[Path, ...]:
-    return tuple(GUI_ROOT / path for path in GUARDED_PATHS)
+def files_to_check() -> tuple[Path, ...]:
+    return tuple(GUI_ROOT / path for path in FILES_TO_CHECK)
 
 
 def _replacement_for_class_literal(value: str) -> str:
@@ -198,7 +200,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("paths", nargs="*", type=Path)
     args = parser.parse_args(argv)
-    allowed = set(guarded_files())
+    allowed = set(files_to_check())
     paths = sorted({path.resolve() for path in args.paths} if args.paths else allowed)
     failed = False
     for path in paths:

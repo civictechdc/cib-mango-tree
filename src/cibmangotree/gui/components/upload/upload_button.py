@@ -4,6 +4,8 @@ from pathlib import Path
 from fastapi import File, UploadFile
 from nicegui import app, ui
 
+from cibmangotree.gui.theme import COLOR_PRIMARY
+
 
 def _vue_dist_path(file_path: str, js_path: str) -> str:
     return (Path(file_path).parent / js_path).resolve().as_posix()
@@ -16,7 +18,7 @@ class UploadButton(
         self,
         on_upload: Callable[[UploadFile], Awaitable[None]],
         text: str | None = None,
-        color: str = "primary",
+        color: str = COLOR_PRIMARY,
         icon: str | None = None,
         redirect_url: str | None = None,
     ) -> None:

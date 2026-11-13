@@ -19,7 +19,12 @@ from cibmangotree.analyzers.ngrams.ngrams_stats.interface import (
     COL_NGRAM_TOTAL_REPS,
     COL_NGRAM_WORDS,
 )
-from cibmangotree.gui.theme import CHART_HIGHLIGHT, TAB_10_PALETTE
+from cibmangotree.gui.theme import (
+    CHART_BORDER,
+    CHART_HIGHLIGHT,
+    CHART_SHADOW,
+    TAB_10_PALETTE,
+)
 
 
 class SamplingMetadata(BaseModel):
@@ -107,17 +112,17 @@ def plot_scatter_echart(
             "itemStyle": {
                 "color": TAB_10_PALETTE[i % len(TAB_10_PALETTE)],
                 "opacity": 0.7,
-                "borderColor": "white",
+                "borderColor": CHART_BORDER,
                 "borderWidth": 0.5,
             },
             "emphasis": {
                 "itemStyle": {
                     "color": CHART_HIGHLIGHT,
                     "opacity": 1.0,
-                    "borderColor": "white",
+                    "borderColor": CHART_BORDER,
                     "borderWidth": 1,
                     "shadowBlur": 10,
-                    "shadowColor": "rgba(0, 0, 0, 0.3)",
+                    "shadowColor": CHART_SHADOW,
                 },
                 "scale": 1.5,
             },

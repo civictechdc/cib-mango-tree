@@ -16,4 +16,7 @@ repos:
         entry: python src/cibmangotree/gui/_style_rules.py
         language: system
         types: [python]
-        files: ^src/cibmangotree/gui/(base|components/(analysis|choice_fork|exit_confirmation|export_outputs|import_options|manage_analyses|new_project_dialog)|dashboards/base_dashboard|dashboards/hashtags/dashboard|dashboards/ngrams/dashboard|dashboards/placeholder/dashboard|dashboards/time_coordination/(compare_page|dashboard)|pages/(analysis_config_and_run|analysis_post|analyzer_previous|dataset_preview|importer|start)|pages/analysis_workflow/(analyzer_step|column_mapping_step|params_step|run_step))\.py$
+        # Mirror FILES_TO_CHECK in gui/_style_rules.py (YAML cannot import it).
+        # Drift is caught automatically by test_hook_covers_exactly_the_files_to_check in
+        # gui/tests/test_styles.py.
+        files: ^src/cibmangotree/gui/(base|components/(analysis|choice_fork|exit_confirmation|export_outputs|import_options|manage_analyses|new_project_dialog|toggle|upload/upload_button)|dashboards/base_dashboard|dashboards/hashtags/dashboard|dashboards/ngrams/dashboard|dashboards/placeholder/dashboard|dashboards/time_coordination/(compare_page|dashboard)|pages/(analysis_config_and_run|analysis_post|analyzer_previous|dataset_preview|importer|start)|pages/analysis_workflow/(analyzer_step|column_mapping_step|params_step|run_step))\.py$

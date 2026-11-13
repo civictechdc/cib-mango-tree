@@ -14,7 +14,12 @@ from cibmangotree.analyzers.hashtags.hashtags_base.interface import (
     OUTPUT_COL_TIMESPAN,
     PRIMARY_OUTPUT_DATETIME_FORMAT,
 )
-from cibmangotree.gui.theme import CHART_HIGHLIGHT, MANGO_ORANGE
+from cibmangotree.gui.theme import (
+    CHART_HIGHLIGHT,
+    CHART_LINE,
+    CHART_SHADOW,
+    MANGO_ORANGE,
+)
 
 
 def _format_date_for_axis(ts: datetime, is_hourly: bool) -> str:
@@ -65,18 +70,18 @@ def plot_gini_echart(
             "name": "Gini coefficient",
             "type": "line",
             "data": series_data,
-            "lineStyle": {"color": "black", "width": 1.5},
+            "lineStyle": {"color": CHART_LINE, "width": 1.5},
             "showSymbol": False,
             "symbol": "circle",
             "symbolSize": 4,
-            "itemStyle": {"color": "black"},
+            "itemStyle": {"color": CHART_LINE},
             "emphasis": {
                 "showSymbol": True,
                 "itemStyle": {
                     "color": CHART_HIGHLIGHT,
                     "symbolSize": 12,
                     "shadowBlur": 10,
-                    "shadowColor": "rgba(0, 0, 0, 0.3)",
+                    "shadowColor": CHART_SHADOW,
                 },
             },
         }
@@ -109,7 +114,7 @@ def plot_gini_echart(
                         "color": CHART_HIGHLIGHT,
                         "symbolSize": 12,
                         "shadowBlur": 10,
-                        "shadowColor": "rgba(0, 0, 0, 0.3)",
+                        "shadowColor": CHART_SHADOW,
                     },
                 },
             }

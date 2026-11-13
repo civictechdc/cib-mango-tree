@@ -26,13 +26,13 @@ from cibmangotree.gui.theme import (
 def test_pilot_files_contain_no_hardcoded_styles() -> None:
     findings = [
         finding.render()
-        for path in rules.guarded_files()
+        for path in rules.files_to_check()
         for finding in rules.scan_source(path.read_text(encoding="utf-8"), path)
     ]
     assert findings == []
 
 
-def test_hook_covers_exactly_the_guarded_files() -> None:
+def test_hook_covers_exactly_the_files_to_check() -> None:
     config = yaml.safe_load((rules.REPO_ROOT / ".pre-commit-config.yaml").read_text())
     hook = next(
         hook
@@ -45,8 +45,8 @@ def test_hook_covers_exactly_the_guarded_files() -> None:
         for path in rules.GUI_ROOT.rglob("*.py")
         if re.match(hook["files"], path.relative_to(rules.REPO_ROOT).as_posix())
     }
-    assert covered == set(rules.guarded_files())
-    assert all(path.is_file() for path in rules.guarded_files())
+    assert covered == set(rules.files_to_check())
+    assert all(path.is_file() for path in rules.files_to_check())
     assert hook["entry"] == "python src/cibmangotree/gui/_style_rules.py"
 
 
@@ -106,7 +106,7 @@ def test_cli_reports_a_regression_without_rewriting(
     offender = tmp_path / "regression.py"
     source = 'ui.label("x").classes("text-medium")\n'
     offender.write_text(source, encoding="utf-8")
-    monkeypatch.setattr(rules, "guarded_files", lambda: (offender,))
+    monkeypatch.setattr(rules, "files_to_check", lambda: (offender,))
 
     assert rules.main([str(offender)]) == 1
     assert "font-medium" in capsys.readouterr().out
@@ -120,7 +120,7 @@ def test_cli_skips_unmigrated_files(tmp_path: Path) -> None:
 
 
 @pytest.mark.parametrize("source", ['ui.label("x"', None])
-def test_cli_fails_when_a_guarded_file_cannot_be_checked(
+def test_cli_fails_when_a_file_to_check_cannot_be_checked(
     source: str | None,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -129,7 +129,7 @@ def test_cli_fails_when_a_guarded_file_cannot_be_checked(
     path = tmp_path / "broken.py"
     if source is not None:
         path.write_text(source, encoding="utf-8")
-    monkeypatch.setattr(rules, "guarded_files", lambda: (path,))
+    monkeypatch.setattr(rules, "files_to_check", lambda: (path,))
     assert rules.main([]) == 1
     assert "cannot check styling" in capsys.readouterr().out
 

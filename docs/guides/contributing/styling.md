@@ -35,7 +35,7 @@ components do not inline them.
 
 | Purpose                                   | Use                      | Examples                                          |
 | ----------------------------------------- | ------------------------ | ------------------------------------------------- |
-| Widget chrome / Quasar props              | Theme `PROPS_*`          | `.props(PROPS_FLAT)`, `.props(PROPS_OUTLINE)`     |
+| Widget chrome / Quasar props              | Theme `gui_props`        | `.props(gui_props.flat)`, `.props(gui_props.outline)`     |
 | Brand and status color roles              | Theme `COLOR_*`          | `color=COLOR_PRIMARY`, `color=COLOR_MANGO_ORANGE` |
 | Heading/body typography roles             | Quasar classes via theme | `TEXT_HEADING` → `text-h6`                        |
 | Layout, spacing, sizing, borders, shadows | Tailwind via theme       | `CARD_CONTENT`, `ROW_ACTIONS`                     |
@@ -60,17 +60,18 @@ Hex palette values are registered once via `GuiPage._setup_colors()` /
 `ui.colors(...)`. Call sites use `COLOR_*` role names, not hexes (except where
 charts need a theme hex export such as `MANGO_ORANGE`).
 
-Use names that describe the role: `COLOR_*`, `PROPS_*`, `CARD_*`, `ROW_*`,
-`COL_*`, `TEXT_*`, `ICON_*`, and `STYLE_*`. Class constants go to `.classes()`;
-`STYLE_*` constants contain raw CSS and go to `.style()`; `PROPS_*` go to
-`.props()`; `COLOR_*` go to `color=`.
+Use names that describe the role: `COLOR_*`, `CARD_*`, `ROW_*`, `COL_*`,
+`TEXT_*`, `ICON_*`, and `STYLE_*`. Class constants go to `.classes()`;
+`STYLE_*` constants contain raw CSS and go to `.style()`; Quasar presentation
+flags go through `gui_props` (from `GuiProps`) to `.props()`; `COLOR_*` go to
+`color=`.
 
 ```python
 from cibmangotree.gui.theme import (
+    gui_props,
     CARD_CONTENT,
     COLOR_PRIMARY,
     COL_STEP_BODY,
-    PROPS_OUTLINE,
     STYLE_CENTERED,
     TEXT_MUTED,
 )
@@ -78,7 +79,7 @@ from cibmangotree.gui.theme import (
 with ui.column().classes(COL_STEP_BODY).style(STYLE_CENTERED):
     with ui.card().classes(CARD_CONTENT):
         ui.label("No analyses found").classes(TEXT_MUTED)
-    ui.button("Continue", color=COLOR_PRIMARY).props(PROPS_OUTLINE)
+    ui.button("Continue", color=COLOR_PRIMARY).props(gui_props.outline)
 ```
 
 Compose related constants in `theme.py` so their common styles stay

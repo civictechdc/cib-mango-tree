@@ -6,10 +6,10 @@ from cibmangotree.gui.theme import (
     COLOR_CANCEL,
     COLOR_MANGO_ORANGE,
     COLOR_PRIMARY,
-    PROPS_OUTLINE,
     ROW_ACTIONS_MT_4,
     TEXT_SECTION_HEADING,
     WIDTH_FULL,
+    gui_props,
 )
 
 
@@ -43,7 +43,7 @@ class NewProjectDialog(ui.dialog):
                     "Cancel",
                     on_click=self._handle_cancel,
                     color=COLOR_CANCEL,
-                ).props(PROPS_OUTLINE)
+                ).props(gui_props.outline)
 
                 ui.button(
                     "Next",

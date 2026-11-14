@@ -17,8 +17,6 @@ from cibmangotree.gui.theme import (
     COLOR_NEGATIVE,
     COLOR_PRIMARY,
     MANGO_DARK_GREEN,
-    PROPS_INSTANT_FEEDBACK,
-    PROPS_OUTLINE,
     ROW_ACTIONS,
     ROW_INLINE,
     ROW_STATUS,
@@ -31,6 +29,7 @@ from cibmangotree.gui.theme import (
     TEXT_SM,
     TEXT_SUBTITLE_BOLD_MT,
     WIDTH_FULL_MB_4,
+    gui_props,
 )
 from cibmangotree.gui.utils import open_directory_explorer
 from cibmangotree.storage import SupportedOutputExtension
@@ -214,7 +213,7 @@ class ExportDialog(ui.dialog):
 
             with ui.row().classes(ROW_ACTIONS):
                 ui.button("Cancel", on_click=self.close, color=COLOR_CANCEL).props(
-                    PROPS_OUTLINE
+                    gui_props.outline
                 )
                 self.select_outputs_next = ui.button(
                     "Next",
@@ -305,7 +304,7 @@ class ExportDialog(ui.dialog):
                     on_click=lambda: self._show_step("select_outputs"),
                     icon="arrow_back",
                     color=COLOR_CANCEL,
-                ).props(PROPS_OUTLINE)
+                ).props(gui_props.outline)
                 ui.button(
                     "Start Export",
                     on_click=self._handle_start_export,
@@ -335,7 +334,7 @@ class ExportDialog(ui.dialog):
             self.export_progress_bar = (
                 ui.linear_progress(value=0, show_value=False)
                 .classes(WIDTH_FULL_MB_4)
-                .props(PROPS_INSTANT_FEEDBACK)
+                .props(gui_props.instant_feedback)
             )
 
             self.output_status_container = ui.column().classes(COL_STACK_MB_4)
@@ -364,7 +363,7 @@ class ExportDialog(ui.dialog):
                     icon="folder_open",
                 )
                 ui.button("Close", on_click=self.close, color=COLOR_CANCEL).props(
-                    PROPS_OUTLINE
+                    gui_props.outline
                 )
 
     def _start_export(self):

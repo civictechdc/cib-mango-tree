@@ -28,7 +28,6 @@ from cibmangotree.gui.theme import (
     LINK_BRAND,
     LINK_ICON,
     LOGO_BADGE,
-    PROPS_FLAT,
     ROW_CENTERED,
     ROW_HEADER,
     SIZE_ICON_SM,
@@ -38,6 +37,7 @@ from cibmangotree.gui.theme import (
     TEXT_FOOTER,
     TEXT_HEADING,
     gui_colors,
+    gui_props,
     gui_urls,
 )
 from cibmangotree.meta.get_version import get_version
@@ -189,7 +189,7 @@ class GuiPage(BaseModel, abc.ABC):
                         }
                         if self.back_text:
                             btn_kwargs["text"] = self.back_text
-                        ui.button(**btn_kwargs).props(PROPS_FLAT)
+                        ui.button(**btn_kwargs).props(gui_props.flat)
 
                 # Center: Title
                 ui.label(self.title).classes(TEXT_HEADING)
@@ -201,7 +201,7 @@ class GuiPage(BaseModel, abc.ABC):
                             icon="home",
                             color=COLOR_ACCENT,
                             on_click=self._handle_home_click,
-                        ).props(PROPS_FLAT)
+                        ).props(gui_props.flat)
 
     async def _handle_back_click(self) -> None:
         """Handle back button click with optional exit confirmation."""

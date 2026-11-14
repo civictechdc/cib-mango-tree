@@ -11,7 +11,6 @@ from cibmangotree.gui.theme import (
     COL_FULL,
     COL_STEP_BODY,
     ICON_INFO,
-    PROPS_USE_CHIPS,
     ROW_CENTERED_GAP,
     ROW_WRAP_CENTER,
     STYLE_CARD_FLEX_MIN,
@@ -23,6 +22,7 @@ from cibmangotree.gui.theme import (
     TEXT_STEP_TITLE,
     WIDTH_FULL_H_64,
     WIDTH_FULL_MT_2,
+    gui_props,
 )
 
 
@@ -118,7 +118,7 @@ class ColumnMappingStep:
                     on_change=on_mapping_change,
                 )
                 .classes(WIDTH_FULL_MT_2)
-                .props(PROPS_USE_CHIPS)
+                .props(gui_props.use_chips)
             )
 
             self.column_dropdowns[input_col.name] = (dropdown, dropdown_options)

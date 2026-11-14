@@ -13,13 +13,13 @@ from cibmangotree.gui.theme import (
     COL_FULL_GAP_2,
     COLOR_NEGATIVE,
     COLOR_PRIMARY,
-    PROPS_NO_CAPS,
     ROW_FULL_CENTER_GAP_2,
     STYLE_CONTENT_WIDE_PAD_1,
     TEXT_LG,
     TEXT_SM,
     WIDTH_FULL_H_64,
     WIDTH_FULL_WRAP,
+    gui_props,
 )
 from cibmangotree.importing.csv import CSVImporter
 from cibmangotree.importing.excel import ExcelImporter
@@ -183,14 +183,14 @@ class PreviewDatasetPage(GuiPage):
                         icon="close",
                         color=COLOR_NEGATIVE,
                         on_click=open_import_options,
-                    ).props(PROPS_NO_CAPS)
+                    ).props(gui_props.no_caps)
 
                     ui.button(
                         "Looks good, let's proceed",
                         icon="upload",
                         color=COLOR_PRIMARY,
                         on_click=import_data_create_project,
-                    ).props(PROPS_NO_CAPS)
+                    ).props(gui_props.no_caps)
 
         except Exception as e:
             self.notify_error(f"Error loading preview: {str(e)}")

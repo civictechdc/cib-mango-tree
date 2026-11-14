@@ -20,6 +20,7 @@ from cibmangotree.gui.theme import (
     COL_STEP_BODY,
     ICON_INFO,
     STYLE_CENTERED,
+    gui_props,
 )
 
 
@@ -95,7 +96,7 @@ def test_scan_ignores_prose_and_named_constants() -> None:
         "ui.label(step).classes(ICON_INFO)\n"
         "ui.column().style(STYLE_CENTERED)\n"
         "ui.label(step).classes(add=TEXT_MUTED, remove=TEXT_WEIGHT_MEDIUM)\n"
-        "ui.button(label, color=COLOR_PRIMARY).props(PROPS_OUTLINE)\n"
+        "ui.button(label, color=COLOR_PRIMARY).props(gui_props.outline)\n"
     )
     assert rules.scan_source(source, Path("example.py")) == []
 

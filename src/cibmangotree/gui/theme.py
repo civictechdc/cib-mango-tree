@@ -80,20 +80,6 @@ class GuiURLS(BaseModel):
     )
 
 
-class GuiConstants(BaseModel):
-    """Container for both colors and urls"""
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    colors: GuiColors = Field(...)
-    urls: GuiURLS = Field(...)
-
-
-# Singletons — gui_colors / gui_urls used by base.py; gui_constants for tests.
-gui_colors = GuiColors()
-gui_urls = GuiURLS()
-gui_constants = GuiConstants(colors=gui_colors, urls=gui_urls)
-
 # ---------------------------------------------------------------------------
 # Quasar color roles — NiceGUI color=... on buttons, icons, notifies.
 # Names match slots registered in GuiPage._setup_colors (negative is built-in).
@@ -108,29 +94,101 @@ COLOR_NEGATIVE = "negative"
 COLOR_GREY = "grey"  # toggle inactive (group mode)
 COLOR_RED = "red"  # toggle inactive (standalone mode)
 
-# ---------------------------------------------------------------------------
-# Quasar props — NiceGUI .props(...) presentation / shared widget flags.
-# ---------------------------------------------------------------------------
-PROPS_FLAT = "flat"  # header/back/exit dialogs; stepper Back; ngrams cancel
-PROPS_OUTLINE = "outline"  # cancel/close buttons in dialogs and export/import
-PROPS_UNELEVATED = "unelevated"  # time-coordination dashboard chrome
-PROPS_NO_CAPS = "no-caps"  # dataset_preview action buttons
-PROPS_DENSE = "dense"  # time-coordination controls
-PROPS_FLAT_ROUND_DENSE = "flat round dense"  # ngrams dialog close icon button
-PROPS_OUTLINE_DENSE = "outline dense"  # ngrams secondary actions
-PROPS_DISABLE = "disable"  # start page Open/Delete until a row is selected
-PROPS_PERSISTENT = "persistent"  # analysis run progress dialog
-PROPS_USE_CHIPS = "use-chips"  # column_mapping_step selects
-PROPS_COLOR_PRIMARY = f"color={COLOR_PRIMARY}"  # toggle active
-PROPS_COLOR_GREY = f"color={COLOR_GREY}"  # toggle inactive (group)
-PROPS_COLOR_RED = f"color={COLOR_RED}"  # toggle inactive (standalone)
-PROPS_INSTANT_FEEDBACK = "instant-feedback"  # export progress bar
-PROPS_STEPPER = "horizontal animated"  # analysis_config_and_run stepper
-PROPS_CLEARABLE_OFF = 'clearable autocomplete="off"'  # ngrams search input
-PROPS_TOOLTIP_OFFSET = 'anchor="bottom middle" self="top middle" :offset="[210, 8]"'  # import_options info tooltips
-PROPS_TABLE_STICKY = (
-    "flat bordered separator='horizontal' sticky-header"  # start page projects table
-)
+
+class GuiProps(BaseModel):
+    """Quasar / NiceGUI .props(...) presentation flags."""
+
+    model_config = ConfigDict(frozen=True)
+
+    flat: str = Field(
+        default="flat",
+        description="Header/back/exit dialogs; stepper Back; ngrams cancel",
+    )
+    outline: str = Field(
+        default="outline",
+        description="Cancel/close buttons in dialogs and export/import",
+    )
+    unelevated: str = Field(
+        default="unelevated",
+        description="Time-coordination dashboard chrome",
+    )
+    no_caps: str = Field(
+        default="no-caps",
+        description="Dataset preview action buttons",
+    )
+    dense: str = Field(
+        default="dense",
+        description="Time-coordination controls",
+    )
+    flat_round_dense: str = Field(
+        default="flat round dense",
+        description="Ngrams dialog close icon button",
+    )
+    outline_dense: str = Field(
+        default="outline dense",
+        description="Ngrams secondary actions",
+    )
+    disable: str = Field(
+        default="disable",
+        description="Start page Open/Delete until a row is selected",
+    )
+    persistent: str = Field(
+        default="persistent",
+        description="Analysis run progress dialog",
+    )
+    use_chips: str = Field(
+        default="use-chips",
+        description="Column mapping step selects",
+    )
+    color_primary: str = Field(
+        default=f"color={COLOR_PRIMARY}",
+        description="Toggle active",
+    )
+    color_grey: str = Field(
+        default=f"color={COLOR_GREY}",
+        description="Toggle inactive (group)",
+    )
+    color_red: str = Field(
+        default=f"color={COLOR_RED}",
+        description="Toggle inactive (standalone)",
+    )
+    instant_feedback: str = Field(
+        default="instant-feedback",
+        description="Export progress bar",
+    )
+    stepper: str = Field(
+        default="horizontal animated",
+        description="Analysis config and run stepper",
+    )
+    clearable_off: str = Field(
+        default='clearable autocomplete="off"',
+        description="Ngrams search input",
+    )
+    tooltip_offset: str = Field(
+        default='anchor="bottom middle" self="top middle" :offset="[210, 8]"',
+        description="Import options info tooltips",
+    )
+    table_sticky: str = Field(
+        default="flat bordered separator='horizontal' sticky-header",
+        description="Start page projects table",
+    )
+
+
+class GuiConstants(BaseModel):
+    """Container for colors, urls, and props."""
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    colors: GuiColors = Field(...)
+    urls: GuiURLS = Field(...)
+    props: GuiProps = Field(...)
+
+
+# Singletons — used by base.py / GUI modules; gui_constants for tests.
+gui_colors = GuiColors()
+gui_urls = GuiURLS()
+gui_props = GuiProps()
+gui_constants = GuiConstants(colors=gui_colors, urls=gui_urls, props=gui_props)
 
 # ---------------------------------------------------------------------------
 # Tailwind / Quasar class strings — NiceGUI .classes(...)

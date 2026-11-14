@@ -10,7 +10,6 @@ from cibmangotree.gui.theme import (
     COLOR_CANCEL,
     COLOR_MANGO_ORANGE,
     COLOR_NEGATIVE,
-    PROPS_OUTLINE,
     ROW_ACTIONS,
     ROW_ACTIONS_MT_4,
     SPACING_MB_4,
@@ -18,6 +17,7 @@ from cibmangotree.gui.theme import (
     TEXT_NEGATIVE_MB_6,
     TEXT_SECTION_HEADING,
     WIDTH_FULL_H_96,
+    gui_props,
 )
 
 
@@ -88,7 +88,7 @@ class ManageAnalysisDialog(ui.dialog):
                     "Close",
                     on_click=self._handle_close,
                     color=COLOR_CANCEL,
-                ).props(PROPS_OUTLINE)
+                ).props(gui_props.outline)
 
                 ui.button(
                     "Delete Selected",
@@ -188,7 +188,7 @@ class ManageAnalysisDialog(ui.dialog):
                     "Cancel",
                     on_click=lambda: dialog.submit(False),
                     color=COLOR_CANCEL,
-                ).props(PROPS_OUTLINE)
+                ).props(gui_props.outline)
 
                 ui.button(
                     "Delete", on_click=lambda: dialog.submit(True), color=COLOR_NEGATIVE

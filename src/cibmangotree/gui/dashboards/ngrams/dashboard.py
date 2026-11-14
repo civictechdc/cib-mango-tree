@@ -31,10 +31,6 @@ from cibmangotree.gui.theme import (
     COLOR_PRIMARY,
     COLOR_SECONDARY,
     CSS_NGRAMS_GRID,
-    PROPS_CLEARABLE_OFF,
-    PROPS_FLAT,
-    PROPS_FLAT_ROUND_DENSE,
-    PROPS_OUTLINE_DENSE,
     ROW_FULL_CENTER,
     ROW_FULL_ITEMS_GAP_4,
     ROW_GAP_4_END,
@@ -48,6 +44,7 @@ from cibmangotree.gui.theme import (
     TEXT_HEADING,
     WIDTH_FULL,
     WIDTH_QUARTER,
+    gui_props,
 )
 
 from ..base_dashboard import BaseDashboardPage
@@ -274,7 +271,7 @@ class NgramsDashboardPage(BaseDashboardPage):
             with ui.row().classes(ROW_SPACED):
                 ui.label(f"User Viewer - {user}").classes(TEXT_HEADING)
                 ui.button(icon="close", on_click=dialog.close).props(
-                    PROPS_FLAT_ROUND_DENSE
+                    gui_props.flat_round_dense
                 )
             with ui.row().classes(ROW_META_MUTED):
                 ui.label(f"Total Posts: {total_num_posts}")
@@ -494,7 +491,7 @@ class NgramsDashboardPage(BaseDashboardPage):
                 with ui.row().classes(ROW_GAP_4_END):
                     ui.button(
                         "Cancel", on_click=dialog.close, color=COLOR_CANCEL
-                    ).props(PROPS_FLAT)
+                    ).props(gui_props.flat)
 
                     async def _confirm():
                         dialog.close()
@@ -567,7 +564,7 @@ class NgramsDashboardPage(BaseDashboardPage):
                             label="Search N-gram",
                             on_change=self._handle_filter_change,
                         )
-                        .props(PROPS_CLEARABLE_OFF)
+                        .props(gui_props.clearable_off)
                         .classes(WIDTH_QUARTER)
                         .on("keydown.enter", self._handle_enter_press)
                         .on("clear", self._handle_clear)
@@ -588,7 +585,7 @@ class NgramsDashboardPage(BaseDashboardPage):
                         "Show all data",
                         on_click=self._handle_show_all_click,
                         color=COLOR_SECONDARY,
-                    ).props(PROPS_OUTLINE_DENSE)
+                    ).props(gui_props.outline_dense)
                     self._show_all_btn.set_visibility(False)
 
                 with ui.card().classes(WIDTH_FULL):

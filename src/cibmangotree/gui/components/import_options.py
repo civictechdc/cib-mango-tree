@@ -16,8 +16,6 @@ from cibmangotree.gui.theme import (
     COLOR_MANGO_ORANGE,
     COLOR_PRIMARY,
     ICON_INFO,
-    PROPS_OUTLINE,
-    PROPS_TOOLTIP_OFFSET,
     ROW_ACTIONS_MT_3,
     ROW_CENTERED_GAP,
     ROW_LAYOUT,
@@ -32,6 +30,7 @@ from cibmangotree.gui.theme import (
     TEXT_TOOLTIP_BODY,
     WIDTH_SKIP_ROWS,
     WIDTH_TOOLTIP,
+    gui_props,
 )
 from cibmangotree.importing.csv import CsvImportSession
 from cibmangotree.importing.excel import ExcelImportSession
@@ -86,7 +85,7 @@ class ImportOptionsDialog(ui.dialog):
             # Action buttons
             with ui.row().classes(ROW_ACTIONS_MT_3):
                 ui.button("Cancel", on_click=self.close, color=COLOR_CANCEL).props(
-                    PROPS_OUTLINE
+                    gui_props.outline
                 )
                 ui.button(
                     "Retry Import",
@@ -105,7 +104,9 @@ class ImportOptionsDialog(ui.dialog):
                 ui.label("Column separator:").classes(TEXT_FIELD_LABEL)
                 with ui.icon("info").classes(ICON_INFO):
                     with (
-                        ui.tooltip().classes(WIDTH_TOOLTIP).props(PROPS_TOOLTIP_OFFSET)
+                        ui.tooltip()
+                        .classes(WIDTH_TOOLTIP)
+                        .props(gui_props.tooltip_offset)
                     ):
                         ui.label(
                             "Data files separate columns by commas, semicolons, pipes, or "
@@ -128,7 +129,9 @@ class ImportOptionsDialog(ui.dialog):
                 ui.label("Quote character:").classes(TEXT_FIELD_LABEL)
                 with ui.icon("info").classes(ICON_INFO):
                     with (
-                        ui.tooltip().classes(WIDTH_TOOLTIP).props(PROPS_TOOLTIP_OFFSET)
+                        ui.tooltip()
+                        .classes(WIDTH_TOOLTIP)
+                        .props(gui_props.tooltip_offset)
                     ):
                         ui.label(
                             "A quote character is used to enclose text so that our software "
@@ -151,7 +154,9 @@ class ImportOptionsDialog(ui.dialog):
                 ui.label("Has header:").classes(TEXT_FIELD_LABEL)
                 with ui.icon("info").classes(ICON_INFO):
                     with (
-                        ui.tooltip().classes(WIDTH_TOOLTIP).props(PROPS_TOOLTIP_OFFSET)
+                        ui.tooltip()
+                        .classes(WIDTH_TOOLTIP)
+                        .props(gui_props.tooltip_offset)
                     ):
                         ui.label(
                             "Some datasets feature a header row with the title of the "
@@ -169,7 +174,9 @@ class ImportOptionsDialog(ui.dialog):
                 ui.label("Skip rows:").classes(TEXT_FIELD_LABEL)
                 with ui.icon("info").classes(ICON_INFO):
                     with (
-                        ui.tooltip().classes(WIDTH_TOOLTIP).props(PROPS_TOOLTIP_OFFSET)
+                        ui.tooltip()
+                        .classes(WIDTH_TOOLTIP)
+                        .props(gui_props.tooltip_offset)
                     ):
                         ui.label(
                             "Some datasets begin with multiple rows that contain titles, "

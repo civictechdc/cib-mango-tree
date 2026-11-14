@@ -19,8 +19,6 @@ from cibmangotree.gui.theme import (
     COLOR_NEGATIVE,
     COLOR_PRIMARY,
     MANGO_DARK_GREEN,
-    PROPS_OUTLINE,
-    PROPS_PERSISTENT,
     ROW_GAP_MT_4,
     ROW_INLINE,
     STYLE_CENTERED,
@@ -35,6 +33,7 @@ from cibmangotree.gui.theme import (
     TEXT_STATUS,
     TEXT_STEP_TITLE,
     TEXT_WEIGHT_MEDIUM,
+    gui_props,
 )
 
 QUEUE_POLL_INTERVAL = 0.05
@@ -143,7 +142,7 @@ class RunAnalysisStep:
         }
 
         with (
-            ui.dialog().props(PROPS_PERSISTENT) as dialog,
+            ui.dialog().props(gui_props.persistent) as dialog,
             ui.card().classes(CARD_PROGRESS).style(STYLE_PROGRESS_DIALOG),
         ):
             analyzer_header = ui.label(analyzer.name).classes(TEXT_DIALOG_HEADER)
@@ -163,7 +162,7 @@ class RunAnalysisStep:
                     icon="stop",
                     color=COLOR_NEGATIVE,
                     on_click=lambda: cancel_event.set(),
-                ).props(PROPS_OUTLINE)
+                ).props(gui_props.outline)
                 cancel_btn.set_visibility(False)
 
                 success_btn = ui.button(

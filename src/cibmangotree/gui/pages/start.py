@@ -12,9 +12,6 @@ from cibmangotree.gui.theme import (
     COLOR_NEGATIVE,
     COLOR_PRIMARY,
     HEAD_HTML_STICKY_TABLE,
-    PROPS_DISABLE,
-    PROPS_OUTLINE,
-    PROPS_TABLE_STICKY,
     ROW_ACTIONS,
     ROW_CENTERED,
     ROW_TOOLBAR_END,
@@ -25,6 +22,7 @@ from cibmangotree.gui.theme import (
     TABLE_PROJECTS,
     TEXT_HEADING_MUTED,
     TEXT_NEGATIVE_MB_6,
+    gui_props,
 )
 
 _COLUMNS = [
@@ -112,7 +110,7 @@ class StartPage(GuiPage):
                         icon="delete",
                         color=COLOR_NEGATIVE,
                     )
-                    self._delete_button.props(PROPS_DISABLE)
+                    self._delete_button.props(gui_props.disable)
 
                     self._open_button = ui.button(
                         "Open Project",
@@ -120,7 +118,7 @@ class StartPage(GuiPage):
                         icon="folder_open",
                         color=COLOR_PRIMARY,
                     )
-                    self._open_button.props(PROPS_DISABLE)
+                    self._open_button.props(gui_props.disable)
 
     def _build_table(self) -> None:
         rows = self._build_rows()
@@ -132,7 +130,7 @@ class StartPage(GuiPage):
                 selection="single",
             )
             .classes(TABLE_PROJECTS)
-            .props(PROPS_TABLE_STICKY)
+            .props(gui_props.table_sticky)
         )
 
         self._table.on("selection", self._on_selection_change)
@@ -177,11 +175,11 @@ class StartPage(GuiPage):
         assert self._delete_button is not None
         has_selection = bool(self._table.selected)
         if has_selection:
-            self._open_button.props(remove=PROPS_DISABLE)
-            self._delete_button.props(remove=PROPS_DISABLE)
+            self._open_button.props(remove=gui_props.disable)
+            self._delete_button.props(remove=gui_props.disable)
         else:
-            self._open_button.props(PROPS_DISABLE)
-            self._delete_button.props(PROPS_DISABLE)
+            self._open_button.props(gui_props.disable)
+            self._delete_button.props(gui_props.disable)
 
     async def _handle_create_new(self) -> None:
         dialog = NewProjectDialog(self.session)
@@ -225,7 +223,7 @@ class StartPage(GuiPage):
                     "Cancel",
                     on_click=lambda: dialog.submit(False),
                     color=COLOR_CANCEL,
-                ).props(PROPS_OUTLINE)
+                ).props(gui_props.outline)
                 ui.button(
                     "Delete", on_click=lambda: dialog.submit(True), color=COLOR_NEGATIVE
                 )

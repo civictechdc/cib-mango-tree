@@ -5,7 +5,7 @@ files pattern together as more modules are migrated.
 
 Modules in FILES_TO_CHECK must not pass string or f-string literals to
 .classes(), .style(), or .props(), and must not pass string literals to
-color= — import named constants from theme.py instead (COLOR_*, PROPS_*,
+color= — import named constants from theme.py instead (COLOR_*, gui_props,
 CARD_*, …). Retired Quasar/layout tokens still get specific replacement hints
 when they appear in a banned class literal.
 """

@@ -3,13 +3,10 @@ from nicegui import ui
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
     CARD_DIALOG_MD,
-    COLOR_CANCEL,
-    COLOR_MANGO_ORANGE,
-    COLOR_PRIMARY,
-    PROPS_OUTLINE,
     ROW_ACTIONS_MT_4,
     TEXT_SECTION_HEADING,
     WIDTH_FULL,
+    gui_props,
 )
 
 
@@ -42,14 +39,14 @@ class NewProjectDialog(ui.dialog):
                 ui.button(
                     "Cancel",
                     on_click=self._handle_cancel,
-                    color=COLOR_CANCEL,
-                ).props(PROPS_OUTLINE)
+                    color="cancel",
+                ).props(gui_props.outline)
 
                 ui.button(
                     "Next",
                     on_click=self._handle_next,
                     icon="arrow_forward",
-                    color=COLOR_PRIMARY,
+                    color="primary",
                 )
 
     def _handle_cancel(self) -> None:
@@ -59,7 +56,9 @@ class NewProjectDialog(ui.dialog):
         name = self.name_input.value
         if not name or not name.strip():
             ui.notify(
-                "Please enter a project name", type="warning", color=COLOR_MANGO_ORANGE
+                "Please enter a project name",
+                type="warning",
+                color="warning",
             )
             return
 

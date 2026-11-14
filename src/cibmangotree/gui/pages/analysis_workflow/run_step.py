@@ -16,11 +16,6 @@ from cibmangotree.gui.theme import (
     COL_STACK_MT_2,
     COL_STACK_MT_4,
     COL_STEP_BODY,
-    COLOR_NEGATIVE,
-    COLOR_PRIMARY,
-    MANGO_DARK_GREEN,
-    PROPS_OUTLINE,
-    PROPS_PERSISTENT,
     ROW_GAP_MT_4,
     ROW_INLINE,
     STYLE_CENTERED,
@@ -35,6 +30,7 @@ from cibmangotree.gui.theme import (
     TEXT_STATUS,
     TEXT_STEP_TITLE,
     TEXT_WEIGHT_MEDIUM,
+    gui_props,
 )
 
 QUEUE_POLL_INTERVAL = 0.05
@@ -83,7 +79,7 @@ class RunAnalysisStep:
             ui.button(
                 "Run Analysis",
                 icon="play_arrow",
-                color=COLOR_PRIMARY,
+                color="primary",
                 on_click=self._start_analysis,
             ).classes(TEXT_BASE)
 
@@ -143,7 +139,7 @@ class RunAnalysisStep:
         }
 
         with (
-            ui.dialog().props(PROPS_PERSISTENT) as dialog,
+            ui.dialog().props(gui_props.persistent) as dialog,
             ui.card().classes(CARD_PROGRESS).style(STYLE_PROGRESS_DIALOG),
         ):
             analyzer_header = ui.label(analyzer.name).classes(TEXT_DIALOG_HEADER)
@@ -161,15 +157,15 @@ class RunAnalysisStep:
                 cancel_btn = ui.button(
                     "Cancel Analysis",
                     icon="stop",
-                    color=COLOR_NEGATIVE,
+                    color="negative",
                     on_click=lambda: cancel_event.set(),
-                ).props(PROPS_OUTLINE)
+                ).props(gui_props.outline)
                 cancel_btn.set_visibility(False)
 
                 success_btn = ui.button(
                     "Continue",
                     icon="arrow_forward",
-                    color=COLOR_PRIMARY,
+                    color="primary",
                     on_click=lambda: (
                         dialog.close(),
                         self.page.navigate_to(gui_routes.post_analysis),
@@ -207,9 +203,7 @@ class RunAnalysisStep:
                 with step_list_container:
                     with ui.row().classes(ROW_INLINE):
                         spinner = ui.spinner("gears", size="sm")
-                        checkmark = ui.icon(
-                            "check_circle", color=MANGO_DARK_GREEN, size="sm"
-                        )
+                        checkmark = ui.icon("check_circle", color="primary", size="sm")
                         checkmark.set_visibility(False)
                         label = ui.label(step_name).classes(TEXT_WEIGHT_MEDIUM)
                 step_rows[step_name] = (spinner, checkmark, label)

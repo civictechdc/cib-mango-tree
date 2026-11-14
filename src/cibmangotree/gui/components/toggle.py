@@ -1,11 +1,5 @@
 from nicegui import ui
 
-from cibmangotree.gui.theme import (
-    PROPS_COLOR_GREY,
-    PROPS_COLOR_PRIMARY,
-    PROPS_COLOR_RED,
-)
-
 
 class ToggleButton(ui.button):
     def __init__(self, *args, group=None, **kwargs) -> None:
@@ -34,10 +28,11 @@ class ToggleButton(ui.button):
     def update(self) -> None:
         if self._group:
             # Group mode: green when active, grey when inactive
-            self.props(PROPS_COLOR_PRIMARY if self._state else PROPS_COLOR_GREY)
+            color = "primary" if self._state else "grey"
         else:
             # Standalone mode: orange/red toggle
-            self.props(PROPS_COLOR_PRIMARY if self._state else PROPS_COLOR_RED)
+            color = "primary" if self._state else "red"
+        self.set_background_color(color)
         super().update()
 
 

@@ -12,13 +12,6 @@ from cibmangotree.gui.theme import (
     CARD_DIALOG_FULL,
     COL_FULL,
     COL_STACK_MB_4,
-    COLOR_CANCEL,
-    COLOR_MANGO_ORANGE,
-    COLOR_NEGATIVE,
-    COLOR_PRIMARY,
-    MANGO_DARK_GREEN,
-    PROPS_INSTANT_FEEDBACK,
-    PROPS_OUTLINE,
     ROW_ACTIONS,
     ROW_INLINE,
     ROW_STATUS,
@@ -31,6 +24,7 @@ from cibmangotree.gui.theme import (
     TEXT_SM,
     TEXT_SUBTITLE_BOLD_MT,
     WIDTH_FULL_MB_4,
+    gui_props,
 )
 from cibmangotree.gui.utils import open_directory_explorer
 from cibmangotree.storage import SupportedOutputExtension
@@ -213,13 +207,13 @@ class ExportDialog(ui.dialog):
                         self._add_checkbox_group("Secondary Outputs", sec_outputs)
 
             with ui.row().classes(ROW_ACTIONS):
-                ui.button("Cancel", on_click=self.close, color=COLOR_CANCEL).props(
-                    PROPS_OUTLINE
+                ui.button("Cancel", on_click=self.close, color="cancel").props(
+                    gui_props.outline
                 )
                 self.select_outputs_next = ui.button(
                     "Next",
                     on_click=self._go_to_configure_export,
-                    color=COLOR_PRIMARY,
+                    color="primary",
                     icon="arrow_forward",
                 )
                 self.select_outputs_next.set_enabled(False)
@@ -304,12 +298,12 @@ class ExportDialog(ui.dialog):
                     "Back",
                     on_click=lambda: self._show_step("select_outputs"),
                     icon="arrow_back",
-                    color=COLOR_CANCEL,
-                ).props(PROPS_OUTLINE)
+                    color="cancel",
+                ).props(gui_props.outline)
                 ui.button(
                     "Start Export",
                     on_click=self._handle_start_export,
-                    color=COLOR_PRIMARY,
+                    color="primary",
                     icon="arrow_forward",
                 )
 
@@ -335,7 +329,7 @@ class ExportDialog(ui.dialog):
             self.export_progress_bar = (
                 ui.linear_progress(value=0, show_value=False)
                 .classes(WIDTH_FULL_MB_4)
-                .props(PROPS_INSTANT_FEEDBACK)
+                .props(gui_props.instant_feedback)
             )
 
             self.output_status_container = ui.column().classes(COL_STACK_MB_4)
@@ -345,10 +339,10 @@ class ExportDialog(ui.dialog):
         with self.export_complete:
             with ui.row().classes(ROW_STATUS):
                 self.complete_success_icon = ui.icon(
-                    "check_circle", color=MANGO_DARK_GREEN, size="lg"
+                    "check_circle", color="primary", size="lg"
                 )
                 self.complete_error_icon = ui.icon(
-                    "cancel", color=COLOR_NEGATIVE, size="lg"
+                    "cancel", color="negative", size="lg"
                 )
                 self.complete_status_label = ui.label("").classes(TEXT_HEADING)
                 self.complete_success_icon.set_visibility(False)
@@ -360,11 +354,11 @@ class ExportDialog(ui.dialog):
                 self.export_complete_open_folder = ui.button(
                     "Open exports folder",
                     on_click=self._open_folder,
-                    color=COLOR_PRIMARY,
+                    color="primary",
                     icon="folder_open",
                 )
-                ui.button("Close", on_click=self.close, color=COLOR_CANCEL).props(
-                    PROPS_OUTLINE
+                ui.button("Close", on_click=self.close, color="cancel").props(
+                    gui_props.outline
                 )
 
     def _start_export(self):
@@ -372,7 +366,7 @@ class ExportDialog(ui.dialog):
             ui.notify(
                 "Please select an export format",
                 type="warning",
-                color=COLOR_MANGO_ORANGE,
+                color="warning",
             )
             self._show_step("configure_export")
             return

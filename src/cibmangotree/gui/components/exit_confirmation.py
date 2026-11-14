@@ -2,11 +2,9 @@ from nicegui import ui
 
 from cibmangotree.gui.theme import (
     CARD_DIALOG_NARROW,
-    COLOR_CANCEL,
-    COLOR_NEGATIVE,
-    PROPS_FLAT,
     ROW_GAP_2,
     TEXT_CENTER_MB_4,
+    gui_props,
 )
 
 
@@ -40,10 +38,10 @@ class ExitConfirmationDialog(ui.dialog):
                 ui.button(
                     cancel_text,
                     on_click=lambda: self.submit(False),
-                    color=COLOR_CANCEL,
-                ).props(PROPS_FLAT)
+                    color="cancel",
+                ).props(gui_props.flat)
                 ui.button(
                     confirm_text,
                     on_click=lambda: self.submit(True),
-                    color=COLOR_NEGATIVE,
-                ).props(PROPS_FLAT)
+                    color="negative",
+                ).props(gui_props.flat)

@@ -27,7 +27,6 @@ from cibmangotree.analyzers.hashtags.hashtags_base.interface import (
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
     CARD_FLEX_1,
-    CHART_HIGHLIGHT,
     COL_DASHBOARD,
     CSS_HASHTAGS_GRID,
     ROW_CENTERED,
@@ -38,6 +37,7 @@ from cibmangotree.gui.theme import (
     TEXT_BODY_MUTED_MB_2,
     TEXT_HEADING,
     WIDTH_FULL,
+    gui_colors,
 )
 
 from ..base_dashboard import BaseDashboardPage
@@ -168,7 +168,10 @@ class HashtagsDashboardPage(BaseDashboardPage):
                             "silent": True,
                             "symbol": "none",
                             "animation": False,
-                            "lineStyle": {"color": CHART_HIGHLIGHT, "width": 2},
+                            "lineStyle": {
+                                "color": gui_colors.chart_highlight,
+                                "width": 2,
+                            },
                             "label": {
                                 "position": "end",
                                 "distance": 10,

@@ -20,10 +20,7 @@ from cibmangotree.analyzers.ngrams.ngrams_stats.interface import (
     COL_NGRAM_WORDS,
 )
 from cibmangotree.gui.theme import (
-    CHART_BORDER,
-    CHART_HIGHLIGHT,
-    CHART_SHADOW,
-    TAB_10_PALETTE,
+    gui_colors,
 )
 
 
@@ -107,22 +104,22 @@ def plot_scatter_echart(
         series_config = {
             "name": f"{n}-gram",
             "type": "scatter",
-            "color": TAB_10_PALETTE[i],
+            "color": gui_colors.tab_10_palette[i],
             "symbolSize": 11,
             "itemStyle": {
-                "color": TAB_10_PALETTE[i % len(TAB_10_PALETTE)],
+                "color": gui_colors.tab_10_palette[i % len(gui_colors.tab_10_palette)],
                 "opacity": 0.7,
-                "borderColor": CHART_BORDER,
+                "borderColor": gui_colors.chart_border,
                 "borderWidth": 0.5,
             },
             "emphasis": {
                 "itemStyle": {
-                    "color": CHART_HIGHLIGHT,
+                    "color": gui_colors.chart_highlight,
                     "opacity": 1.0,
-                    "borderColor": CHART_BORDER,
+                    "borderColor": gui_colors.chart_border,
                     "borderWidth": 1,
                     "shadowBlur": 10,
-                    "shadowColor": CHART_SHADOW,
+                    "shadowColor": gui_colors.chart_shadow,
                 },
                 "scale": 1.5,
             },

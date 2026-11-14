@@ -14,12 +14,7 @@ from cibmangotree.analyzers.hashtags.hashtags_base.interface import (
     OUTPUT_COL_TIMESPAN,
     PRIMARY_OUTPUT_DATETIME_FORMAT,
 )
-from cibmangotree.gui.theme import (
-    CHART_HIGHLIGHT,
-    CHART_LINE,
-    CHART_SHADOW,
-    MANGO_ORANGE,
-)
+from cibmangotree.gui.theme import gui_colors
 
 
 def _format_date_for_axis(ts: datetime, is_hourly: bool) -> str:
@@ -70,18 +65,18 @@ def plot_gini_echart(
             "name": "Gini coefficient",
             "type": "line",
             "data": series_data,
-            "lineStyle": {"color": CHART_LINE, "width": 1.5},
+            "lineStyle": {"color": gui_colors.chart_line, "width": 1.5},
             "showSymbol": False,
             "symbol": "circle",
             "symbolSize": 4,
-            "itemStyle": {"color": CHART_LINE},
+            "itemStyle": {"color": gui_colors.chart_line},
             "emphasis": {
                 "showSymbol": True,
                 "itemStyle": {
-                    "color": CHART_HIGHLIGHT,
+                    "color": gui_colors.chart_highlight,
                     "symbolSize": 12,
                     "shadowBlur": 10,
-                    "shadowColor": CHART_SHADOW,
+                    "shadowColor": gui_colors.chart_shadow,
                 },
             },
         }
@@ -105,16 +100,16 @@ def plot_gini_echart(
                 "name": "Smoothed",
                 "type": "line",
                 "data": smooth_series_data,
-                "lineStyle": {"color": MANGO_ORANGE, "width": 2},
-                "itemStyle": {"color": MANGO_ORANGE},
+                "lineStyle": {"color": gui_colors.brand_progress, "width": 2},
+                "itemStyle": {"color": gui_colors.brand_progress},
                 "showSymbol": False,
                 "emphasis": {
                     "showSymbol": True,
                     "itemStyle": {
-                        "color": CHART_HIGHLIGHT,
+                        "color": gui_colors.chart_highlight,
                         "symbolSize": 12,
                         "shadowBlur": 10,
-                        "shadowColor": CHART_SHADOW,
+                        "shadowColor": gui_colors.chart_shadow,
                     },
                 },
             }

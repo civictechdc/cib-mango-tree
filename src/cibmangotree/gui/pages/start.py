@@ -8,9 +8,6 @@ from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
     COL_FULL,
-    COLOR_CANCEL,
-    COLOR_NEGATIVE,
-    COLOR_PRIMARY,
     HEAD_HTML_STICKY_TABLE,
     ROW_ACTIONS,
     ROW_CENTERED,
@@ -98,7 +95,7 @@ class StartPage(GuiPage):
                         "Create New",
                         on_click=self._handle_create_new,
                         icon="add",
-                        color=COLOR_PRIMARY,
+                        color="primary",
                     )
 
                 self._build_table()
@@ -108,7 +105,7 @@ class StartPage(GuiPage):
                         "Delete",
                         on_click=self._handle_delete_project,
                         icon="delete",
-                        color=COLOR_NEGATIVE,
+                        color="negative",
                     )
                     self._delete_button.props(gui_props.disable)
 
@@ -116,7 +113,7 @@ class StartPage(GuiPage):
                         "Open Project",
                         on_click=self._handle_open_project,
                         icon="folder_open",
-                        color=COLOR_PRIMARY,
+                        color="primary",
                     )
                     self._open_button.props(gui_props.disable)
 
@@ -222,10 +219,10 @@ class StartPage(GuiPage):
                 ui.button(
                     "Cancel",
                     on_click=lambda: dialog.submit(False),
-                    color=COLOR_CANCEL,
+                    color="cancel",
                 ).props(gui_props.outline)
                 ui.button(
-                    "Delete", on_click=lambda: dialog.submit(True), color=COLOR_NEGATIVE
+                    "Delete", on_click=lambda: dialog.submit(True), color="negative"
                 )
 
         confirmed = await dialog

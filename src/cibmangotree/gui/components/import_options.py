@@ -12,9 +12,6 @@ from nicegui import ui
 
 from cibmangotree.gui.theme import (
     CARD_DIALOG_PADDED,
-    COLOR_CANCEL,
-    COLOR_MANGO_ORANGE,
-    COLOR_PRIMARY,
     ICON_INFO,
     ROW_ACTIONS_MT_3,
     ROW_CENTERED_GAP,
@@ -84,14 +81,14 @@ class ImportOptionsDialog(ui.dialog):
 
             # Action buttons
             with ui.row().classes(ROW_ACTIONS_MT_3):
-                ui.button("Cancel", on_click=self.close, color=COLOR_CANCEL).props(
+                ui.button("Cancel", on_click=self.close, color="cancel").props(
                     gui_props.outline
                 )
                 ui.button(
                     "Retry Import",
                     icon="refresh",
                     on_click=self._handle_retry,
-                    color=COLOR_PRIMARY,
+                    color="primary",
                 )
 
     def _build_csv_controls(self):
@@ -221,7 +218,7 @@ class ImportOptionsDialog(ui.dialog):
                     ui.notify(
                         "Invalid skip rows value",
                         type="negative",
-                        color=COLOR_MANGO_ORANGE,
+                        color="negative",
                     )
                     return
 
@@ -249,6 +246,6 @@ class ImportOptionsDialog(ui.dialog):
             ui.notify(
                 f"Error updating configuration: {str(e)}",
                 type="negative",
-                color=COLOR_MANGO_ORANGE,
+                color="negative",
             )
             print(f"Config update error:\n{format_exc()}")

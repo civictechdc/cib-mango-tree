@@ -4,10 +4,11 @@ The hook and pytest use the same scanner. Widen FILES_TO_CHECK and the hook's
 files pattern together as more modules are migrated.
 
 Modules in FILES_TO_CHECK must not pass string or f-string literals to
-.classes(), .style(), or .props(), and must not pass string literals to
-color= — import named constants from theme.py instead (COLOR_*, gui_props,
-CARD_*, …). Retired Quasar/layout tokens still get specific replacement hints
-when they appear in a banned class literal.
+.classes(), .style(), or .props() — import named constants from theme.py
+instead (gui_props, CARD_*, …). Quasar ``color=`` may use slot name strings
+(``"primary"``, ``"negative"``, …) registered via ``ui.colors`` in
+``GuiPage._setup_colors``. Retired Quasar/layout tokens still get specific
+replacement hints when they appear in a banned class literal.
 """
 
 from __future__ import annotations
@@ -123,29 +124,6 @@ def scan_source(source: str, path: Path) -> list[Finding]:
     for node in ast.walk(ast.parse(source)):
         if not isinstance(node, ast.Call):
             continue
-
-        for keyword in node.keywords:
-            if keyword.arg == "color":
-                if isinstance(keyword.value, ast.Constant) and isinstance(
-                    keyword.value.value, str
-                ):
-                    findings.append(
-                        Finding(
-                            path,
-                            keyword.value.lineno,
-                            keyword.value.value,
-                            THEME_CONSTANT_HINT,
-                        )
-                    )
-                elif isinstance(keyword.value, ast.JoinedStr):
-                    findings.append(
-                        Finding(
-                            path,
-                            keyword.value.lineno,
-                            "<f-string>",
-                            THEME_CONSTANT_HINT,
-                        )
-                    )
 
         if not isinstance(node.func, ast.Attribute):
             continue

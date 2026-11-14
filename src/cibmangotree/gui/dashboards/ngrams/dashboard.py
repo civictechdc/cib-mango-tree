@@ -27,9 +27,6 @@ from cibmangotree.analyzers.ngrams.ngrams_stats.interface import (
 from cibmangotree.gui.session import GuiSession
 from cibmangotree.gui.theme import (
     COL_DASHBOARD,
-    COLOR_CANCEL,
-    COLOR_PRIMARY,
-    COLOR_SECONDARY,
     CSS_NGRAMS_GRID,
     ROW_FULL_CENTER,
     ROW_FULL_ITEMS_GAP_4,
@@ -489,15 +486,15 @@ class NgramsDashboardPage(BaseDashboardPage):
                     "This may cause the browser to slow down or become unresponsive."
                 ).classes(TEXT_BODY_MUTED)
                 with ui.row().classes(ROW_GAP_4_END):
-                    ui.button(
-                        "Cancel", on_click=dialog.close, color=COLOR_CANCEL
-                    ).props(gui_props.flat)
+                    ui.button("Cancel", on_click=dialog.close, color="cancel").props(
+                        gui_props.flat
+                    )
 
                     async def _confirm():
                         dialog.close()
                         await self._load_full_dataset()
 
-                    ui.button("Load all", on_click=_confirm, color=COLOR_PRIMARY)
+                    ui.button("Load all", on_click=_confirm, color="primary")
             dialog.open()
         else:
             await self._load_full_dataset()
@@ -584,7 +581,7 @@ class NgramsDashboardPage(BaseDashboardPage):
                     self._show_all_btn = ui.button(
                         "Show all data",
                         on_click=self._handle_show_all_click,
-                        color=COLOR_SECONDARY,
+                        color="secondary",
                     ).props(gui_props.outline_dense)
                     self._show_all_btn.set_visibility(False)
 

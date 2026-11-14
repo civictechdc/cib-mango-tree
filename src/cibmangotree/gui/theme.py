@@ -7,58 +7,134 @@ See docs/guides/contributing/styling.md.
 
 from pydantic import BaseModel, ConfigDict, Field
 
-# ---------------------------------------------------------------------------
-# Brand hexes — fed into GuiColors / ui.colors(); also used directly where
-# NiceGUI/ECharts need a raw color (icons, chart series, mark lines).
-# ---------------------------------------------------------------------------
-MANGO_DARK_GREEN = "#609949"  # export/run success icons; GuiColors.primary
-MANGO_ORANGE = "#f3921e"  # hashtag plots/window preview; GuiColors.mango_orange
-MANGO_ORANGE_LIGHT = "#f9bc30"  # GuiColors.secondary only
-ACCENT = "white"  # GuiColors.accent (header icon buttons)
-CANCEL = "#424242"  # GuiColors.cancel; hashtag window-preview dashed lines
-
-# ---------------------------------------------------------------------------
-# Chart hexes — ECharts option dicts in analyzer dashboards (not Quasar slots).
-# ---------------------------------------------------------------------------
-# Shared red for highlights (hashtags Gini/plots, ngrams plots).
-CHART_HIGHLIGHT = "#d62728"
-CHART_LINE = "black"  # hashtags default series stroke/fill
-CHART_BORDER = "white"  # ngrams scatter point borders
-CHART_SHADOW = "rgba(0, 0, 0, 0.3)"  # hashtags/ngrams hover shadow
-# Classic Tableau/matplotlib tab10 categorical palette for ngrams series colors
-# (dashboards/ngrams/plots.py). Fourth entry reuses CHART_HIGHLIGHT.
-TAB_10_PALETTE = [
-    "#1f77b4",
-    "#ff7f0e",
-    "#2ca02c",
-    CHART_HIGHLIGHT,
-    "#9467bd",
-    "#8c564b",
-    "#e377c2",
-    "#7f7f7f",
-    "#bcbd22",
-    "#17becf",
-]
-# Time-coordination network edge colors by group size
-# (dashboards/time_coordination/chart_utils.py).
-EDGE_COLOR_PAIR = "#B0B7C3"  # N == 1 (light grey)
-EDGE_COLOR_GROUP_2_5 = "#1B9E77"  # 2 <= N <= 5 (teal/green)
-EDGE_COLOR_GROUP_6_10 = "#D7268A"  # 6 <= N <= 10 (magenta)
-EDGE_COLOR_GROUP_11_20 = "#8B2E8B"  # N >= 11 (incl. >20)
-
 
 class GuiColors(BaseModel):
-    """Mango Tree brand colors registered with NiceGUI via GuiPage._setup_colors."""
+    """Mango Tree brand/status/chart colors (hex SSOT).
+
+    Set color values here. The app will take care of things from here.
+
+    Hex values are defined here on ``gui_colors``. ``GuiPage._setup_colors``
+    passes them into ``ui.colors(...)`` so Quasar named slots use this palette.
+
+    Quasar widgets take slot names on ``color=`` (e.g. ``"primary"``);
+    charts/CSS use ``gui_colors.*`` hexes directly.
+    """
 
     model_config = ConfigDict(frozen=True)
 
-    primary: str = Field(default=MANGO_DARK_GREEN, description="Mango dark green")
-    secondary: str = Field(default=MANGO_ORANGE_LIGHT, description="Mango orange light")
-    accent: str = Field(default=ACCENT, description="Accent color")
-    cancel: str = Field(default=CANCEL, description="Cancel/back/close action color")
+    brand_primary: str = Field(
+        default="#2a4a23",
+        description="Brand primary",
+    )
+    brand_secondary: str = Field(
+        default="#4e823b",
+        description="Brand secondary",
+    )
+    brand_accent: str = Field(
+        default="#f7ba2d",
+        description="Brand accent",
+    )
+    brand_dark: str = Field(
+        default="#2a4a23",
+        description="Brand dark",
+    )
+    brand_cancel: str = Field(
+        default="#424242",
+        description="Brand cancel",
+    )
+    brand_progress: str = Field(
+        default="#f3921e",
+        description="Brand progress",
+    )
+    status_positive: str = Field(
+        default="#4e823b",
+        description="Status positive",
+    )
+    status_negative: str = Field(
+        default="#bc3a11",
+        description="Status negative",
+    )
+    status_warning: str = Field(
+        default="#f7ba2d",
+        description="Status warning",
+    )
+    status_info: str = Field(
+        default="#9fb8e0",
+        description="Status info",
+    )
+    grey: str = Field(
+        default="#9e9e9e",
+        description="Toggle inactive (group mode); Quasar $grey",
+    )
+    red: str = Field(
+        default="#f44336",
+        description="Toggle inactive (standalone mode); Quasar $red",
+    )
+    chart_color_1: str = Field(
+        default="#325caa",
+        description="Chart color 1",
+    )
+    chart_color_2: str = Field(
+        default="#b8bec8",
+        description="Chart color 2",
+    )
+    chart_color_3: str = Field(
+        default="#b0c860",
+        description="Chart color 3",
+    )
+    chart_color_4: str = Field(
+        default="#d42483",
+        description="Chart color 4",
+    )
+    chart_color_5: str = Field(
+        default="#ca6c38",
+        description="Chart color 5",
+    )
+    chart_highlight: str = Field(
+        default="#d62728",
+        description="Chart highlight",
+    )
+    chart_line: str = Field(
+        default="black",
+        description="Chart line",
+    )
+    chart_border: str = Field(
+        default="white",
+        description="Chart border",
+    )
+    chart_shadow: str = Field(
+        default="rgba(0, 0, 0, 0.3)",
+        description="Chart shadow",
+    )
+    tab_10_palette_0: str = Field(default="#1f77b4", description="Tab10 palette 0")
+    tab_10_palette_1: str = Field(default="#ff7f0e", description="Tab10 palette 1")
+    tab_10_palette_2: str = Field(default="#2ca02c", description="Tab10 palette 2")
+    tab_10_palette_3: str = Field(
+        default="#d62728",
+        description="Tab10 palette 3 (same as chart_highlight)",
+    )
+    tab_10_palette_4: str = Field(default="#9467bd", description="Tab10 palette 4")
+    tab_10_palette_5: str = Field(default="#8c564b", description="Tab10 palette 5")
+    tab_10_palette_6: str = Field(default="#e377c2", description="Tab10 palette 6")
+    tab_10_palette_7: str = Field(default="#7f7f7f", description="Tab10 palette 7")
+    tab_10_palette_8: str = Field(default="#bcbd22", description="Tab10 palette 8")
+    tab_10_palette_9: str = Field(default="#17becf", description="Tab10 palette 9")
 
-    # Additional colors for reference
-    mango_orange: str = Field(default=MANGO_ORANGE, description="Mango orange")
+    @property
+    def tab_10_palette(self) -> tuple[str, ...]:
+        """Indexed Tableau/matplotlib tab10 series colors for ngrams plots."""
+        return (
+            self.tab_10_palette_0,
+            self.tab_10_palette_1,
+            self.tab_10_palette_2,
+            self.tab_10_palette_3,
+            self.tab_10_palette_4,
+            self.tab_10_palette_5,
+            self.tab_10_palette_6,
+            self.tab_10_palette_7,
+            self.tab_10_palette_8,
+            self.tab_10_palette_9,
+        )
 
 
 class GuiURLS(BaseModel):
@@ -78,21 +154,6 @@ class GuiURLS(BaseModel):
         default="https://cibmangotree.org",
         description="Official website URL",
     )
-
-
-# ---------------------------------------------------------------------------
-# Quasar color roles — NiceGUI color=... on buttons, icons, notifies.
-# Names match slots registered in GuiPage._setup_colors (negative is built-in).
-# Used across pages/, components/, and dashboard action chrome.
-# ---------------------------------------------------------------------------
-COLOR_PRIMARY = "primary"
-COLOR_SECONDARY = "secondary"
-COLOR_ACCENT = "accent"
-COLOR_CANCEL = "cancel"
-COLOR_MANGO_ORANGE = "mango-orange"
-COLOR_NEGATIVE = "negative"
-COLOR_GREY = "grey"  # toggle inactive (group mode)
-COLOR_RED = "red"  # toggle inactive (standalone mode)
 
 
 class GuiProps(BaseModel):
@@ -139,18 +200,6 @@ class GuiProps(BaseModel):
     use_chips: str = Field(
         default="use-chips",
         description="Column mapping step selects",
-    )
-    color_primary: str = Field(
-        default=f"color={COLOR_PRIMARY}",
-        description="Toggle active",
-    )
-    color_grey: str = Field(
-        default=f"color={COLOR_GREY}",
-        description="Toggle inactive (group)",
-    )
-    color_red: str = Field(
-        default=f"color={COLOR_RED}",
-        description="Toggle inactive (standalone)",
     )
     instant_feedback: str = Field(
         default="instant-feedback",
@@ -355,7 +404,7 @@ STYLE_IMPORT_DIALOG = "min-width: 600px; max-width: 800px"
 STYLE_EXPORT_DIALOG = "min-width: 500px; max-width: 700px"
 STYLE_PROGRESS_DIALOG = "width: 600px; max-width: 90vw; padding: 2rem;"  # run_step
 STYLE_CHART_HEIGHT = "height: 320px"  # params_step window preview
-STYLE_STATUS_ACCENT = f"color: {MANGO_ORANGE}"  # run_step status text
+STYLE_STATUS_ACCENT = f"color: {gui_colors.brand_progress}"  # run_step status text
 STYLE_PROMPT = "font-size: 1.05rem"  # choice_fork / analysis_post prompts
 STYLE_SPACE_BETWEEN = "justify-content: space-between"  # base footer
 STYLE_HIDDEN = "display: none;"  # base_dashboard loading swap

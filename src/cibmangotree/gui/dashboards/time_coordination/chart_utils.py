@@ -2,12 +2,7 @@
 
 import networkx as nx
 
-from cibmangotree.gui.theme import (
-    EDGE_COLOR_GROUP_2_5,
-    EDGE_COLOR_GROUP_6_10,
-    EDGE_COLOR_GROUP_11_20,
-    EDGE_COLOR_PAIR,
-)
+from cibmangotree.gui.theme import gui_colors
 
 # Slightly above ECharts' default (12) so hovered account names stay readable.
 NODE_LABEL_FONT_SIZE = 14
@@ -21,10 +16,10 @@ EDGE_GROUP_11_20 = "g11_20"
 
 # (group_key, color, label) — keys used for visibility toggles.
 EDGE_COLOR_LEGEND = (
-    (EDGE_GROUP_PAIR, EDGE_COLOR_PAIR, "1:1 pair"),
-    (EDGE_GROUP_2_5, EDGE_COLOR_GROUP_2_5, "Group of 2–5"),
-    (EDGE_GROUP_6_10, EDGE_COLOR_GROUP_6_10, "Group of 6–10"),
-    (EDGE_GROUP_11_20, EDGE_COLOR_GROUP_11_20, "Group of 11–20"),
+    (EDGE_GROUP_PAIR, gui_colors.chart_color_2, "1:1 pair"),
+    (EDGE_GROUP_2_5, gui_colors.chart_color_3, "Group of 2–5"),
+    (EDGE_GROUP_6_10, gui_colors.chart_color_4, "Group of 6–10"),
+    (EDGE_GROUP_11_20, gui_colors.chart_color_5, "Group of 11–20"),
 )
 
 ALL_EDGE_GROUPS = frozenset(key for key, _color, _label in EDGE_COLOR_LEGEND)
@@ -194,7 +189,7 @@ def edge_color_for_link(G: nx.Graph, u, v) -> str:
     for key, color, _label in EDGE_COLOR_LEGEND:
         if key == group:
             return color
-    return EDGE_COLOR_GROUP_11_20
+    return gui_colors.chart_color_5
 
 
 def apply_edge_group_visibility(

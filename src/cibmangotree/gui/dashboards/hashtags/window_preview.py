@@ -11,7 +11,7 @@ import polars as pl
 
 from cibmangotree.analyzer_interface.params import TimeBinningValue
 from cibmangotree.analyzers.hashtags.hashtags_base.interface import COL_TIME
-from cibmangotree.gui.theme import CANCEL, MANGO_ORANGE
+from cibmangotree.gui.theme import gui_colors
 
 ACTIVITY_BIN_COUNT = 150
 # The sample hashtag file has 91 occupied hours and 100 occupied minutes.
@@ -131,12 +131,12 @@ def plot_activity_echart(bins: pl.DataFrame, edges: WindowEdges) -> dict:
         "name": "Posts",
         "type": "bar",
         "data": series_data,
-        "itemStyle": {"color": MANGO_ORANGE},
+        "itemStyle": {"color": gui_colors.brand_progress},
         "barMaxWidth": 8,
         "markLine": {
             "symbol": "none",
             "silent": True,
-            "lineStyle": {"color": CANCEL, "type": "dashed"},
+            "lineStyle": {"color": gui_colors.brand_cancel, "type": "dashed"},
             "data": line_data,
         },
     }

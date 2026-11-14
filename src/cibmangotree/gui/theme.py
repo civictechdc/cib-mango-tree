@@ -9,9 +9,9 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class GuiColors(BaseModel):
-    """Mango Tree brand/status/chart colors (hex SSOT).
+    """Mango Tree brand/status/chart colors (hex Single Source Of Truth).
 
-    Set color values here. The app will take care of things from here.
+    Set color values in this class. The app takes care of implementing the colors from here.
 
     Hex values are defined here on ``gui_colors``. ``GuiPage._setup_colors``
     passes them into ``ui.colors(...)`` so Quasar named slots use this palette.
@@ -22,96 +22,36 @@ class GuiColors(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
-    brand_primary: str = Field(
-        default="#2a4a23",
-        description="Brand primary",
-    )
-    brand_secondary: str = Field(
-        default="#4e823b",
-        description="Brand secondary",
-    )
-    brand_accent: str = Field(
-        default="#f7ba2d",
-        description="Brand accent",
-    )
-    brand_dark: str = Field(
-        default="#2a4a23",
-        description="Brand dark",
-    )
-    brand_cancel: str = Field(
-        default="#424242",
-        description="Brand cancel",
-    )
-    brand_progress: str = Field(
-        default="#f3921e",
-        description="Brand progress",
-    )
-    status_positive: str = Field(
-        default="#4e823b",
-        description="Status positive",
-    )
-    status_negative: str = Field(
-        default="#bc3a11",
-        description="Status negative",
-    )
-    status_warning: str = Field(
-        default="#f7ba2d",
-        description="Status warning",
-    )
-    status_info: str = Field(
-        default="#9fb8e0",
-        description="Status info",
-    )
+    brand_primary: str = Field(default="#2a4a23", description="Brand primary")
+    brand_secondary: str = Field(default="#4e823b", description="Brand secondary")
+    brand_accent: str = Field(default="#f7ba2d", description="Brand accent")
+    brand_dark: str = Field(default="#2a4a23", description="Brand dark")
+    brand_cancel: str = Field(default="#424242", description="Brand cancel")
+    brand_progress: str = Field(default="#f3921e", description="Brand progress")
+    status_positive: str = Field(default="#4e823b", description="Status positive")
+    status_negative: str = Field(default="#bc3a11", description="Status negative")
+    status_warning: str = Field(default="#f7ba2d", description="Status warning")
+    status_info: str = Field(default="#9fb8e0", description="Status info")
     grey: str = Field(
-        default="#9e9e9e",
-        description="Toggle inactive (group mode); Quasar $grey",
+        default="#9e9e9e", description="Toggle inactive (group mode); Quasar $grey"
     )
     red: str = Field(
-        default="#f44336",
-        description="Toggle inactive (standalone mode); Quasar $red",
+        default="#f44336", description="Toggle inactive (standalone mode); Quasar $red"
     )
-    chart_color_1: str = Field(
-        default="#325caa",
-        description="Chart color 1",
-    )
-    chart_color_2: str = Field(
-        default="#b8bec8",
-        description="Chart color 2",
-    )
-    chart_color_3: str = Field(
-        default="#b0c860",
-        description="Chart color 3",
-    )
-    chart_color_4: str = Field(
-        default="#d42483",
-        description="Chart color 4",
-    )
-    chart_color_5: str = Field(
-        default="#ca6c38",
-        description="Chart color 5",
-    )
-    chart_highlight: str = Field(
-        default="#d62728",
-        description="Chart highlight",
-    )
-    chart_line: str = Field(
-        default="black",
-        description="Chart line",
-    )
-    chart_border: str = Field(
-        default="white",
-        description="Chart border",
-    )
-    chart_shadow: str = Field(
-        default="rgba(0, 0, 0, 0.3)",
-        description="Chart shadow",
-    )
+    chart_color_1: str = Field(default="#325caa", description="Chart color 1")
+    chart_color_2: str = Field(default="#b8bec8", description="Chart color 2")
+    chart_color_3: str = Field(default="#b0c860", description="Chart color 3")
+    chart_color_4: str = Field(default="#d42483", description="Chart color 4")
+    chart_color_5: str = Field(default="#ca6c38", description="Chart color 5")
+    chart_highlight: str = Field(default="#d62728", description="Chart highlight")
+    chart_line: str = Field(default="black", description="Chart line")
+    chart_border: str = Field(default="white", description="Chart border")
+    chart_shadow: str = Field(default="rgba(0, 0, 0, 0.3)", description="Chart shadow")
     tab_10_palette_0: str = Field(default="#1f77b4", description="Tab10 palette 0")
     tab_10_palette_1: str = Field(default="#ff7f0e", description="Tab10 palette 1")
     tab_10_palette_2: str = Field(default="#2ca02c", description="Tab10 palette 2")
     tab_10_palette_3: str = Field(
-        default="#d62728",
-        description="Tab10 palette 3 (same as chart_highlight)",
+        default="#d62728", description="Tab10 palette 3 (same as chart_highlight)"
     )
     tab_10_palette_4: str = Field(default="#9467bd", description="Tab10 palette 4")
     tab_10_palette_5: str = Field(default="#8c564b", description="Tab10 palette 5")
@@ -151,8 +91,7 @@ class GuiURLS(BaseModel):
         description="Instagram profile URL",
     )
     website_url: str = Field(
-        default="https://cibmangotree.org",
-        description="Official website URL",
+        default="https://cibmangotree.org", description="Official website URL"
     )
 
 
@@ -170,48 +109,35 @@ class GuiProps(BaseModel):
         description="Cancel/close buttons in dialogs and export/import",
     )
     unelevated: str = Field(
-        default="unelevated",
-        description="Time-coordination dashboard chrome",
+        default="unelevated", description="Time-coordination dashboard chrome"
     )
     no_caps: str = Field(
-        default="no-caps",
-        description="Dataset preview action buttons",
+        default="no-caps", description="Dataset preview action buttons"
     )
-    dense: str = Field(
-        default="dense",
-        description="Time-coordination controls",
-    )
+    dense: str = Field(default="dense", description="Time-coordination controls")
     flat_round_dense: str = Field(
-        default="flat round dense",
-        description="Ngrams dialog close icon button",
+        default="flat round dense", description="Ngrams dialog close icon button"
     )
     outline_dense: str = Field(
-        default="outline dense",
-        description="Ngrams secondary actions",
+        default="outline dense", description="Ngrams secondary actions"
     )
     disable: str = Field(
-        default="disable",
-        description="Start page Open/Delete until a row is selected",
+        default="disable", description="Start page Open/Delete until a row is selected"
     )
     persistent: str = Field(
-        default="persistent",
-        description="Analysis run progress dialog",
+        default="persistent", description="Analysis run progress dialog"
     )
     use_chips: str = Field(
-        default="use-chips",
-        description="Column mapping step selects",
+        default="use-chips", description="Column mapping step selects"
     )
     instant_feedback: str = Field(
-        default="instant-feedback",
-        description="Export progress bar",
+        default="instant-feedback", description="Export progress bar"
     )
     stepper: str = Field(
-        default="horizontal animated",
-        description="Analysis config and run stepper",
+        default="horizontal animated", description="Analysis config and run stepper"
     )
     clearable_off: str = Field(
-        default='clearable autocomplete="off"',
-        description="Ngrams search input",
+        default='clearable autocomplete="off"', description="Ngrams search input"
     )
     tooltip_offset: str = Field(
         default='anchor="bottom middle" self="top middle" :offset="[210, 8]"',

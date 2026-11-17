@@ -26,8 +26,10 @@ from .interface import (
 
 
 def _compute_ngram_statistics(
-    df_message_ngrams: pl.DataFrame, df_messages: pl.DataFrame
-) -> pl.DataFrame:
+    df_message_ngrams: pl.DataFrame,
+    df_messages: pl.DataFrame,
+    check_cancelled=lambda: False,
+) -> pl.DataFrame | None:
     """
     Compute basic statistics for each n-gram.
 
@@ -39,10 +41,11 @@ def _compute_ngram_statistics(
         DataFrame with columns [ngram_id, ngram_total_reps, ngram_distinct_poster_count]
         Filters out n-grams with only 1 repetition.
     """
-    dict_authors_by_message = {
-        row[COL_MESSAGE_SURROGATE_ID]: row[COL_AUTHOR_ID]
-        for row in df_messages.iter_rows(named=True)
-    }
+    dict_authors_by_message = {}
+    for row in df_messages.iter_rows(named=True):
+        dict_authors_by_message[row[COL_MESSAGE_SURROGATE_ID]] = row[COL_AUTHOR_ID]
+        if check_cancelled():
+            return
 
     return (
         df_message_ngrams.group_by(COL_NGRAM_ID)
@@ -187,21 +190,32 @@ def _report_slice_row_counts(df_ngram_summary: pl.DataFrame) -> list[int]:
 
 
 def main(context: SecondaryAnalyzerContext):
+    check_cancelled = context.check_cancelled
     df_message_ngrams = pl.read_parquet(
         context.base.table(OUTPUT_MESSAGE_NGRAMS).parquet_path
     )
     df_ngrams = pl.read_parquet(context.base.table(OUTPUT_NGRAM_DEFS).parquet_path)
     df_messages = pl.read_parquet(context.base.table(OUTPUT_MESSAGE).parquet_path)
 
-    if context.is_cancelled():
+    if check_cancelled():
         return
 
     with context.progress("Computing ngram statistics"):
-        df_ngram_stats = _compute_ngram_statistics(df_message_ngrams, df_messages)
+        df_ngram_stats = _compute_ngram_statistics(
+            df_message_ngrams, df_messages, check_cancelled
+        )
+
+    if check_cancelled():
+        return
 
     with context.progress("Creating the summary table"):
         df_ngram_summary = _create_summary_table(df_ngrams, df_ngram_stats)
+        if check_cancelled():
+            return
         df_ngram_summary.write_parquet(context.output(OUTPUT_NGRAM_STATS).parquet_path)
+
+    if check_cancelled():
+        return
 
     df_messages_schema = df_messages.to_arrow().schema
     df_message_ngrams_schema = df_message_ngrams.to_arrow().schema
@@ -234,6 +248,9 @@ def main(context: SecondaryAnalyzerContext):
         ) as writer:
             report_total_processed = 0
             for slice_height in report_slice_row_counts:
+                if check_cancelled():
+                    return
+
                 df_ngram_summary_slice = df_ngram_summary.slice(
                     report_total_processed, slice_height
                 )
@@ -247,6 +264,9 @@ def main(context: SecondaryAnalyzerContext):
                 df_output = _create_full_report_slice(
                     df_ngram_summary_slice, df_message_ngrams, df_messages
                 )
+
+                if check_cancelled():
+                    return
 
                 writer.write_table(df_output.to_arrow())
                 reporter.update(report_total_processed / df_ngram_summary.height)

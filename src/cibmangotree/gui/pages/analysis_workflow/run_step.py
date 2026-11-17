@@ -224,9 +224,10 @@ class RunAnalysisStep:
                     self.session.current_analysis = analysis.model
                     success_btn.set_visibility(True)
                     self.page.notify_success("Analysis completed!")
+                    cancel_btn.disable()
                 else:
                     self.page.notify_warning("Analysis was canceled")
-                cancel_btn.disable()
+                    dialog.close()
 
         def _poll_queue():
             for _ in range(MAX_MESSAGES_PER_POLL):

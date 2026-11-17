@@ -79,6 +79,9 @@ def main(context: PrimaryAnalyzerContext) -> None:
         df_in = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
         read_progress.update(1.0)
 
+    if context.is_cancelled():
+        return
+
     pdf = df_in.select([COL_USER_ID, COL_TIMESTAMP, COL_MESSAGE_TEXT]).to_pandas()
 
     with context.progress("Preparing timestamps") as prep_progress:
@@ -88,12 +91,17 @@ def main(context: PrimaryAnalyzerContext) -> None:
             user_col_name=COL_USER_ID,
             content_col_name=COL_MESSAGE_TEXT,
             progress=_ProgressValue(prep_progress),
+            is_cancelled=context.is_cancelled,
         )
+        if context.is_cancelled():
+            return
         prep_progress.finish()
 
     posts = pl.from_pandas(
         prepared.df[[COL_USER_ID, COL_TIMESTAMP, COL_MESSAGE_TEXT, "rel_timestamp"]]
     ).rename({"rel_timestamp": COL_REL_TIMESTAMP})
+    if context.is_cancelled():
+        return
     posts.write_parquet(context.output(OUTPUT_POSTS).parquet_path)
 
     method = METHODS[method_id]
@@ -109,10 +117,15 @@ def main(context: PrimaryAnalyzerContext) -> None:
             )
         else:
             graph = method(prepared, progress, win_size=win_size, t_step=t_step)
+        if context.is_cancelled():
+            return
         build_progress.finish()
 
     with context.progress("Ranking edges") as rank_progress:
         remember_top_edges(graph, progress=_ProgressValue(rank_progress))
         rank_progress.finish()
+
+    if context.is_cancelled():
+        return
 
     _edges_frame(graph).write_parquet(context.output(OUTPUT_EDGES).parquet_path)

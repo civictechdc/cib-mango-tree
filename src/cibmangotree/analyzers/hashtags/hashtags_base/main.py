@@ -123,6 +123,9 @@ def main(context: PrimaryAnalyzerContext):
     input_reader = context.input()
     df_input = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
 
+    if context.is_cancelled():
+        return
+
     time_window_param = context.params.get(PARAM_TIME_WINDOW)
 
     # window hard-coded to 1hr for now

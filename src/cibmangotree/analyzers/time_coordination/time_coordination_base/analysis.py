@@ -52,12 +52,16 @@ def prepare_dataframe(
     user_col_name: str,
     content_col_name: str,
     progress=None,
-) -> PreparedData:
+    is_cancelled=lambda: False,
+) -> PreparedData | None:
     """Drop incomplete rows, add ``rel_timestamp``, sort — same prep as ``read_csv``."""
     csv_df = df.dropna(subset=[user_col_name, time_col_name, content_col_name]).copy()
     series = csv_df[time_col_name]
     n_rows = len(csv_df)
     time_data: list[float] = []
+
+    if is_cancelled():
+        return
 
     if pd.api.types.is_datetime64_any_dtype(series):
         # Normalize any datetime resolution to unix seconds.
@@ -66,6 +70,8 @@ def prepare_dataframe(
             .map(lambda t: t.timestamp())
             .to_numpy(dtype=float)
         )
+        if is_cancelled():
+            return
         for i, ts in enumerate(values):
             time_data.append(float(ts))
             if (
@@ -74,6 +80,8 @@ def prepare_dataframe(
                 and (i % READ_PROGRESS_EVERY == 0 or i + 1 == n_rows)
             ):
                 progress.value = (i + 1) / n_rows
+            if is_cancelled():
+                return
     else:
         for i, row in enumerate(series):
             if hasattr(row, "timestamp"):
@@ -87,9 +95,13 @@ def prepare_dataframe(
                 and (i % READ_PROGRESS_EVERY == 0 or i + 1 == n_rows)
             ):
                 progress.value = (i + 1) / n_rows
+            if is_cancelled():
+                return
 
     time_arr = np.array(time_data)
     csv_df["rel_timestamp"] = time_arr - np.min(time_arr)
+    if is_cancelled():
+        return
     csv_df = csv_df.sort_values("rel_timestamp")
     return PreparedData(
         df=csv_df,

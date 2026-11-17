@@ -9,6 +9,9 @@ def main(context: SecondaryAnalyzerContext):
         context.base.table("character_count").parquet_path
     )
 
+    if context.is_cancelled():
+        return
+
     df_export = df_character_count.with_columns(
         # `is_long` is a new column that we are adding to the output.
         pl.col("character_count")

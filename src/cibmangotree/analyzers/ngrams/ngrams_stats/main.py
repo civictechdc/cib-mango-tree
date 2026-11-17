@@ -193,6 +193,9 @@ def main(context: SecondaryAnalyzerContext):
     df_ngrams = pl.read_parquet(context.base.table(OUTPUT_NGRAM_DEFS).parquet_path)
     df_messages = pl.read_parquet(context.base.table(OUTPUT_MESSAGE).parquet_path)
 
+    if context.is_cancelled():
+        return
+
     with context.progress("Computing ngram statistics"):
         df_ngram_stats = _compute_ngram_statistics(df_message_ngrams, df_messages)
 

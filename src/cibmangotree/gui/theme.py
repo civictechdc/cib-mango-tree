@@ -11,10 +11,8 @@ from pydantic import BaseModel, ConfigDict, Field
 class GuiColors(BaseModel):
     """Mango Tree brand/status/chart colors (hex Single Source Of Truth).
 
-    Set color values in this class. The app takes care of implementing the colors from here.
-
-    Hex values are defined here on ``gui_colors``. ``GuiPage._setup_colors``
-    passes them into ``ui.colors(...)`` so Quasar named slots use this palette.
+    Set color values in this class. ``GuiPage._setup_colors`` maps these hexes
+    onto Quasar named slots via ``ui.colors(...)``.
 
     Quasar widgets take slot names on ``color=`` (e.g. ``"primary"``);
     charts/CSS use ``gui_colors.*`` hexes directly.
@@ -173,6 +171,11 @@ gui_constants = GuiConstants(colors=gui_colors, urls=gui_urls, props=gui_props)
 SPACING_MB_4 = "mb-4"
 SPACING_MB_6 = "mb-6"
 
+ITEMS_CENTER = "items-center"
+JUSTIFY_CENTER = "justify-center"
+ROW_CENTERED = f"w-full {ITEMS_CENTER}"
+WIDTH_FULL = "w-full"
+
 # Cards — analysis workflow, dialogs, progress UI
 CARD_FLAT = "shadow-none border border-gray-200"
 CARD_CONTENT = f"w-full p-4 {CARD_FLAT}"  # run_step summary
@@ -181,13 +184,10 @@ CARD_MAPPING = f"p-4 {CARD_FLAT}"  # column_mapping_step cards
 CARD_DIALOG_FULL = "w-full"  # export / manage-analyses dialogs
 CARD_DIALOG_PADDED = "w-full p-3"  # import_options dialog
 CARD_DIALOG_MD = "w-96"  # new_project_dialog
-
-# Rows — shared action/toolbars and form rows (components + workflow steps)
-ITEMS_CENTER = "items-center"
-JUSTIFY_CENTER = "justify-center"
 CARD_DIALOG_NARROW = f"w-80 {ITEMS_CENTER}"  # exit_confirmation
 CARD_PROGRESS = f"{ITEMS_CENTER} {JUSTIFY_CENTER} gap-6"  # run_step progress dialog
-ROW_CENTERED = f"w-full {ITEMS_CENTER}"
+
+# Rows — shared action/toolbars and form rows (components + workflow steps)
 ROW_CENTERED_GAP = f"{ITEMS_CENTER} gap-1"
 ROW_LAYOUT = f"{ROW_CENTERED} gap-2 mb-2"  # import_options labeled rows
 ROW_ACTIONS = "w-full justify-end gap-2"  # dialog footers
@@ -211,7 +211,6 @@ COL_GAP_2 = "gap-2"
 COL_FULL = "w-full"
 
 # Widths / sizes — inputs, grids, start-page chrome
-WIDTH_FULL = "w-full"
 WIDTH_FULL_MT_2 = f"{WIDTH_FULL} mt-2"
 WIDTH_FULL_MB_4 = f"{WIDTH_FULL} {SPACING_MB_4}"
 WIDTH_FULL_H_64 = f"{WIDTH_FULL} h-64"  # preview/previous/dataset grids

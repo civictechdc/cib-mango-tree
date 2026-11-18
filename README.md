@@ -9,17 +9,19 @@
 
 
 <p align="center">
-<a href="https://www.python.org/"><img alt="code" src="https://img.shields.io/badge/Python-3.12-yellow?logo=Python"></a>
-<a href="https://pola.rs"><img alt="docs Polars" src="https://img.shields.io/badge/Polars-1.41.1-blue?logo=Polars"></a>
-<a href="https://nicegui.io"><img alt="NiceGUI website" src="https://img.shields.io/badge/NiceGUI-3.12-skyblue"></a>
+<a href="https://www.python.org/"><img alt="code" src="https://img.shields.io/badge/Python-3.12+-yellow?logo=Python"></a>
+<a href="https://pola.rs"><img alt="docs Polars" src="https://img.shields.io/badge/Polars-1.9+-blue?logo=Polars"></a>
+<a href="https://nicegui.io"><img alt="NiceGUI website" src="https://img.shields.io/badge/NiceGUI-3.12+-skyblue"></a>
 <a href="https://civictechdc.github.io/cib-mango-tree/"><img alt="docs website" src="https://img.shields.io/badge/docs-website-orange"></a>
 <a href="https://black.readthedocs.io/en/stable/"><img alt="style: black" src="https://img.shields.io/badge/style-Black-black?logo=Black"></a>
 <a href="https://mit-license.org"><img alt="license: MIT" src="https://img.shields.io/badge/license-MIT-green"></a>
 </p>
 
+**Quick start:** [Try in Codespaces](#try-in-github-codespaces) · [Download a release](#download-latest-release) · [Contribute](#contributing)
+
 ## About
 
-CIB Mango Tree is a Python-based, iteractive open source toolkit for detecting coordinated inauthentic behavior (CIB) in social media datasets. It is designed for researchers, data journalists, fact-checkers, and watchdogs working to identify inauthentic activity online. For more about the project, visit the project main home page: [cibmangotree.org](https://cibmangotree.org)
+CIB Mango Tree is a Python-based, interactive open source toolkit for detecting coordinated inauthentic behavior (CIB) in social media datasets. It is designed for researchers, data journalists, fact-checkers, and watchdogs working to identify inauthentic activity online. For more about the project, visit the project main home page: [cibmangotree.org](https://cibmangotree.org)
 
 <p align="center">
 <img src="./docs/img/cibmt_overview.png" alt="CIBMT Welcome Screen" style="width:750px"/>
@@ -36,24 +38,28 @@ The latest release is available under Assets in the Releases tab:
 > [!NOTE]
 > Starting with **v0.11.0** we have new GUI interface! 
 > 
-> The last version to use the terminal user interface was v0.10.2
+> The last version to use the terminal user interface (CLI) was v0.10.2
 
 ## Try in GitHub Codespaces
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/civictechdc/cib-mango-tree)
 
-No local install needed (GitHub account required):
+No local install needed (sign in to GitHub first — Codespaces requires a GitHub account):
 
 1. Click the badge above and create a Codespace.
-2. Wait for setup. The **first** open often takes several minutes (dependency install). That is normal — it is not frozen.
+2. Wait for setup. The **first** open often takes several minutes (dependency install). That is normal — it is not frozen. The terminal will show progress; setup is done when you see: `CIB Mango Tree is ready — open port 8000 in the browser if it did not open automatically.`
 3. A browser tab may open with a “starting…” page first; it refreshes until the app is ready.
 4. When ready, CIB Mango Tree appears in the browser (port 8000). You do not need to run terminal commands.
 
+If the app does not open automatically, open the **Ports** tab in the bottom panel (same area as **Terminal**), find port **8000**, and click the globe icon to open it in the browser.
+
 Later opens of the same Codespace are usually much faster.
+
+To use the app, download a [sample data file](assets/demo_data/demo_data.csv). In the app, click **Create New** on the start page, then click **Browse Files** to upload that file.
 
 ## Contributing
 
-New contributions are welcome! Before contributing, please check out our [Technical Documentation guides](https://civictechdc.github.io/cib-mango-tree). If you are not yet familiar with the project, our [New Contributor Guide](https://civictechdc.github.io/cib-mango-tree/guides/contributing/new_contributor_guide) is the best place to start.
+New contributions are welcome! Before contributing, please check out our [Technical Documentation guides](https://civictechdc.github.io/cib-mango-tree). If you are not yet familiar with the project, our [New Contributor Guide](https://civictechdc.github.io/cib-mango-tree/guides/contributing/new_contributor_guide) is the best place to start. You can also [join Civic Tech DC on Slack](https://www.civictechdc.org/slack) and look for the `#cib-mango-tree-*` channels.
 
 ### Installing development version
 

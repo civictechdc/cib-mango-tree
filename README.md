@@ -77,6 +77,10 @@ Design and research handoff (personas, journeys, screen exports) lives in the [`
 
 Known datasets for research, prototyping, and QA live in a shared [Google Drive folder](https://drive.google.com/drive/folders/1OL7toRas_JbCw5nSMbbWb7j6yZciO5r5). Smaller fixtures tracked in the repo are documented under [`assets/test_data/`](assets/test_data/README.md).
 
+### Planned analyzers / tests
+
+Test outlines, backlog, and roadmap for analyzers planned or in progress live in a shared [Google Drive folder](https://drive.google.com/drive/folders/1xm0v5Wo8IuyBcdW_5h8RousgjY4dyVJ5).
+
 ## AI policy
 
 Contributors using AI tools should follow the project [AI Use Policy](AI_POLICY.md).

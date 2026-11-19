@@ -2,6 +2,8 @@
 
 The `/gui` module provides the application interface for CIB Mango Tree, built on NiceGUI. On a normal desktop install it launches as a native window via pywebview; in GitHub Codespaces it serves in the browser instead. It reuses the core `App` and analysis components.
 
+Contributor guide (pages, routes, theme, dashboards): [GUI development](../../../docs/guides/contributing/gui-development.md).
+
 ## Tech Stack
 
 - NiceGUI — Python web UI framework that renders Quasar/Vue.js components server-side and serves them to a native window via pywebview
@@ -50,8 +52,7 @@ On macOS this produces `CIBMangoTree.app` (onedir + BUNDLE). On other platforms 
 
 Each page subclasses `GuiPage` and implements `render_content()`:
 
-- `start.py` — home/landing page
-- `project_select.py` — select or create a project
+- `start.py` — home/landing page (project list, create/open/delete)
 - `importer.py` / `dataset_preview.py` — import and preview a dataset
 - `analyzer_select.py` — choose a primary or previous analyzer
 - `analyzer_previous.py` — view/re-use past analyzer runs

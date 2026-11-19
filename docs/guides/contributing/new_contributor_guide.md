@@ -184,5 +184,5 @@ You might not be interested in any specific parts of new test development, but a
 - Reviewing pull requests
 - Improving our existing [test suite](./testing.md)
 - Testing the general performance of analyzers (speed, memory, data science code)
-- Helping with the NiceGUI app and dashboards (`src/cibmangotree/gui/`)
+- Helping with the NiceGUI app and dashboards ([GUI development](./gui-development.md); `src/cibmangotree/gui/`)
 - Improving the application's storage system (backend, databases)

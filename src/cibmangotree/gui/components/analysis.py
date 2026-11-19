@@ -14,8 +14,15 @@ from cibmangotree.gui.theme import (
     ICON_INFO,
     ROW_CENTERED,
     ROW_CENTERED_GAP,
+    ROW_GAP_MT,
+    ROW_WRAP_CENTER,
+    TEXT_BOLD,
     TEXT_MUTED,
     TEXT_TOOLTIP_BODY,
+    WIDTH_AMOUNT,
+    WIDTH_FULL_MT_2,
+    WIDTH_TOOLTIP,
+    WIDTH_UNIT_SELECT,
 )
 
 
@@ -59,7 +66,7 @@ class AnalysisParamsCard:
                 )
             return
 
-        with ui.row().classes("flex-wrap gap-6 justify-center w-full"):
+        with ui.row().classes(ROW_WRAP_CENTER):
             for param in self.params:
                 self._build_param_card(param)
 
@@ -67,10 +74,10 @@ class AnalysisParamsCard:
         """Build an individual card for a single parameter."""
         with ui.card().classes(CARD_PARAM):
             with ui.row().classes(ROW_CENTERED_GAP):
-                ui.label(param.print_name).classes("font-bold")
+                ui.label(param.print_name).classes(TEXT_BOLD)
                 if param.description:
                     with ui.icon("info").classes(ICON_INFO):
-                        with ui.tooltip().classes("w-64"):
+                        with ui.tooltip().classes(WIDTH_TOOLTIP):
                             ui.label(param.description).classes(TEXT_TOOLTIP_BODY)
 
             param_type = param.type
@@ -101,7 +108,7 @@ class AnalysisParamsCard:
                 f"Must be at least {param_type.min}": lambda v: v >= param_type.min,
                 f"Must be at most {param_type.max}": lambda v: v <= param_type.max,
             },
-        ).classes("w-full mt-2")
+        ).classes(WIDTH_FULL_MT_2)
 
         self.param_widgets[param.id] = ("integer", number_input)
 
@@ -123,7 +130,7 @@ class AnalysisParamsCard:
             options,
             value=selected,
             on_change=self._notify_change,
-        ).classes("w-full mt-2")
+        ).classes(WIDTH_FULL_MT_2)
 
         self.param_widgets[param.id] = ("choice", select)
 
@@ -134,7 +141,7 @@ class AnalysisParamsCard:
         tb_default = (
             default_value if isinstance(default_value, TimeBinningValue) else None
         )
-        with ui.row().classes("gap-2 mt-2 w-full"):
+        with ui.row().classes(ROW_GAP_MT):
             unit_select = ui.select(
                 {
                     "year": "Year",
@@ -147,7 +154,7 @@ class AnalysisParamsCard:
                 },
                 value=tb_default.unit if tb_default else "day",
                 on_change=self._notify_change,
-            ).classes("w-32")
+            ).classes(WIDTH_UNIT_SELECT)
 
             amount_input = ui.number(
                 value=tb_default.amount if tb_default else 1,
@@ -160,7 +167,7 @@ class AnalysisParamsCard:
                     "Cannot exceed 1000": lambda v: v <= 1000,
                 },
                 on_change=self._notify_change,
-            ).classes("w-24")
+            ).classes(WIDTH_AMOUNT)
 
         self.param_widgets[param.id] = ("time_binning", unit_select, amount_input)
 

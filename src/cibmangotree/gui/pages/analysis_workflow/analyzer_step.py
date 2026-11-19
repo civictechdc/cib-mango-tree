@@ -4,6 +4,15 @@ from nicegui import ui
 
 from cibmangotree.gui.components.toggle import ToggleButtonGroup
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    BLOCK_ANALYZER_GRID,
+    BLOCK_PT_12_CENTER,
+    CARD_ANALYZER_DESC,
+    COL_CENTERED_FULL,
+    ROW_CENTER_GAP_4_FULL,
+    SCROLL_MAX_H_72,
+    TEXT_MUTED,
+)
 
 
 class AnalyzerSelectionStep:
@@ -19,7 +28,7 @@ class AnalyzerSelectionStep:
         analyzers = self.session.app.context.suite.primary_anlyzers
 
         if not analyzers:
-            ui.label("No analyzers available").classes("text-grey")
+            ui.label("No analyzers available").classes(TEXT_MUTED)
             return
 
         analyzer_options = {
@@ -31,13 +40,13 @@ class AnalyzerSelectionStep:
 
         self.button_group = ToggleButtonGroup()
 
-        with ui.column().classes("items-center w-full"):
-            with ui.element().classes("w-[64rem] max-w-full"):
-                with ui.row().classes("items-center justify-center gap-4 w-full"):
+        with ui.column().classes(COL_CENTERED_FULL):
+            with ui.element().classes(BLOCK_ANALYZER_GRID):
+                with ui.row().classes(ROW_CENTER_GAP_4_FULL):
                     for analyzer_name in analyzer_options.keys():
                         self.button_group.add_button(analyzer_name)
 
-                with ui.element().classes("pt-12 flex justify-center w-full"):
+                with ui.element().classes(BLOCK_PT_12_CENTER):
                     DEFAULT_TEXT = (
                         "No analyzer selected. Click button above to select it."
                     )
@@ -48,14 +57,14 @@ class AnalyzerSelectionStep:
                         )
                         return textwrap.dedent(raw or DEFAULT_TEXT).strip()
 
-                    with ui.card().classes("w-[40rem] shadow-none"):
+                    with ui.card().classes(CARD_ANALYZER_DESC):
                         # Taller than before so method lists are readable.
-                        with ui.scroll_area().classes("max-h-72"):
+                        with ui.scroll_area().classes(SCROLL_MAX_H_72):
                             ui.markdown().bind_content_from(
                                 target_object=self.button_group,
                                 target_name="selected_text",
                                 backward=_description_markdown,
-                            ).classes("text-grey")
+                            ).classes(TEXT_MUTED)
 
     def is_valid(self) -> bool:
         """Check if an analyzer is selected."""

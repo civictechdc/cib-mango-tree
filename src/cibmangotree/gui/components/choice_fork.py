@@ -2,6 +2,12 @@ from typing import Callable
 
 from nicegui import ui
 
+from cibmangotree.gui.theme import (
+    ROW_GAP_4,
+    SPACING_MB_6,
+    STYLE_PROMPT,
+)
+
 
 def two_button_choice_fork_content(
     prompt: str,
@@ -13,10 +19,10 @@ def two_button_choice_fork_content(
     right_button_icon: str,
 ) -> None:
     # Prompt label
-    ui.label(prompt).classes("q-mb-lg").style("font-size: 1.05rem")
+    ui.label(prompt).classes(SPACING_MB_6).style(STYLE_PROMPT)
 
     # Action buttons row
-    with ui.row().classes("gap-4"):
+    with ui.row().classes(ROW_GAP_4):
         ui.button(
             left_button_label,
             on_click=left_button_on_click,

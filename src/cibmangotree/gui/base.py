@@ -18,7 +18,26 @@ from pydantic import BaseModel, ConfigDict
 from cibmangotree.gui.components.exit_confirmation import ExitConfirmationDialog
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
-from cibmangotree.gui.theme import gui_colors, gui_urls
+from cibmangotree.gui.theme import (
+    COL_CONTENT_CENTER,
+    FLEX_CENTER,
+    FLEX_CENTER_GAP_2,
+    FLEX_CENTER_GAP_3,
+    LINK_BRAND,
+    LINK_ICON,
+    LOGO_BADGE,
+    ROW_CENTERED,
+    ROW_HEADER,
+    SIZE_ICON_SM,
+    STYLE_CONTENT_DEFAULT,
+    STYLE_SPACE_BETWEEN,
+    SVG_FILL_FULL,
+    TEXT_FOOTER,
+    TEXT_HEADING,
+    gui_colors,
+    gui_props,
+    gui_urls,
+)
 from cibmangotree.meta.get_version import get_version
 
 
@@ -47,6 +66,8 @@ class GuiPage(BaseModel, abc.ABC):
 
     Usage:
         ```python
+        from cibmangotree.gui.theme import ITEMS_CENTER
+
         class MyPage(GuiPage):
             def __init__(self, session: GuiSession):
                 super().__init__(
@@ -58,7 +79,7 @@ class GuiPage(BaseModel, abc.ABC):
                 )
 
             def render_content(self) -> None:
-                with ui.column().classes("items-center"):
+                with ui.column().classes(ITEMS_CENTER):
                     ui.label("My page content")
 
             def requires_exit_confirmation(self) -> bool:
@@ -124,22 +145,34 @@ class GuiPage(BaseModel, abc.ABC):
 
         Example:
             ```python
+            from cibmangotree.gui.theme import ITEMS_CENTER
+
             def render_content(self) -> None:
-                with ui.column().classes("items-center"):
+                with ui.column().classes(ITEMS_CENTER):
                     ui.label("Welcome")
                     ui.button("Click me", on_click=self._handle_click)
             ```
         """
         raise NotImplementedError
 
+    # Quasar ships named color slots (primary, negative, …) with its own defaults.
+    # ui.colors(...) overrides those slots with our gui_colors hexes (and can add
+    # custom names like cancel / brand-progress). Buttons/icons then use
+    # color="primary" etc.; Quasar looks up the slot and applies bg + contrasting
+    # text. Passing a raw hex to color= skips that and often leaves black labels.
     def _setup_colors(self) -> None:
-        """Setup Mango Tree brand colors for NiceGUI."""
+        """Override Quasar color slots with GuiColors hexes for this page."""
         ui.colors(
-            primary=gui_colors.primary,
-            secondary=gui_colors.secondary,
-            accent=gui_colors.accent,
-            cancel=gui_colors.cancel,
-            mango_orange=gui_colors.mango_orange,
+            primary=gui_colors.brand_primary,
+            secondary=gui_colors.brand_secondary,
+            accent=gui_colors.brand_accent,
+            dark=gui_colors.brand_dark,
+            positive=gui_colors.status_positive,
+            negative=gui_colors.status_negative,
+            warning=gui_colors.status_warning,
+            info=gui_colors.status_info,
+            cancel=gui_colors.brand_cancel,
+            brand_progress=gui_colors.brand_progress,
         )
 
     def _render_header(self) -> None:
@@ -152,9 +185,9 @@ class GuiPage(BaseModel, abc.ABC):
         - Right: Home button (if not on home page)
         """
         with ui.header(elevated=True):
-            with ui.row().classes("w-full items-center justify-between"):
+            with ui.row().classes(ROW_HEADER):
                 # Left: Back button or spacer
-                with ui.element("div").classes("flex items-center"):
+                with ui.element("div").classes(FLEX_CENTER):
                     if self.show_back_button and self.back_route:
                         # Build button parameters conditionally
                         btn_kwargs = {
@@ -164,19 +197,19 @@ class GuiPage(BaseModel, abc.ABC):
                         }
                         if self.back_text:
                             btn_kwargs["text"] = self.back_text
-                        ui.button(**btn_kwargs).props("flat")
+                        ui.button(**btn_kwargs).props(gui_props.flat)
 
                 # Center: Title
-                ui.label(self.title).classes("text-h6")
+                ui.label(self.title).classes(TEXT_HEADING)
 
                 # Right: Home button (if not on home page)
-                with ui.element("div").classes("flex items-center"):
+                with ui.element("div").classes(FLEX_CENTER):
                     if self.show_back_button:  # Not on home if back button shown
                         ui.button(
                             icon="home",
                             color="accent",
                             on_click=self._handle_home_click,
-                        ).props("flat")
+                        ).props(gui_props.flat)
 
     async def _handle_back_click(self) -> None:
         """Handle back button click with optional exit confirmation."""
@@ -238,51 +271,43 @@ class GuiPage(BaseModel, abc.ABC):
         - Right: External links (GitHub, Instagram)
         """
         with ui.footer(elevated=True):
-            with (
-                ui.row()
-                .classes("w-full items-center")
-                .style("justify-content: space-between")
-            ):
+            with ui.row().classes(ROW_CENTERED).style(STYLE_SPACE_BETWEEN):
                 # Left: License
-                with ui.element("div").classes("flex items-center"):
+                with ui.element("div").classes(FLEX_CENTER):
                     version = get_version()
                     version_str = f"{version}" if version else "dev"
-                    ui.label("MIT License · " + version_str).classes(
-                        "text-sm text-bold"
-                    )
+                    ui.label("MIT License · " + version_str).classes(TEXT_FOOTER)
 
                 # Center: Project attribution
-                with ui.element("div").classes("flex items-center gap-2"):
+                with ui.element("div").classes(FLEX_CENTER_GAP_2):
                     with ui.link(target=gui_urls.website_url, new_tab=True).classes(
-                        "inline-flex items-center no-underline"
+                        LINK_BRAND
                     ):
-                        with ui.element("div").classes("bg-white rounded-full p-1.5"):
+                        with ui.element("div").classes(LOGO_BADGE):
                             ui.html(
                                 self._load_svg_icon("cibmt_logo"), sanitize=False
-                            ).classes("size-5")
+                            ).classes(SIZE_ICON_SM)
                         ui.tooltip("Visit cibmangotree.org")
-                    ui.label("A Civic Tech DC Project").classes("text-sm text-bold")
+                    ui.label("A Civic Tech DC Project").classes(TEXT_FOOTER)
 
                 # Right: External links
                 self._render_footer_links()
 
     def _render_footer_links(self) -> None:
         """Render social media links in footer."""
-        with ui.element("div").classes("flex items-center gap-3"):
+        with ui.element("div").classes(FLEX_CENTER_GAP_3):
             # GitHub button
-            with ui.link(target=gui_urls.github_url, new_tab=True).classes(
-                "inline-flex items-center justify-center text-white no-underline size-5"
-            ):
+            with ui.link(target=gui_urls.github_url, new_tab=True).classes(LINK_ICON):
                 ui.html(self._load_svg_icon("github"), sanitize=False).classes(
-                    "size-full fill-current"
+                    SVG_FILL_FULL
                 )
                 ui.tooltip("Visit our GitHub")
 
             with ui.link(target=gui_urls.instagram_url, new_tab=True).classes(
-                "inline-flex items-center justify-center text-white no-underline size-5"
+                LINK_ICON
             ):
                 ui.html(self._load_svg_icon("instagram"), sanitize=False).classes(
-                    "size-full fill-current"
+                    SVG_FILL_FULL
                 )
                 ui.tooltip("Follow us on Instagram")
 
@@ -312,32 +337,23 @@ class GuiPage(BaseModel, abc.ABC):
 
     def notify_success(self, message: str) -> None:
         """Show success notification."""
-        ui.notify(message, type="positive", color="mango-orange")
+        ui.notify(message, type="positive", color="positive")
 
     def notify_warning(self, message: str) -> None:
         """Show warning notification."""
-        ui.notify(message, type="warning", color="mango-orange")
+        ui.notify(message, type="warning", color="warning")
 
     def notify_error(self, message: str) -> None:
         """Show error notification."""
-        ui.notify(message, type="negative", color="mango-orange")
+        ui.notify(message, type="negative", color="negative")
 
     @contextmanager
     def centered_content(
         self,
-        max_width: str | None = None,
-        height: str = "80vh",
-        padding: str | None = None,
-        justify: str = "center",
+        style: str = STYLE_CONTENT_DEFAULT,
+        classes: str = COL_CONTENT_CENTER,
     ) -> Generator[ui.column, None, None]:
-        style = f"height: {height}; width: 100%"
-        if max_width:
-            style += f"; max-width: {max_width}; margin: 0 auto"
-        if padding:
-            style += f"; padding: {padding}"
-        container = (
-            ui.column().classes(f"items-center justify-{justify} gap-8").style(style)
-        )
+        container = ui.column().classes(classes).style(style)
         with container:
             yield container
 

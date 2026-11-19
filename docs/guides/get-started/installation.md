@@ -2,7 +2,9 @@
 
 This guide sets up a **development** environment so you can run and change CIB Mango Tree from source. For a packaged build, use the [latest release](https://github.com/civictechdc/cib-mango-tree/releases/latest) instead.
 
-To try the app **without** a local install, open a [GitHub Codespace](https://codespaces.new/civictechdc/cib-mango-tree) (GitHub account required). The first start can take several minutes while dependencies install; a “starting…” page may appear and refresh until the app is ready in the browser on port 8000. You do not need to run terminal commands. Later opens of the same Codespace are usually much faster.
+To try the app **without** a local install, open a [GitHub Codespace](https://codespaces.new/civictechdc/cib-mango-tree) (sign in to GitHub first — Codespaces requires a GitHub account). The first start can take several minutes while dependencies install; the terminal shows progress and finishes with `CIB Mango Tree is ready — open port 8000 in the browser if it did not open automatically.` A “starting…” page may appear and refresh until the app is ready in the browser on port 8000. If the app does not open automatically, open the **Ports** tab in the bottom panel (same area as **Terminal**), find port **8000**, and click the globe icon. You do not need to run terminal commands. Later opens of the same Codespace are usually much faster.
+
+To use the app in Codespaces, download a [sample data file](https://github.com/civictechdc/cib-mango-tree/blob/main/assets/demo_data/demo_data.csv). In the app, click **Create New** on the start page, then click **Browse Files** to upload that file.
 
 ## Required software
 

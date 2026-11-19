@@ -14,8 +14,7 @@ from cibmangotree.analyzers.hashtags.hashtags_base.interface import (
     OUTPUT_COL_TIMESPAN,
     PRIMARY_OUTPUT_DATETIME_FORMAT,
 )
-
-MANGO_DARK_ORANGE = "#f3921e"
+from cibmangotree.gui.theme import gui_colors
 
 
 def _format_date_for_axis(ts: datetime, is_hourly: bool) -> str:
@@ -66,18 +65,18 @@ def plot_gini_echart(
             "name": "Gini coefficient",
             "type": "line",
             "data": series_data,
-            "lineStyle": {"color": "black", "width": 1.5},
+            "lineStyle": {"color": gui_colors.chart_line, "width": 1.5},
             "showSymbol": False,
             "symbol": "circle",
             "symbolSize": 4,
-            "itemStyle": {"color": "black"},
+            "itemStyle": {"color": gui_colors.chart_line},
             "emphasis": {
                 "showSymbol": True,
                 "itemStyle": {
-                    "color": "#d62728",
+                    "color": gui_colors.chart_highlight,
                     "symbolSize": 12,
                     "shadowBlur": 10,
-                    "shadowColor": "rgba(0, 0, 0, 0.3)",
+                    "shadowColor": gui_colors.chart_shadow,
                 },
             },
         }
@@ -101,16 +100,16 @@ def plot_gini_echart(
                 "name": "Smoothed",
                 "type": "line",
                 "data": smooth_series_data,
-                "lineStyle": {"color": MANGO_DARK_ORANGE, "width": 2},
-                "itemStyle": {"color": MANGO_DARK_ORANGE},
+                "lineStyle": {"color": gui_colors.brand_progress, "width": 2},
+                "itemStyle": {"color": gui_colors.brand_progress},
                 "showSymbol": False,
                 "emphasis": {
                     "showSymbol": True,
                     "itemStyle": {
-                        "color": "#d62728",
+                        "color": gui_colors.chart_highlight,
                         "symbolSize": 12,
                         "shadowBlur": 10,
-                        "shadowColor": "rgba(0, 0, 0, 0.3)",
+                        "shadowColor": gui_colors.chart_shadow,
                     },
                 },
             }

@@ -1,9 +1,14 @@
-"""Check the migrated GUI modules without importing NiceGUI or changing files.
+"""Check migrated GUI modules without importing NiceGUI or changing files.
 
-The hook and pytest use the same scanner. Widen GUARDED_PATHS and the hook's
-files pattern together as more modules are migrated. Only direct string and
-f-string arguments to .classes() and .style() are checked; variable values and
-arbitrary Python expressions are not evaluated.
+The hook and pytest use the same scanner. Widen FILES_TO_CHECK and the hook's
+files pattern together as more modules are migrated.
+
+Modules in FILES_TO_CHECK must not pass string or f-string literals to
+.classes(), .style(), or .props() — import named constants from theme.py
+instead (gui_props, CARD_*, …). Quasar ``color=`` may use slot name strings
+(``"primary"``, ``"negative"``, …) registered via ``ui.colors`` in
+``GuiPage._setup_colors``. Retired Quasar/layout tokens still get specific
+replacement hints when they appear in a banned class literal.
 """
 
 from __future__ import annotations
@@ -12,18 +17,40 @@ import argparse
 import ast
 import re
 from pathlib import Path
-from typing import Iterator, NamedTuple
+from typing import NamedTuple
 
 GUI_ROOT = Path(__file__).resolve().parent
 REPO_ROOT = GUI_ROOT.parents[2]
-GUARDED_PATHS = (
+FILES_TO_CHECK = (
+    "base.py",
     "components/analysis.py",
+    "components/choice_fork.py",
     "components/exit_confirmation.py",
     "components/export_outputs.py",
     "components/import_options.py",
+    "components/manage_analyses.py",
     "components/new_project_dialog.py",
+    "components/toggle.py",
+    "components/upload/upload_button.py",
+    "dashboards/base_dashboard.py",
+    "dashboards/hashtags/dashboard.py",
+    "dashboards/ngrams/dashboard.py",
+    "dashboards/placeholder/dashboard.py",
+    "dashboards/time_coordination/compare_page.py",
+    "dashboards/time_coordination/dashboard.py",
+    "pages/analysis_config_and_run.py",
+    "pages/analysis_post.py",
+    "pages/analysis_workflow/analyzer_step.py",
+    "pages/analysis_workflow/column_mapping_step.py",
+    "pages/analysis_workflow/params_step.py",
     "pages/analysis_workflow/run_step.py",
+    "pages/analyzer_previous.py",
+    "pages/dataset_preview.py",
+    "pages/importer.py",
+    "pages/start.py",
 )
+
+THEME_CONSTANT_HINT = "a named constant from cibmangotree.gui.theme"
 
 RETIRED_CLASS_TOKENS = {
     "q-mb-xs": "mb-1",
@@ -41,7 +68,7 @@ RETIRED_CLASS_TOKENS = {
     "text-medium": "font-medium",
     "text-grey": "TEXT_MUTED",
     "text-grey-5": "TEXT_MUTED for text; a semantic constant for icons",
-    "text-grey-6": "TEXT_MUTED for text; ICON_INFO for info icons",
+    "text-grey-6": "TEXT_MUTED for text; a semantic constant for icons",
     "text-grey-7": "TEXT_MUTED for text; ICON_INFO for info icons",
     "text-gray-500": "TEXT_MUTED",
     "text-gray-600": "TEXT_MUTED",
@@ -60,76 +87,90 @@ class Finding(NamedTuple):
         return f"{where}:{self.line}: replace {self.literal!r} with {self.replacement}"
 
 
-def guarded_files() -> tuple[Path, ...]:
-    return tuple(GUI_ROOT / path for path in GUARDED_PATHS)
+def files_to_check() -> tuple[Path, ...]:
+    return tuple(GUI_ROOT / path for path in FILES_TO_CHECK)
 
 
-def style_constants() -> dict[str, str]:
-    """Read STYLE_* literals from theme.py without its pydantic dependency."""
-    constants = {}
-    tree = ast.parse((GUI_ROOT / "theme.py").read_text(encoding="utf-8"))
-    for node in tree.body:
-        if not isinstance(node, ast.Assign) or not isinstance(node.value, ast.Constant):
-            continue
-        if not isinstance(node.value.value, str):
-            continue
-        for target in node.targets:
-            if isinstance(target, ast.Name) and target.id.startswith("STYLE_"):
-                constants[node.value.value.strip().rstrip(";")] = target.id
-    return constants
+def _replacement_for_class_literal(value: str) -> str:
+    tokens = re.findall(r"\S+", value)
+    retired = [
+        RETIRED_CLASS_TOKENS[token] for token in tokens if token in RETIRED_CLASS_TOKENS
+    ]
+    if retired:
+        return "; ".join(retired)
+    return THEME_CONSTANT_HINT
 
 
-def literal_parts(argument: ast.expr) -> Iterator[tuple[str, int, bool, bool]]:
-    """Yield static text with flags for boundaries next to an interpolation."""
+def _replacement_for_style_literal(value: str) -> str:
+    stripped = value.strip().rstrip(";")
+    if not stripped:
+        return "STYLE_CLEAR"
+    return THEME_CONSTANT_HINT
+
+
+def _flag_string_arg(argument: ast.expr, path: Path, findings: list[Finding]) -> None:
     if isinstance(argument, ast.Constant) and isinstance(argument.value, str):
-        yield argument.value, argument.lineno, True, True
+        findings.append(
+            Finding(path, argument.lineno, argument.value, THEME_CONSTANT_HINT)
+        )
     elif isinstance(argument, ast.JoinedStr):
-        for index, part in enumerate(argument.values):
-            if isinstance(part, ast.Constant) and isinstance(part.value, str):
-                yield (
-                    part.value,
-                    part.lineno,
-                    index == 0,
-                    index == len(argument.values) - 1,
-                )
+        findings.append(
+            Finding(path, argument.lineno, "<f-string>", THEME_CONSTANT_HINT)
+        )
 
 
 def scan_source(source: str, path: Path) -> list[Finding]:
-    findings = []
-    styles = style_constants()
+    findings: list[Finding] = []
     for node in ast.walk(ast.parse(source)):
-        if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute):
+        if not isinstance(node, ast.Call):
+            continue
+
+        if not isinstance(node.func, ast.Attribute):
             continue
         method = node.func.attr
-        if method not in {"classes", "style"}:
+        if method not in {"classes", "style", "props"}:
             continue
         for argument in [*node.args, *(keyword.value for keyword in node.keywords)]:
-            if method == "style":
-                if isinstance(argument, ast.Constant) and isinstance(
-                    argument.value, str
-                ):
-                    value = argument.value.strip().rstrip(";")
-                    if value in styles:
-                        findings.append(
-                            Finding(path, argument.lineno, value, styles[value])
-                        )
-                continue
-            for text, line, left_edge, right_edge in literal_parts(argument):
-                for match in re.finditer(r"\S+", text):
-                    if match.start() == 0 and not left_edge:
-                        continue
-                    if match.end() == len(text) and not right_edge:
-                        continue
-                    token = match.group()
-                    if token in RETIRED_CLASS_TOKENS:
-                        findings.append(
-                            Finding(
-                                path,
-                                line + text[: match.start()].count("\n"),
-                                token,
-                                RETIRED_CLASS_TOKENS[token],
-                            )
-                        )
+            if (
+                method == "classes"
+                and isinstance(argument, ast.Constant)
+                and isinstance(argument.value, str)
+            ):
+                findings.append(
+                    Finding(
+                        path,
+                        argument.lineno,
+                        argument.value,
+                        _replacement_for_class_literal(argument.value),
+                    )
+                )
+            elif (
+                method == "style"
+                and isinstance(argument, ast.Constant)
+                and isinstance(argument.value, str)
+            ):
+                findings.append(
+                    Finding(
+                        path,
+                        argument.lineno,
+                        argument.value,
+                        _replacement_for_style_literal(argument.value),
+                    )
+                )
+            elif method == "props":
+                _flag_string_arg(argument, path, findings)
+            elif isinstance(argument, ast.JoinedStr) and method in {
+                "classes",
+                "style",
+            }:
+                findings.append(
+                    Finding(
+                        path,
+                        argument.lineno,
+                        "<f-string>",
+                        THEME_CONSTANT_HINT,
+                    )
+                )
     return findings
 
 
@@ -137,7 +178,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("paths", nargs="*", type=Path)
     args = parser.parse_args(argv)
-    allowed = set(guarded_files())
+    allowed = set(files_to_check())
     paths = sorted({path.resolve() for path in args.paths} if args.paths else allowed)
     failed = False
     for path in paths:

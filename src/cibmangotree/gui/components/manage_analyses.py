@@ -5,6 +5,17 @@ from nicegui import ui
 from cibmangotree.app.analysis_context import AnalysisContext
 from cibmangotree.gui.components.analysis_utils import present_timestamp
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    CARD_DIALOG_FULL,
+    ROW_ACTIONS,
+    ROW_ACTIONS_MT_4,
+    SPACING_MB_4,
+    TEXT_MUTED_MB_4,
+    TEXT_NEGATIVE_MB_6,
+    TEXT_SECTION_HEADING,
+    WIDTH_FULL_H_96,
+    gui_props,
+)
 
 
 class ManageAnalysisDialog(ui.dialog):
@@ -35,13 +46,13 @@ class ManageAnalysisDialog(ui.dialog):
         self.deleted_ids: set = set()
 
         # Build dialog UI
-        with self, ui.card().classes("w-full"):
+        with self, ui.card().classes(CARD_DIALOG_FULL):
             # Dialog title
-            ui.label("Manage Analyses").classes("text-h6 q-mb-md")
+            ui.label("Manage Analyses").classes(TEXT_SECTION_HEADING)
 
             # Check if there are analyses to display
             if not self.analysis_contexts:
-                ui.label("No analyses found").classes("text-grey q-mb-md")
+                ui.label("No analyses found").classes(TEXT_MUTED_MB_4)
             else:
                 # Analyses grid — multiRow selection enabled
                 self.grid = ui.aggrid(
@@ -66,18 +77,20 @@ class ManageAnalysisDialog(ui.dialog):
                         "rowSelection": {"mode": "multiRow"},
                     },
                     theme="quartz",
-                ).classes("w-full h-96")
+                ).classes(WIDTH_FULL_H_96)
 
             # Action buttons
-            with ui.row().classes("w-full justify-end gap-2 mt-4"):
+            with ui.row().classes(ROW_ACTIONS_MT_4):
                 ui.button(
                     "Close",
                     on_click=self._handle_close,
                     color="cancel",
-                ).props("outline")
+                ).props(gui_props.outline)
 
                 ui.button(
-                    "Delete Selected", on_click=self._handle_delete, color="negative"
+                    "Delete Selected",
+                    on_click=self._handle_delete,
+                    color="negative",
                 )
 
     async def _handle_delete(self) -> None:
@@ -88,7 +101,7 @@ class ManageAnalysisDialog(ui.dialog):
             ui.notify(
                 "Please select one or more analyses to delete",
                 type="warning",
-                color="mango-orange",
+                color="warning",
             )
             return
 
@@ -135,14 +148,14 @@ class ManageAnalysisDialog(ui.dialog):
             ui.notify(
                 f"Some deletions failed: {'; '.join(errors)}",
                 type="negative",
-                color="mango-orange",
+                color="negative",
             )
         elif newly_deleted:
             label = "analysis" if len(newly_deleted) == 1 else "analyses"
             ui.notify(
                 f"Deleted {len(newly_deleted)} {label} successfully.",
                 type="positive",
-                color="mango-orange",
+                color="positive",
             )
 
     async def _show_delete_confirmation(self, count: int, rows: list[dict]) -> bool:
@@ -163,16 +176,16 @@ class ManageAnalysisDialog(ui.dialog):
 
         with ui.dialog() as dialog, ui.card():
             ui.label(f"Are you sure you want to delete {description}?").classes(
-                "q-mb-md"
+                SPACING_MB_4
             )
-            ui.label("This action cannot be undone.").classes("text-negative mb-6")
+            ui.label("This action cannot be undone.").classes(TEXT_NEGATIVE_MB_6)
 
-            with ui.row().classes("w-full justify-end gap-2"):
+            with ui.row().classes(ROW_ACTIONS):
                 ui.button(
                     "Cancel",
                     on_click=lambda: dialog.submit(False),
                     color="cancel",
-                ).props("outline")
+                ).props(gui_props.outline)
 
                 ui.button(
                     "Delete", on_click=lambda: dialog.submit(True), color="negative"

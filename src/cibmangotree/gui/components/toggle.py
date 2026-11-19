@@ -28,10 +28,11 @@ class ToggleButton(ui.button):
     def update(self) -> None:
         if self._group:
             # Group mode: green when active, grey when inactive
-            self.props(f"color={'primary' if self._state else 'grey'}")
+            color = "primary" if self._state else "grey"
         else:
             # Standalone mode: orange/red toggle
-            self.props(f"color={'primary' if self._state else 'red'}")
+            color = "primary" if self._state else "red"
+        self.set_background_color(color)
         super().update()
 
 

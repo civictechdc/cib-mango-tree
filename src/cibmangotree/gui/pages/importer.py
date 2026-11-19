@@ -7,6 +7,10 @@ from cibmangotree.gui.base import GuiPage
 from cibmangotree.gui.components import UploadButton
 from cibmangotree.gui.routes import gui_routes
 from cibmangotree.gui.session import GuiSession
+from cibmangotree.gui.theme import (
+    STYLE_CONTENT_NARROW,
+    TEXT_LG,
+)
 
 
 class ImportDatasetPage(GuiPage):
@@ -45,8 +49,8 @@ class ImportDatasetPage(GuiPage):
 
     def render_content(self) -> None:
         """Render file selection interface."""
-        with self.centered_content(max_width="800px"):
-            ui.label("Choose a dataset file.").classes("text-lg")
+        with self.centered_content(style=STYLE_CONTENT_NARROW):
+            ui.label("Choose a dataset file.").classes(TEXT_LG)
 
             async def handle_upload(upload: UploadFile) -> None:
                 file_contents: bytes = await upload.read()

@@ -19,19 +19,9 @@ from cibmangotree.analyzers.ngrams.ngrams_stats.interface import (
     COL_NGRAM_TOTAL_REPS,
     COL_NGRAM_WORDS,
 )
-
-TAB_10_PALETTE = [
-    "#1f77b4",
-    "#ff7f0e",
-    "#2ca02c",
-    "#d62728",
-    "#9467bd",
-    "#8c564b",
-    "#e377c2",
-    "#7f7f7f",
-    "#bcbd22",
-    "#17becf",
-]
+from cibmangotree.gui.theme import (
+    gui_colors,
+)
 
 
 class SamplingMetadata(BaseModel):
@@ -114,22 +104,22 @@ def plot_scatter_echart(
         series_config = {
             "name": f"{n}-gram",
             "type": "scatter",
-            "color": TAB_10_PALETTE[i],
+            "color": gui_colors.tab_10_palette[i],
             "symbolSize": 11,
             "itemStyle": {
-                "color": TAB_10_PALETTE[i % len(TAB_10_PALETTE)],
+                "color": gui_colors.tab_10_palette[i % len(gui_colors.tab_10_palette)],
                 "opacity": 0.7,
-                "borderColor": "white",
+                "borderColor": gui_colors.chart_border,
                 "borderWidth": 0.5,
             },
             "emphasis": {
                 "itemStyle": {
-                    "color": "#d62728",
+                    "color": gui_colors.chart_highlight,
                     "opacity": 1.0,
-                    "borderColor": "white",
+                    "borderColor": gui_colors.chart_border,
                     "borderWidth": 1,
                     "shadowBlur": 10,
-                    "shadowColor": "rgba(0, 0, 0, 0.3)",
+                    "shadowColor": gui_colors.chart_shadow,
                 },
                 "scale": 1.5,
             },

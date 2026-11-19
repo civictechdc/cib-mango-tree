@@ -2,6 +2,8 @@
 
 Analyzers are the core data-processing components of CIB Mango Tree. Users pick a **primary** analyzer, map columns, set parameters, and run an analysis. The app then runs any **secondary** analyzers bound to that primary: primaries usually write normalized tables meant for further processing, while secondaries turn those into export-friendly or dashboard-ready outputs—so the suite runs them automatically whenever that primary finishes (the user does not pick secondaries separately). Afterward, users can open a **NiceGUI results dashboard** for that primary (a registered dashboard if one exists; otherwise a placeholder).
 
+For planned and in-progress tests (outlines, backlog, roadmap), see the [planned analyzers Drive folder](https://drive.google.com/drive/folders/1xm0v5Wo8IuyBcdW_5h8RousgjY4dyVJ5). The contributor path from research through implementation is in the [New Contributor Guide](./new_contributor_guide.md).
+
 ## Recipe overview
 
 | Piece | Role |
@@ -337,6 +339,7 @@ def test_example_report():
 ## Next steps
 
 - Study `analyzers/example/` then `analyzers/ngrams/`.
+- Planned / in-progress analyzer outlines and roadmap: [Google Drive folder](https://drive.google.com/drive/folders/1xm0v5Wo8IuyBcdW_5h8RousgjY4dyVJ5).
 - Design philosophy (domains): [architecture](../design-philosophy/architecture.md), [content](../design-philosophy/content-domain.md), [core](../design-philosophy/core-domain.md), [edge](../design-philosophy/edge-domain.md)
-- GUI dashboard code: `src/cibmangotree/gui/dashboards/` and `src/cibmangotree/gui/README.md`.
+- GUI pages and dashboards: [GUI development](./gui-development.md); code under `src/cibmangotree/gui/dashboards/` and the [GUI module README](https://github.com/civictechdc/cib-mango-tree/blob/main/src/cibmangotree/gui/README.md).
 - Time Coordination method background (sliding window, ADO, time overlap, DTW): [Time Coordination methods](../analyzers/time-coordination-methods.md)

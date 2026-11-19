@@ -29,6 +29,7 @@ nav = [
                 "guides/contributing/logging.md",
                 "guides/contributing/testing.md",
                 "guides/contributing/styling.md",
+                "guides/contributing/gui-development.md",
                 "guides/contributing/profiling.md",
             ]},
         ]},

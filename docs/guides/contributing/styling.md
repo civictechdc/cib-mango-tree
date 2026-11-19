@@ -1,5 +1,8 @@
 # Styling
 
+For page structure, `GuiPage`, routes, and adding screens, see
+[GUI development](./gui-development.md).
+
 **Set every GUI presentation value in `src/cibmangotree/gui/theme.py`.**
 
 Pages, components, and dashboards must not invent class strings, CSS snippets,

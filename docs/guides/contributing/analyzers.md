@@ -341,5 +341,5 @@ def test_example_report():
 - Study `analyzers/example/` then `analyzers/ngrams/`.
 - Planned / in-progress analyzer outlines and roadmap: [Google Drive folder](https://drive.google.com/drive/folders/1xm0v5Wo8IuyBcdW_5h8RousgjY4dyVJ5).
 - Design philosophy (domains): [architecture](../design-philosophy/architecture.md), [content](../design-philosophy/content-domain.md), [core](../design-philosophy/core-domain.md), [edge](../design-philosophy/edge-domain.md)
-- GUI dashboard code: `src/cibmangotree/gui/dashboards/` and `src/cibmangotree/gui/README.md`.
+- GUI pages and dashboards: [GUI development](./gui-development.md); code under `src/cibmangotree/gui/dashboards/` and the [GUI module README](https://github.com/civictechdc/cib-mango-tree/blob/main/src/cibmangotree/gui/README.md).
 - Time Coordination method background (sliding window, ADO, time overlap, DTW): [Time Coordination methods](../analyzers/time-coordination-methods.md)

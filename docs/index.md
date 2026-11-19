@@ -9,3 +9,5 @@ Welcome to the technical documentation website of [CIB Mango Tree](https://cibma
 This is the technical documentation, for a user-based perspective see the project main home page: [cibmangotree.org](https://cibmangotree.org)
 
 **Known datasets** for research, prototyping, and QA live in a shared [Google Drive folder](https://drive.google.com/drive/folders/1OL7toRas_JbCw5nSMbbWb7j6yZciO5r5). Smaller fixtures tracked in the repo are under [`assets/test_data/`](https://github.com/civictechdc/cib-mango-tree/tree/main/assets/test_data).
+
+**Planned analyzers / tests** (outlines, backlog, and roadmap) live in a shared [Google Drive folder](https://drive.google.com/drive/folders/1xm0v5Wo8IuyBcdW_5h8RousgjY4dyVJ5).

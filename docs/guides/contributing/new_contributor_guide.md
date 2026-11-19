@@ -27,7 +27,7 @@ Contributing a new test consists of several steps.
 ///
 
 !!! example
-    If you really enjoy diving into a new domain, open-ended problems, and reading papers, you can help us out by doing research and proposing a new test. If instead, you prefer tasks with more clearly defined outputs, you are welcome to review the documentation or implement a currently proposed test.
+    If you really enjoy diving into a new domain, open-ended problems, and reading papers, you can help us out by doing research and proposing a new test. If instead, you prefer tasks with more clearly defined outputs, you are welcome to review the documentation or implement a currently proposed test from the [planned analyzers Drive folder](https://drive.google.com/drive/folders/1xm0v5Wo8IuyBcdW_5h8RousgjY4dyVJ5).
 
 ## I am interested in...
 
@@ -103,6 +103,7 @@ That is absolutely fine, we've all been there. If you can, the best way to find 
 | [Civic Tech DC website](https://www.civictechdc.org) | Upcoming in-person events |
 | [Civic Tech DC Luma](https://lu.ma/civic-tech-dc) | Following upcoming in-person events |
 | [Known datasets (Google Drive)](https://drive.google.com/drive/folders/1OL7toRas_JbCw5nSMbbWb7j6yZciO5r5) | Shared collection of datasets used for research, prototyping, and QA |
+| [Planned analyzers / tests (Google Drive)](https://drive.google.com/drive/folders/1xm0v5Wo8IuyBcdW_5h8RousgjY4dyVJ5) | Test outlines, backlog, roadmap, and one-pager template for analyzers planned or in progress |
 
 ### Doing research
 
@@ -115,13 +116,13 @@ It all starts here. CIB Mango Tree wants to make pre-existing social media analy
     - EU DisinfoLab. 2024. [CIB Detection Tree](https://www.disinfo.eu/publications/coordinated-inauthentic-behaviour-detection-tree/)
     - Method background for the Time Coordination analyzer: [Time Coordination methods](../analyzers/time-coordination-methods.md)
 
-**Hand-off**: You should fill out the test outline [template document](https://docs.google.com/document/d/1eO2pbMfBZNznnCo4s3E9eINaR-2qxCLedo7EbaRmHsA/edit?tab=t.0#heading=h.35g3nbbzlngs) on our Google Drive to propose a new test for our library. This will help us have a record of what was done, the key references, and it will provide a good starting point for a new volunteer.
+**Hand-off**: You should fill out the test outline [template document](https://docs.google.com/document/d/1eO2pbMfBZNznnCo4s3E9eINaR-2qxCLedo7EbaRmHsA/edit?tab=t.0#heading=h.35g3nbbzlngs) on our Google Drive to propose a new test for our library. Completed and in-progress outlines (plus the backlog and roadmap) live in the [planned analyzers Drive folder](https://drive.google.com/drive/folders/1xm0v5Wo8IuyBcdW_5h8RousgjY4dyVJ5). This will help us have a record of what was done, the key references, and it will provide a good starting point for a new volunteer.
 
 **Getting help**: You can ask around on the `#cib-mango-tree-product` channel. For example, you can share any papers you find interesting to get the conversation going. It is also always great to share short updates in the weekly calls or at the in-person event.
 
 ### Designing a test
 
-If a test already has a test outline document that has been completed, the best next step is to give a very short presentation of the test and discuss it with the rest of the volunteers in one of the virtual calls (or at in-person events). The goal here is to take the outline and think about how:  
+If a test already has a test outline document that has been completed (see the [planned analyzers Drive folder](https://drive.google.com/drive/folders/1xm0v5Wo8IuyBcdW_5h8RousgjY4dyVJ5)), the best next step is to give a very short presentation of the test and discuss it with the rest of the volunteers in one of the virtual calls (or at in-person events). The goal here is to take the outline and think about how:  
 
 1. The analysis method in the outline could be made useful for the test library and  
 1. what are the possible implementations.  

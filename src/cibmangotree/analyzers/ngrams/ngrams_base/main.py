@@ -483,6 +483,7 @@ def main(context: PrimaryAnalyzerContext):
     max_n = parameters[PARAM_MAX_N]
     assert isinstance(min_n, int)
     assert isinstance(max_n, int)
+    check_cancelled = context.check_cancelled
 
     # Configure tokenizer for social media text processing
     tokenizer_config = TokenizerConfig(
@@ -497,13 +498,13 @@ def main(context: PrimaryAnalyzerContext):
     input_reader = context.input()
     df_input = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
 
-    if context.is_cancelled():
+    if check_cancelled():
         return
 
     with context.progress("Preprocessing messages"):
         df_input = _preprocess_messages(df_input)
 
-    if context.is_cancelled():
+    if check_cancelled():
         return
 
     with context.progress("Detecting n-grams") as reporter:
@@ -514,7 +515,7 @@ def main(context: PrimaryAnalyzerContext):
             tokenizer_config,
             reporter.update,
             spill_dir=context.temp_dir,
-            check_cancelled=context.is_cancelled,
+            check_cancelled=check_cancelled,
         )
 
     with context.progress("Fetching n-gram statistics"):

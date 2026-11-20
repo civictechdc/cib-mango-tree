@@ -66,12 +66,6 @@ class PrimaryAnalyzerContext(ABC, BaseModel):
             return NullProgressReporter(title)
         return self.progress_reporter(title)
 
-    def is_cancelled(self) -> bool:
-        """Return True if the run has been cancelled."""
-        if self.check_cancelled is None:
-            return False
-        return self.check_cancelled()
-
     @abstractmethod
     def input(self) -> "InputTableReader":
         """
@@ -125,10 +119,6 @@ class BaseDerivedModuleContext(ABC, BaseModel):
         if self.progress_reporter is None:
             return NullProgressReporter(title)
         return self.progress_reporter(title)
-
-    def is_cancelled(self) -> bool:
-        """Return True if the run has been cancelled."""
-        return self.check_cancelled()
 
     @property
     @abstractmethod

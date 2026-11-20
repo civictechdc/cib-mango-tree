@@ -71,6 +71,7 @@ def main(context: PrimaryAnalyzerContext) -> None:
     win_size = int(context.params[PARAM_WIN_SIZE])
     t_step = int(context.params[PARAM_T_STEP])
     min_posts = int(context.params[PARAM_MIN_POSTS])
+    check_cancelled = context.check_cancelled
     if method_id not in METHODS:
         raise ValueError(f"Unknown time-coordination method: {method_id!r}")
 
@@ -79,7 +80,7 @@ def main(context: PrimaryAnalyzerContext) -> None:
         df_in = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
         read_progress.update(1.0)
 
-    if context.is_cancelled():
+    if check_cancelled():
         return
 
     pdf = df_in.select([COL_USER_ID, COL_TIMESTAMP, COL_MESSAGE_TEXT]).to_pandas()
@@ -91,16 +92,16 @@ def main(context: PrimaryAnalyzerContext) -> None:
             user_col_name=COL_USER_ID,
             content_col_name=COL_MESSAGE_TEXT,
             progress=_ProgressValue(prep_progress),
-            is_cancelled=context.is_cancelled,
+            check_cancelled=check_cancelled,
         )
-        if context.is_cancelled():
+        if check_cancelled():
             return
         prep_progress.finish()
 
     posts = pl.from_pandas(
         prepared.df[[COL_USER_ID, COL_TIMESTAMP, COL_MESSAGE_TEXT, "rel_timestamp"]]
     ).rename({"rel_timestamp": COL_REL_TIMESTAMP})
-    if context.is_cancelled():
+    if check_cancelled():
         return
     posts.write_parquet(context.output(OUTPUT_POSTS).parquet_path)
 
@@ -117,7 +118,7 @@ def main(context: PrimaryAnalyzerContext) -> None:
             )
         else:
             graph = method(prepared, progress, win_size=win_size, t_step=t_step)
-        if context.is_cancelled():
+        if check_cancelled():
             return
         build_progress.finish()
 
@@ -125,7 +126,7 @@ def main(context: PrimaryAnalyzerContext) -> None:
         remember_top_edges(graph, progress=_ProgressValue(rank_progress))
         rank_progress.finish()
 
-    if context.is_cancelled():
+    if check_cancelled():
         return
 
     _edges_frame(graph).write_parquet(context.output(OUTPUT_EDGES).parquet_path)

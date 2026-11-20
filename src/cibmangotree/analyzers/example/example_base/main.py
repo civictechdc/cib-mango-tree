@@ -19,7 +19,7 @@ def main(context: PrimaryAnalyzerContext):
     input_reader = context.input()
     df_input = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
 
-    if context.is_cancelled():
+    if check_cancelled():
         return
 
     # The analysis parameters are provided in a dictionary. This is how you

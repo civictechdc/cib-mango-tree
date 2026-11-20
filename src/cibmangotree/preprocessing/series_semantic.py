@@ -61,8 +61,8 @@ def parse_datetime_with_tz(s: pl.Series) -> pl.Series:
     # Handle timezone abbreviations like "UTC", "EST"
     tz_abbrev_regex = r" ([A-Z]{3,4})$"  # UTC, EST, etc.
 
-    # Handle timezone offsets like "-05:00", "+00:00"
-    tz_offset_regex = r"[+-]\d{2}:\d{2}$"  # -05:00, +00:00, etc.
+    # Handle timezone offsets like "-05:00", "+00:00", and compact "+0000"
+    tz_offset_regex = r"[+-]\d{2}:?\d{2}$"
 
     # Handle ISO 8601 "Z" suffix (UTC)
     z_suffix_regex = r"Z$"
@@ -106,7 +106,9 @@ native_date = SeriesSemantic(
 native_datetime = SeriesSemantic(
     semantic_name="native_datetime",
     column_type=pl.Datetime,
-    try_convert=lambda s: s,
+    try_convert=lambda s: (
+        s.dt.replace_time_zone(None) if getattr(s.dtype, "time_zone", None) else s
+    ),
     validate_result=lambda s: constant_series(s, True),
     data_type="datetime",
     return_dtype=pl.Datetime,

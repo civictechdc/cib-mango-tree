@@ -30,6 +30,22 @@ def test_native_datetime_recognition():
     assert native_datetime.check(series)
 
 
+def test_native_datetime_strips_timezone():
+    """Tz-aware native Datetime must convert to naive for preprocess return_dtype."""
+    series = pl.Series(
+        [datetime(2025, 1, 1, 12, 0), datetime(2025, 1, 2, 13, 0)],
+    ).dt.replace_time_zone("UTC")
+    assert native_datetime.check(series)
+
+    result = native_datetime.try_convert(series)
+    assert result.dtype == pl.Datetime
+    assert getattr(result.dtype, "time_zone", None) is None
+    assert result.to_list() == [
+        datetime(2025, 1, 1, 12, 0),
+        datetime(2025, 1, 2, 13, 0),
+    ]
+
+
 def test_datetime_with_timezone_parsing():
     """Test parsing datetime strings with timezone"""
     series = pl.Series(["2025-02-28 00:36:15 UTC", "2025-02-28 00:36:13 UTC"])
@@ -156,6 +172,31 @@ def test_parse_datetime_with_tz_offset():
 
     assert result.dtype == pl.Datetime
     assert result.is_not_null().all()
+
+
+def test_parse_datetime_with_tz_compact_offset():
+    """Compact offsets like +0000 must strip to naive Datetime (truth_vax style)."""
+    series = pl.Series(
+        [
+            "2024-08-21T00:00:45.269000+0000",
+            "2024-08-21T00:01:03.061000+0000",
+        ]
+    )
+    result = parse_datetime_with_tz(series)
+
+    assert result.dtype == pl.Datetime
+    assert getattr(result.dtype, "time_zone", None) is None
+    assert result.is_not_null().all()
+
+    # Same path as preprocess map_batches
+    out = pl.DataFrame({"created_at": series}).select(
+        pl.col("created_at").map_batches(
+            datetime_string.try_convert,
+            return_dtype=datetime_string.return_dtype,
+        )
+    )
+    assert out.dtypes[0] == pl.Datetime
+    assert getattr(out.dtypes[0], "time_zone", None) is None
 
 
 def test_datetime_with_timezone_offset_parsing():

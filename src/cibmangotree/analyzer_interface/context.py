@@ -57,7 +57,7 @@ class PrimaryAnalyzerContext(ABC, BaseModel):
 
     check_cancelled: Callable[[], bool] = lambda: False
     """
-    Callable that returns True when the current run has been cancelled.
+    Callable that returns True if/when the current run has been cancelled.
     """
 
     def progress(self, title: str) -> ProgressReporterProtocol:
@@ -115,9 +115,9 @@ class BaseDerivedModuleContext(ABC, BaseModel):
     Prefer ``context.progress(title)`` in analyzer mains.
     """
 
-    check_cancelled: Callable[[], bool] | None = None
+    check_cancelled: Callable[[], bool] = lambda: False
     """
-    Optional callable that returns True when the current run has been cancelled.
+    Callable that returns True if/when the current run has been cancelled.
     """
 
     def progress(self, title: str) -> ProgressReporterProtocol:

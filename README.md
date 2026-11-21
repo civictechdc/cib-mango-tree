@@ -81,6 +81,10 @@ Known datasets for research, prototyping, and QA live in a shared [Google Drive 
 
 Test outlines, backlog, and roadmap for analyzers planned or in progress live in a shared [Google Drive folder](https://drive.google.com/drive/folders/1xm0v5Wo8IuyBcdW_5h8RousgjY4dyVJ5).
 
+## Maintainers
+
+Cutting a release? Use the **[Release Checklist](https://github.com/civictechdc/cib-mango-tree/wiki/Release-Checklist)** on the project wiki.
+
 ## AI policy
 
 Contributors using AI tools should follow the project [AI Use Policy](AI_POLICY.md).

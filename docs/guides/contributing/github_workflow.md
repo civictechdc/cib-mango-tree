@@ -54,4 +54,4 @@ If you use AI tools while contributing, follow the project [AI Use Policy](https
 
 - Prefer **one concern per PR** (the PR template asks you to limit type and scope).
 - Docs-only and UX-handoff changes still use this same fork/PR flow; CI may skip some jobs for paths that do not affect the app.
-- For release cutovers, maintainers follow `.github/PULL_REQUEST_TEMPLATE/release.md` — contributors normally do not need that template.
+- For release cutovers, maintainers follow the [Release Checklist](https://github.com/civictechdc/cib-mango-tree/wiki/Release-Checklist) on the wiki — contributors normally do not need the Release PR template.

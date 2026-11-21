@@ -3,6 +3,7 @@ from concurrent.futures import ProcessPoolExecutor
 from math import ceil
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Callable
 
 import polars as pl
 
@@ -231,6 +232,8 @@ def _drop_subsumed_occurrences(
     chunk_defs: pl.LazyFrame,
     surviving_hashes: pl.LazyFrame,
     min_n: int,
+    *,
+    check_cancelled: Callable[[], bool] = lambda: False,
 ) -> tuple[pl.LazyFrame, pl.LazyFrame]:
     """
     Drop a shorter n-gram from a message when that message also contains a
@@ -282,7 +285,8 @@ def _extract_ngrams_from_messages(
     progress_callback=None,
     max_workers: int | None = None,
     spill_dir: str | None = None,
-) -> tuple[pl.DataFrame, pl.DataFrame]:
+    check_cancelled: Callable[[], bool] = lambda: False,
+) -> tuple[pl.DataFrame, pl.DataFrame] | None:
     """
     Extract n-grams from messages with within-message deduplication.
 
@@ -322,6 +326,9 @@ def _extract_ngrams_from_messages(
     if df_input.height < MIN_ROWS_FOR_PARALLEL:
         max_workers = 1
 
+    if check_cancelled():
+        return
+
     n_chunks = 1 if max_workers <= 1 else max_workers * CHUNKS_PER_WORKER
     chunk_size = max(1, ceil(df_input.height / n_chunks))
     payloads = [
@@ -345,7 +352,11 @@ def _extract_ngrams_from_messages(
         _spill_chunks(payloads, max_workers, spill_path, progress_callback)
 
         pairs = pl.scan_parquet(spill_path / "pairs_*.parquet")
+        if check_cancelled():
+            return
         chunk_defs = pl.scan_parquet(spill_path / "defs_*.parquet")
+        if check_cancelled():
+            return
 
         _assert_no_hash_collisions(chunk_defs)
 
@@ -353,33 +364,50 @@ def _extract_ngrams_from_messages(
         surviving_hashes = (
             pairs.group_by(COL_NGRAM_HASH).len().filter(pl.col("len") > 1)
         )
+        if check_cancelled():
+            return
         pairs, surviving_hashes = _drop_subsumed_occurrences(
-            pairs, chunk_defs, surviving_hashes, min_n
+            pairs, chunk_defs, surviving_hashes, min_n, check_cancelled=check_cancelled
         )
+        if check_cancelled():
+            return
 
         # One row per n-gram that survives, rather than one per occurrence: this is
         # the only place the text is materialised.
         # Sorting before assigning ids keeps ngram_id stable across runs, since
         # group_by output order is not deterministic and the ids feed the sort order
         # of the outputs.
-        df_ngram_defs = (
-            chunk_defs.unique(subset=COL_NGRAM_HASH)
-            .join(
-                surviving_hashes.select(COL_NGRAM_HASH),
-                on=COL_NGRAM_HASH,
-                how="inner",
-            )
-            .collect(engine="streaming")
-            .sort(COL_NGRAM_WORDS)
-            .with_row_index(COL_NGRAM_ID)
-            .with_columns(
-                pl.col(COL_NGRAM_ID).cast(pl.Int64),
-                pl.col(COL_NGRAM_WORDS)
-                .str.split(" ")
-                .list.len()
-                .alias(COL_NGRAM_LENGTH),
-            )
+        df_ngram_defs = chunk_defs.unique(subset=COL_NGRAM_HASH)
+        if check_cancelled():
+            return
+        df_ngram_defs = df_ngram_defs.join(
+            surviving_hashes.select(COL_NGRAM_HASH),
+            on=COL_NGRAM_HASH,
+            how="inner",
         )
+
+        if check_cancelled():
+            return
+
+        df_ngram_defs = df_ngram_defs.collect(engine="streaming")
+
+        if check_cancelled():
+            return
+        df_ngram_defs = df_ngram_defs.sort(COL_NGRAM_WORDS)
+
+        if check_cancelled():
+            return
+
+        df_ngram_defs = df_ngram_defs.with_row_index(COL_NGRAM_ID)
+        if check_cancelled():
+            return
+
+        df_ngram_defs = df_ngram_defs.with_columns(
+            pl.col(COL_NGRAM_ID).cast(pl.Int64),
+            pl.col(COL_NGRAM_WORDS).str.split(" ").list.len().alias(COL_NGRAM_LENGTH),
+        )
+        if check_cancelled():
+            return
 
         df_message_ngrams = (
             pairs.join(
@@ -390,6 +418,9 @@ def _extract_ngrams_from_messages(
             .select(COL_MESSAGE_SURROGATE_ID, COL_NGRAM_ID)
             .collect(engine="streaming")
         )
+
+    if check_cancelled():
+        return
 
     return df_message_ngrams, df_ngram_defs.select(
         COL_NGRAM_ID, COL_NGRAM_WORDS, COL_NGRAM_LENGTH
@@ -452,6 +483,7 @@ def main(context: PrimaryAnalyzerContext):
     max_n = parameters[PARAM_MAX_N]
     assert isinstance(min_n, int)
     assert isinstance(max_n, int)
+    check_cancelled = context.check_cancelled
 
     # Configure tokenizer for social media text processing
     tokenizer_config = TokenizerConfig(
@@ -465,8 +497,15 @@ def main(context: PrimaryAnalyzerContext):
 
     input_reader = context.input()
     df_input = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
+
+    if check_cancelled():
+        return
+
     with context.progress("Preprocessing messages"):
         df_input = _preprocess_messages(df_input)
+
+    if check_cancelled():
+        return
 
     with context.progress("Detecting n-grams") as reporter:
         df_ngram_instances, df_ngram_defs = _extract_ngrams_from_messages(
@@ -476,6 +515,7 @@ def main(context: PrimaryAnalyzerContext):
             tokenizer_config,
             reporter.update,
             spill_dir=context.temp_dir,
+            check_cancelled=check_cancelled,
         )
 
     with context.progress("Fetching n-gram statistics"):

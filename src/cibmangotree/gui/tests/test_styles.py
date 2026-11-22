@@ -33,7 +33,7 @@ def test_pilot_files_contain_no_hardcoded_styles() -> None:
     assert findings == []
 
 
-def test_hook_covers_exactly_the_files_to_check() -> None:
+def test_hook_covers_files_to_check() -> None:
     config = yaml.safe_load((rules.REPO_ROOT / ".pre-commit-config.yaml").read_text())
     hook = next(
         hook
@@ -41,13 +41,12 @@ def test_hook_covers_exactly_the_files_to_check() -> None:
         for hook in repo["hooks"]
         if hook["id"] == "gui-styles"
     )
-    covered = {
-        path
-        for path in rules.GUI_ROOT.rglob("*.py")
-        if re.match(hook["files"], path.relative_to(rules.REPO_ROOT).as_posix())
-    }
-    assert covered == set(rules.files_to_check())
-    assert all(path.is_file() for path in rules.files_to_check())
+    to_check = rules.files_to_check()
+    assert all(path.is_file() for path in to_check)
+    assert all(
+        re.match(hook["files"], path.relative_to(rules.REPO_ROOT).as_posix())
+        for path in to_check
+    )
     assert hook["entry"] == "python src/cibmangotree/gui/_style_rules.py"
 
 

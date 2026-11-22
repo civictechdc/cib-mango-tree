@@ -136,7 +136,8 @@ The `gui-styles` pre-commit hook runs `gui/_style_rules.py` on modules listed in
 `FILES_TO_CHECK`. It rejects string and f-string arguments to `.classes()`,
 `.style()`, and `.props()`. Quasar `color=` slot name strings are allowed.
 It also flags retired Quasar/layout tokens in class literals. Widen
-`FILES_TO_CHECK` and the hook `files` pattern together when migrating more
-modules (drift is caught by `test_hook_covers_exactly_the_files_to_check` in
-`gui/tests/test_styles.py`). Install and run hooks via
+`FILES_TO_CHECK` when migrating more modules (the pre-commit hook already
+matches all `gui/**/*.py`; the script enforces only listed files). Coverage of
+listed paths is checked by `test_hook_covers_files_to_check` in
+`gui/tests/test_styles.py`. Install and run hooks via
 [Installation](../get-started/installation.md).

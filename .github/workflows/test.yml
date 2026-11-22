@@ -6,6 +6,8 @@ on:
       - 'ux/**'
       - 'docs/**'
       - 'zensical.toml'
+      - '*.md'
+      - '**/*.md'
 
 jobs:
   test:

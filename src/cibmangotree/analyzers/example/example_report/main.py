@@ -4,10 +4,14 @@ from cibmangotree.analyzer_interface.context import SecondaryAnalyzerContext
 
 
 def main(context: SecondaryAnalyzerContext):
+    check_cancelled = context.check_cancelled
     df_character_count = pl.read_parquet(
         # This `character_count` is the output ID from the primary analyzer.
         context.base.table("character_count").parquet_path
     )
+
+    if check_cancelled():
+        return
 
     df_export = df_character_count.with_columns(
         # `is_long` is a new column that we are adding to the output.

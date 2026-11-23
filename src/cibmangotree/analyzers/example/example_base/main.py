@@ -19,6 +19,9 @@ def main(context: PrimaryAnalyzerContext):
     input_reader = context.input()
     df_input = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
 
+    if context.check_cancelled():
+        return
+
     # The analysis parameters are provided in a dictionary. This is how you
     # access them. The dictionary key must match the parameter ID in the interface.
     # Prefer declared interface defaults over hard-coded fallbacks in main.

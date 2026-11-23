@@ -45,12 +45,18 @@ def gini(x: pl.Series) -> float:
 
 
 def hashtag_analysis(
-    data_frame: pl.DataFrame, every="1h", progress=NullProgressReporter
-) -> pl.DataFrame:
+    data_frame: pl.DataFrame,
+    every="1h",
+    progress=NullProgressReporter,
+    check_cancelled=lambda: False,
+) -> pl.DataFrame | None:
     if not isinstance(data_frame.schema[COL_TIME], pl.Datetime):
         data_frame = data_frame.with_columns(
             pl.col(COL_TIME).str.to_datetime().alias(COL_TIME)
         )
+
+    if check_cancelled():
+        return
 
     # Filter rows with null timestamps (required for group_by_dynamic)
     # and null/empty post content (required for string operations)
@@ -60,6 +66,9 @@ def hashtag_analysis(
         & (pl.col(COL_POST) != "")
     )
 
+    if check_cancelled():
+        return
+
     # define the expressions
     has_hashtag_symbols = (
         pl.col(COL_POST).str.contains("#").any()
@@ -67,6 +76,9 @@ def hashtag_analysis(
     extract_hashtags = pl.col(COL_POST).str.extract_all(
         r"(#\S+)"
     )  # fetch all hashtags based on `#` symbol
+
+    if check_cancelled():
+        return
 
     with progress("Gathering hashtags..."):
         # if hashtag symbol is detected, extract with regex
@@ -80,11 +92,17 @@ def hashtag_analysis(
                 f"The data in {COL_POST} column appear to have no hashtags."
             )
 
+    if check_cancelled():
+        return
+
     # select columns and sort by time in ascending order
     # (expected by .group_by_dynamic below)
     df_input = df_input.select(pl.col([COL_AUTHOR_ID, COL_TIME, COL_POST])).sort(
         pl.col(COL_TIME)
     )
+
+    if check_cancelled():
+        return
 
     with progress("Counting hashtags..."):
         # compute gini per timewindow
@@ -109,6 +127,9 @@ def hashtag_analysis(
             .rename({COL_TIME: OUTPUT_COL_TIMESPAN})
         )
 
+    if check_cancelled():
+        return
+
     # convert datetime back to string
     df_out = df_out.with_columns(
         pl.col(OUTPUT_COL_TIMESPAN).dt.to_string(PRIMARY_OUTPUT_DATETIME_FORMAT)
@@ -119,9 +140,15 @@ def hashtag_analysis(
 
 def main(context: PrimaryAnalyzerContext):
     progress = context.progress_reporter or (lambda name: NullProgressReporter(name))
+    check_cancelled = context.check_cancelled
 
     input_reader = context.input()
+    if check_cancelled():
+        return
+
     df_input = input_reader.preprocess(pl.read_parquet(input_reader.parquet_path))
+    if check_cancelled():
+        return
 
     time_window_param = context.params.get(PARAM_TIME_WINDOW)
 
@@ -131,5 +158,8 @@ def main(context: PrimaryAnalyzerContext):
         progress=progress,
         every=time_window_param.to_polars_truncate_spec(),  # returns '12h', '5d' etc.
     )
+
+    if check_cancelled():
+        return
 
     df_out.write_parquet(context.output(OUTPUT_GINI).parquet_path)

@@ -55,6 +55,11 @@ class PrimaryAnalyzerContext(ABC, BaseModel):
     Prefer ``context.progress(title)`` in analyzer mains.
     """
 
+    check_cancelled: Callable[[], bool] = lambda: False
+    """
+    Callable that returns True if/when the current run has been cancelled.
+    """
+
     def progress(self, title: str) -> ProgressReporterProtocol:
         """Return a progress reporter for ``title``, or a no-op if unset."""
         if self.progress_reporter is None:
@@ -102,6 +107,11 @@ class BaseDerivedModuleContext(ABC, BaseModel):
     """
     Optional factory that returns a progress reporter for a named step.
     Prefer ``context.progress(title)`` in analyzer mains.
+    """
+
+    check_cancelled: Callable[[], bool] = lambda: False
+    """
+    Callable that returns True if/when the current run has been cancelled.
     """
 
     def progress(self, title: str) -> ProgressReporterProtocol:

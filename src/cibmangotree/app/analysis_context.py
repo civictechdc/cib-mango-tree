@@ -194,6 +194,7 @@ class AnalysisContext(BaseModel):
                     progress_reporter=make_progress_reporter(
                         analyzer_spec.id, analyzer_spec.name
                     ),
+                    check_cancelled=check_cancelled,
                 )
                 analyzer_context.prepare()
 
@@ -237,6 +238,7 @@ class AnalysisContext(BaseModel):
                         progress_reporter=make_progress_reporter(
                             secondary_spec.id, secondary_spec.name
                         ),
+                        check_cancelled=check_cancelled,
                     )
                     secondary_context.prepare()
 
